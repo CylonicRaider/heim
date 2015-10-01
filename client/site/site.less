@@ -29,6 +29,7 @@ body.page {
 
   header {
     position: relative;
+    background: white;
     border-bottom: 10px solid @brand-color;
     padding: 14px 0;
     box-shadow: 0 0 8px fade(black, 25%);
@@ -200,6 +201,9 @@ body.page {
 }
 
 body.welcome {
+  // thanks to http://subtlepatterns.com/symphony/
+  background: data-uri('./symphony.png');
+
   @keyframes raise {
     0% {
       transform: translateY(10px);
@@ -219,11 +223,11 @@ body.welcome {
   }
 
   .splash {
-    margin: 20px 0;
+    margin: 30px 0;
   }
 
   .clicky {
-    @size: 235px;
+    @size: 200px;
     position: relative;
     display: inline-block;
     width: @size;
@@ -266,6 +270,7 @@ body.welcome {
       top: 0;
       bottom: 0;
       transition: transform .1s ease-out;
+      box-shadow: 0 1px 6px fade(black, 25%);
     }
 
     .delay-parts(@duration) {
@@ -291,7 +296,7 @@ body.welcome {
     }
 
     .colors {
-      padding: 29px;
+      padding: 8px;
       font-size: 0;
       transform: perspective(0);  // fix overflow clipping in Chrome
 
@@ -391,11 +396,12 @@ body.welcome {
   h1 {
     font-size: 20px;
     font-weight: normal;
-    margin-top: 10px;
+    margin-top: 20px;
     animation: raise .5s ease .5s 1 normal both;
   }
 
   .info-box {
+    background: fade(white, 80%);
     margin-top: 40px;
     border-radius: 5px;
     box-shadow: 0 2px 10px fade(black, 25%);
@@ -470,6 +476,10 @@ body.welcome {
     }
   }
 
+  footer {
+    background: #fafafa;
+  }
+
   @media (min-width: @thin-breakpoint) {
     h1 br {
       display: none;
@@ -483,7 +493,7 @@ body.welcome {
     }
 
     .clicky .colors {
-      padding: 15px;
+      padding: 5px;
     }
 
     h1 {
@@ -497,7 +507,8 @@ body.welcome {
       margin-right: -10px;
 
       .start-chatting {
-        padding: 10px 30px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .features {
@@ -510,6 +521,10 @@ body.welcome {
     .info-box {
       .messages {
         font-size: 14px;
+      }
+
+      .start-chatting {
+        margin-top: 5px;
       }
 
       .features {
