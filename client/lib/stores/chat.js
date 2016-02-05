@@ -210,12 +210,12 @@ module.exports.store = Reflux.createStore({
             id: ev.data.id,
             session_id: ev.data.session_id,
             name: ev.data.to,
-            hue: hueHash.hue(ev.data.to),
+            hue: hueHash.hue(ev.data.id),
           })
       }
     } else if (ev.type === 'join-event') {
       ev.data.present = true
-      ev.data.hue = hueHash.hue(ev.data.name)
+      ev.data.hue = hueHash.hue(ev.data.id)
       this.state.who = this.state.who
         .set(ev.data.session_id, Immutable.fromJS(ev.data))
     } else if (ev.type === 'part-event') {
@@ -310,7 +310,7 @@ module.exports.store = Reflux.createStore({
             message._mention = true
           }
         }
-        message.sender.hue = hueHash.hue(message.sender.name)
+        message.sender.hue = hueHash.hue(message.sender.id)
         who.mergeIn([message.sender.session_id], {
           lastSent: message.time,
         })
@@ -386,7 +386,7 @@ module.exports.store = Reflux.createStore({
       Immutable.Seq(data.listing)
         .map(user => {
           user.present = true
-          user.hue = hueHash.hue(user.name)
+          user.hue = hueHash.hue(user.id)
           return [user.session_id, Immutable.Map(user)]
         })
     )
