@@ -42,9 +42,9 @@ frontend:
     - "8081:8081"
   environment:
     NODE_ENV: development
-    SENTRY_ENDPOINT: http://sentry@localhost:9000/2
-    HEIM_ORIGIN: http://localhost:8080
-    EMBED_ORIGIN: http://localhost:8081
+    SENTRY_ENDPOINT: http://sentry@euphoria.leet.nu:9000/2
+    HEIM_ORIGIN: https://euphoria.leet.nu
+    EMBED_ORIGIN: http://embed.space
 
 # The upgradedb container runs the upgradedb command against the psql container.
 upgradedb:
@@ -65,7 +65,7 @@ backend:
     - ./client/build:/srv/heim/client/src/build
     - ./backend/console/keys:/keys
   ports:
-    - "8080:80"
+    - "8060:80"
     - "2222:2222"
   environment:
     HEIM_ID: dev1

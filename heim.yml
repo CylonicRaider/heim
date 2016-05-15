@@ -7,4 +7,5 @@ email:
 kms:
   aes256:
     key-file: /keys/masterkey
-set_insecure_cookies: true
+allow_room_creation: false
+#set_insecure_cookies: true
