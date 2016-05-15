@@ -21,6 +21,9 @@ const index = _.extend({}, unicodeIndex, {
   'bot': 'bot',
   'greenduck': 'greenduck',
   'mobile': unicodeIndex.iphone,
+  'tumbleweed': 'tumbleweed',
+  'tumbleweed2': 'tumbleweed2',
+  'tumbleweed!': 'tumbleweed2',
 })
 
 delete index.iphone
