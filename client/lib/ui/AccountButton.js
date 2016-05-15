@@ -22,7 +22,7 @@ export default React.createClass({
         <FastButton className="account-button signed-in" onClick={this.props.onOpenAccountSettingsDialog}>
           <div className="account-info">
             <div className="status">signed in</div>
-            <div className="name" title={email}>{email}</div>
+            <div className="name" title={email}>{this.props.account.get('name')}</div>
           </div>
         </FastButton>
       )
