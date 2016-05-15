@@ -3,7 +3,7 @@
 @import "forms.less";
 
 
-@base-font-size: 15px;
+@base-font-size: 12pt;
 
 body {
   overflow-y: hidden;  // prevent mobile Chrome pull to refresh
@@ -19,7 +19,7 @@ body {
   }
 
   input, textarea, button {
-    font-family: Open Sans, Droid Sans, sans-serif;
+    font-family: Droid Sans, sans-serif;
     margin: 0;
   }
 }
@@ -114,7 +114,7 @@ iframe.js {
   }
 
   h1, h2, .notification-settings .notification-toggle .inner, .toolbox-button .inner, .account-button .inner {
-    font-size: .92rem;
+    font-size: .85rem;
     font-weight: bold;
     color: #777;
   }
@@ -551,7 +551,7 @@ iframe.js {
 @time-margin: 70px;
 @messages-padding: 10px;
 @nick-spacing: 6px;
-@nick-height: 22px;
+@nick-height: 19px;
 @entry-height: 35px;
 @vertical-spacing: 4px;
 @thread-indent: 22px;
@@ -559,17 +559,16 @@ iframe.js {
 .nick, .text-rect {
   background: @neutral-color;
   padding: 0 4px;
-  font-size: .92em;
+  font-size: .85em;
   border-radius: 2px;
 }
 
 .nick, .text-rect, .messages-container .line {
+  line-height: @nick-height;
   unicode-bidi: embed;
 }
 
 .nick {
-  padding-top: 1px;
-  padding-bottom: 1px;
   .emoji {
     height: 100%;
   }
@@ -1027,7 +1026,7 @@ iframe.js {
   // extended drag handle touch area can extend below bottom
   overflow: hidden;
 
-  @message-spacing: 2.5px;
+  @message-spacing: 1px;
   @thread-spacing: 8px;
   @seen-fade: cubic-bezier(0, 1, .4, .2);
 
@@ -1078,7 +1077,7 @@ iframe.js {
     display: inline-flex;
     box-sizing: border-box;
     color: @topic-color;
-    font-size: .92em;
+    font-size: .85em;
     font-weight: bold;
     line-height: normal;
     cursor: pointer;
@@ -1164,7 +1163,7 @@ iframe.js {
     height: 20px;
     padding-bottom: 4px;
     margin-top: 1px;
-    .button-icon('../res/expand-rest.svg', 14px, 3px, 1, @alignment: baseline);
+    .button-icon('../res/expand-rest.svg', 14px, 3px, 1);
     .inner:before {
       width: 8px;
     }
@@ -1313,6 +1312,8 @@ iframe.js {
     .nick {
       flex-shrink: 0;
       margin-right: @nick-spacing;
+      height: @nick-height;
+      box-sizing: border-box;
     }
 
     .content {
@@ -1479,11 +1480,11 @@ iframe.js {
   .timestamp {
     position: absolute;
     left: 0;
-    font-size: .92em;
+    font-size: .85em;
     color: #aaa;
     width: @time-margin;
     padding-right: 9px;
-    padding-top: 0.08em;
+    padding-top: 1px;
     box-sizing: border-box;
     text-align: right;
     white-space: nowrap;
@@ -1509,7 +1510,7 @@ iframe.js {
 
     .nick-box, .entry-text, .measure, label {
       font-size: @base-font-size;
-      line-height: 1.2;
+      line-height: @base-font-size + 2.5pt;
       height: @entry-height;
       padding: 8px 10px;
       box-sizing: border-box;
@@ -1524,7 +1525,6 @@ iframe.js {
 
     .entry-text, .measure {
       background: none;
-      margin-top: 1px;
       padding-left: 0;
       overflow-y: hidden;
     }
@@ -1702,7 +1702,7 @@ iframe.js {
     font-weight: normal;
     white-space: nowrap;
     color: gray;
-    font-size: .92rem;
+    font-size: .85rem;
 
     &.now {
       color: green;
@@ -1974,7 +1974,7 @@ iframe.js {
 
 .account-auth-dialog .content {
   .register-fine-print {
-    font-size: .92rem;
+    font-size: .85rem;
     margin-bottom: 20px;
   }
 }
