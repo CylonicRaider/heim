@@ -44,7 +44,7 @@ frontend:
     NODE_ENV: development
     SENTRY_ENDPOINT: http://sentry@euphoria.leet.nu:9000/2
     HEIM_ORIGIN: https://euphoria.leet.nu
-    EMBED_ORIGIN: http://embed.space
+    EMBED_ORIGIN: https://embed.space
 
 # The upgradedb container runs the upgradedb command against the psql container.
 upgradedb:
