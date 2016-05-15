@@ -99,6 +99,10 @@ export default React.createClass({
               </div>
             </div>
           </FieldLabelContainer>
+          <div className="label-line">
+            <div className="label">reload page after applying to see results :(</div>
+            <div className="spacer"/>
+          </div>
           <div className="bottom">
             <div className="action-line">
               <div className="spacer" />
@@ -195,7 +199,7 @@ export default React.createClass({
         <Form {...formParams}>
           <div className="account-state">you're signed into your account. <button type="button" tabIndex="4" className="sign-out minor-secondary-action" onClick={accountSettingsFlow.logout}>sign out</button></div>
           {!accountEmailVerified && <div className="not-verified">your email is not verified. <button type="button" tabIndex="4" className="resend-verify minor-secondary-action" onClick={accountSettingsFlow.resendVerifyEmail}>re-send email</button></div>}
-          {false && <FieldLabelContainer label="account name">
+          <FieldLabelContainer label="account name">
             <div className="field-action-box">
               <div className="inner">
                 <div className="big-nick" style={{background: 'hsl(' + hueHash.hue(account.get('name')) + ', 65%, 85%)'}}>{account.get('name')}</div>
@@ -203,7 +207,7 @@ export default React.createClass({
               <div className="spacer" />
               <button type="button" tabIndex="1" className="major-secondary-action" onClick={this.openChangeName}>change<span className="long"> name</span></button>
             </div>
-          </FieldLabelContainer>}
+          </FieldLabelContainer>
           <FieldLabelContainer label="email address">
             <div className="field-action-box">
               <div className="inner">{account.get('email')}</div>

@@ -46,6 +46,9 @@ export default React.createClass({
       return true
     })
     const userCount = people.size
+    const lurkers = this.props.who.filter(user =>
+      user.get('present') && !user.get('name') && !/^bot:/.test(user.get('id')))
+    const lurkerCount = lurkers.size
 
     // use an outer container element so we can z-index the bar above the
     // bubbles. this makes the bubbles slide from "underneath" the bar.
@@ -56,7 +59,7 @@ export default React.createClass({
         {this.props.isManager && <FastButton className={classNames('manager-toggle', {'on': this.props.managerMode})} onClick={this.props.toggleManagerMode}><div className="hex left" dangerouslySetInnerHTML={{__html: hexLeftSVG}} />{this.props.managerMode ? 'host mode' : 'host'}<div className="hex right" dangerouslySetInnerHTML={{__html: hexRightSVG}} /></FastButton>}
         <div className="right">
           <Spinner visible={this.props.working} />
-          {this.props.joined && <FastButton fastTouch className="user-count" onClick={this.props.toggleUserList}>{userCount}</FastButton>}
+          {this.props.joined && <FastButton fastTouch className="user-count" onClick={this.props.toggleUserList}>{userCount}{lurkerCount ? <span className="lurker-count">+{lurkerCount}</span> : null}</FastButton>}
         </div>
       </div>
     )

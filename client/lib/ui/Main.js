@@ -295,7 +295,8 @@ export default React.createClass({
                 <div className="content">
                   <span className="title">what would you like notifications for?</span>
                   <div className="actions">
-                    <FastButton onClick={() => ui.notificationsNoticeChoice('message')}>new messages</FastButton>
+                    <FastButton onClick={() => ui.notificationsNoticeChoice('message')}>new messages</FastButton>,
+                    <FastButton onClick={() => ui.notificationsNoticeChoice('reply')}>replies</FastButton>,
                     or
                     <FastButton onClick={() => ui.notificationsNoticeChoice('mention')}>just mentions<span className="long"> of @{hueHash.normalize(this.state.chat.nick)}</span></FastButton>
                   </div>

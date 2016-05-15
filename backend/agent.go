@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	agentCookieName     = "a"
+	agentCookieName     = "b"
 	agentCookieDuration = 365 * 24 * time.Hour
 )
 

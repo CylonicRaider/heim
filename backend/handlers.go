@@ -38,7 +38,8 @@ func (s *Server) route() {
 	s.r.PathPrefix("/about").Handler(
 		prometheus.InstrumentHandler("about", http.HandlerFunc(s.handleAboutStatic)))
 
-	s.r.HandleFunc("/room/{prefix:(pm:)?}{room:[a-z0-9]+}/ws", instrumentSocketHandlerFunc("ws", s.handleRoom))
+	// No API serving
+	//s.r.HandleFunc("/room/{prefix:(pm:)?}{room:[a-z0-9]+}/ws", instrumentSocketHandlerFunc("ws", s.handleRoom))
 	s.r.Handle(
 		"/room/{prefix:(pm:)?}{room:[a-z0-9]+}/", prometheus.InstrumentHandlerFunc("room_static", s.handleRoomStatic))
 
@@ -88,16 +89,21 @@ func (s *Server) handleRoomStatic(w http.ResponseWriter, r *http.Request) {
 	room, err := s.resolveRoom(ctx, prefix, roomName, client)
 	if err != nil {
 		if err == proto.ErrRoomNotFound {
-			if !s.allowRoomCreation || prefix != "" {
-				s.serveErrorPage("room not found", http.StatusNotFound, w, r)
-				return
-			}
+			//if !s.allowRoomCreation || prefix != "" {
+			//	s.serveErrorPage("room not found", http.StatusNotFound, w, r)
+			//	return
+			//}
 		} else {
 			s.serveErrorPage(err.Error(), http.StatusInternalServerError, w, r)
 			return
 		}
 	}
-	params := map[string]interface{}{"RoomTitle": strings.TrimPrefix(room.Title(), "&")}
+	params := map[string]interface{}{}
+	if room == nil {
+		params["RoomTitle"] = roomName
+	} else {
+		params["RoomTitle"] = strings.TrimPrefix(room.Title(), "&")
+	}
 	s.servePage("room.html", params, w, r)
 }
 
