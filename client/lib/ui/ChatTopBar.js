@@ -59,7 +59,7 @@ export default React.createClass({
         {this.props.isManager && <FastButton className={classNames('manager-toggle', {'on': this.props.managerMode})} onClick={this.props.toggleManagerMode}><div className="hex left" dangerouslySetInnerHTML={{__html: hexLeftSVG}} />{this.props.managerMode ? 'host mode' : 'host'}<div className="hex right" dangerouslySetInnerHTML={{__html: hexRightSVG}} /></FastButton>}
         <div className="right">
           <Spinner visible={this.props.working} />
-          {this.props.joined && <FastButton fastTouch className="user-count" onClick={this.props.toggleUserList}>{userCount}{lurkerCount && <span className="lurker-count">+{lurkerCount}</span>}</FastButton>}
+          {this.props.joined && <FastButton fastTouch className="user-count" onClick={this.props.toggleUserList}>{userCount}{lurkerCount ? <span className="lurker-count">+{lurkerCount}</span> : null}</FastButton>}
         </div>
       </div>
     )
