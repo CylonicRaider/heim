@@ -72,15 +72,16 @@ export default React.createClass({
       prevUser = user
       return true
     }).toList()
+    const bots = list.get('bot')
     return (
       <div className="user-list" {...this.props}>
         {people && <div className="list">
-          <h1>people <span class="user-counter">{people.length}</span></h1>
+          <h1>people</h1>
           {people.map(formatUser).toIndexedSeq()}
         </div>}
-        {list.has('bot') && <div className="list">
-          <h1>bots <span class="user-counter">{bots.length}</span></h1>
-          {list.get('bot').map(formatUser).toIndexedSeq()}
+        {bots && <div className="list">
+          <h1>bots <span className="user-counter">({bots.size})</span></h1>
+          {bots.map(formatUser).toIndexedSeq()}
         </div>}
       </div>
     )

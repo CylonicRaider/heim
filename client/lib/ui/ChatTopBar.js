@@ -46,7 +46,7 @@ export default React.createClass({
       return true
     })
     const userCount = people.size
-    let lurkers = this.props.who.filter(user =>
+    const lurkers = this.props.who.filter(user =>
       user.get('present') && !user.get('name') && !/^bot:/.test(user.get('id')))
     const lurkerCount = lurkers.size
 
