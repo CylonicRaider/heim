@@ -21,6 +21,7 @@ const index = _.extend({}, unicodeIndex, {
   'bot': 'bot',
   'greenduck': 'greenduck',
   'mobile': unicodeIndex.iphone,
+  'poop': 'poop',
   'sad': unicodeIndex.cry,
   'tumbleweed': 'tumbleweed',
   'tumbleweed2': 'tumbleweed2',
