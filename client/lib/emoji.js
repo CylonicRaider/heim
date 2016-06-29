@@ -23,6 +23,7 @@ const index = _.extend({}, unicodeIndex, {
   'mobile': unicodeIndex.iphone,
   'poop': 'poop',
   'sad': unicodeIndex.cry,
+  'sun': unicodeIndex.sunny,
   'tumbleweed': 'tumbleweed',
   'tumbleweed2': 'tumbleweed2',
   'tumbleweed!': 'tumbleweed2',
