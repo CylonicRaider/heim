@@ -44,7 +44,7 @@ frontend:
     NODE_ENV: development
     SENTRY_ENDPOINT: http://sentry@euphoria.leet.nu:9000/2
     HEIM_ORIGIN: https://euphoria.leet.nu
-    EMBED_ORIGIN: https://embed.space
+    EMBED_ORIGIN: https://embed.euphoria.leet.nu
 
 # The upgradedb container runs the upgradedb command against the psql container.
 upgradedb:
@@ -103,7 +103,7 @@ embed:
     - ./_deps/godeps:/godeps
     - ./client/build:/srv/heim/client/src/build
   ports:
-    - "8081:80"
+    - "8061:80"
   command: run.sh heimctl serve-embed -http :80 -static /srv/heim/client/src/build/embed
 
 presence:
