@@ -44,7 +44,7 @@ frontend:
     - "8081:8081"
   environment:
     NODE_ENV: development
-    SENTRY_ENDPOINT: https://sentry:sentry@sentry.euphoria.leet.nu/2
+    SENTRY_ENDPOINT: https://sentry@sentry.euphoria.leet.nu/2
     HEIM_ORIGIN: https://euphoria.leet.nu
     EMBED_ORIGIN: https://embed.euphoria.leet.nu
 
