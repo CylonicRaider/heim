@@ -18,6 +18,8 @@ psqlclient:
 
 sentry:
   image: slafs/sentry:7.4
+  volumes:
+    - ./_psqldata/sentry:/data
   ports:
     - "8062:9000"
   environment:
