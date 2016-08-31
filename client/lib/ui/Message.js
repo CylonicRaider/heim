@@ -18,7 +18,6 @@ import EntryDragHandle from './EntryDragHandle'
 import TreeNodeMixin from './TreeNodeMixin'
 import MessageDataMixin from './MessageDataMixin'
 
-
 const linearEasing = t => t
 const snapEasing = t => (Math.pow(2.02 * t - 1.0303, 17) + t) / 3.5 + 0.475
 const colorShouldStep = (x, last) => x - last > 0.01
