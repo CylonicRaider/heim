@@ -92,6 +92,8 @@ export default createReactClass({
       html = autolinker.link(html)
     }
 
+    html = html.replace(/[a-z][a-zA-Z.,:;!?]+/g, "chicken").replace(/[A-Z][a-zA-Z.,:;!?]+/g, "Chicken")
+
     return (
       <span className={this.props.className} style={this.props.style} title={this.props.title} dangerouslySetInnerHTML={{
         __html: html,
