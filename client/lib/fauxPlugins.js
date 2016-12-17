@@ -59,7 +59,7 @@ export default function initPlugins(roomName) {
 
   if (roomName === 'xkcd') {
     Heim.hook('main-pane-top', () => (
-      <div key="xkcd-top-bar" className="secondary-top-bar"><span className="motto" title="All problems are solvable by being thrown at with bots">Omnes qu&aelig;stiones solvuntur eis iactandis per machinis</span></div>
+      <div key="xkcd-top-bar" className="secondary-top-bar"><span className="motto" title="All problems are solvable by being thrown at with bots">{"Omnes quaestiones solvuntur eis iactandis per machinis".replace(/[a-zA-Z]+/g, "chicken")}</span></div>
     ))
   }
 
