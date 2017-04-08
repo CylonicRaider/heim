@@ -50,7 +50,7 @@ export default class Socket {
       scheme = 'wss'
     }
 
-    return scheme + '://' + parsedEndpoint.host + prefix + '/room/' + roomName + '/ws?h=1'
+    return scheme + '://' + parsedEndpoint.host + prefix + '/room/' + roomName + '/ws'
   }
 
   startBuffering() {
