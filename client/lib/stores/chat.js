@@ -350,11 +350,13 @@ module.exports.store = Reflux.createStore({
       }
       return
     }
-    this.state.earliestLog = data.log[0].id
+    if (! this.state.earliestLog || data.log[0].id <= this.state.earliestLog) {
+      this.state.earliestLog = data.log[0].id
+    }
     ReactDOM.unstable_batchedUpdates(() => {
       const log = this._handleMessagesData(data.log)
 
-      if (!data.before) {
+      if (!data.before && false) {
         // persist local tree data but reset out server state
         const shadows = []
         this.state.messages.mapDFS(node => {
@@ -372,7 +374,7 @@ module.exports.store = Reflux.createStore({
           shadows.push(lastVisit.toJS())
         }
 
-        this.state.messages.reset(shadows)
+        if (false) this.state.messages.reset(shadows)
       }
       this.state.messages.add(log)
       storeActions.logsReceived(_.map(log, m => m.id), this.state)
