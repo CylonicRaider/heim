@@ -374,7 +374,7 @@ module.exports.store = Reflux.createStore({
           shadows.push(lastVisit.toJS())
         }
 
-        if (false) this.state.messages.reset(shadows)
+        this.state.messages.reset(shadows)
       }
       this.state.messages.add(log)
       storeActions.logsReceived(_.map(log, m => m.id), this.state)
