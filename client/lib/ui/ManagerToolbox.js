@@ -25,6 +25,7 @@ export default React.createClass({
     if (selectedCommand === 'ban' || selectedCommand === 'banIP') {
       commandParams = {
         seconds: {
+          M: 5 * 60,
           h: 60 * 60,
           d: 24 * 60 * 60,
           w: 7 * 24 * 60 * 60,
@@ -66,7 +67,8 @@ export default React.createClass({
             <option value="pm">pm</option>
           </select>
           <div className="preview">{toolboxData.activeItemSummary}</div>
-          {!isEmpty && inputDuration && <select ref="banDuration" defaultValue={60 * 60}>
+          {!isEmpty && inputDuration && <select ref="banDuration" defaultValue="h">
+            <option value="M">for 5 minutes</option>
             <option value="h">for 1 hour</option>
             <option value="d">for 1 day</option>
             <option value="w">for 1 week</option>
