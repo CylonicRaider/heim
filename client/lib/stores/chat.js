@@ -558,6 +558,16 @@ module.exports.store = Reflux.createStore({
     })
   },
 
+  refreshUsers() {
+    if (this.state.authState) {
+      return
+    }
+
+    this.socket.send({
+      type: 'who',
+    })
+  },
+
   markMessagesSeen(ids) {
     const now = Date.now()
 

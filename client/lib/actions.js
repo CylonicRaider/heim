@@ -3,6 +3,7 @@ import Reflux from 'reflux'
 module.exports = Reflux.createActions([
   'sendMessage',
   'loadMoreLogs',
+  'refreshUsers',
   'setNick',
   'tryRoomPasscode',
   'setup',
