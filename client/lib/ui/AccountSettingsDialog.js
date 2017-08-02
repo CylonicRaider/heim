@@ -99,10 +99,6 @@ export default React.createClass({
               </div>
             </div>
           </FieldLabelContainer>
-          <div className="label-line">
-            <div className="label">reload page after applying to see results :(</div>
-            <div className="spacer"/>
-          </div>
           <div className="bottom">
             <div className="action-line">
               <div className="spacer" />
