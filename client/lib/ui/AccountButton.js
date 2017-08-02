@@ -17,12 +17,13 @@ export default React.createClass({
 
   render() {
     if (this.props.account) {
+      const name = this.props.account.get('name')
       const email = this.props.account.get('email')
       return (
         <FastButton className="account-button signed-in" onClick={this.props.onOpenAccountSettingsDialog}>
           <div className="account-info">
             <div className="status">signed in</div>
-            <div className="name" title={email}>{this.props.account.get('name')}</div>
+            <div className="name" title={email}>{name || email}</div>
           </div>
         </FastButton>
       )
