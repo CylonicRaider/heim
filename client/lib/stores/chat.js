@@ -270,6 +270,10 @@ module.exports.store = Reflux.createStore({
       if (ev.error) {
         storeActions[kind].failed(ev)
       } else {
+        // note: can't do the same for email because the API does not return the new address
+        if (ev.type == 'change-name-reply') {
+          this.state.account = this.state.account.set('name', ev.data.name)
+        }
         storeActions[kind].completed()
       }
     } else if (ev.type === 'login-event' || ev.type === 'logout-event') {
