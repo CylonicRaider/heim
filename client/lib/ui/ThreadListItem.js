@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 import classNames from 'classnames'
 
@@ -11,17 +13,17 @@ import TreeNodeMixin from './TreeNodeMixin'
 import MessageDataMixin from './MessageDataMixin'
 
 
-const ThreadListItem = React.createClass({
+const ThreadListItem = createReactClass({
   displayName: 'ThreadListItem',
 
   propTypes: {
-    nodeId: React.PropTypes.string.isRequired,
-    tree: React.PropTypes.instanceOf(Tree).isRequired,
-    threadNodeId: React.PropTypes.string.isRequired,
-    threadTree: React.PropTypes.instanceOf(Tree).isRequired,
-    depth: React.PropTypes.number,
-    threadData: React.PropTypes.instanceOf(MessageData),
-    onClick: React.PropTypes.func,
+    nodeId: PropTypes.string.isRequired,
+    tree: PropTypes.instanceOf(Tree).isRequired,
+    threadNodeId: PropTypes.string.isRequired,
+    threadTree: PropTypes.instanceOf(Tree).isRequired,
+    depth: PropTypes.number,
+    threadData: PropTypes.instanceOf(MessageData),
+    onClick: PropTypes.func,
   },
 
   mixins: [

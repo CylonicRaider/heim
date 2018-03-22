@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { Box, Item, A, Image } from 'react-html-email'
 
@@ -21,9 +22,9 @@ export default function TopBubbleBox(props) {
 }
 
 TopBubbleBox.propTypes = {
-  logo: React.PropTypes.string.isRequired,
-  padding: React.PropTypes.number,
-  children: React.PropTypes.node,
+  logo: PropTypes.string.isRequired,
+  padding: PropTypes.number,
+  children: PropTypes.node,
 }
 
 TopBubbleBox.defaultProps = {

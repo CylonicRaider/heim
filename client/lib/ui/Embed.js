@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import EventEmitter from 'eventemitter3'
 import queryString from 'querystring'
@@ -10,11 +12,11 @@ let nextEmbedId = 0
 const embedIndex = new EventEmitter()
 actions.embedMessage.listen(data => embedIndex.emit(data.id, data))
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'Embed',
 
   propTypes: {
-    className: React.PropTypes.string,
+    className: PropTypes.string,
   },
 
   mixins: [

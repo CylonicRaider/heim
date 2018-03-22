@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { Item, Box } from 'react-html-email'
 
@@ -14,5 +15,5 @@ export default function BodyBox({children}) {
 }
 
 BodyBox.propTypes = {
-  children: React.PropTypes.node,
+  children: PropTypes.node,
 }

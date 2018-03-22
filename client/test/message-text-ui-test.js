@@ -2,7 +2,7 @@ import support from './support/setup'
 import assert from 'assert'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import TestUtils from 'react-addons-test-utils'
+import ReactTestUtils from 'react-dom/test-utils'
 
 import MessageText from '../lib/ui/MessageText'
 
@@ -13,7 +13,7 @@ describe('<MessageText>', () => {
   })
 
   function renderMessageText(content) {
-    return TestUtils.renderIntoDocument(
+    return ReactTestUtils.renderIntoDocument(
       <MessageText content={content} />
     )
   }

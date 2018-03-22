@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import classNames from 'classnames'
 import Reflux from 'reflux'
@@ -36,18 +38,18 @@ function closestIdx(array, value, iterator) {
   return idx
 }
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'ChatPane',
 
   propTypes: {
-    disabled: React.PropTypes.bool,
-    nodeId: React.PropTypes.string,
-    afterRender: React.PropTypes.func,
-    onScrollbarSize: React.PropTypes.func,
-    showParent: React.PropTypes.bool,
-    showTimeStamps: React.PropTypes.bool,
-    showAllReplies: React.PropTypes.bool,
-    pane: React.PropTypes.instanceOf(Pane).isRequired,
+    disabled: PropTypes.bool,
+    nodeId: PropTypes.string,
+    afterRender: PropTypes.func,
+    onScrollbarSize: PropTypes.func,
+    showParent: PropTypes.bool,
+    showTimeStamps: PropTypes.bool,
+    showAllReplies: PropTypes.bool,
+    pane: PropTypes.instanceOf(Pane).isRequired,
   },
 
   mixins: [
@@ -355,7 +357,7 @@ export default React.createClass({
     ReactDOM.unstable_batchedUpdates(() => {
       this.props.pane.focusMessage(anchor && anchor.dataset.messageId)
       if (!Heim.isTouch) {
-        require('react/lib/ReactUpdates').asap(() => {
+        require('react-dom/lib/ReactUpdates').asap(() => {
           this.props.pane.focusEntry()
         })
       }

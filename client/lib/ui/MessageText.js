@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOMServer from 'react-dom/server'
 import Autolinker from 'autolinker'
 import twemoji from 'twemoji'
@@ -35,16 +37,16 @@ const autolinker = new Autolinker({
   },
 })
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'MessageText',
 
   propTypes: {
-    content: React.PropTypes.string.isRequired,
-    maxLength: React.PropTypes.number,
-    onlyEmoji: React.PropTypes.bool,
-    className: React.PropTypes.string,
-    title: React.PropTypes.string,
-    style: React.PropTypes.object,
+    content: PropTypes.string.isRequired,
+    maxLength: PropTypes.number,
+    onlyEmoji: PropTypes.bool,
+    className: PropTypes.string,
+    title: PropTypes.string,
+    style: PropTypes.object,
   },
 
   mixins: [

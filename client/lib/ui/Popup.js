@@ -1,15 +1,17 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import classNames from 'classnames'
 
 
-module.exports = React.createClass({
+module.exports = createReactClass({
   displayName: 'Popup',
 
   propTypes: {
-    className: React.PropTypes.string,
-    onDismiss: React.PropTypes.func,
-    children: React.PropTypes.node,
+    className: PropTypes.string,
+    onDismiss: PropTypes.func,
+    children: PropTypes.node,
   },
 
   componentWillMount() {

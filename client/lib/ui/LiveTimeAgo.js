@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 import classNames from 'classnames'
 import moment from 'moment'
@@ -10,13 +12,13 @@ function checkIsMoment(props, propName) {
   }
 }
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'LiveTimeAgo',
 
   propTypes: {
-    time: React.PropTypes.oneOfType([React.PropTypes.number, checkIsMoment]),
-    nowText: React.PropTypes.string,
-    className: React.PropTypes.string,
+    time: PropTypes.oneOfType([React.PropTypes.number, checkIsMoment]),
+    nowText: PropTypes.string,
+    className: PropTypes.string,
   },
 
   mixins: [

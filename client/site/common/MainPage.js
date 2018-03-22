@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import Page from './Page'
@@ -18,9 +19,9 @@ export default function MainPage(props) {
 }
 
 MainPage.propTypes = {
-  className: React.PropTypes.string,
-  title: React.PropTypes.string,
-  heimPage: React.PropTypes.string,
-  nav: React.PropTypes.node,
-  children: React.PropTypes.node,
+  className: PropTypes.string,
+  title: PropTypes.string,
+  heimPage: PropTypes.string,
+  nav: PropTypes.node,
+  children: PropTypes.node,
 }

@@ -3,17 +3,17 @@ const React = require('react')
 const classNames = require('classnames')
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'Form',
 
   propTypes: {
-    context: React.PropTypes.object,
-    errors: React.PropTypes.objectOf(React.PropTypes.string),
-    validators: React.PropTypes.objectOf(React.PropTypes.func),
-    working: React.PropTypes.bool,
-    onSubmit: React.PropTypes.func,
-    className: React.PropTypes.string,
-    children: React.PropTypes.node,
+    context: PropTypes.object,
+    errors: PropTypes.objectOf(React.PropTypes.string),
+    validators: PropTypes.objectOf(React.PropTypes.func),
+    working: PropTypes.bool,
+    onSubmit: PropTypes.func,
+    className: PropTypes.string,
+    children: PropTypes.node,
   },
 
   getDefaultProps() {

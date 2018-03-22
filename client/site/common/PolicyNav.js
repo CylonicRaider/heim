@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import heimURL from '../../lib/heimURL'
@@ -31,5 +32,5 @@ export default function PolicyNav(props) {
 }
 
 PolicyNav.propTypes = {
-  selected: React.PropTypes.string,
+  selected: PropTypes.string,
 }

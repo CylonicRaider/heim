@@ -1,4 +1,5 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
 import classNames from 'classnames'
 import Reflux from 'reflux'
 
@@ -7,7 +8,7 @@ import toolbox from '../stores/toolbox'
 import FastButton from './FastButton'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'ManagerToolbox',
 
   mixins: [

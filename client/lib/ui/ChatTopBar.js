@@ -1,5 +1,7 @@
 const fs = require('fs')  // needs to be a require to work with brfs for now: https://github.com/babel/babelify/issues/81
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import Immutable from 'immutable'
 
@@ -11,25 +13,25 @@ import Spinner from './Spinner'
 const hexLeftSVG = fs.readFileSync(__dirname + '/../../res/hex-left-side.svg')
 const hexRightSVG = hexLeftSVG.toString().replace('transform=""', 'transform="translate(7, 0) scale(-1, 1)"')
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'ChatTopBar',
 
   propTypes: {
-    who: React.PropTypes.instanceOf(Immutable.Map),
-    showInfoPaneButton: React.PropTypes.bool,
-    infoPaneOpen: React.PropTypes.bool,
-    collapseInfoPane: React.PropTypes.func,
-    expandInfoPane: React.PropTypes.func,
-    toggleUserList: React.PropTypes.func,
-    roomName: React.PropTypes.string.isRequired,
-    roomTitle: React.PropTypes.string.isRequired,
-    authType: React.PropTypes.string,
-    connected: React.PropTypes.bool,
-    joined: React.PropTypes.bool,
-    isManager: React.PropTypes.bool,
-    managerMode: React.PropTypes.bool,
-    toggleManagerMode: React.PropTypes.func,
-    working: React.PropTypes.bool,
+    who: PropTypes.instanceOf(Immutable.Map),
+    showInfoPaneButton: PropTypes.bool,
+    infoPaneOpen: PropTypes.bool,
+    collapseInfoPane: PropTypes.func,
+    expandInfoPane: PropTypes.func,
+    toggleUserList: PropTypes.func,
+    roomName: PropTypes.string.isRequired,
+    roomTitle: PropTypes.string.isRequired,
+    authType: PropTypes.string,
+    connected: PropTypes.bool,
+    joined: PropTypes.bool,
+    isManager: PropTypes.bool,
+    managerMode: PropTypes.bool,
+    toggleManagerMode: PropTypes.func,
+    working: PropTypes.bool,
   },
 
   mixins: [require('react-immutable-render-mixin')],

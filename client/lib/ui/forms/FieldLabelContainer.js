@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 
@@ -17,11 +18,11 @@ export default function FieldLabelContainer(props) {
 }
 
 FieldLabelContainer.propTypes = {
-  label: React.PropTypes.string.isRequired,
-  className: React.PropTypes.string,
-  action: React.PropTypes.string,
-  onAction: React.PropTypes.func,
-  error: React.PropTypes.bool,
-  message: React.PropTypes.string,
-  children: React.PropTypes.node,
+  label: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  action: PropTypes.string,
+  onAction: PropTypes.func,
+  error: PropTypes.bool,
+  message: PropTypes.string,
+  children: PropTypes.node,
 }

@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 
 import Message from './Message'
 import Tree from '../Tree'
@@ -6,14 +8,14 @@ import { Pane } from '../stores/ui'
 import TreeNodeMixin from './TreeNodeMixin'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'MessageList',
 
   propTypes: {
-    pane: React.PropTypes.instanceOf(Pane).isRequired,
-    tree: React.PropTypes.instanceOf(Tree).isRequired,
-    showTimeStamps: React.PropTypes.bool,
-    roomSettings: React.PropTypes.object,
+    pane: PropTypes.instanceOf(Pane).isRequired,
+    tree: PropTypes.instanceOf(Tree).isRequired,
+    showTimeStamps: PropTypes.bool,
+    roomSettings: PropTypes.object,
   },
 
   mixins: [

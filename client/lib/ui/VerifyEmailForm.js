@@ -1,11 +1,12 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
 import Reflux from 'reflux'
 
 import verifyEmailFlow from '../stores/verifyEmailFlow'
 import { Form, ErrorMessage } from './forms'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'VerifyEmailForm',
 
   mixins: [

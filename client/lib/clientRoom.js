@@ -134,11 +134,6 @@ export default function clientRoom() {
 
     Heim.hook = Heim.plugins.hook
 
-    if (_.has(hashFlags, 'perf')) {
-      uiwindow.ReactPerf = require('react-addons-perf')
-      uiwindow.ReactPerf.start()
-    }
-
     Heim.loadCSS = function loadCSS(id) {
       const cssEl = uidocument.getElementById(id)
       const cssURL = document.getElementById(id).getAttribute('href')
@@ -169,7 +164,7 @@ export default function clientRoom() {
 
       const React = require('react')
       const ReactDOM = require('react-dom')
-      const SyntheticKeyboardEvent = require('react/lib/SyntheticKeyboardEvent')
+      const SyntheticKeyboardEvent = require('react-dom/lib/SyntheticKeyboardEvent')
       const Main = require('./ui/Main').default
 
       Heim.loadCSS('css')

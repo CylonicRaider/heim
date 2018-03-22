@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 
 import clamp from '../clamp'
@@ -19,17 +21,17 @@ function dimensions(el, prop) {
   return dims
 }
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'Scroller',
 
   propTypes: {
-    onScroll: React.PropTypes.func,
-    onNearTop: React.PropTypes.func,
-    onScrollbarSize: React.PropTypes.func,
-    target: React.PropTypes.string,
-    edgeSpace: React.PropTypes.number,
-    className: React.PropTypes.string,
-    children: React.PropTypes.node,
+    onScroll: PropTypes.func,
+    onNearTop: PropTypes.func,
+    onScrollbarSize: PropTypes.func,
+    target: PropTypes.string,
+    edgeSpace: PropTypes.number,
+    className: PropTypes.string,
+    children: PropTypes.node,
   },
 
   componentWillMount() {

@@ -1,6 +1,8 @@
 /* eslint-disable react/no-multi-comp */
 
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 import Immutable from 'immutable'
 import moment from 'moment'
@@ -142,15 +144,15 @@ export default function initPlugins(roomName) {
       },
     })
 
-    const SyncedEmbed = React.createClass({
+    const SyncedEmbed = createReactClass({
       displayName: 'SyncedEmbed',
 
       propTypes: {
-        messageId: React.PropTypes.string,
-        youtubeId: React.PropTypes.string,
-        youtubeTime: React.PropTypes.number,
-        startedAt: React.PropTypes.number,
-        className: React.PropTypes.string,
+        messageId: PropTypes.string,
+        youtubeId: PropTypes.string,
+        youtubeTime: PropTypes.number,
+        startedAt: PropTypes.number,
+        className: PropTypes.string,
       },
 
       shouldComponentUpdate(nextProps) {
@@ -171,7 +173,7 @@ export default function initPlugins(roomName) {
       },
     })
 
-    const YouTubeTV = React.createClass({
+    const YouTubeTV = createReactClass({
       displayName: 'YouTubeTV',
 
       mixins: [
@@ -192,7 +194,7 @@ export default function initPlugins(roomName) {
       },
     })
 
-    const YouTubePane = React.createClass({
+    const YouTubePane = createReactClass({
       displayName: 'YouTubePane',
 
       mixins: [

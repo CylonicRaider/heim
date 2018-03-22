@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 import classNames from 'classnames'
 
@@ -7,12 +9,12 @@ import ui from '../stores/ui'
 import MessageText from './MessageText'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'UserList',
 
   propTypes: {
-    users: React.PropTypes.instanceOf(Immutable.Map),
-    selected: React.PropTypes.instanceOf(Immutable.Set),
+    users: PropTypes.instanceOf(Immutable.Map),
+    selected: PropTypes.instanceOf(Immutable.Set),
   },
 
   mixins: [require('react-immutable-render-mixin')],

@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 
 import actions from '../actions'
@@ -6,11 +8,11 @@ import { Pane } from '../stores/ui'
 import EntryMixin from './EntryMixin'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'NickEntry',
 
   propTypes: {
-    pane: React.PropTypes.instanceOf(Pane).isRequired,
+    pane: PropTypes.instanceOf(Pane).isRequired,
   },
 
   mixins: [

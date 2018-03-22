@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { Item } from 'react-html-email'
 
@@ -12,5 +13,5 @@ export default function Footer(props) {
 }
 
 Footer.propTypes = {
-  children: React.PropTypes.node,
+  children: PropTypes.node,
 }

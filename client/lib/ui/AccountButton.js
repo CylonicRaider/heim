@@ -1,16 +1,18 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 
 import FastButton from './FastButton'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'AccountButton',
 
   propTypes: {
-    account: React.PropTypes.instanceOf(Immutable.Map),
-    onOpenAccountAuthDialog: React.PropTypes.func,
-    onOpenAccountSettingsDialog: React.PropTypes.func,
+    account: PropTypes.instanceOf(Immutable.Map),
+    onOpenAccountAuthDialog: PropTypes.func,
+    onOpenAccountSettingsDialog: PropTypes.func,
   },
 
   mixins: [require('react-immutable-render-mixin')],

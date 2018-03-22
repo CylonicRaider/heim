@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import classNames from 'classnames'
 import Immutable from 'immutable'
@@ -23,19 +25,19 @@ const linearEasing = t => t
 const snapEasing = t => (Math.pow(2.02 * t - 1.0303, 17) + t) / 3.5 + 0.475
 const colorShouldStep = (x, last) => x - last > 0.01
 
-const Message = React.createClass({
+const Message = createReactClass({
   displayName: 'Message',
 
   propTypes: {
-    nodeId: React.PropTypes.string.isRequired,
-    tree: React.PropTypes.instanceOf(Tree).isRequired,
-    pane: React.PropTypes.instanceOf(Pane).isRequired,
-    showTimeStamps: React.PropTypes.bool,
-    showTimeAgo: React.PropTypes.bool,
-    showAllReplies: React.PropTypes.bool,
-    depth: React.PropTypes.number,
-    visibleCount: React.PropTypes.number,
-    roomSettings: React.PropTypes.instanceOf(Immutable.Map),
+    nodeId: PropTypes.string.isRequired,
+    tree: PropTypes.instanceOf(Tree).isRequired,
+    pane: PropTypes.instanceOf(Pane).isRequired,
+    showTimeStamps: PropTypes.bool,
+    showTimeAgo: PropTypes.bool,
+    showAllReplies: PropTypes.bool,
+    depth: PropTypes.number,
+    visibleCount: PropTypes.number,
+    roomSettings: PropTypes.instanceOf(Immutable.Map),
   },
 
   mixins: [

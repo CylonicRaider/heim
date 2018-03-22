@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import heimURL from '../../lib/heimURL'
 
@@ -27,8 +28,8 @@ export default function Page(props) {
 }
 
 Page.propTypes = {
-  title: React.PropTypes.string,
-  heimPage: React.PropTypes.string,
-  className: React.PropTypes.string,
-  children: React.PropTypes.node,
+  title: PropTypes.string,
+  heimPage: PropTypes.string,
+  className: PropTypes.string,
+  children: PropTypes.node,
 }

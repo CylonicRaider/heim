@@ -5,7 +5,6 @@ import 'babel-polyfill'
 import _ from 'lodash'
 import merge from 'merge-stream'
 import gulp from 'gulp'
-import gutil from 'gulp-util'
 import gfile from 'gulp-file'
 import gzip from 'gulp-gzip'
 import gtemplate from 'gulp-template'
@@ -23,6 +22,9 @@ import fs from 'fs'
 import path from 'path'
 import ReactHTMLEmail from 'react-html-email'
 import { exec } from 'child_process'
+import colors from 'ansi-colors'
+import log from 'fancy-log'
+import through2 from 'through2'
 
 let watching = false
 const heimDest = './build/heim'
@@ -56,7 +58,7 @@ function reload(moduleName) {
 
 function handleError(title) {
   return function handler(err) {
-    gutil.log(gutil.colors.red(title + ':'), err.message)
+    log(colors.red(title + ':'), err.message)
     if (watching) {
       this.emit('end')
     } else {
@@ -98,7 +100,7 @@ gulp.task('heim-js', ['heim-git-commit', 'heim-less'], () => {
     .pipe(source('main.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-      .pipe(process.env.NODE_ENV === 'production' ? uglify() : gutil.noop())
+      .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
     .pipe(sourcemaps.write('./', {includeContent: true}))
     .on('error', handleError('heim browserify error'))
     .pipe(gulp.dest(heimStaticDest))
@@ -108,7 +110,7 @@ gulp.task('heim-js', ['heim-git-commit', 'heim-less'], () => {
 
 gulp.task('fast-touch-js', () => {
   return gulp.src('./site/lib/fast-touch.js')
-    .pipe(process.env.NODE_ENV === 'production' ? uglify() : gutil.noop())
+    .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
     .on('error', handleError('fastTouch browserify error'))
     .pipe(gulp.dest(heimStaticDest))
 })
@@ -119,7 +121,7 @@ gulp.task('embed-js', () => {
     .pipe(source('embed.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-      .pipe(process.env.NODE_ENV === 'production' ? uglify() : gutil.noop())
+      .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
     .pipe(sourcemaps.write('./', {includeContent: true}))
     .on('error', handleError('embed browserify error'))
     .pipe(gulp.dest(embedDest))
@@ -137,7 +139,7 @@ gulp.task('raven-js', ['heim-git-commit', 'heim-js'], () => {
       .bundle()
       .pipe(source('raven.js'))
       .pipe(buffer())
-      .pipe(process.env.NODE_ENV === 'production' ? uglify() : gutil.noop())
+      .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
       .on('error', handleError('raven browserify error'))
       .pipe(gulp.dest(heimStaticDest))
       .pipe(gzip())
@@ -271,7 +273,7 @@ function watchifyTask(name, bundler, outFile, dest) {
         .pipe(gulp.dest(dest))
     }
 
-    watchBundler.on('log', gutil.log.bind(gutil, gutil.colors.green('JS (' + name + ')')))
+    watchBundler.on('log', log.bind(null, colors.green('JS (' + name + ')')))
     watchBundler.on('update', rebundle)
     return rebundle()
   })

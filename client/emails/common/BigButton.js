@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { Item, A, Span, textDefaults } from 'react-html-email'
 
@@ -18,7 +19,7 @@ export default function BigButton(props) {
 }
 
 BigButton.propTypes = {
-  href: React.PropTypes.string.isRequired,
-  color: React.PropTypes.string,
-  children: React.PropTypes.node,
+  href: PropTypes.string.isRequired,
+  color: PropTypes.string,
+  children: PropTypes.node,
 }

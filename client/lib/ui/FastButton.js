@@ -1,20 +1,22 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 
 
 // A button that triggers on touch start on mobile to increase responsiveness.
-export default React.createClass({
+export default createReactClass({
   displayName: 'FastButton',
 
   propTypes: {
-    vibrate: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
-    fastTouch: React.PropTypes.bool,
-    empty: React.PropTypes.bool,
-    onClick: React.PropTypes.func,
-    component: React.PropTypes.string,
-    children: React.PropTypes.node,
+    vibrate: PropTypes.bool,
+    disabled: PropTypes.bool,
+    fastTouch: PropTypes.bool,
+    empty: PropTypes.bool,
+    onClick: PropTypes.func,
+    component: PropTypes.string,
+    children: PropTypes.node,
   },
 
   getDefaultProps() {

@@ -104,7 +104,7 @@ class ChatTree extends Tree {
     // the ability to mark ancestors to recalculate based on their children
     // instead of incremental update.
 
-    const queue = _.pairs(oldNodes)
+    const queue = _.toPairs(oldNodes)
     const seen = _.mapValues(oldNodes, () => true)
 
     const scores = {}

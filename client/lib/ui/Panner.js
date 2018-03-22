@@ -1,21 +1,23 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 
 import clamp from '../clamp'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'Panner',
 
   propTypes: {
-    threshold: React.PropTypes.number,
-    smoothing: React.PropTypes.number,
-    sensitivity: React.PropTypes.number,
-    friction: React.PropTypes.number,
-    snapPoints: React.PropTypes.objectOf(React.PropTypes.number),
-    onMove: React.PropTypes.func,
-    children: React.PropTypes.node,
+    threshold: PropTypes.number,
+    smoothing: PropTypes.number,
+    sensitivity: PropTypes.number,
+    friction: PropTypes.number,
+    snapPoints: PropTypes.objectOf(React.PropTypes.number),
+    onMove: PropTypes.func,
+    children: PropTypes.node,
   },
 
   getDefaultProps() {

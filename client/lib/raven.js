@@ -4,7 +4,6 @@ import Raven from 'raven-js'
 // fixed in a future version. We need to use require() here because imports
 // seem to be reordered by babel.
 window.Raven = Raven
-require('raven-js/plugins/native')
 require('raven-js/plugins/console')
 
 Raven.config(process.env.SENTRY_ENDPOINT, {

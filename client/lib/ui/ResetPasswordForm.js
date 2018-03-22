@@ -1,4 +1,5 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
 import Reflux from 'reflux'
 
 import resetPasswordFlow from '../stores/resetPasswordFlow'
@@ -6,7 +7,7 @@ import { Form, PasswordStrengthField, ErrorMessage } from './forms'
 import { validatePassword, minPasswordEntropy } from './formValidators'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'ResetPasswordForm',
 
   mixins: [

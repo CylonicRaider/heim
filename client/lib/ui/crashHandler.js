@@ -41,9 +41,9 @@ export default function displayCrashDialog(ev) {
   }
 
   CrashDialog.propTypes = {
-    ravenEventId: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
-    onReload: React.PropTypes.func,
-    onIgnore: React.PropTypes.func,
+    ravenEventId: PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
+    onReload: PropTypes.func,
+    onIgnore: PropTypes.func,
   }
 
   const container = uidocument.createElement('div')

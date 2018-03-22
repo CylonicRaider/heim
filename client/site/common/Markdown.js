@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import MarkdownIt from 'markdown-it'
 
 
@@ -30,6 +31,6 @@ export default function Markdown(props) {
 }
 
 Markdown.propTypes = {
-  className: React.PropTypes.string,
-  content: React.PropTypes.string,
+  className: PropTypes.string,
+  content: PropTypes.string,
 }

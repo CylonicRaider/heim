@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import MessageText from '../../lib/ui/MessageText'
 import hueHash from '../../lib/hueHash'
@@ -9,5 +10,5 @@ export default function FauxNick(props) {
 }
 
 FauxNick.propTypes = {
-  nick: React.PropTypes.string,
+  nick: PropTypes.string,
 }

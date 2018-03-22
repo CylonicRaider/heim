@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import Reflux from 'reflux'
 
@@ -11,12 +13,12 @@ import EntryMixin from './EntryMixin'
 import EntryDragHandle from './EntryDragHandle'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'ChatEntry',
 
   propTypes: {
-    pane: React.PropTypes.instanceOf(Pane).isRequired,
-    onChange: React.PropTypes.func,
+    pane: PropTypes.instanceOf(Pane).isRequired,
+    onChange: PropTypes.func,
   },
 
   mixins: [

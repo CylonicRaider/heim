@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import Popup from './Popup'
@@ -6,15 +8,15 @@ import FastButton from './FastButton'
 import Spinner from './Spinner'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'Dialog',
 
   propTypes: {
-    title: React.PropTypes.string,
-    working: React.PropTypes.bool,
-    onClose: React.PropTypes.func,
-    className: React.PropTypes.string,
-    children: React.PropTypes.node,
+    title: PropTypes.string,
+    working: PropTypes.bool,
+    onClose: PropTypes.func,
+    className: PropTypes.string,
+    children: PropTypes.node,
   },
 
   onShadeClick(ev) {

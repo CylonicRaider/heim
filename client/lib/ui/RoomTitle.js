@@ -1,18 +1,20 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import FastButton from './FastButton'
 import ToggleBubble from './ToggleBubble'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'RoomTitle',
 
   propTypes: {
-    name: React.PropTypes.string.isRequired,
-    title: React.PropTypes.string.isRequired,
-    connected: React.PropTypes.bool,
-    authType: React.PropTypes.string,
+    name: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    connected: PropTypes.bool,
+    authType: PropTypes.string,
   },
 
   mixins: [require('react-immutable-render-mixin')],
