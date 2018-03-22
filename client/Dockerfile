@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 MAINTAINER Max Goodman <max@euphoria.io>
 
 RUN apt-get update && apt-get dist-upgrade -y
