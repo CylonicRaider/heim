@@ -130,7 +130,7 @@ gulp.task('embed-js', () => {
 })
 
 gulp.task('raven-js', ['heim-git-commit', 'heim-js'], () => {
-  shell('md5sum build/main.js | cut -d " " -f 1', releaseHash => {
+  shell('md5sum build/heim/static/main.js | cut -d " " -f 1', releaseHash => {
     return browserify('./lib/raven.js')
       .transform(envify(_.extend({
         SENTRY_ENDPOINT: process.env.SENTRY_ENDPOINT,
