@@ -8,7 +8,7 @@ export default function TopBubbleBox(props) {
   return (
     <Item align="center">
       <A href="{{.SiteURL}}">
-        <Image src={'{{.File `' + props.logo + '`}}'} width={67} height={90} />
+        <Image src={'{{.File `' + props.logo + '`}}'} alt="Logo" width={67} height={90} />
       </A>
       <Box width="600" cellPadding={2} bgcolor="white" style={{
         borderBottom: '3px solid #ccc',
