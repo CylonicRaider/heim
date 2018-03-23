@@ -25,6 +25,8 @@ import { exec } from 'child_process'
 import colors from 'ansi-colors'
 import log from 'fancy-log'
 import through2 from 'through2'
+import babelify from 'babelify'
+import brfs from 'brfs'
 
 let watching = false
 const heimDest = './build/heim'
@@ -67,13 +69,19 @@ function handleError(title) {
   }
 }
 
+function heimBrowserify(files, args) {
+  return browserify(files, args)
+    .transform(babelify, {presets: ['env', 'react', 'stage-2']})
+    .transform(brfs)
+}
+
 function heimBundler(args) {
-  return browserify('./lib/client.js', args)
+  return heimBrowserify('./lib/client.js', args)
     .transform(envify(heimOptions))
 }
 
 function embedBundler(args) {
-  return browserify('./lib/embed.js', args)
+  return heimBrowserify('./lib/embed.js', args)
     .transform(envify({
       HEIM_ORIGIN: process.env.HEIM_ORIGIN,
     }))
@@ -131,7 +139,7 @@ gulp.task('embed-js', () => {
 
 gulp.task('raven-js', ['heim-git-commit', 'heim-js'], () => {
   shell('md5sum build/heim/static/main.js | cut -d " " -f 1', releaseHash => {
-    return browserify('./lib/raven.js')
+    return heimBrowserify('./lib/raven.js')
       .transform(envify(_.extend({
         SENTRY_ENDPOINT: process.env.SENTRY_ENDPOINT,
         HEIM_RELEASE: releaseHash,

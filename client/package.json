@@ -74,11 +74,5 @@
   },
   "scripts": {
     "test": "eslint ./ && mochify"
-  },
-  "browserify": {
-    "transform": [
-      ["babelify", {"presets": ["env", "react", "stage-2"]}],
-      "brfs"
-    ]
   }
 }
