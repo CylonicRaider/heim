@@ -75,7 +75,7 @@ describe('storage store', () => {
     it('should not save unchanged values', () => {
       storage.store.set(testKey, testValue)
       clock.tick(SLEEP_TIME)
-      localStorage.setItem.reset()
+      localStorage.setItem.resetHistory()
       storage.store.set(testKey, testValue)
       clock.tick(SLEEP_TIME)
       sinon.assert.notCalled(localStorage.setItem)
@@ -117,7 +117,7 @@ describe('storage store', () => {
 
       storage.store.setRoom(testRoom, testKey, testValue)
       clock.tick(SLEEP_TIME)
-      localStorage.setItem.reset()
+      localStorage.setItem.resetHistory()
       storage.store.setRoom(testRoom, testKey, testValue)
       clock.tick(SLEEP_TIME)
       sinon.assert.notCalled(localStorage.setItem)
@@ -239,7 +239,7 @@ describe('storage store', () => {
     describe('set action', () => {
       beforeEach(() => {
         storage.store.load()
-        console.warn.reset()  // eslint-disable-line no-console
+        console.warn.resetHistory()  // eslint-disable-line no-console
       })
 
       it('should log a warning', () => {

@@ -91,8 +91,8 @@ describe('Tree', () => {
       let prev1
 
       beforeEach(() => {
-        tree.changes.emit.reset()
-        updateFunc.reset()
+        tree.changes.emit.resetHistory()
+        updateFunc.resetHistory()
         prev1 = tree.get('1')
         tree.add({id: '3', parent: '1', value: 'yo', time: 7})
       })
@@ -145,8 +145,8 @@ describe('Tree', () => {
       ]
 
       beforeEach(() => {
-        tree.changes.emit.reset()
-        updateFunc.reset()
+        tree.changes.emit.resetHistory()
+        updateFunc.resetHistory()
         prevRoot2 = tree.get('__root')
         prev1 = tree.get('1')
         tree.add(entries2)
@@ -205,8 +205,8 @@ describe('Tree', () => {
 
       describe('after re-adding the same nodes', () => {
         beforeEach(() => {
-          tree.changes.emit.reset()
-          updateFunc.reset()
+          tree.changes.emit.resetHistory()
+          updateFunc.resetHistory()
           tree.add(entries2)
         })
 
@@ -227,8 +227,8 @@ describe('Tree', () => {
         let prev3
 
         beforeEach(() => {
-          tree.changes.emit.reset()
-          updateFunc.reset()
+          tree.changes.emit.resetHistory()
+          updateFunc.resetHistory()
           prev3 = tree.get('3')
           tree.add({id: '3', parent: '1', time: 2})
         })
@@ -258,8 +258,8 @@ describe('Tree', () => {
 
     describe('after adding a node with a missing parent', () => {
       beforeEach(() => {
-        tree.changes.emit.reset()
-        updateFunc.reset()
+        tree.changes.emit.resetHistory()
+        updateFunc.resetHistory()
         tree.add({id: '3', parent: 'wtf', value: 'yo', time: 7})
       })
 
@@ -289,8 +289,8 @@ describe('Tree', () => {
         let prevWtf
 
         beforeEach(() => {
-          tree.changes.emit.reset()
-          updateFunc.reset()
+          tree.changes.emit.resetHistory()
+          updateFunc.resetHistory()
           prev1 = tree.get('1')
           prevWtf = tree.get('wtf')
           tree.add({id: 'wtf', parent: '1', value: 'j0', time: 6})
@@ -333,8 +333,8 @@ describe('Tree', () => {
       let prev2
 
       beforeEach(() => {
-        tree.changes.emit.reset()
-        updateFunc.reset()
+        tree.changes.emit.resetHistory()
+        updateFunc.resetHistory()
         prevRoot2 = tree.get('__root')
         prev1 = tree.get('1')
         prev2 = tree.get('2')
@@ -378,8 +378,8 @@ describe('Tree', () => {
 
     describe('after adding a node with no parent ("shadow")', () => {
       beforeEach(() => {
-        tree.changes.emit.reset()
-        updateFunc.reset()
+        tree.changes.emit.resetHistory()
+        updateFunc.resetHistory()
         tree.add({id: 'shadow', parent: null, value: 'boo'})
       })
 
@@ -407,8 +407,8 @@ describe('Tree', () => {
         let prevShadow
 
         beforeEach(() => {
-          tree.changes.emit.reset()
-          updateFunc.reset()
+          tree.changes.emit.resetHistory()
+          updateFunc.resetHistory()
           prevRoot2 = tree.get('__root')
           prevShadow = tree.get('shadow')
           tree.add({id: 'shadow', parent: '__root', time: 1})
@@ -454,8 +454,8 @@ describe('Tree', () => {
       })
 
       it('should call updateFunc and trigger a change event', () => {
-        tree.updateFunc.reset()
-        tree.changes.emit.reset()
+        tree.updateFunc.resetHistory()
+        tree.changes.emit.resetHistory()
         const prev2 = tree.get('2')
         tree.mergeNodes('2', {value: 'dawg'})
         sinon.assert.calledWithExactly(tree.updateFunc, {
@@ -465,8 +465,8 @@ describe('Tree', () => {
       })
 
       it('should not call updateFunc or trigger a change event if unchanged', () => {
-        tree.updateFunc.reset()
-        tree.changes.emit.reset()
+        tree.updateFunc.resetHistory()
+        tree.changes.emit.resetHistory()
         tree.mergeNodes('2', {value: 'world'})
         sinon.assert.notCalled(tree.updateFunc)
         sinon.assert.notCalled(tree.changes.emit)
@@ -483,7 +483,7 @@ describe('Tree', () => {
 
     describe('after resetting to empty', () => {
       beforeEach(() => {
-        tree.changes.emit.reset()
+        tree.changes.emit.resetHistory()
         tree.reset()
       })
 
@@ -548,7 +548,7 @@ describe('Tree', () => {
 
     describe('after adding a node', () => {
       beforeEach(() => {
-        tree.changes.emit.reset()
+        tree.changes.emit.resetHistory()
         tree.add({id: '3', parent: '1', value: 'yo', time: 7})
       })
 

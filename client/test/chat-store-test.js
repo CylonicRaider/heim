@@ -417,7 +417,7 @@ describe('chat store', () => {
       chat.store.socketEvent(snapshotReply)
       chat.store.socketEvent(nickReply)
       chat.store.socketClose()
-      chat.store.socket.send.reset()
+      chat.store.socket.send.resetHistory()
     })
 
     it('should send stored nick', (done) => {
@@ -774,7 +774,7 @@ describe('chat store', () => {
 
   function checkMessagesChangedEvent(msgBody) {
     it('should trigger messagesChanged action', (done) => {
-      chat.actions.messagesChanged.reset()
+      chat.actions.messagesChanged.resetHistory()
       handleSocket(msgBody, (state) => {
         const ids = Immutable.Seq(msgBody.data.log).map(msg => msg.id).toArray()
         ids.unshift('__root')
@@ -856,7 +856,7 @@ describe('chat store', () => {
 
       it('should not trigger messagesChanged action', (done) => {
         const logReplyWithBefore = _.merge(_.clone(logReply), {data: {before: 'id0'}})
-        chat.actions.messagesChanged.reset()
+        chat.actions.messagesChanged.resetHistory()
         handleSocket(logReplyWithBefore, () => {
           sinon.assert.notCalled(chat.actions.messagesChanged)
           done()

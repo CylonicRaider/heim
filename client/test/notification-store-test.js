@@ -437,7 +437,7 @@ describe('notification store', () => {
     describe('when popups enabled', () => {
       beforeEach(() => {
         notification.store.chatStateChange({connected: true, joined: true})
-        Heim.setFavicon.reset()
+        Heim.setFavicon.resetHistory()
         notification.store.onInactive()
         notification.store.storageChange(storageMock)
       })
@@ -482,7 +482,7 @@ describe('notification store', () => {
       describe('before joined', () => {
         beforeEach(() => {
           notification.store.chatStateChange({connected: true, joined: false})
-          Heim.setFavicon.reset()
+          Heim.setFavicon.resetHistory()
         })
 
         describe('when page inactive', () => {
@@ -503,8 +503,8 @@ describe('notification store', () => {
         describe('when page active', () => {
           beforeEach(() => {
             notification.store.onActive()
-            Heim.setFavicon.reset()
-            Heim.setTitleMsg.reset()
+            Heim.setFavicon.resetHistory()
+            Heim.setTitleMsg.resetHistory()
           })
 
           describe('receiving logged messages', () => {
@@ -833,7 +833,7 @@ describe('notification store', () => {
           fakeNotification.close = sinon.spy()
           notification.store.closePopup('new-mention')
           sinon.assert.calledOnce(fakeNotification.close)
-          fakeNotification.close.reset()
+          fakeNotification.close.resetHistory()
           clock.tick(500)
           sinon.assert.calledOnce(fakeNotification.close)
         })
@@ -844,7 +844,7 @@ describe('notification store', () => {
           sinon.assert.calledOnce(Notification)
           notification.store.closePopup('new-mention')
           sinon.assert.calledOnce(fakeNotification.close)
-          fakeNotification.close.reset()
+          fakeNotification.close.resetHistory()
           clock.tick(500)
           sinon.assert.notCalled(fakeNotification.close)
         })
@@ -876,7 +876,7 @@ describe('notification store', () => {
     describe('activity tracking', () => {
       beforeEach(() => {
         notification.store.chatStateChange({connected: true, joined: true})
-        Heim.setFavicon.reset()
+        Heim.setFavicon.resetHistory()
       })
 
       it('should start active', () => {
@@ -898,7 +898,7 @@ describe('notification store', () => {
           notification.store.onActive()
           notification.store.storageChange(storageMock)
           simulateMessages(['id1'], mockChatState)
-          Heim.setTitleMsg.reset()
+          Heim.setTitleMsg.resetHistory()
           clock.tick(0)
         })
 
@@ -928,7 +928,7 @@ describe('notification store', () => {
 
         it('should reset favicon when window becomes active', () => {
           sinon.assert.calledOnce(Heim.setFavicon)
-          Heim.setFavicon.reset()
+          Heim.setFavicon.resetHistory()
 
           notification.store.onActive()
           sinon.assert.calledOnce(Heim.setFavicon)
@@ -937,7 +937,7 @@ describe('notification store', () => {
 
         it('should reset page title when window becomes active', () => {
           sinon.assert.calledOnce(Heim.setTitleMsg)
-          Heim.setTitleMsg.reset()
+          Heim.setTitleMsg.resetHistory()
 
           notification.store.onActive()
           sinon.assert.calledOnce(Heim.setTitleMsg)
@@ -949,7 +949,7 @@ describe('notification store', () => {
     describe('with a popup showing', () => {
       beforeEach(() => {
         notification.store.chatStateChange({connected: true, joined: true})
-        Heim.setFavicon.reset()
+        Heim.setFavicon.resetHistory()
         notification.store.onInactive()
         notification.store.storageChange(storageMock)
         simulateMessages(['id1'], mockChatState)
@@ -984,7 +984,7 @@ describe('notification store', () => {
       it('should retain favicon state after timeout and reconnect', () => {
         clock.tick(3000)
         notification.store.chatStateChange({connected: false, joined: false})
-        Heim.setFavicon.reset()
+        Heim.setFavicon.resetHistory()
         notification.store.chatStateChange({connected: true, joined: true})
         sinon.assert.calledOnce(Heim.setFavicon)
         sinon.assert.calledWithExactly(Heim.setFavicon, notification.favicons.active)

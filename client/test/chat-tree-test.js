@@ -231,7 +231,7 @@ describe('ChatTree', () => {
 
     describe('calling reset', () => {
       it('should empty the threads tree and return itself', () => {
-        const ret = tree.reset()
+        const ret = tree.resetHistory()
         assert.equal(ret, tree)
         assert.equal(tree.threads.size, 0)
       })
