@@ -2,9 +2,9 @@ import _ from 'lodash'
 import React from 'react'
 import createReactClass from 'create-react-class'
 import ReactDOM from 'react-dom'
-import { CSSTransitionGroup } from 'react-transition-group'
 import classNames from 'classnames'
 import Reflux from 'reflux'
+import { CSSTransitionGroup } from 'react-transition-group'
 
 import chat from '../stores/chat'
 import ui from '../stores/ui'
@@ -63,6 +63,7 @@ export default createReactClass({
   },
 
   onScrollbarSize(width) {
+    /* eslint-disable react/no-unused-state */
     this.setState({scrollbarWidth: width})
   },
 
@@ -121,10 +122,8 @@ export default createReactClass({
   onTabKeyCombo(ev) {
     if (ev.key === 'ArrowLeft') {
       ui.focusLeftPane()
-      return
     } else if (ev.key === 'ArrowRight') {
       ui.focusRightPane()
-      return
     } else if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') {
       if (!this.state.ui.threadPopupAnchorEl) {
         return
@@ -151,14 +150,11 @@ export default createReactClass({
         idx++
       }
       this.selectThread(threadEls[idx].dataset.threadId, threadEls[idx])
-      return
     } else if (ev.key === 'Enter' && this.state.ui.focusedPane === this.state.ui.popupPane) {
       ui.popupToThreadPane()
-      return
     } else if (ev.key === 'Backspace') {
       if (/^thread-/.test(this.state.ui.focusedPane)) {
         ui.closeFocusedThreadPane()
-        return
       }
     } else if (uiwindow.getSelection().isCollapsed) {
       ui.focusEntry()
@@ -291,7 +287,7 @@ export default createReactClass({
           <div className="chat-pane-container main-pane" onClickCapture={_.partial(this.onPaneClick, 'main')}>
             <ChatTopBar who={this.state.chat.who} roomName={roomName} roomTitle={roomTitle} connected={this.state.chat.connected} joined={!!this.state.chat.joined} authType={this.state.chat.authType} isManager={this.state.chat.isManager} managerMode={this.state.ui.managerMode} working={this.state.chat.loadingLogs} showInfoPaneButton={!thin || !Heim.isTouch} infoPaneOpen={infoPaneOpen} collapseInfoPane={ui.collapseInfoPane} expandInfoPane={ui.expandInfoPane} toggleUserList={ui.toggleUserList} toggleManagerMode={ui.toggleManagerMode} />
             {this.templateHook('main-pane-top')}
-            <CSSTransisionGroup className="notice-stack" transitionName="slide-down" transitionEnterTimeout={150} transitionLeaveTimeout={150}>
+            <CSSTransitionGroup className="notice-stack" transitionName="slide-down" transitionEnterTimeout={150} transitionLeaveTimeout={150}>
               {this.state.ui.notices.has('notifications') && this.state.notification.popupsSupported && <div className="notice dark notifications">
                 <div className="content">
                   <span className="title">what would you like notifications for?</span>
@@ -305,10 +301,10 @@ export default createReactClass({
               </div>}
               {pmNotices.map(pm => <PMNotice key={pm.get('kind') + pm.get('id')} pmId={pm.get('id')} nick={pm.get('nick')} kind={pm.get('kind')} />) }
               {this.state.update.get('ready') && <FastButton className="update-button" onClick={update.perform}><p>update ready<em>{Heim.isTouch ? 'tap' : 'click'} to reload</em></p></FastButton>}
-            </CSSTransisionGroup>
+            </CSSTransitionGroup>
             <div className="main-pane-stack">
               <ChatPane pane={this.state.ui.panes.get('main')} showTimeStamps={this.state.ui.showTimestamps} onScrollbarSize={this.onScrollbarSize} disabled={!!mainPaneThreadId} />
-              <CSSTransisionGroup transitionName="slide" transitionLeave={!mainPaneThreadId} transitionLeaveTimeout={200} transitionEnter={false}>
+              <CSSTransitionGroup transitionName="slide" transitionLeave={!mainPaneThreadId} transitionLeaveTimeout={200} transitionEnter={false}>
                 {mainPaneThreadId && <div key={mainPaneThreadId} className="main-pane-cover main-pane-thread">
                   <div className="top-bar">
                     <MessageText className="title" content={this.state.chat.messages.get(selectedThread).get('content')} />
@@ -319,7 +315,7 @@ export default createReactClass({
                 {thin && this.state.ui.managerToolboxAnchorEl && <div key="manager-toolbox" className="main-pane-cover">
                   <ManagerToolbox />
                 </div>}
-              </CSSTransisionGroup>
+              </CSSTransitionGroup>
             </div>
           </div>
           {(thin || this.state.ui.sidebarPaneExpanded) && <div className="sidebar-pane">

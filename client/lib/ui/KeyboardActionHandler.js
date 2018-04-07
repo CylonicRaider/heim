@@ -9,7 +9,7 @@ export default createReactClass({
 
   propTypes: {
     listenTo: PropTypes.func,
-    keys: PropTypes.objectOf(React.PropTypes.func),
+    keys: PropTypes.objectOf(PropTypes.func),
     children: PropTypes.node,
   },
 

@@ -1,4 +1,4 @@
-require('./support/setup')
+import './support/setup'
 import assert from 'assert'
 import sinon from 'sinon'
 import Immutable from 'immutable'
@@ -17,7 +17,7 @@ describe('Tree', () => {
 
   function expectEmit(tree, ids) {
     sinon.assert.callCount(tree.changes.emit, ids.length + 1)
-    Immutable.Seq(ids).forEach(id => {
+    Immutable.Seq(ids).forEach((id) => {
       sinon.assert.calledWithExactly(tree.changes.emit, id, tree.get(id))
     })
     sinon.assert.calledWithExactly(tree.changes.emit, '__all', ids)
@@ -513,7 +513,7 @@ describe('Tree', () => {
     }
 
     beforeEach(() => {
-      tree = new Tree('time', function updateFunc(oldNodes, updateNode) {
+      tree = new Tree('time', (oldNodes, updateNode) => {
         Immutable.Seq(oldNodes)
           .forEach((oldNode, id) => {
             callUpdateNode(updateNode, tree.get(id).set('updated', true))

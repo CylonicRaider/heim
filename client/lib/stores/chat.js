@@ -97,7 +97,7 @@ module.exports.store = Reflux.createStore({
     this.lastActive = null
     this.lastVisit = null
 
-    this.state.messages.changes.on('__all', ids => {
+    this.state.messages.changes.on('__all', (ids) => {
       storeActions.messagesChanged(ids, this.state)
     })
 
@@ -226,7 +226,7 @@ module.exports.store = Reflux.createStore({
     } else if (ev.type === 'network-event' && ev.data.type === 'partition') {
       const id = ev.data.server_id
       const era = ev.data.server_era
-      this.state.who = this.state.who.map(v => {
+      this.state.who = this.state.who.map((v) => {
         const gone = v.get('server_id') === id && v.get('server_era') === era
         return gone ? v.set('present', false) : v
       })
@@ -301,8 +301,8 @@ module.exports.store = Reflux.createStore({
     const seenCutoff = Date.now() - this.seenTTL
     const nick = this.state.nick || this.state.tentativeNick
 
-    this.state.who = this.state.who.withMutations(who => {
-      _.each(messages, message => {
+    this.state.who = this.state.who.withMutations((who) => {
+      _.each(messages, (message) => {
         if (nick) {
           const mention = message.content.match(mentionFindRe)
           // Note: we are relying on hueHash.normalize to strip the preceding and following characters from the mention regex match here.
@@ -327,7 +327,7 @@ module.exports.store = Reflux.createStore({
           message._seen = true
         } else {
           const seen = this._seenMessages.get(message.id)
-          message._seen = seen ? seen : false
+          message._seen = seen || false
         }
       })
     })
@@ -357,7 +357,7 @@ module.exports.store = Reflux.createStore({
       if (!data.before) {
         // persist local tree data but reset out server state
         const shadows = []
-        this.state.messages.mapDFS(node => {
+        this.state.messages.mapDFS((node) => {
           let shadow = node.filter((v, k) => /^_/.test(k))
           if (shadow.size) {
             shadow = shadow.toJS()
@@ -384,7 +384,7 @@ module.exports.store = Reflux.createStore({
     // TODO: merge instead of reset so we don't lose lastSent
     this.state.who = Immutable.OrderedMap(
       Immutable.Seq(data.listing)
-        .map(user => {
+        .map((user) => {
           user.present = true
           user.hue = hueHash.hue(user.name)
           return [user.session_id, Immutable.Map(user)]
@@ -412,14 +412,12 @@ module.exports.store = Reflux.createStore({
         type: this.state.authType,
         data: this.state.authData,
       })
+    } else if (error === 'already joined') {
+      // no-op
+    } else if (this.state.authState === 'trying-stored') {
+      this.state.authState = 'needs-passcode'
     } else {
-      if (error === 'already joined') {
-        return
-      } else if (this.state.authState === 'trying-stored') {
-        this.state.authState = 'needs-passcode'
-      } else {
-        this.state.authState = 'failed'
-      }
+      this.state.authState = 'failed'
     }
   },
 

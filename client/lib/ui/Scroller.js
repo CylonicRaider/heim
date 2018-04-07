@@ -258,10 +258,8 @@ export default createReactClass({
         posRef = target
         if (this._targetInView && shouldHoldPos && !shouldScrollBottom) {
           oldPos = this._anchorPos
-        } else {
-          if (options.forceTargetInView && !this._targetInView || shouldScrollBottom || jumping) {
-            oldPos = clampedPos
-          }
+        } else if (options.forceTargetInView && !this._targetInView || shouldScrollBottom || jumping) {
+          oldPos = clampedPos
         }
       } else if (this._anchor) {
         // Otherwise, try to keep the anchor element in the same place it was when

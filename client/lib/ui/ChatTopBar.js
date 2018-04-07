@@ -1,4 +1,5 @@
 const fs = require('fs')  // needs to be a require to work with brfs for now: https://github.com/babel/babelify/issues/81
+
 import React from 'react'
 import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
@@ -40,7 +41,7 @@ export default createReactClass({
     let people = this.props.who.filter(user =>
       user.get('present') && user.get('name') && !/^bot:/.test(user.get('id')))
     let prevUser
-    people = people.filter(user => {
+    people = people.filter((user) => {
       if (prevUser && user.get('id') === prevUser.get('id') && user.get('name') === prevUser.get('name')) {
         return false
       }
@@ -49,6 +50,7 @@ export default createReactClass({
     })
     const userCount = people.size
 
+    /* eslint-disable react/no-danger */
     // use an outer container element so we can z-index the bar above the
     // bubbles. this makes the bubbles slide from "underneath" the bar.
     return (

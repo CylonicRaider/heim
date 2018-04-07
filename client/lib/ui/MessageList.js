@@ -16,6 +16,8 @@ export default createReactClass({
     tree: PropTypes.instanceOf(Tree).isRequired,
     showTimeStamps: PropTypes.bool,
     roomSettings: PropTypes.object,
+    nodeId: PropTypes.string,
+    depth: PropTypes.number,
   },
 
   mixins: [

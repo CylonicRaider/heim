@@ -70,8 +70,8 @@ describe('notification store', () => {
     })
 
     describe('receiving permission', () => {
-      it('should set popupsPermission', done => {
-        support.listenOnce(notification.store, state => {
+      it('should set popupsPermission', (done) => {
+        support.listenOnce(notification.store, (state) => {
           assert.equal(state.popupsPermission, true)
           done()
         })
@@ -85,8 +85,8 @@ describe('notification store', () => {
     })
 
     describe('receiving denial', () => {
-      it('should set no popupsPermission', done => {
-        support.listenOnce(notification.store, state => {
+      it('should set no popupsPermission', (done) => {
+        support.listenOnce(notification.store, (state) => {
           assert.equal(state.popupsPermission, false)
           done()
         })
@@ -455,8 +455,8 @@ describe('notification store', () => {
           sinon.assert.calledWithExactly(Heim.setTitleMsg, opts.expectTitleMsg)
         })
 
-        it('should add notification', done => {
-          support.listenOnce(notification.store, state => {
+        it('should add notification', (done) => {
+          support.listenOnce(notification.store, (state) => {
             _.each(opts.messageIds, messageId =>
               assert.equal(state.notifications.get(messageId), opts.expectKind)
             )
@@ -523,10 +523,10 @@ describe('notification store', () => {
       })
 
       describe('receiving a message while notifications paused', () => {
-        it('should add a notification and not display a popup', done => {
+        it('should add a notification and not display a popup', (done) => {
           notification.store.storageChange(_.extend({}, storageMock, {notifyPausedUntil: startTime + 1000}))
           simulateMessages(['id1'], mockChatState)
-          support.listenOnce(notification.store, state => {
+          support.listenOnce(notification.store, (state) => {
             sinon.assert.notCalled(Notification)
             assert.equal(state.notifications.get('id1'), 'new-message')
             done()
@@ -591,12 +591,12 @@ describe('notification store', () => {
       })
 
       describe('closing and receiving a new message', () => {
-        it('should display a second popup', done => {
+        it('should display a second popup', (done) => {
           simulateMessages(['id1'], mockChatState)
           clock.tick(0)
           fakeNotification.close()
           simulateMessages(['id2'], mockChatState2)
-          support.listenOnce(notification.store, state => {
+          support.listenOnce(notification.store, (state) => {
             sinon.assert.calledTwice(Notification)
             assert.equal(state.notifications.get(message1.id), 'new-message')
             done()
@@ -606,11 +606,11 @@ describe('notification store', () => {
       })
 
       describe('receiving old messages', () => {
-        it('should not replace existing newer notifications', done => {
+        it('should not replace existing newer notifications', (done) => {
           simulateMessages([message1.id, message2.id, message3.id], mockChatState3)
           clock.tick(0)
           simulateMessages([messageOld.id], mockChatState3Old)
-          support.listenOnce(notification.store, state => {
+          support.listenOnce(notification.store, (state) => {
             assert.equal(state.notifications.get(message1.id), 'new-message')
             assert.equal(state.notifications.get(message2.id), 'new-message')
             assert.equal(state.notifications.get(message3.id), 'new-message')
@@ -701,9 +701,9 @@ describe('notification store', () => {
           })
 
           describe('and dismissing it and updating the mention again', () => {
-            it('should not create another notification', done => {
+            it('should not create another notification', (done) => {
               notification.store.messagesChanged([messageMention.id], mockChatStateMention)
-              support.listenOnce(notification.store, state => {
+              support.listenOnce(notification.store, (state) => {
                 assert.equal(state.notifications.get(messageMention.id), 'new-mention')
                 notification.store.dismissNotification(messageMention.id)
                 clock.tick(0)
@@ -720,12 +720,12 @@ describe('notification store', () => {
           describe('and reconnecting later', () => {
             function testReset(expectHas, done, resetCallback) {
               notification.store.messagesChanged([messageMention.id], mockChatStateMention)
-              support.listenOnce(notification.store, state => {
+              support.listenOnce(notification.store, (state) => {
                 assert.equal(state.notifications.get(messageMention.id), 'new-mention')
                 sinon.assert.calledOnce(Notification)
                 const mentionNotification = fakeNotification
                 resetCallback()
-                support.listenOnce(notification.store, state2 => {
+                support.listenOnce(notification.store, (state2) => {
                   assert.equal(state2.notifications.has(messageMention.id), expectHas)
                   sinon.assert.calledOnce(mentionNotification.close)
                   done()
@@ -736,7 +736,7 @@ describe('notification store', () => {
             }
 
             describe('with the message no longer loaded', () => {
-              it('should remove the notification and alert', done => {
+              it('should remove the notification and alert', (done) => {
                 testReset(false, done, () => {
                   notification.store.messagesChanged(['__root'], emptyChatState)
                   notification.store.messagesChanged([message1.id], mockChatState)
@@ -745,7 +745,7 @@ describe('notification store', () => {
             })
 
             describe('with the message as a shadow node', () => {
-              it('should remove the notification and alert', done => {
+              it('should remove the notification and alert', (done) => {
                 testReset(false, done, () => {
                   notification.store.messagesChanged(['__root'], mockChatStateMentionShadow)
                   notification.store.messagesChanged([message1.id], mockChatState)
@@ -754,7 +754,7 @@ describe('notification store', () => {
             })
 
             describe('with the message re-loaded', () => {
-              it('should remove the notification and alert', done => {
+              it('should remove the notification and alert', (done) => {
                 testReset(true, done, () => {
                   notification.store.messagesChanged(['__root'], emptyChatState)
                   clock.tick(0)
@@ -765,13 +765,13 @@ describe('notification store', () => {
           })
 
           describe('which is then deleted', () => {
-            it('should remove the notification and alert', done => {
+            it('should remove the notification and alert', (done) => {
               notification.store.messagesChanged([messageMention.id], mockChatStateMention)
-              support.listenOnce(notification.store, state => {
+              support.listenOnce(notification.store, (state) => {
                 assert.equal(state.notifications.get(messageMention.id), 'new-mention')
                 sinon.assert.calledOnce(Notification)
                 notification.store.messagesChanged([messageMention.id], mockChatStateMentionDeleted)
-                support.listenOnce(notification.store, state2 => {
+                support.listenOnce(notification.store, (state2) => {
                   assert(!state2.notifications.has(messageMention.id))
                   sinon.assert.calledOnce(fakeNotification.close)
                   done()
@@ -788,7 +788,7 @@ describe('notification store', () => {
             simulateMessages([message2Reply1.id, message2Reply3.id], mockChatState2Reply3)
           })
 
-          it('should display a popup for the latest message', done => {
+          it('should display a popup for the latest message', (done) => {
             support.listenOnce(notification.store, () => {
               sinon.assert.calledOnce(Notification)
               sinon.assert.calledWithExactly(Notification, 'ezzie', {
@@ -1012,13 +1012,13 @@ describe('notification store', () => {
           ]),
         }
         simulateMessages([message1.id], mockChatStateSeen)
-        support.listenOnce(notification.store, state => {
+        support.listenOnce(notification.store, (state) => {
           assert.equal(state.notifications.get(message1.id), 'new-message')
           mockChatStateSeen.messages.mergeNodes(message1.id, {_seen: Date.now()})
           notification.store.messagesChanged([message1.id], mockChatStateSeen)
           clock.tick(seenTime)
           action(mockChatStateSeen)
-          support.listenOnce(notification.store, state2 => {
+          support.listenOnce(notification.store, (state2) => {
             assert.equal(expectRemoved, !state2.notifications.has(message1.id))
             done()
           })
@@ -1027,19 +1027,19 @@ describe('notification store', () => {
         clock.tick(0)
       }
 
-      it('should be removed when becoming inactive', done => {
+      it('should be removed when becoming inactive', (done) => {
         test(true, done, 40 * 1000, notification.store.onInactive)
       })
 
-      it('should be removed if seen more than 30s ago when new messages come in', done => {
-        test(true, done, 60 * 1000, state => {
+      it('should be removed if seen more than 30s ago when new messages come in', (done) => {
+        test(true, done, 60 * 1000, (state) => {
           state.messages.add(message2)
           simulateMessages([message2.id], state)
         })
       })
 
-      it('should not be removed if seen less than 30s ago', done => {
-        test(false, done, 20 * 1000, state => {
+      it('should not be removed if seen less than 30s ago', (done) => {
+        test(false, done, 20 * 1000, (state) => {
           state.messages.add(message2)
           simulateMessages([message2.id], state)
         })

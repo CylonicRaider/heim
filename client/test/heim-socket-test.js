@@ -168,14 +168,14 @@ describe('socket store', () => {
   })
 
   describe('when socket opened', () => {
-    it('should emit an open event', done => {
+    it('should emit an open event', (done) => {
       socket.once('open', done)
       socket._onOpen()
     })
   })
 
   function checkSocketCleanup(action) {
-    it('should emit an close event', done => {
+    it('should emit an close event', (done) => {
       socket.once('close', done)
       action()
     })
@@ -235,10 +235,10 @@ describe('socket store', () => {
   })
 
   describe('when message received', () => {
-    it('should emit a receive event', done => {
+    it('should emit a receive event', (done) => {
       const testBody = {it: 'works'}
 
-      socket.once('receive', body => {
+      socket.once('receive', (body) => {
         assert.deepEqual(body, testBody)
         done()
       })

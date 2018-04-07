@@ -26,6 +26,7 @@ export default createReactClass({
   },
 
   render() {
+    /* eslint-disable jsx-a11y/click-events-have-key-events */
     return (
       <div className="dim-shade dialog-cover fill" ref="shade" onClick={this.onShadeClick}>
         <Popup className={classNames('dialog', this.props.className)}>

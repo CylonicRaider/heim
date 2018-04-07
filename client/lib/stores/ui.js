@@ -229,7 +229,7 @@ function createPaneStore(paneId, createOptions = {}) {
     revealMessage(messageId) {
       ReactDOM.unstable_batchedUpdates(() => {
         Immutable.Seq(this.chatState.messages.iterAncestorsOf(messageId))
-          .forEach(ancestor => {
+          .forEach((ancestor) => {
             this.setMessageData(ancestor.get('id'), {repliesExpanded: true})
           })
         this.setMessageData(messageId, {repliesExpanded: true})
@@ -585,10 +585,10 @@ const store = module.exports.store = Reflux.createStore({
         this.thawInfo()
       }
     } else {
+      /* eslint-disable no-lonely-if */
       if (target === 'info') {
         if (!this.state.selectedThread) {
           storeActions.selectThreadInList(this.state.lastSelectedThread)
-          return
         }
       } else {
         this.deselectThread()

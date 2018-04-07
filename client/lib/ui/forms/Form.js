@@ -1,6 +1,8 @@
-const _ = require('lodash')
-const React = require('react')
-const classNames = require('classnames')
+import _ from 'lodash'
+import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
+import classNames from 'classnames'
 
 
 export default createReactClass({
@@ -8,8 +10,8 @@ export default createReactClass({
 
   propTypes: {
     context: PropTypes.object,
-    errors: PropTypes.objectOf(React.PropTypes.string),
-    validators: PropTypes.objectOf(React.PropTypes.func),
+    errors: PropTypes.objectOf(PropTypes.string),
+    validators: PropTypes.objectOf(PropTypes.func),
     working: PropTypes.bool,
     onSubmit: PropTypes.func,
     className: PropTypes.string,
@@ -78,7 +80,7 @@ export default createReactClass({
       }
 
       const validatorValues = {}
-      fieldSpec.split(' ').forEach(field => {
+      fieldSpec.split(' ').forEach((field) => {
         validatorValues[field] = formValues[field]
       })
       if (!filter || filter(validatorValues)) {
@@ -99,7 +101,7 @@ export default createReactClass({
   _walkChildren(children, serverErrors, validatorErrors, errorSeen) {
     let foundError = errorSeen
     const errors = _.assign({}, serverErrors, validatorErrors)
-    return React.Children.map(children, child => {
+    return React.Children.map(children, (child) => {
       if (!React.isValidElement(child)) {
         return child
       } else if (!child.props.name && child.props.type !== 'submit') {
@@ -115,7 +117,7 @@ export default createReactClass({
       }
 
       return React.cloneElement(child, {
-        onModify: value => {
+        onModify: (value) => {
           this.onFieldModify(name, value)
           if (child.props.onModify) {
             child.props.onModify(value)

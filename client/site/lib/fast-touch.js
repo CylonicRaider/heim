@@ -1,10 +1,10 @@
 (function initFastTouch(body) {
   if ('ontouchstart' in window) {
     body.classList.add('touch')
-    body.addEventListener('touchstart', function onFastTouchStart(ev) {
+    body.addEventListener('touchstart', (ev) => {
       ev.target.classList.add('touching')
     }, false)
-    body.addEventListener('touchend', function onFastTouchEnd(ev) {
+    body.addEventListener('touchend', (ev) => {
       ev.target.classList.remove('touching')
     }, false)
   }

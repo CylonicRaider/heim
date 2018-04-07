@@ -25,7 +25,7 @@ const autolinker = new Autolinker({
         return false
       }
 
-      if (location.protocol === 'https:' && RegExp('^https?:\/\/' + location.hostname).test(url)) {
+      if (location.protocol === 'https:' && RegExp('^https?://' + location.hostname).test(url)) {
         // self-link securely
         tag.setAttr('href', url.replace(/^http:/, 'https:'))
       } else {
@@ -34,6 +34,7 @@ const autolinker = new Autolinker({
 
       return tag
     }
+    return null
   },
 })
 
@@ -54,6 +55,7 @@ export default createReactClass({
   ],
 
   render() {
+    /* eslint-disable react/no-danger */
     // FIXME: replace with React splitting parser + preserve links when trimmed
 
     let content = this.props.content

@@ -63,6 +63,6 @@ export default createReactClass({
     const data = _.extend({}, this.props, {id: this.embedId})
     delete data.className
     const url = process.env.EMBED_ORIGIN + '/?' + queryString.stringify(data)
-    return <iframe key={url} ref="iframe" className={classNames('embed', this.props.className)} style={{width: this.state.width}} src={url} />
+    return <iframe key={url} ref="iframe" className={classNames('embed', this.props.className)} style={{width: this.state.width}} src={url} title="embedded media" />
   },
 })

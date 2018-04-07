@@ -25,7 +25,7 @@ function hueHash(text, offset = 0) {
     // this keeps the value within Number.MAX_SAFE_INTEGER without throwing out
     // information.
     const origVal = val
-    val = val << 5
+    val <<= 5
     val += origVal
 
     // add the character information to the hash.
@@ -33,7 +33,7 @@ function hueHash(text, offset = 0) {
   }
 
   // cast the result of the final character addition to a 32 bit int.
-  val = val << 0
+  val <<= 0
 
   // add the minimum possible value, to ensure that val is positive (without
   // throwing out information).

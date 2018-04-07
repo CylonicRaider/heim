@@ -25,7 +25,7 @@ export default class BatchTransition {
     let maxFPS = 0
 
     let toReap = 0
-    _.each(this._transitions, transition => {
+    _.each(this._transitions, (transition) => {
       // skip finished but not reaped transitions
       if (transition.finished) {
         toReap++

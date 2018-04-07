@@ -19,6 +19,8 @@ export default createReactClass({
   },
 
   render() {
+    /* eslint-disable react/no-array-index-key */
+    // let's hope this is actually intended...
     const notifications = this.props.notifications.map((kind, messageId) =>
       <NotificationListItem key={messageId} tree={this.props.tree} nodeId={messageId} kind={kind} onClick={this.props.onNotificationSelect} />
     ).toIndexedSeq()

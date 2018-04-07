@@ -45,7 +45,7 @@ export default createReactClass({
       .sortBy(user => user.get('name').toLowerCase())
       .groupBy(user => /^bot:/.test(user.get('id')) ? 'bot' : 'human')
 
-    const formatUser = user => {
+    const formatUser = (user) => {
       const sessionId = user.get('session_id')
       const selected = this.props.selected.has(sessionId)
       return (
@@ -67,7 +67,7 @@ export default createReactClass({
 
     let prevUser
     let people = list.get('human')
-    people = people && people.filter(user => {
+    people = people && people.filter((user) => {
       if (prevUser && user.get('id') === prevUser.get('id') && user.get('name') === prevUser.get('name')) {
         return false
       }

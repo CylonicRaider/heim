@@ -8,7 +8,7 @@ const allowedImageDomains = {
 
 let frozen = true
 let _freezeHandler = null
-window.addEventListener('message', function onMessage(ev) {
+window.addEventListener('message', (ev) => {
   if (ev.origin === process.env.HEIM_ORIGIN) {
     if (ev.data.type === 'freeze') {
       frozen = true
@@ -78,10 +78,10 @@ function render() {
   const data = queryString.parse(location.search.substr(1))
 
   if (data.kind === 'imgur') {
-    loadImage(data.id, '//i.imgur.com/' + data.imgur_id + 'l.jpg', function onload(img) {
+    loadImage(data.id, '//i.imgur.com/' + data.imgur_id + 'l.jpg', (img) => {
       let fullSizeEl
 
-      handleFreeze(function onFrozen(isFrozen) {
+      handleFreeze((isFrozen) => {
         if (isFrozen) {
           if (fullSizeEl) {
             fullSizeEl.parentNode.removeChild(fullSizeEl)
@@ -104,7 +104,7 @@ function render() {
       return
     }
 
-    loadImage(data.id, data.url, function onload(img) {
+    loadImage(data.id, data.url, (img) => {
       // inspired by http://stackoverflow.com/a/4276742
       const canvasEl = document.createElement('canvas')
       const w = canvasEl.width = img.naturalWidth
@@ -115,7 +115,7 @@ function render() {
       canvasEl.className = 'cover'
       document.body.appendChild(canvasEl)
 
-      handleFreeze(function onFreeze(isFrozen) {
+      handleFreeze((isFrozen) => {
         if (isFrozen) {
           document.body.appendChild(canvasEl)
         } else {

@@ -10,13 +10,14 @@ function checkIsMoment(props, propName) {
   if (!moment.isMoment(props[propName])) {
     return new Error('not a Moment instance')
   }
+  return null
 }
 
 export default createReactClass({
   displayName: 'LiveTimeAgo',
 
   propTypes: {
-    time: PropTypes.oneOfType([React.PropTypes.number, checkIsMoment]),
+    time: PropTypes.oneOfType([PropTypes.number, checkIsMoment]),
     nowText: PropTypes.string,
     className: PropTypes.string,
   },

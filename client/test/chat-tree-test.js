@@ -1,4 +1,4 @@
-require('./support/setup')
+import './support/setup'
 import _ from 'lodash'
 import { assert } from 'chai'
 import Immutable from 'immutable'
@@ -245,7 +245,7 @@ describe('ChatTree', () => {
       tree = new ChatTree()
 
       const orphans = Immutable.Seq(testMessages)
-        .map(message => {
+        .map((message) => {
           if (message.parent === '__root') {
             return _.extend({}, message, {parent: 'parent1-1-1'})
           }
@@ -261,7 +261,7 @@ describe('ChatTree', () => {
     })
 
     it('should not calculate counts', () => {
-      _.each(testMessages, entry => {
+      _.each(testMessages, (entry) => {
         assert.isNull(tree.getCount(entry.id))
       })
     })

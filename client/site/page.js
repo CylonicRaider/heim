@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+
 import ReactDOMServer from 'react-dom/server'
 
 

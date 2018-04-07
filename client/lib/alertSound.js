@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 const sound = new Audio(process.env.HEIM_PREFIX + '/static/alert.mp3')
 
 export function play() {

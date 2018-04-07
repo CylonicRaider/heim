@@ -255,7 +255,7 @@ export default createReactClass({
 
     const scrollerBox = ReactDOM.findDOMNode(this.refs.scroller).getBoundingClientRect()
     const midPoint = (scrollerBox.bottom - scrollerBox.top) / 2
-    const checkPos = el => {
+    const checkPos = (el) => {
       const box = el.getBoundingClientRect()
       if (box.bottom > scrollerBox.top && box.top < scrollerBox.bottom) {
         return true
@@ -327,30 +327,32 @@ export default createReactClass({
 
     let anchor
     switch (dir) {
-    case 'up':
-      if (idx === 0) {
-        return
-      }
-      idx--
-      anchor = anchors[idx]
-      break
-    case 'down':
-      idx++
-      anchor = anchors[idx]
-      break
-    case 'out':
-      if (!this.state.pane.focusedMessage) {
+      case 'up':
+        if (idx === 0) {
+          return
+        }
+        idx--
+        anchor = anchors[idx]
         break
-      }
-      const parentId = this.state.chat.messages.get(this.state.pane.focusedMessage).get('parent')
-      anchor = anchors[idx]
-      while (anchor && anchor.dataset.messageId !== parentId) {
+      case 'down':
         idx++
         anchor = anchors[idx]
-      }
-      break
-    case 'top':
-      break
+        break
+      case 'out':
+        if (!this.state.pane.focusedMessage) {
+          break
+        }
+        {
+          const parentId = this.state.chat.messages.get(this.state.pane.focusedMessage).get('parent')
+          anchor = anchors[idx]
+          while (anchor && anchor.dataset.messageId !== parentId) {
+            idx++
+            anchor = anchors[idx]
+          }
+        }
+        break
+      case 'top':
+        break
     // no default
     }
 

@@ -65,14 +65,14 @@ export default createReactClass({
   render() {
     let label
     switch (this.authState) {
-    case 'trying':
-      label = 'trying...'
-      break
-    case 'failed':
-      label = 'no dice. try again:'
-      break
-    default:
-      label = 'passcode:'
+      case 'trying':
+        label = 'trying...'
+        break
+      case 'failed':
+        label = 'no dice. try again:'
+        break
+      default:
+        label = 'passcode:'
     }
 
     return (

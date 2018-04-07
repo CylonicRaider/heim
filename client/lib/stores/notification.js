@@ -1,4 +1,5 @@
 const fs = require('fs')  // needs to be a require to work with brfs for now: https://github.com/babel/babelify/issues/81
+
 import _ from 'lodash'
 import Reflux from 'reflux'
 import Immutable from 'immutable'
@@ -174,7 +175,7 @@ module.exports.store = Reflux.createStore({
   messagesChanged(ids, state) {
     this._messages = state.messages
     const unseen = Immutable.Seq(ids)
-      .map(id => {
+      .map((id) => {
         const msg = state.messages.get(id)
 
         if (id === '__root' || this.state.latestNotifications.has(id)) {
@@ -202,7 +203,7 @@ module.exports.store = Reflux.createStore({
     unseen.forEach(msg => this._markNotification('new-message', state.roomName, state.roomTitle, msg))
 
     unseen
-      .filter(msg => {
+      .filter((msg) => {
         const msgId = msg.get('id')
         const parentId = msg.get('parent')
 
@@ -263,8 +264,8 @@ module.exports.store = Reflux.createStore({
     let alerts = {}
 
     const groups = this.state.latestNotifications
-      .withMutations(notifications => {
-        _.each(this._newNotifications, newNotification => {
+      .withMutations((notifications) => {
+        _.each(this._newNotifications, (newNotification) => {
           const newMessageId = newNotification.message.get('id')
           const existingNotification = notifications.get(newMessageId)
           const newPriority = this.priority[newNotification.kind]
@@ -320,6 +321,7 @@ module.exports.store = Reflux.createStore({
           }
           return true
         }
+        return false
       })
       .map(notification => notification.kind)
 

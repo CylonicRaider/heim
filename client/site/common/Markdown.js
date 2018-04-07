@@ -25,6 +25,7 @@ const md = new MarkdownIt()
   })
 
 export default function Markdown(props) {
+  /* eslint-disable react/no-danger */
   return (
     <div className={props.className} dangerouslySetInnerHTML={{__html: md.render(props.content)}} />
   )

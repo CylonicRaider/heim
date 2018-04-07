@@ -17,6 +17,8 @@ export default createReactClass({
     onClick: PropTypes.func,
     component: PropTypes.string,
     children: PropTypes.node,
+    // for default prop
+    tabIndex: PropTypes.number,
   },
 
   getDefaultProps() {

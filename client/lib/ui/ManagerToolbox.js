@@ -51,13 +51,13 @@ export default createReactClass({
       <div className="manager-toolbox">
         <div className={classNames('items', {'empty': isEmpty})} onCopy={this.onCopy}>
           {isEmpty && 'nothing selected'}
-          {toolboxData.items.toSeq().map(item =>
+          {toolboxData.items.toSeq().map(item => (
             <span key={item.get('kind') + '-' + item.get('id') + '-' + item.get('name', '')} className={classNames('item', item.get('kind'), {'active': item.get('active'), 'removed': item.get('removed')})}>
               {item.has('name') && <div className="name">{item.get('name')}</div>}
               <div className="id">{item.get('id')}</div>
               {item.has('addr') && <div className="addr">{item.get('realAddr') || item.get('addr')}</div>}
             </span>
-          )}
+          ))}
         </div>
         <div className="action">
           <select className="command-picker" value={selectedCommand} onChange={this.selectCommand}>

@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+
 export function postAPI(url, data) {
   return fetch(url, {
     method: 'post',
@@ -7,7 +9,7 @@ export function postAPI(url, data) {
     },
     body: JSON.stringify(data),
   })
-    .then(response => {
+    .then((response) => {
       // via https://github.com/github/fetch
       if (response.status >= 200 && response.status < 300) {
         return response

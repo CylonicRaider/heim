@@ -1,3 +1,4 @@
+/* eslint-disable prefer-rest-params, prefer-spread */
 import _ from 'lodash'
 
 

@@ -15,7 +15,7 @@ export default createReactClass({
     smoothing: PropTypes.number,
     sensitivity: PropTypes.number,
     friction: PropTypes.number,
-    snapPoints: PropTypes.objectOf(React.PropTypes.number),
+    snapPoints: PropTypes.objectOf(PropTypes.number),
     onMove: PropTypes.func,
     children: PropTypes.node,
   },
@@ -118,12 +118,10 @@ export default createReactClass({
         startY: touch.clientY,
         initX: -this._drag.x,
       })
+    } else if (this._drag.direction) {
+      this._drag.active = false
     } else {
-      if (this._drag.direction) {
-        this._drag.active = false
-      } else {
-        this._drag = null
-      }
+      this._drag = null
     }
   },
 

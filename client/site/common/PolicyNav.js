@@ -20,11 +20,11 @@ export default function PolicyNav(props) {
           <li className="home">
             <a href={heimURL('/')}>&nbsp;</a>
           </li>
-          {items.map(item =>
+          {items.map(item => (
             <li key={item.name} className={classNames(props.selected === item.name && 'selected')}>
               <a href={heimURL('/about/' + item.name)}>{item.caption}</a>
             </li>
-          )}
+          ))}
         </ul>
       </div>
     </nav>

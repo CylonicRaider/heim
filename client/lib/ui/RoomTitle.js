@@ -37,19 +37,19 @@ export default createReactClass({
       details = 'hang tight! we\'ll try again every few seconds until we get in.'
     } else {
       switch (this.props.authType) {
-      case 'passcode':
-        if (uiwindow.location.pathname.match(/^\/room\/(pm:)/)) {
-          className = caption = 'pm'
-          details = 'private messaging between you and another user'
-        } else {
-          className = caption = 'private'
-          details = 'this room requires a passcode for entry'
-        }
-        break
-      case 'public':
-        className = caption = 'public'
-        details = 'anyone with a link can join this room'
-        break
+        case 'passcode':
+          if (uiwindow.location.pathname.match(/^\/room\/(pm:)/)) {
+            className = caption = 'pm'
+            details = 'private messaging between you and another user'
+          } else {
+            className = caption = 'private'
+            details = 'this room requires a passcode for entry'
+          }
+          break
+        case 'public':
+          className = caption = 'public'
+          details = 'anyone with a link can join this room'
+          break
       // no default
       }
     }

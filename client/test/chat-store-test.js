@@ -254,8 +254,8 @@ describe('chat store', () => {
       storage.load.restore()
     })
 
-    it('should save room name', done => {
-      support.listenOnce(chat.store, state => {
+    it('should save room name', (done) => {
+      support.listenOnce(chat.store, (state) => {
         assert.equal(state.roomName, 'ezzie')
         done()
       })
@@ -364,13 +364,13 @@ describe('chat store', () => {
 
   describe('when connected', () => {
     it('should have connected state: true', () => {
-      support.listenOnce(chat.store, state => {
+      support.listenOnce(chat.store, (state) => {
         assert.equal(state.connected, true)
       })
       chat.store.socketOpen()
     })
 
-    it('should send stored passcode authenticaton', done => {
+    it('should send stored passcode authenticaton', (done) => {
       chat.store.state.roomName = 'ezzie'
       chat.store.storageChange(mockStorage)
       support.listenOnce(chat.store, () => {
@@ -391,14 +391,14 @@ describe('chat store', () => {
 
   describe('when disconnected', () => {
     it('should have connected state: false', () => {
-      support.listenOnce(chat.store, state => {
+      support.listenOnce(chat.store, (state) => {
         assert.equal(state.connected, false)
       })
       chat.store.socketClose()
     })
 
-    it('should set joined and canJoin state to false', done => {
-      support.listenOnce(chat.store, state => {
+    it('should set joined and canJoin state to false', (done) => {
+      support.listenOnce(chat.store, (state) => {
         assert.equal(state.joined, false)
         assert.equal(state.canJoin, false)
         done()
@@ -420,7 +420,7 @@ describe('chat store', () => {
       chat.store.socket.send.reset()
     })
 
-    it('should send stored nick', done => {
+    it('should send stored nick', (done) => {
       chat.store.socketOpen()
       handleSocket(snapshotReply, () => {
         sinon.assert.calledWithExactly(chat.store.socket.send, {
@@ -431,7 +431,7 @@ describe('chat store', () => {
       })
     })
 
-    it('should send stored passcode authentication', done => {
+    it('should send stored passcode authentication', (done) => {
       support.listenOnce(chat.store, () => {
         sinon.assert.calledOnce(chat.store.socket.send)
         sinon.assert.calledWithExactly(chat.store.socket.send, {
@@ -446,21 +446,21 @@ describe('chat store', () => {
       chat.store.socketOpen()
     })
 
-    it('should persist lastVisit node', done => {
+    it('should persist lastVisit node', (done) => {
       const prevLastVisit = chat.store.state.messages.get('__lastVisit')
       chat.store.socketOpen()
-      handleSocket(snapshotReply, state => {
+      handleSocket(snapshotReply, (state) => {
         assert(Immutable.is(state.messages.get('__lastVisit'), prevLastVisit))
         done()
       })
     })
 
-    it('should persist shadow nodes (underscored properties)', done => {
+    it('should persist shadow nodes (underscored properties)', (done) => {
       chat.store.state.messages.add({id: 'test', parent: 'id1', _data: 'retained'})
       assert.equal(chat.store.state.messages.get('test').get('parent'), 'id1')
 
       chat.store.socketOpen()
-      handleSocket(snapshotReply, state => {
+      handleSocket(snapshotReply, (state) => {
         const testNode = state.messages.get('test')
         assert(testNode)
         assert.equal(testNode.get('parent'), null)
@@ -528,8 +528,8 @@ describe('chat store', () => {
   })
 
   describe('received hello events', () => {
-    it('should store user id, manager status, and staff status', done => {
-      handleSocket(helloEvent, state => {
+    it('should store user id, manager status, and staff status', (done) => {
+      handleSocket(helloEvent, (state) => {
         assert.equal(state.id, helloEvent.data.session.id)
         assert.equal(state.isManager, helloEvent.data.session.is_manager)
         assert.equal(state.isStaff, helloEvent.data.session.is_staff)
@@ -537,17 +537,17 @@ describe('chat store', () => {
       })
     })
 
-    it('should set auth type state to public if room not private', done => {
+    it('should set auth type state to public if room not private', (done) => {
       const publicHelloEvent = _.merge({}, helloEvent, {data: {room_is_private: false}})
-      handleSocket(publicHelloEvent, state => {
+      handleSocket(publicHelloEvent, (state) => {
         assert.equal(state.authType, 'public')
         done()
       })
     })
 
-    it('should set auth type state to passcode if room private', done => {
+    it('should set auth type state to passcode if room private', (done) => {
       const privateHelloEvent = _.merge({}, helloEvent, {data: {room_is_private: true}})
-      handleSocket(privateHelloEvent, state => {
+      handleSocket(privateHelloEvent, (state) => {
         assert.equal(state.authType, 'passcode')
         done()
       })
@@ -588,86 +588,86 @@ describe('chat store', () => {
       'data': message1,
     }
 
-    it('should be appended to log', done => {
-      handleSocket(sendEvent, state => {
+    it('should be appended to log', (done) => {
+      handleSocket(sendEvent, (state) => {
         assert(state.messages.last().isSuperset(Immutable.fromJS(sendEvent.data)))
         done()
       })
     })
 
-    it('should be assigned a hue', done => {
-      handleSocket(sendEvent, state => {
+    it('should be assigned a hue', (done) => {
+      handleSocket(sendEvent, (state) => {
         assert.equal(state.messages.last().getIn(['sender', 'hue']), 70)
         done()
       })
     })
 
-    it('should update sender lastSent', done => {
-      handleSocket(sendEvent, state => {
+    it('should update sender lastSent', (done) => {
+      handleSocket(sendEvent, (state) => {
         assert.equal(state.who.get(sendEvent.data.sender.session_id).get('lastSent'), sendEvent.data.time)
         done()
       })
     })
 
-    it('should be stored as children of parent', done => {
+    it('should be stored as children of parent', (done) => {
       handleSocket(sendEvent, () => {
-        handleSocket(sendReplyEvent, state => {
+        handleSocket(sendReplyEvent, (state) => {
           assert(state.messages.get('id2').get('children').contains('id3'))
           done()
         })
       })
     })
 
-    it('should be sorted by timestamp', done => {
+    it('should be sorted by timestamp', (done) => {
       handleSocket(sendEvent, () => {
-        handleSocket(pastSendEvent, state => {
+        handleSocket(pastSendEvent, (state) => {
           assert.deepEqual(state.messages.get('__root').get('children').toJS(), ['id1', 'id2'])
           done()
         })
       })
     })
 
-    it('should trigger messageReceived action', done => {
-      handleSocket(sendEvent, state => {
+    it('should trigger messageReceived action', (done) => {
+      handleSocket(sendEvent, (state) => {
         sinon.assert.calledOnce(chat.actions.messageReceived)
         sinon.assert.calledWithExactly(chat.actions.messageReceived, state.messages.last(), state)
         done()
       })
     })
 
-    it('should trigger messagesChanged action', done => {
-      handleSocket(sendEvent, state => {
+    it('should trigger messagesChanged action', (done) => {
+      handleSocket(sendEvent, (state) => {
         sinon.assert.calledOnce(chat.actions.messagesChanged)
         sinon.assert.calledWithExactly(chat.actions.messagesChanged, ['__root', 'id2'], state)
         done()
       })
     })
 
-    it('should be tagged as a mention, if it matches', done => {
+    it('should be tagged as a mention, if it matches', (done) => {
       chat.store.state.tentativeNick = 'test er'
-      handleSocket(sendMentionEvent, state => {
+      handleSocket(sendMentionEvent, (state) => {
         assert(state.messages.last().get('_mention'))
         done()
       })
     })
 
-    it('older than seenTTL should be marked seen = true', done => {
+    it('older than seenTTL should be marked seen = true', (done) => {
       const msgTime = (Date.now() - chat.store.seenTTL) / 1000 - 10
       const oldSendEvent = _.merge({}, sendEvent, {data: {time: msgTime}})
-      handleSocket(oldSendEvent, state => {
+      handleSocket(oldSendEvent, (state) => {
         assert.equal(state.messages.last().get('_seen'), true)
         done()
       })
     })
 
-    it('newer than seenTTL should be looked up whether seen', done => {
+    it('newer than seenTTL should be looked up whether seen', (done) => {
       const msgTime = Date.now() / 1000 - 5
       const seenSendEvent = _.merge({}, sendEvent, {data: {time: msgTime}})
       const mockSeenMessages = {}
       const seenTime = mockSeenMessages[seenSendEvent.data.id] = msgTime * 1000
       chat.store.state.roomName = 'ezzie'
       chat.store.storageChange({room: {ezzie: {seenMessages: mockSeenMessages}}})
-      handleSocket(seenSendEvent, state => {
+      handleSocket(seenSendEvent, (state) => {
         assert.equal(state.messages.last().get('_seen'), seenTime)
         done()
       })
@@ -682,8 +682,8 @@ describe('chat store', () => {
   }
 
   function checkLogs(msgBody) {
-    it('messages should be assigned to log', done => {
-      handleSocket(msgBody, state => {
+    it('messages should be assigned to log', (done) => {
+      handleSocket(msgBody, (state) => {
         assert.equal(state.messages.size, logReply.data.log.length)
         assert(state.messages.get('id1').isSuperset(Immutable.fromJS(message1)))
         assert(state.messages.get('id2').isSuperset(Immutable.fromJS(message2)))
@@ -693,23 +693,23 @@ describe('chat store', () => {
       })
     })
 
-    it('messages should all be assigned hues', done => {
-      handleSocket(msgBody, state => {
+    it('messages should all be assigned hues', (done) => {
+      handleSocket(msgBody, (state) => {
         assertMessagesHaveHues(state.messages)
         done()
       })
     })
 
-    it('messages should update sender lastSent', done => {
-      handleSocket(msgBody, state => {
+    it('messages should update sender lastSent', (done) => {
+      handleSocket(msgBody, (state) => {
         assert.equal(state.who.get(message2.sender.session_id).get('lastSent'), message2.time)
         assert.equal(state.who.get(message3.sender.session_id).get('lastSent'), message3.time)
         done()
       })
     })
 
-    it('should update earliestLog', done => {
-      handleSocket(msgBody, state => {
+    it('should update earliestLog', (done) => {
+      handleSocket(msgBody, (state) => {
         assert.equal(state.earliestLog, 'id1')
         done()
       })
@@ -717,7 +717,7 @@ describe('chat store', () => {
   }
 
   describe('sending messages', () => {
-    it('should log a warning upon error', done => {
+    it('should log a warning upon error', (done) => {
       testErrorLogging('send-reply', 'bzzt!', done)
     })
   })
@@ -729,9 +729,9 @@ describe('chat store', () => {
       'data': _.merge({}, message1, {deleted: 12345}),
     }
 
-    it('should update the message data in the tree', done => {
+    it('should update the message data in the tree', (done) => {
       chat.store.socketEvent(logReply)
-      handleSocket(deleteEvent, state => {
+      handleSocket(deleteEvent, (state) => {
         assert(state.messages.get(message1.id).get('deleted') === 12345)
         done()
       })
@@ -745,7 +745,7 @@ describe('chat store', () => {
   describe('received edit-message-reply events', () => {
     testEditMessageEvent('edit-message-reply')
 
-    it('should log a warning upon error', done => {
+    it('should log a warning upon error', (done) => {
       testErrorLogging('edit-message-reply', 'oh no!', done)
     })
   })
@@ -760,22 +760,22 @@ describe('chat store', () => {
       },
     }
 
-    it('should add the id to the banned ids set', done => {
-      handleSocket(banReplyEvent, state => {
+    it('should add the id to the banned ids set', (done) => {
+      handleSocket(banReplyEvent, (state) => {
         assert(state.bannedIds.has(banReplyEvent.data.id))
         done()
       })
     })
 
-    it('should log a warning upon error', done => {
+    it('should log a warning upon error', (done) => {
       testErrorLogging('ban-reply', 'oops!', done)
     })
   })
 
   function checkMessagesChangedEvent(msgBody) {
-    it('should trigger messagesChanged action', done => {
+    it('should trigger messagesChanged action', (done) => {
       chat.actions.messagesChanged.reset()
-      handleSocket(msgBody, state => {
+      handleSocket(msgBody, (state) => {
         const ids = Immutable.Seq(msgBody.data.log).map(msg => msg.id).toArray()
         ids.unshift('__root')
         sinon.assert.calledOnce(chat.actions.messagesChanged)
@@ -789,7 +789,7 @@ describe('chat store', () => {
     checkLogs(logReply)
     checkMessagesChangedEvent(logReply)
 
-    it('should ignore empty logs', done => {
+    it('should ignore empty logs', (done) => {
       const emptyLogReply = {
         'id': '0',
         'type': 'log-reply',
@@ -799,7 +799,7 @@ describe('chat store', () => {
       }
 
       handleSocket(logReply, () => {
-        handleSocket(emptyLogReply, state => {
+        handleSocket(emptyLogReply, (state) => {
           assert.equal(state.messages.size, 3)
           done()
         })
@@ -807,9 +807,9 @@ describe('chat store', () => {
     })
 
     describe('receiving more logs', () => {
-      it('messages should be added to logs', done => {
+      it('messages should be added to logs', (done) => {
         handleSocket(logReply, () => {
-          handleSocket(moreLogReply, state => {
+          handleSocket(moreLogReply, (state) => {
             assert.equal(state.messages.size, logReply.data.log.length + 1)
             assert(state.messages.get('id0').isSuperset(Immutable.fromJS(message0)))
             done()
@@ -817,27 +817,27 @@ describe('chat store', () => {
         })
       })
 
-      it('messages should all be assigned hues', done => {
+      it('messages should all be assigned hues', (done) => {
         handleSocket(logReply, () => {
-          handleSocket(moreLogReply, state => {
+          handleSocket(moreLogReply, (state) => {
             assertMessagesHaveHues(state.messages)
             done()
           })
         })
       })
 
-      it('messages should update sender lastSent', done => {
+      it('messages should update sender lastSent', (done) => {
         handleSocket(logReply, () => {
-          handleSocket(moreLogReply, state => {
+          handleSocket(moreLogReply, (state) => {
             assert.equal(state.who.get(message0.sender.session_id).get('lastSent'), message0.time)
             done()
           })
         })
       })
 
-      it('should update earliestLog', done => {
+      it('should update earliestLog', (done) => {
         handleSocket(logReply, () => {
-          handleSocket(moreLogReply, state => {
+          handleSocket(moreLogReply, (state) => {
             assert.equal(state.earliestLog, 'id0')
             done()
           })
@@ -854,7 +854,7 @@ describe('chat store', () => {
         checkLogs(logReply)
       })
 
-      it('should not trigger messagesChanged action', done => {
+      it('should not trigger messagesChanged action', (done) => {
         const logReplyWithBefore = _.merge(_.clone(logReply), {data: {before: 'id0'}})
         chat.actions.messagesChanged.reset()
         handleSocket(logReplyWithBefore, () => {
@@ -879,7 +879,7 @@ describe('chat store', () => {
         })
       })
 
-      it('should not make a request if one already in flight', done => {
+      it('should not make a request if one already in flight', (done) => {
         chat.store.socketEvent(logReply)
         chat.store.loadMoreLogs()
         chat.store.loadMoreLogs()
@@ -917,10 +917,10 @@ describe('chat store', () => {
   })
 
   function checkUsers(msgBody) {
-    it('users should be assigned to user list', done => {
-      handleSocket(msgBody, state => {
+    it('users should be assigned to user list', (done) => {
+      handleSocket(msgBody, (state) => {
         assert.equal(state.who.size, whoReply.data.listing.length)
-        assert(Immutable.Iterable(whoReply.data.listing).every(user => {
+        assert(Immutable.Iterable(whoReply.data.listing).every((user) => {
           const whoEntry = state.who.get(user.session_id)
           return !!whoEntry && whoEntry.get('present') && whoEntry.isSuperset(Immutable.fromJS(user))
         }))
@@ -928,11 +928,9 @@ describe('chat store', () => {
       })
     })
 
-    it('users should all be assigned hues', done => {
-      handleSocket(msgBody, state => {
-        assert(state.who.every(whoEntry => {
-          return !!whoEntry.has('hue')
-        }))
+    it('users should all be assigned hues', (done) => {
+      handleSocket(msgBody, (state) => {
+        assert(state.who.every(whoEntry => !!whoEntry.has('hue')))
         done()
       })
     })
@@ -947,22 +945,22 @@ describe('chat store', () => {
     checkMessagesChangedEvent(snapshotReply)
     checkUsers(snapshotReply)
 
-    it('should update server version', done => {
-      handleSocket(snapshotReply, state => {
+    it('should update server version', (done) => {
+      handleSocket(snapshotReply, (state) => {
         assert.equal(state.serverVersion, snapshotReply.data.version)
         done()
       })
     })
 
-    it('should update session id', done => {
-      handleSocket(snapshotReply, state => {
+    it('should update session id', (done) => {
+      handleSocket(snapshotReply, (state) => {
         assert.equal(state.sessionId, snapshotReply.data.session_id)
         done()
       })
     })
 
-    it('should set canJoin state to true', done => {
-      handleSocket(snapshotReply, state => {
+    it('should set canJoin state to true', (done) => {
+      handleSocket(snapshotReply, (state) => {
         assert.equal(state.canJoin, true)
         done()
       })
@@ -973,22 +971,22 @@ describe('chat store', () => {
         chat.store.joinRoom()
       })
 
-      it('should set joined state to the join time', done => {
-        handleSocket(snapshotReply, state => {
+      it('should set joined state to the join time', (done) => {
+        handleSocket(snapshotReply, (state) => {
           assert.equal(state.joined, Date.now())
           done()
         })
       })
 
-      it('should clear auth state', done => {
+      it('should clear auth state', (done) => {
         chat.store.state.authState = 'trying-stored'
-        handleSocket(snapshotReply, state => {
+        handleSocket(snapshotReply, (state) => {
           assert.equal(state.authState, null)
           done()
         })
       })
 
-      it('should trigger sending stored nick', done => {
+      it('should trigger sending stored nick', (done) => {
         chat.store.state.roomName = 'ezzie'
         chat.store.storageChange(mockStorage)
         handleSocket(snapshotReply, () => {
@@ -1000,7 +998,7 @@ describe('chat store', () => {
         })
       })
 
-      it('should not send stored nick if unset', done => {
+      it('should not send stored nick if unset', (done) => {
         chat.store.state.roomName = 'ezzie'
         chat.store.storageChange({room: {}})
         handleSocket(snapshotReply, () => {
@@ -1034,27 +1032,27 @@ describe('chat store', () => {
       chat.store.socketEvent(snapshotReply)
     })
 
-    it('should update user list name', done => {
+    it('should update user list name', (done) => {
       handleSocket(whoReply, () => {
-        handleSocket(nickReply, state => {
+        handleSocket(nickReply, (state) => {
           assert.equal(state.who.getIn([nickReply.data.session_id, 'name']), nickReply.data.to)
           done()
         })
       })
     })
 
-    it('should update hue', done => {
+    it('should update hue', (done) => {
       handleSocket(whoReply, () => {
-        handleSocket(nickReply, state => {
+        handleSocket(nickReply, (state) => {
           assert.equal(state.who.getIn([nickReply.data.session_id, 'hue']), 70)
           done()
         })
       })
     })
 
-    it('should add nonexistent users', done => {
+    it('should add nonexistent users', (done) => {
       handleSocket(whoReply, () => {
-        handleSocket(nonexistentNickEvent, state => {
+        handleSocket(nonexistentNickEvent, (state) => {
           assert(state.who.has(nonexistentNickEvent.data.session_id))
           done()
         })
@@ -1062,18 +1060,18 @@ describe('chat store', () => {
     })
 
     describe('in response to nick set', () => {
-      it('should not update nick if rejected', done => {
+      it('should not update nick if rejected', (done) => {
         chat.store.state.nick = 'previous'
         chat.store.state.roomName = 'ezzie'
-        handleSocket(rejectedNickReply, state => {
+        handleSocket(rejectedNickReply, (state) => {
           assert.equal(state.nick, 'previous')
           done()
         })
       })
 
-      it('should update stored nick', done => {
+      it('should update stored nick', (done) => {
         chat.store.state.roomName = 'ezzie'
-        handleSocket(nickReply, state => {
+        handleSocket(nickReply, (state) => {
           assert.equal(state.nick, 'tester')
           sinon.assert.calledOnce(storage.setRoom)
           sinon.assert.calledWithExactly(storage.setRoom, 'ezzie', 'nick', 'tester')
@@ -1081,7 +1079,7 @@ describe('chat store', () => {
         })
       })
 
-      it('should update Raven user context', done => {
+      it('should update Raven user context', (done) => {
         handleSocket(nickReply, () => {
           sinon.assert.calledOnce(Raven.setUserContext)
           sinon.assert.calledWithExactly(Raven.setUserContext, {
@@ -1108,16 +1106,16 @@ describe('chat store', () => {
       },
     }
 
-    it('should add to user list', done => {
-      handleSocket(joinEvent, state => {
+    it('should add to user list', (done) => {
+      handleSocket(joinEvent, (state) => {
         assert(state.who.get(joinEvent.data.session_id).isSuperset(Immutable.fromJS(joinEvent.data)))
         assert.equal(state.who.get(joinEvent.data.session_id).get('present'), true)
         done()
       })
     })
 
-    it('should assign a hue', done => {
-      handleSocket(joinEvent, state => {
+    it('should assign a hue', (done) => {
+      handleSocket(joinEvent, (state) => {
         assert.equal(state.who.getIn([joinEvent.data.session_id, 'hue']), 50)
         done()
       })
@@ -1135,9 +1133,9 @@ describe('chat store', () => {
       },
     }
 
-    it('should set non-present in user list', done => {
+    it('should set non-present in user list', (done) => {
       handleSocket(whoReply, () => {
-        handleSocket(partEvent, state => {
+        handleSocket(partEvent, (state) => {
           assert.equal(state.who.get(partEvent.data.session_id).get('present'), false)
           done()
         })
@@ -1173,23 +1171,23 @@ describe('chat store', () => {
   })
 
   describe('received bounce events', () => {
-    it('should set passcode auth', done => {
-      handleSocket(bounceEvent, state => {
+    it('should set passcode auth', (done) => {
+      handleSocket(bounceEvent, (state) => {
         assert.equal(state.authType, 'passcode')
         done()
       })
     })
 
-    it('should set canJoin state to false', done => {
-      handleSocket(bounceEvent, state => {
+    it('should set canJoin state to false', (done) => {
+      handleSocket(bounceEvent, (state) => {
         assert.equal(state.canJoin, false)
         done()
       })
     })
 
     describe('if not trying a stored passcode', () => {
-      it('should set auth state to "needs-passcode"', done => {
-        handleSocket(bounceEvent, state => {
+      it('should set auth state to "needs-passcode"', (done) => {
+        handleSocket(bounceEvent, (state) => {
           assert.equal(state.authState, 'needs-passcode')
           done()
         })
@@ -1197,9 +1195,9 @@ describe('chat store', () => {
     })
 
     describe('if trying a stored passcode', () => {
-      it('should be ignored', done => {
+      it('should be ignored', (done) => {
         chat.store.state.authState = 'trying-stored'
-        handleSocket(bounceEvent, state => {
+        handleSocket(bounceEvent, (state) => {
           assert.equal(state.authState, 'trying-stored')
           done()
         })
@@ -1238,8 +1236,8 @@ describe('chat store', () => {
     })
 
     describe('if successful', () => {
-      it('should save auth data in storage', done => {
-        handleSocket(successfulAuthReplyEvent, state => {
+      it('should save auth data in storage', (done) => {
+        handleSocket(successfulAuthReplyEvent, (state) => {
           sinon.assert.calledOnce(storage.setRoom)
           sinon.assert.calledWithExactly(storage.setRoom, 'ezzie', 'auth', {type: 'passcode', data: 'hunter2'})
           assert.equal(state.authState, null)
@@ -1252,7 +1250,7 @@ describe('chat store', () => {
       describe('if stored auth unsuccessful', () => {
         it('should set auth state to "needs-passcode"', () => {
           chat.store.state.authState = 'trying-stored'
-          handleSocket(body, state => {
+          handleSocket(body, (state) => {
             assert.equal(state.authState, 'needs-passcode')
           })
         })
@@ -1261,7 +1259,7 @@ describe('chat store', () => {
       describe('if auth unsuccessful', () => {
         it('should set auth state to "failed"', () => {
           chat.store.state.authState = 'trying'
-          handleSocket(body, state => {
+          handleSocket(body, (state) => {
             assert.equal(state.authState, 'failed')
           })
         })
@@ -1277,7 +1275,7 @@ describe('chat store', () => {
     describe('if auth redundant', () => {
       it('should not change auth state', () => {
         chat.store.state.authState = null
-        handleSocket(redundantAuthReplyEvent, state => {
+        handleSocket(redundantAuthReplyEvent, (state) => {
           assert.equal(state.authState, null)
         })
       })
@@ -1295,9 +1293,9 @@ describe('chat store', () => {
       },
     }
 
-    it('should set associated users non-present in the user list', done => {
+    it('should set associated users non-present in the user list', (done) => {
       handleSocket(whoReply, () => {
-        handleSocket(networkPartitionEvent, state => {
+        handleSocket(networkPartitionEvent, (state) => {
           assert.equal(state.who.get(whoReply.data.listing[0].session_id).get('present'), false)
           assert.equal(state.who.get(whoReply.data.listing[1].session_id).get('present'), false)
           assert.equal(state.who.get(whoReply.data.listing[2].session_id).get('present'), true)
@@ -1326,7 +1324,7 @@ describe('chat store', () => {
       },
     }
 
-    it('should log a warning', done => {
+    it('should log a warning', (done) => {
       handleSocket(unknownEvent, () => {
         sinon.assert.calledOnce(console.warn)  // eslint-disable-line no-console
         sinon.assert.calledWithExactly(console.warn, sinon.match.string, unknownEvent.type)  // eslint-disable-line no-console

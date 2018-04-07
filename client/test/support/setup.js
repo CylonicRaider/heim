@@ -12,7 +12,7 @@ export function setupClock() {
   const clock = sinon.useFakeTimers()
 
   // manually fix Sinon #624 until it updates Lolex to 1.2.0
-  Date.now = () => { return Date().getTime() }
+  Date.now = () => Date().getTime()
 
   // set up fake clock to work with lodash
 
@@ -41,6 +41,7 @@ export function setupClock() {
 }
 
 export function listenOnce(listenable, callback) {
+  /* eslint-disable prefer-rest-params */
   const remove = listenable.listen(function handleOnce() {
     remove()
     callback.apply(this, arguments)

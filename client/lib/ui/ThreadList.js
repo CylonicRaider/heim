@@ -17,6 +17,7 @@ export default createReactClass({
     threadData: PropTypes.instanceOf(MessageData),
     onScroll: PropTypes.func,
     onThreadSelect: PropTypes.func,
+    threadNodeId: PropTypes.string,
   },
 
   mixins: [
@@ -31,7 +32,7 @@ export default createReactClass({
   render() {
     return (
       <div className="thread-list" onScroll={this.props.onScroll}>
-        {this.state.threadNode.get('children').toSeq().map((threadId) =>
+        {this.state.threadNode.get('children').toSeq().map(threadId =>
           <ThreadListItem key={threadId} threadData={this.props.threadData} threadTree={this.props.threadTree} threadNodeId={threadId} tree={this.props.tree} nodeId={threadId} onClick={this.props.onThreadSelect} />
         )}
       </div>
