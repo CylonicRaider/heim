@@ -27,7 +27,7 @@ describe('<MessageText>', () => {
   it('truncates long urls', () => {
     const messageContent = renderMessageText('http://google.com/abcdefghijklmnopqrstuvwxyz1234567890')
     assert.equal(ReactDOM.findDOMNode(messageContent).innerHTML,
-      '<a href="http://google.com/abcdefghijklmnopqrstuvwxyz1234567890" target="_blank" rel="noreferrer">google.com/abcdefghijklmnopqrstuvwxyz1..</a>')
+      '<a href="http://google.com/abcdefghijklmnopqrstuvwxyz1234567890" target="_blank" rel="noreferrer" title="http://google.com/abcdefghijklmnopqrstuvwxyz1234567890">google.com/abcdefghijklmnopqrstuvwxyz\u2026</a>')
   })
 
   it('linkifies &room references', () => {

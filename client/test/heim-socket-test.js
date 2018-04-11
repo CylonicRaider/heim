@@ -78,14 +78,22 @@ describe('socket store', () => {
 
   describe('send buffering', () => {
     beforeEach(() => {
+      /* eslint-disable no-console */
       sinon.stub(socket, '_send')
       socket.connect('https://heimhost/test', 'ezzie')
-      sinon.stub(console, 'log')  // eslint-disable-line no-console
+      sinon.stub(console, 'log')
+      sinon.stub(console, 'group')
+      sinon.stub(console, 'groupCollapsed')
+      sinon.stub(console, 'groupEnd')
     })
 
     afterEach(() => {
+      /* eslint-disable no-console */
       socket._send.restore()
-      console.log.restore()  // eslint-disable-line no-console
+      console.groupEnd.restore()
+      console.groupCollapsed.restore()
+      console.group.restore()
+      console.log.restore()
     })
 
     it('should init with empty buffer', () => {
@@ -439,45 +447,52 @@ describe('socket store', () => {
   })
 
   describe('debug logging', () => {
+    /* eslint-disable no-console */
     const testPacket1 = {type: 'test', data: {}, id: 0}
     const testPacket2 = {type: 'test', data: {hello: 'world'}}
 
     beforeEach(() => {
       socket.connect('https://heimhost/test', 'ezzie')
-      sinon.stub(console, 'log')  // eslint-disable-line no-console
+      sinon.stub(console, 'log')
+      sinon.stub(console, 'group')
+      sinon.stub(console, 'groupCollapsed')
+      sinon.stub(console, 'groupEnd')
       socket._logPackets = true
     })
 
     afterEach(() => {
-      console.log.restore()  // eslint-disable-line no-console
+      console.groupEnd.restore()
+      console.groupCollapsed.restore()
+      console.group.restore()
+      console.log.restore()
     })
 
     it('should output packets sent', () => {
       socket.send(testPacket1)
-      sinon.assert.calledWithExactly(console.log, testPacket1)  // eslint-disable-line no-console
+      sinon.assert.calledWithExactly(console.log, testPacket1)
     })
 
     it('should output packets buffered', () => {
       fakeWebSocket.readyState = 0
       socket.send(testPacket1)
-      sinon.assert.calledWithExactly(console.log, testPacket1)  // eslint-disable-line no-console
+      sinon.assert.calledWithExactly(console.log, testPacket1)
     })
 
     it('should output packets received', () => {
       socket._onMessage({data: JSON.stringify(testPacket2)})
-      sinon.assert.calledWithExactly(console.log, testPacket2)  // eslint-disable-line no-console
+      sinon.assert.calledWithExactly(console.log, testPacket2)
     })
 
     it('should output packets sent and response received when sent with log flag', () => {
       socket._logPackets = false
 
       socket.send(testPacket1, true)
-      sinon.assert.calledWithExactly(console.log, testPacket1)  // eslint-disable-line no-console
+      sinon.assert.calledWithExactly(console.log, testPacket1)
 
-      console.log.resetHistory()  // eslint-disable-line no-console
+      console.log.resetHistory()
 
       socket._onMessage({data: JSON.stringify(testPacket1)})
-      sinon.assert.calledWithExactly(console.log, testPacket1)  // eslint-disable-line no-console
+      sinon.assert.calledWithExactly(console.log, testPacket1)
     })
   })
 })

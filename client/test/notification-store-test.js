@@ -15,6 +15,9 @@ describe('notification store', () => {
   let clock
 
   beforeEach(() => {
+    // NOTE: _.debounce apparently doesn't like it when the clock did not
+    //       advance at all, so here, clock.tick() calls should have a
+    //       positive increment (e.g. 1ms).
     clock = support.setupClock()
     clock.tick()
     startTime = Date.now()
@@ -400,7 +403,7 @@ describe('notification store', () => {
         notification.store.onInactive()
         notification.store.storageChange(storageMock)
         simulateMessages(['id1'], mockChatState)
-        clock.tick(0)
+        clock.tick(1)
         sinon.assert.calledOnce(Notification)
       })
 
@@ -444,13 +447,13 @@ describe('notification store', () => {
 
       function checkNotify(opts) {
         it('should ' + (opts.expectFavicon ? '' : 'not ') + 'set favicon', () => {
-          clock.tick(0)
+          clock.tick(1)
           sinon.assert.calledOnce(Heim.setFavicon)
           sinon.assert.calledWithExactly(Heim.setFavicon, opts.expectFavicon ? opts.expectFavicon : '/static/favicon.png')
         })
 
         it('should set correct page title', () => {
-          clock.tick(0)
+          clock.tick(1)
           sinon.assert.calledOnce(Heim.setTitleMsg)
           sinon.assert.calledWithExactly(Heim.setTitleMsg, opts.expectTitleMsg)
         })
@@ -462,11 +465,11 @@ describe('notification store', () => {
             )
             done()
           })
-          clock.tick(0)
+          clock.tick(1)
         })
 
         it('should ' + (opts.expectPopupBody ? '' : 'not ') + 'display a popup', () => {
-          clock.tick(0)
+          clock.tick(1)
           if (opts.expectPopupBody) {
             sinon.assert.calledOnce(Notification)
             sinon.assert.calledWithExactly(Notification, 'ezzie', {
@@ -531,7 +534,7 @@ describe('notification store', () => {
             assert.equal(state.notifications.get('id1'), 'new-message')
             done()
           })
-          clock.tick(0)
+          clock.tick(1)
         })
       })
 
@@ -571,10 +574,10 @@ describe('notification store', () => {
       describe('receiving the same message again', () => {
         it('should not display a popup', () => {
           simulateMessages(['id1'], mockChatState)
-          clock.tick(0)
+          clock.tick(1)
           fakeNotification.close()
           simulateMessages(['id1'], mockChatState)
-          clock.tick(0)
+          clock.tick(1)
           sinon.assert.calledOnce(Notification)
           assert.equal(notification.store.state.notifications.get(message1.id), 'new-message')
         })
@@ -584,7 +587,7 @@ describe('notification store', () => {
         it('should only increment the page title once', () => {
           simulateMessages(['id1'], mockChatState)
           notification.store.messagesChanged(['id1'], mockChatState)
-          clock.tick(0)
+          clock.tick(1)
           sinon.assert.calledOnce(Heim.setTitleMsg)
           sinon.assert.calledWithExactly(Heim.setTitleMsg, 1)
         })
@@ -593,7 +596,7 @@ describe('notification store', () => {
       describe('closing and receiving a new message', () => {
         it('should display a second popup', (done) => {
           simulateMessages(['id1'], mockChatState)
-          clock.tick(0)
+          clock.tick(1)
           fakeNotification.close()
           simulateMessages(['id2'], mockChatState2)
           support.listenOnce(notification.store, (state) => {
@@ -601,14 +604,14 @@ describe('notification store', () => {
             assert.equal(state.notifications.get(message1.id), 'new-message')
             done()
           })
-          clock.tick(0)
+          clock.tick(1)
         })
       })
 
       describe('receiving old messages', () => {
         it('should not replace existing newer notifications', (done) => {
           simulateMessages([message1.id, message2.id, message3.id], mockChatState3)
-          clock.tick(0)
+          clock.tick(1)
           simulateMessages([messageOld.id], mockChatState3Old)
           support.listenOnce(notification.store, (state) => {
             assert.equal(state.notifications.get(message1.id), 'new-message')
@@ -616,7 +619,7 @@ describe('notification store', () => {
             assert.equal(state.notifications.get(message3.id), 'new-message')
             done()
           })
-          clock.tick(0)
+          clock.tick(1)
         })
       })
 
@@ -640,13 +643,13 @@ describe('notification store', () => {
 
           it('should replace an existing new-message notification', () => {
             simulateMessages(['id1'], mockChatState)
-            clock.tick(0)
+            clock.tick(1)
             assert.equal(notification.store.alerts['new-message'].messageId, message1.id)
             sinon.assert.calledOnce(Notification)
             const messageNotification = fakeNotification
 
             notification.store.messagesChanged([message2Reply1.id], mockChatState2OwnReply)
-            clock.tick(0)
+            clock.tick(1)
             assert.equal(notification.store.alerts['new-message'].messageId, message2Reply1.id)
             sinon.assert.calledOnce(messageNotification.close)
             sinon.assert.calledTwice(Notification)
@@ -694,7 +697,7 @@ describe('notification store', () => {
 
           it('if seen before should not add a notification and not display a popup', () => {
             notification.store.messagesChanged([messageMention.id], mockChatStateMentionSeen)
-            clock.tick(0)
+            clock.tick(1)
             sinon.assert.notCalled(Notification)
             sinon.assert.notCalled(Heim.setFavicon)
             assert(!notification.store.state.notifications.has('id3'))
@@ -706,14 +709,14 @@ describe('notification store', () => {
               support.listenOnce(notification.store, (state) => {
                 assert.equal(state.notifications.get(messageMention.id), 'new-mention')
                 notification.store.dismissNotification(messageMention.id)
-                clock.tick(0)
+                clock.tick(1)
                 assert(!notification.store.state.notifications.has(messageMention.id))
                 notification.store.messagesChanged([messageMention.id], mockChatStateMention)
-                clock.tick(0)
+                clock.tick(1)
                 assert(!notification.store.state.notifications.has(messageMention.id))
                 done()
               })
-              clock.tick(0)
+              clock.tick(1)
             })
           })
 
@@ -730,9 +733,9 @@ describe('notification store', () => {
                   sinon.assert.calledOnce(mentionNotification.close)
                   done()
                 })
-                clock.tick(0)
+                clock.tick(1)
               })
-              clock.tick(0)
+              clock.tick(1)
             }
 
             describe('with the message no longer loaded', () => {
@@ -757,7 +760,7 @@ describe('notification store', () => {
               it('should remove the notification and alert', (done) => {
                 testReset(true, done, () => {
                   notification.store.messagesChanged(['__root'], emptyChatState)
-                  clock.tick(0)
+                  clock.tick(1)
                   notification.store.messagesChanged([messageMention.id], mockChatStateMention)
                 })
               })
@@ -776,9 +779,9 @@ describe('notification store', () => {
                   sinon.assert.calledOnce(fakeNotification.close)
                   done()
                 })
-                clock.tick(0)
+                clock.tick(1)
               })
-              clock.tick(0)
+              clock.tick(1)
             })
           })
         })
@@ -797,7 +800,7 @@ describe('notification store', () => {
               })
               done()
             })
-            clock.tick(0)
+            clock.tick(1)
           })
         })
       })
@@ -806,7 +809,7 @@ describe('notification store', () => {
         describe('when joined', () => {
           it('should not set favicon, add a notification, or display a popup', () => {
             notification.store.messagesChanged([message2Reply1.id], mockChatStateOrphan)
-            clock.tick(0)
+            clock.tick(1)
             sinon.assert.notCalled(Heim.setFavicon)
             assert(!notification.store.state.notifications.has(messageMention.id))
             sinon.assert.notCalled(Notification)
@@ -817,7 +820,7 @@ describe('notification store', () => {
       describe('removing an alert with mismatched message id', () => {
         it('should have no effect', () => {
           notification.store.messagesChanged([messageMention.id], mockChatStateMention)
-          clock.tick(0)
+          clock.tick(1)
           sinon.assert.calledOnce(Notification)
           notification.store.removeAlert('new-mention', 'nonexistent')
           sinon.assert.notCalled(fakeNotification.close)
@@ -828,7 +831,7 @@ describe('notification store', () => {
       describe('closing an alert when the browser that doesn\'t call onclose consistently', () => {
         it('should try again in 500ms', () => {
           notification.store.messagesChanged([messageMention.id], mockChatStateMention)
-          clock.tick(0)
+          clock.tick(1)
           sinon.assert.calledOnce(Notification)
           fakeNotification.close = sinon.spy()
           notification.store.closePopup('new-mention')
@@ -840,7 +843,7 @@ describe('notification store', () => {
 
         it('should not try again in 500ms if onclose was called', () => {
           notification.store.messagesChanged([messageMention.id], mockChatStateMention)
-          clock.tick(0)
+          clock.tick(1)
           sinon.assert.calledOnce(Notification)
           notification.store.closePopup('new-mention')
           sinon.assert.calledOnce(fakeNotification.close)
@@ -899,7 +902,7 @@ describe('notification store', () => {
           notification.store.storageChange(storageMock)
           simulateMessages(['id1'], mockChatState)
           Heim.setTitleMsg.resetHistory()
-          clock.tick(0)
+          clock.tick(1)
         })
 
         it('should not open popups', () => {
@@ -917,7 +920,7 @@ describe('notification store', () => {
           notification.store.onInactive()
           notification.store.storageChange(storageMock)
           simulateMessages(['id1'], mockChatState)
-          clock.tick(0)
+          clock.tick(1)
         })
 
         it('should close popup when window becomes active', () => {
@@ -953,7 +956,7 @@ describe('notification store', () => {
         notification.store.onInactive()
         notification.store.storageChange(storageMock)
         simulateMessages(['id1'], mockChatState)
-        clock.tick(0)
+        clock.tick(1)
         sinon.stub(ui, 'gotoMessageInPane')
         window.uiwindow = {focus: sinon.stub()}
       })
@@ -965,7 +968,7 @@ describe('notification store', () => {
 
       it('should replace with another popup', () => {
         simulateMessages(['id2'], mockChatState2)
-        clock.tick(0)
+        clock.tick(1)
         sinon.assert.calledTwice(Notification)
       })
 
@@ -1024,7 +1027,7 @@ describe('notification store', () => {
           })
           clock.tick(seenTime)
         })
-        clock.tick(0)
+        clock.tick(1)
       }
 
       it('should be removed when becoming inactive', (done) => {

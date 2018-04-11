@@ -63,7 +63,7 @@ export default createReactClass({
     ev.preventDefault()
     this._strict = true
     const errors = this._validateFields(this.props.validators, this.state.values, this.props.context)
-    if (!_.any(errors)) {
+    if (!_.some(errors)) {
       this.setState({errors: {}})
       this._strict = false
       this.props.onSubmit(this.state.values)
@@ -128,7 +128,7 @@ export default createReactClass({
         error: !!error,
         isFirstError: firstError,
         message: error,
-        disabled: this.props.working || child.props.type === 'submit' && _.any(validatorErrors),
+        disabled: this.props.working || child.props.type === 'submit' && _.some(validatorErrors),
       }, this._walkChildren(child.props.children, serverErrors, validatorErrors, foundError))
     })
   },

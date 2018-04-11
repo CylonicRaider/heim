@@ -6,6 +6,16 @@ import Immutable from 'immutable'
 import Tree from '../lib/Tree'
 
 
+describe('JS engine', () => {
+  it('reorders object keys', () => {
+    // If this test fails, you might have to update the expectEmit() calls below
+    let obj = {}
+    obj['a'] = null
+    obj['1'] = null
+    assert.deepEqual(Object.keys(obj), ['1', 'a']);
+  })
+})
+
 describe('Tree', () => {
   function debugMap(node, children, depth) {
     return [node.get('id'), depth, children.toArray()]
@@ -73,7 +83,7 @@ describe('Tree', () => {
     })
 
     it('should trigger a change event on the new nodes and root', () => {
-      expectEmit(tree, ['__root', '1', '2'])
+      expectEmit(tree, ['1', '2', '__root'])
     })
 
     it('should visit all nodes in a map traversal', () => {
@@ -200,7 +210,7 @@ describe('Tree', () => {
       })
 
       it('should only trigger a change event for new nodes and the parents of new nodes', () => {
-        expectEmit(tree, ['__root', '0', '1', '3', '9'])
+        expectEmit(tree, ['0', '1', '3', '9', '__root'])
       })
 
       describe('after re-adding the same nodes', () => {
@@ -362,7 +372,7 @@ describe('Tree', () => {
       })
 
       it('should trigger a change event for the old parent, node, and new parent', () => {
-        expectEmit(tree, ['__root', '1', '2'])
+        expectEmit(tree, ['1', '2', '__root'])
       })
 
       it('should visit all nodes in a map traversal', () => {
@@ -543,7 +553,7 @@ describe('Tree', () => {
     })
 
     it('should trigger a change event on the new nodes and root', () => {
-      expectEmit(tree, ['__root', '1', '2'])
+      expectEmit(tree, ['1', '2', '__root'])
     })
 
     describe('after adding a node', () => {

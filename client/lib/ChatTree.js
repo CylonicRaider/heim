@@ -165,7 +165,7 @@ class ChatTree extends Tree {
   }
 
   updateThreads(scores) {
-    const posScores = _.pick(scores, s => s > 0)
+    const posScores = _.pickBy(scores, s => s > 0)
     if (!_.size(scores)) {
       return
     }

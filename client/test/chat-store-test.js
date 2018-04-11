@@ -364,10 +364,13 @@ describe('chat store', () => {
 
   describe('when connected', () => {
     it('should have connected state: true', () => {
-      support.listenOnce(chat.store, (state) => {
-        assert.equal(state.connected, true)
+      let lastState
+      // state will be updated multiple times
+      chat.store.listen((state) => {
+        lastState = state
       })
       chat.store.socketOpen()
+      assert.equal(lastState.connected, true)
     })
 
     it('should send stored passcode authenticaton', (done) => {

@@ -13,12 +13,11 @@ import heimURL from '../heimURL'
 
 
 const autolinker = new Autolinker({
-  twitter: false,
   truncate: 40,
-  replaceFn(self, match) {
+  replaceFn(match) {
     if (match.getType() === 'url') {
       const url = match.getUrl()
-      const tag = self.getTagBuilder().build(match)
+      const tag = this.getTagBuilder().build(match)
 
       if (/^javascript/.test(url.toLowerCase())) {
         // Thanks, Jordan!
@@ -81,16 +80,13 @@ export default createReactClass({
       ReactDOMServer.renderToStaticMarkup(<div className={'emoji emoji-' + emoji.index[name]} title={match}>{match}</div>)
     )
 
-    html = twemoji.replace(html, (match, icon, variant) => {
-      if (variant === '\uFE0E') {
-        return match
-      }
-      const codePoint = emoji.lookupEmojiCharacter(icon)
+    html = twemoji.replace(html, (match) => {
+      const codePoint = emoji.lookupEmojiCharacter(match)
       if (!codePoint) {
         return match
       }
       const emojiName = emoji.names[codePoint] && ':' + emoji.names[codePoint] + ':'
-      return ReactDOMServer.renderToStaticMarkup(<div className={'emoji emoji-' + codePoint} title={emojiName}>{icon}</div>)
+      return ReactDOMServer.renderToStaticMarkup(<div className={'emoji emoji-' + codePoint} title={emojiName}>{match}</div>)
     })
 
     if (!this.props.onlyEmoji) {

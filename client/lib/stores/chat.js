@@ -306,7 +306,7 @@ module.exports.store = Reflux.createStore({
         if (nick) {
           const mention = message.content.match(mentionFindRe)
           // Note: we are relying on hueHash.normalize to strip the preceding and following characters from the mention regex match here.
-          if (mention && _.any(mention, m => hueHash.normalize(m.substr(1)) === hueHash.normalize(nick))) {
+          if (mention && _.some(mention, m => hueHash.normalize(m.substr(1)) === hueHash.normalize(nick))) {
             message._mention = true
           }
         }

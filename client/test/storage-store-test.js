@@ -16,8 +16,8 @@ describe('storage store', () => {
   beforeEach(() => {
     clock = support.setupClock()
     fakeStorage = {}
-    sinon.stub(localStorage, 'getItem', key => fakeStorage[key])
-    sinon.stub(localStorage, 'setItem', (key, value) => {
+    sinon.stub(localStorage, 'getItem').callsFake(key => fakeStorage[key])
+    sinon.stub(localStorage, 'setItem').callsFake((key, value) => {
       fakeStorage[key] = value
     })
     support.resetStore(storage.store)
