@@ -9,10 +9,10 @@ import Tree from '../lib/Tree'
 describe('JS engine', () => {
   it('reorders object keys', () => {
     // If this test fails, you might have to update the expectEmit() calls below
-    let obj = {}
-    obj['a'] = null
+    const obj = {}
+    obj['a'] = null  // eslint-disable-line dot-notation
     obj['1'] = null
-    assert.deepEqual(Object.keys(obj), ['1', 'a']);
+    assert.deepEqual(Object.keys(obj), ['1', 'a'])
   })
 })
 
