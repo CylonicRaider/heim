@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 
 import clamp from '../clamp'
+import forwardProps from '../forwardProps'
 
 
 export default createReactClass({
@@ -238,7 +239,7 @@ export default createReactClass({
 
   render() {
     return (
-      <div {...this.props} onTouchStart={this._intercept('onTouchStart')} onTouchMove={this._intercept('onTouchMove')} onTouchEnd={this._intercept('onTouchEnd')} onTouchCancel={this._intercept('onTouchCancel')}>
+      <div {...forwardProps(this)} onTouchStart={this._intercept('onTouchStart')} onTouchMove={this._intercept('onTouchMove')} onTouchEnd={this._intercept('onTouchEnd')} onTouchCancel={this._intercept('onTouchCancel')}>
         {this.props.children}
       </div>
     )

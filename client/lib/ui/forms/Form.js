@@ -49,7 +49,7 @@ export default createReactClass({
     values[name] = value
     this.setState({
       values: values,
-      errors: _.assign(this.state.errors, this._validateField(name, values), this._clearError),
+      errors: _.assignWith(this.state.errors, this._validateField(name, values), this._clearError),
     })
   },
 
@@ -116,20 +116,26 @@ export default createReactClass({
         firstError = true
       }
 
-      return React.cloneElement(child, {
-        onModify: (value) => {
-          this.onFieldModify(name, value)
-          if (child.props.onModify) {
-            child.props.onModify(value)
-          }
-        },
-        onValidate: () => this.onFieldValidate(name),
+      const newProps = {
         value: this.state.values[name],
-        error: !!error,
-        isFirstError: firstError,
-        message: error,
         disabled: this.props.working || child.props.type === 'submit' && _.some(validatorErrors),
-      }, this._walkChildren(child.props.children, serverErrors, validatorErrors, foundError))
+      }
+      if (child.type !== 'button') {
+        _.extend(newProps, {
+          onModify: (value) => {
+            this.onFieldModify(name, value)
+            if (child.props.onModify) {
+              child.props.onModify(value)
+            }
+          },
+          onValidate: () => this.onFieldValidate(name),
+          error: !!error,
+          isFirstError: firstError,
+          message: error,
+        })
+      }
+
+      return React.cloneElement(child, newProps, this._walkChildren(child.props.children, serverErrors, validatorErrors, foundError))
     })
   },
 

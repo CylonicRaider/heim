@@ -53,7 +53,7 @@ export default function clientRoom() {
     moment.relativeTimeThreshold('s', 0)
     moment.relativeTimeThreshold('m', 60)
 
-    moment.locale('en-short', {
+    moment.defineLocale('en-short', {
       relativeTime: {
         future: 'in %s',
         past: '%s ago',
@@ -71,7 +71,7 @@ export default function clientRoom() {
       },
     })
 
-    moment.locale('en', {
+    moment.updateLocale('en', {
       relativeTime: {
         future: 'in %s',
         past: '%s ago',

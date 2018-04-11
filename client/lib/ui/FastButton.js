@@ -4,6 +4,7 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 
+import forwardProps from '../forwardProps'
 
 // A button that triggers on touch start on mobile to increase responsiveness.
 export default createReactClass({
@@ -68,7 +69,7 @@ export default createReactClass({
     // https://bugzilla.mozilla.org/show_bug.cgi?id=984869#c2
     return React.createElement(
       this.props.component,
-      _.extend({}, this.props, {
+      _.extend(forwardProps(this), {
         onClick: this.onClick,
         onTouchStart: this.onTouchStart,
         onTouchEnd: this.onTouchEnd,

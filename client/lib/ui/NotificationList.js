@@ -1,7 +1,7 @@
 import React from 'react'
 import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
-import ReactTransitionGroup from 'react-transition-group'
+import { TransitionGroup } from 'react-transition-group'
 import Immutable from 'immutable'
 
 import NotificationListItem from './NotificationListItem'
@@ -27,9 +27,9 @@ export default createReactClass({
 
     if (this.props.animate) {
       return (
-        <ReactTransitionGroup component="div" className="notification-list">
+        <TransitionGroup component="div" className="notification-list">
           {notifications}
-        </ReactTransitionGroup>
+        </TransitionGroup>
       )
     }
     return (

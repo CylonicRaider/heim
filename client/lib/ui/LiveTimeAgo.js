@@ -1,9 +1,12 @@
+import _ from 'lodash'
 import React from 'react'
 import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 import classNames from 'classnames'
 import moment from 'moment'
+
+import forwardProps from '../forwardProps'
 
 
 function checkIsMoment(props, propName) {
@@ -42,7 +45,7 @@ export default createReactClass({
     }
 
     return (
-      <time dateTime={t.toISOString()} title={t.format('MMMM Do YYYY, h:mm:ss a')} {...this.props} className={classNames(className, this.props.className)}>
+      <time dateTime={t.toISOString()} title={t.format('MMMM Do YYYY, h:mm:ss a')} {...forwardProps(this.props)} className={classNames(className, this.props.className)}>
         {display}
       </time>
     )

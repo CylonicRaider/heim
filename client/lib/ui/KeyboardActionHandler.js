@@ -1,7 +1,10 @@
+import _ from 'lodash'
 import React from 'react'
 import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import Reflux from 'reflux'
+
+import forwardProps from '../forwardProps'
 
 
 export default createReactClass({
@@ -53,7 +56,7 @@ export default createReactClass({
 
   render() {
     return (
-      <div onKeyDown={this.onKeyDown} {...this.props}>
+      <div onKeyDown={this.onKeyDown} {...forwardProps(this)}>
         {this.props.children}
       </div>
     )

@@ -311,6 +311,7 @@ gulp.task('build', ['build-statics', 'build-browserify', 'build-emails'])
 gulp.task('default', ['build-statics', 'build-emails', 'watch', 'heim-watchify', 'embed-watchify'])
 
 gulp.task('serve-heim', serve({
+  hostname: '0.0.0.0',
   port: 8080,
   root: heimDest,
   middleware: function serveHeim(req, res, next) {
@@ -326,6 +327,7 @@ gulp.task('serve-heim', serve({
 }))
 
 gulp.task('serve-embed', serve({
+  hostname: '0.0.0.0',
   port: 8081,
   root: embedDest,
   middleware: function serveEmbed(req, res, next) {

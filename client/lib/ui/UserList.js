@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
@@ -6,6 +7,7 @@ import classNames from 'classnames'
 
 import chat from '../stores/chat'
 import ui from '../stores/ui'
+import forwardProps from '../forwardProps'
 import MessageText from './MessageText'
 
 
@@ -75,7 +77,7 @@ export default createReactClass({
       return true
     }).toList()
     return (
-      <div className="user-list" {...this.props}>
+      <div className="user-list" {...forwardProps(this)}>
         {people && <div className="list">
           <h1>people</h1>
           {people.map(formatUser).toIndexedSeq()}

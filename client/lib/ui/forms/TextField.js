@@ -73,7 +73,7 @@ export default createReactClass({
           ref="input"
           name={this.props.name}
           type={this.props.inputType}
-          value={this.props.value}
+          value={this.props.value || ''}
           tabIndex={this.props.tabIndex}
           autoFocus={this.props.autoFocus}
           spellCheck={this.props.spellCheck}
