@@ -52,7 +52,7 @@ export default createReactClass({
       const box = this.props.anchorEl.getBoundingClientRect()
       const node = ReactDOM.findDOMNode(this.bubbleElem)
 
-      if (! node) {
+      if (!node) {
         return
       }
 
@@ -76,7 +76,7 @@ export default createReactClass({
     return (
       <CSSTransitionGroup transitionName={this.props.transition} transitionEnterTimeout={150} transitionLeaveTimeout={150}>
         {this.props.visible &&
-          <Popup ref={el => this.bubbleElem = el} key="bubble" className={classNames('bubble', this.props.className)} onDismiss={this.onDismiss}>
+          <Popup ref={(el) => { this.bubbleElem = el }} key="bubble" className={classNames('bubble', this.props.className)} onDismiss={this.onDismiss}>
             {this.props.children}
           </Popup>
         }

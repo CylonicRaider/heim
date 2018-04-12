@@ -60,7 +60,8 @@ export default createReactClass({
           ))}
         </div>
         <div className="action">
-          <select className="command-picker" value={selectedCommand} onChange={this.selectCommand}>
+          {/* HACK: The change event is triggered after the click event, which causes the component to be re-rendered, which would reset the value if not for the click listener. */}
+          <select className="command-picker" value={selectedCommand} onClick={this.selectCommand} onChange={this.selectCommand}>
             <option value="delete">delete</option>
             <option value="ban">ban</option>
             <option value="banIP">IP ban</option>
