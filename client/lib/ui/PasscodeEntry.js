@@ -18,7 +18,6 @@ export default createReactClass({
   },
 
   mixins: [
-    require('react-addons-linked-state-mixin'),
     EntryMixin,
     Reflux.listenTo(chat.store, '_onChatUpdate'),
   ],
@@ -64,7 +63,7 @@ export default createReactClass({
 
   render() {
     let label
-    switch (this.authState) {
+    switch (this.state.authState) {
       case 'trying':
         label = 'trying...'
         break
@@ -80,7 +79,7 @@ export default createReactClass({
         <p className="message">This room requires a passcode.</p>
         <form className="entry focus-target" onSubmit={this.tryPasscode}>
           <label>{label}</label>
-          <input key="passcode" ref="input" type="password" className="entry-text" autoFocus valueLink={this.linkState('value')} disabled={this.state.connected === false} />
+          <input key="passcode" ref="input" type="password" className="entry-text" autoFocus value={this.state.value} onChange={event => this.setState({value: event.target.value})} disabled={this.state.connected === false} />
         </form>
       </div>
     )

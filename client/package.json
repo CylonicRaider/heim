@@ -10,7 +10,6 @@
     "lodash": "~4.17.5",
     "react": "~15.6.2",
     "react-dom": "~15.6.2",
-    "react-addons-linked-state-mixin": "~15.6.2",
     "react-transition-group": "git+https://github.com/reactjs/react-transition-group#v1-stable",
     "react-addons-pure-render-mixin": "~15.6.2",
     "react-html-email": "~2.0.1",

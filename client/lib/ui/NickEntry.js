@@ -16,7 +16,6 @@ export default createReactClass({
   },
 
   mixins: [
-    require('react-addons-linked-state-mixin'),
     EntryMixin,
     Reflux.ListenerMixin,
     Reflux.connect(require('../stores/chat').store, 'chat'),
@@ -48,7 +47,7 @@ export default createReactClass({
         </div>
         <form className="entry focus-target" onSubmit={this.setNick}>
           <label>choose your name to begin:</label>
-          <input key="nick" ref="input" type="text" className="entry-text" autoFocus valueLink={this.linkState('value')} disabled={this.state.chat.connected === false} />
+          <input key="nick" ref="input" type="text" className="entry-text" autoFocus value={this.state.value} onChange={event => this.setState({value: event.target.value})} disabled={this.state.chat.connected === false} />
         </form>
       </div>
     )

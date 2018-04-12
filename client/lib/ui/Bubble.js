@@ -50,7 +50,11 @@ export default createReactClass({
     // orientations when necessary.
     if (this.props.visible && this.props.anchorEl) {
       const box = this.props.anchorEl.getBoundingClientRect()
-      const node = ReactDOM.findDOMNode(this.refs.bubble)
+      const node = ReactDOM.findDOMNode(this.bubbleElem)
+
+      if (! node) {
+        return
+      }
 
       let top = box.top
       top -= Math.max(0, top + node.clientHeight + this.props.edgeSpacing - uiwindow.innerHeight)
@@ -72,7 +76,7 @@ export default createReactClass({
     return (
       <CSSTransitionGroup transitionName={this.props.transition} transitionEnterTimeout={150} transitionLeaveTimeout={150}>
         {this.props.visible &&
-          <Popup ref="bubble" key="bubble" className={classNames('bubble', this.props.className)} onDismiss={this.onDismiss}>
+          <Popup ref={el => this.bubbleElem = el} key="bubble" className={classNames('bubble', this.props.className)} onDismiss={this.onDismiss}>
             {this.props.children}
           </Popup>
         }

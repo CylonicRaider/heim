@@ -11,6 +11,12 @@ Raven.config(process.env.SENTRY_ENDPOINT, {
   tags: {'git_commit': process.env.HEIM_GIT_COMMIT},
 }).install()
 
+// Hack: After Raven is done with it, requestAnimationFrame stops working
+// altogether (for me?)
+window.requestAnimationFrame = function requestAnimationFrameShim(cb) {
+  setTimeout(cb, 0)
+}
+
 const origCaptureException = Raven.captureException
 window.Raven.captureException = function captureException(ex, options) {
   const newOptions = options || {}
