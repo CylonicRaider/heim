@@ -1,4 +1,5 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
 import classNames from 'classnames'
 import Reflux from 'reflux'
 
@@ -7,7 +8,7 @@ import toolbox from '../stores/toolbox'
 import FastButton from './FastButton'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'ManagerToolbox',
 
   mixins: [
@@ -51,16 +52,17 @@ export default React.createClass({
       <div className="manager-toolbox">
         <div className={classNames('items', {'empty': isEmpty})} onCopy={this.onCopy}>
           {isEmpty && 'nothing selected'}
-          {toolboxData.items.toSeq().map(item =>
+          {toolboxData.items.toSeq().map(item => (
             <span key={item.get('kind') + '-' + item.get('id') + '-' + item.get('name', '')} className={classNames('item', item.get('kind'), {'active': item.get('active'), 'removed': item.get('removed')})}>
               {item.has('name') && <div className="name">{item.get('name')}</div>}
               <div className="id">{item.get('id')}</div>
               {item.has('addr') && <div className="addr">{item.get('realAddr') || item.get('addr')}</div>}
             </span>
-          )}
+          ))}
         </div>
         <div className="action">
-          <select className="command-picker" value={selectedCommand} onChange={this.selectCommand}>
+          {/* HACK: The change event is triggered after the click event, which causes the component to be re-rendered, which would reset the value if not for the click listener. */}
+          <select className="command-picker" value={selectedCommand} onClick={this.selectCommand} onChange={this.selectCommand}>
             <option value="delete">delete</option>
             <option value="ban">ban</option>
             <option value="banIP">IP ban</option>

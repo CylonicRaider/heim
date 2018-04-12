@@ -1,5 +1,5 @@
 import _ from 'lodash'
-require('string.fromcodepoint')
+import 'string.fromcodepoint'
 import unicodeIndex from 'emoji-annotation-to-unicode'
 import twemoji from 'twemoji'
 

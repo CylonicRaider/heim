@@ -1,14 +1,16 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import Reflux from 'reflux'
 
 import { Pane } from '../stores/ui'
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'EntryDragHandle',
 
   propTypes: {
-    pane: React.PropTypes.instanceOf(Pane).isRequired,
+    pane: PropTypes.instanceOf(Pane).isRequired,
   },
 
   mixins: [

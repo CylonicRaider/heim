@@ -1,23 +1,25 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import { CSSTransitionGroup } from 'react-transition-group'
 import classNames from 'classnames'
 
 import Popup from './Popup'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'Bubble',
 
   propTypes: {
-    visible: React.PropTypes.bool,
-    anchorEl: React.PropTypes.any,
-    className: React.PropTypes.string,
-    transition: React.PropTypes.string,
-    offset: React.PropTypes.func,
-    edgeSpacing: React.PropTypes.number,
-    onDismiss: React.PropTypes.func,
-    children: React.PropTypes.node,
+    visible: PropTypes.bool,
+    anchorEl: PropTypes.any,
+    className: PropTypes.string,
+    transition: PropTypes.string,
+    offset: PropTypes.func,
+    edgeSpacing: PropTypes.number,
+    onDismiss: PropTypes.func,
+    children: PropTypes.node,
   },
 
   mixins: [require('react-immutable-render-mixin')],
@@ -48,7 +50,11 @@ export default React.createClass({
     // orientations when necessary.
     if (this.props.visible && this.props.anchorEl) {
       const box = this.props.anchorEl.getBoundingClientRect()
-      const node = ReactDOM.findDOMNode(this.refs.bubble)
+      const node = ReactDOM.findDOMNode(this.bubbleElem)
+
+      if (!node) {
+        return
+      }
 
       let top = box.top
       top -= Math.max(0, top + node.clientHeight + this.props.edgeSpacing - uiwindow.innerHeight)
@@ -68,13 +74,13 @@ export default React.createClass({
 
   render() {
     return (
-      <ReactCSSTransitionGroup transitionName={this.props.transition} transitionEnterTimeout={150} transitionLeaveTimeout={150}>
+      <CSSTransitionGroup transitionName={this.props.transition} transitionEnterTimeout={150} transitionLeaveTimeout={150}>
         {this.props.visible &&
-          <Popup ref="bubble" key="bubble" className={classNames('bubble', this.props.className)} onDismiss={this.onDismiss}>
+          <Popup ref={(el) => { this.bubbleElem = el }} key="bubble" className={classNames('bubble', this.props.className)} onDismiss={this.onDismiss}>
             {this.props.children}
           </Popup>
         }
-      </ReactCSSTransitionGroup>
+      </CSSTransitionGroup>
     )
   },
 })

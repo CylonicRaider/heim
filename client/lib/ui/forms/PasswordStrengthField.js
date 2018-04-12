@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import Entropizer from 'entropizer'
 
@@ -7,22 +9,22 @@ import TextField from './TextField'
 
 const entropizer = new Entropizer()
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'PasswordField',
 
   propTypes: {
-    name: React.PropTypes.string.isRequired,
-    label: React.PropTypes.string.isRequired,
-    minEntropy: React.PropTypes.number,
-    showFeedback: React.PropTypes.bool,
-    value: React.PropTypes.object,
-    onModify: React.PropTypes.func,
-    onValidate: React.PropTypes.func,
-    error: React.PropTypes.bool,
-    message: React.PropTypes.string,
-    className: React.PropTypes.string,
-    tabIndex: React.PropTypes.number,
-    disabled: React.PropTypes.bool,
+    name: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    minEntropy: PropTypes.number,
+    showFeedback: PropTypes.bool,
+    value: PropTypes.object,
+    onModify: PropTypes.func,
+    onValidate: PropTypes.func,
+    error: PropTypes.bool,
+    message: PropTypes.string,
+    className: PropTypes.string,
+    tabIndex: PropTypes.number,
+    disabled: PropTypes.bool,
   },
 
   getInitialState() {

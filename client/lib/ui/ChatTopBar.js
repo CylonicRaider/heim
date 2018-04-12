@@ -1,5 +1,8 @@
 const fs = require('fs')  // needs to be a require to work with brfs for now: https://github.com/babel/babelify/issues/81
+
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import Immutable from 'immutable'
 
@@ -11,25 +14,25 @@ import Spinner from './Spinner'
 const hexLeftSVG = fs.readFileSync(__dirname + '/../../res/hex-left-side.svg')
 const hexRightSVG = hexLeftSVG.toString().replace('transform=""', 'transform="translate(7, 0) scale(-1, 1)"')
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'ChatTopBar',
 
   propTypes: {
-    who: React.PropTypes.instanceOf(Immutable.Map),
-    showInfoPaneButton: React.PropTypes.bool,
-    infoPaneOpen: React.PropTypes.bool,
-    collapseInfoPane: React.PropTypes.func,
-    expandInfoPane: React.PropTypes.func,
-    toggleUserList: React.PropTypes.func,
-    roomName: React.PropTypes.string.isRequired,
-    roomTitle: React.PropTypes.string.isRequired,
-    authType: React.PropTypes.string,
-    connected: React.PropTypes.bool,
-    joined: React.PropTypes.bool,
-    isManager: React.PropTypes.bool,
-    managerMode: React.PropTypes.bool,
-    toggleManagerMode: React.PropTypes.func,
-    working: React.PropTypes.bool,
+    who: PropTypes.instanceOf(Immutable.Map),
+    showInfoPaneButton: PropTypes.bool,
+    infoPaneOpen: PropTypes.bool,
+    collapseInfoPane: PropTypes.func,
+    expandInfoPane: PropTypes.func,
+    toggleUserList: PropTypes.func,
+    roomName: PropTypes.string.isRequired,
+    roomTitle: PropTypes.string.isRequired,
+    authType: PropTypes.string,
+    connected: PropTypes.bool,
+    joined: PropTypes.bool,
+    isManager: PropTypes.bool,
+    managerMode: PropTypes.bool,
+    toggleManagerMode: PropTypes.func,
+    working: PropTypes.bool,
   },
 
   mixins: [require('react-immutable-render-mixin')],
@@ -38,7 +41,7 @@ export default React.createClass({
     let people = this.props.who.filter(user =>
       user.get('present') && user.get('name') && !/^bot:/.test(user.get('id')))
     let prevUser
-    people = people.filter(user => {
+    people = people.filter((user) => {
       if (prevUser && user.get('id') === prevUser.get('id') && user.get('name') === prevUser.get('name')) {
         return false
       }
@@ -50,6 +53,7 @@ export default React.createClass({
       user.get('present') && !user.get('name') && !/^bot:/.test(user.get('id')))
     const lurkerCount = lurkers.size
 
+    /* eslint-disable react/no-danger */
     // use an outer container element so we can z-index the bar above the
     // bubbles. this makes the bubbles slide from "underneath" the bar.
     return (

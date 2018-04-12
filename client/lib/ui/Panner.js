@@ -1,21 +1,24 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 
 import clamp from '../clamp'
+import forwardProps from '../forwardProps'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'Panner',
 
   propTypes: {
-    threshold: React.PropTypes.number,
-    smoothing: React.PropTypes.number,
-    sensitivity: React.PropTypes.number,
-    friction: React.PropTypes.number,
-    snapPoints: React.PropTypes.objectOf(React.PropTypes.number),
-    onMove: React.PropTypes.func,
-    children: React.PropTypes.node,
+    threshold: PropTypes.number,
+    smoothing: PropTypes.number,
+    sensitivity: PropTypes.number,
+    friction: PropTypes.number,
+    snapPoints: PropTypes.objectOf(PropTypes.number),
+    onMove: PropTypes.func,
+    children: PropTypes.node,
   },
 
   getDefaultProps() {
@@ -116,12 +119,10 @@ export default React.createClass({
         startY: touch.clientY,
         initX: -this._drag.x,
       })
+    } else if (this._drag.direction) {
+      this._drag.active = false
     } else {
-      if (this._drag.direction) {
-        this._drag.active = false
-      } else {
-        this._drag = null
-      }
+      this._drag = null
     }
   },
 
@@ -238,7 +239,7 @@ export default React.createClass({
 
   render() {
     return (
-      <div {...this.props} onTouchStart={this._intercept('onTouchStart')} onTouchMove={this._intercept('onTouchMove')} onTouchEnd={this._intercept('onTouchEnd')} onTouchCancel={this._intercept('onTouchCancel')}>
+      <div {...forwardProps(this)} onTouchStart={this._intercept('onTouchStart')} onTouchMove={this._intercept('onTouchMove')} onTouchEnd={this._intercept('onTouchEnd')} onTouchCancel={this._intercept('onTouchCancel')}>
         {this.props.children}
       </div>
     )

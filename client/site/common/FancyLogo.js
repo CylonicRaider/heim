@@ -8,11 +8,11 @@ export default function FancyLogo() {
     <div className="fancy-logo">
       <a className="logo" href={heimURL('/room/welcome/')} tabIndex={1}>welcome</a>
       <div className="colors">
-        <div className="a"></div>
-        <div className="b"></div>
-        <div className="c"></div>
-        <div className="d"></div>
-        <div className="e"></div>
+        <div className="a" />
+        <div className="b" />
+        <div className="c" />
+        <div className="d" />
+        <div className="e" />
       </div>
     </div>
   )

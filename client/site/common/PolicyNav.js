@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import heimURL from '../../lib/heimURL'
@@ -19,11 +20,11 @@ export default function PolicyNav(props) {
           <li className="home">
             <a href={heimURL('/')}>&nbsp;</a>
           </li>
-          {items.map(item =>
+          {items.map(item => (
             <li key={item.name} className={classNames(props.selected === item.name && 'selected')}>
               <a href={heimURL('/about/' + item.name)}>{item.caption}</a>
             </li>
-          )}
+          ))}
         </ul>
       </div>
     </nav>
@@ -31,5 +32,5 @@ export default function PolicyNav(props) {
 }
 
 PolicyNav.propTypes = {
-  selected: React.PropTypes.string,
+  selected: PropTypes.string,
 }

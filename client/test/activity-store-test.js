@@ -32,8 +32,8 @@ describe('activity store', () => {
   })
 
   describe('when window focused', () => {
-    it('should set window state focused', done => {
-      support.listenOnce(activity.store, state => {
+    it('should set window state focused', (done) => {
+      support.listenOnce(activity.store, (state) => {
         assert.equal(state.windowFocused, true)
         assert.equal(state.focusChangedAt, Date.now())
         done()
@@ -43,8 +43,8 @@ describe('activity store', () => {
   })
 
   describe('when window blurred', () => {
-    it('should set window state not focused', done => {
-      support.listenOnce(activity.store, state => {
+    it('should set window state not focused', (done) => {
+      support.listenOnce(activity.store, (state) => {
         assert.equal(state.windowFocused, false)
         assert.equal(state.focusChangedAt, Date.now())
         done()
@@ -63,7 +63,7 @@ describe('activity store', () => {
 
   describe('when page interacted with', () => {
     it('should set window state active and trigger becameActive', () => {
-      support.listenOnce(activity.store, state => {
+      support.listenOnce(activity.store, (state) => {
         assert.equal(state.active, true)
       })
       activity.store.touch(roomName)
@@ -75,7 +75,7 @@ describe('activity store', () => {
       it('should not trigger becameActive', () => {
         activity.store.touch()
         clock.tick(1000)
-        activity.becameActive.reset()
+        activity.becameActive.resetHistory()
         activity.store.touch(roomName)
         clock.tick(0)
         sinon.assert.notCalled(activity.becameActive)
@@ -84,7 +84,7 @@ describe('activity store', () => {
 
     it('should after ' + activity.store.idleTime + 'ms set inactive and trigger becameInactive', () => {
       activity.store.touch(roomName)
-      support.listenOnce(activity.store, state => {
+      support.listenOnce(activity.store, (state) => {
         assert.equal(state.active, false)
       })
       clock.tick(activity.store.idleTime)
@@ -93,8 +93,8 @@ describe('activity store', () => {
   })
 
   describe('activity history storage', () => {
-    it('should be read when storage changes', done => {
-      support.listenOnce(activity.store, state => {
+    it('should be read when storage changes', (done) => {
+      support.listenOnce(activity.store, (state) => {
         assert.equal(state.lastActive[roomName], 4321)
         assert.equal(state.lastVisit[roomName], 1234)
         done()
@@ -114,7 +114,7 @@ describe('activity store', () => {
       activity.store.touch(roomName)
       sinon.assert.calledOnce(storage.setRoom)
       sinon.assert.calledWithExactly(storage.setRoom, roomName, 'lastActive', firstTouchTime)
-      storage.setRoom.reset()
+      storage.setRoom.resetHistory()
       clock.tick(1000)
       const lastTouchTime = Date.now()
       activity.store.touch(roomName)
@@ -135,7 +135,7 @@ describe('activity store', () => {
       })
       clock.tick(activity.store.absenceTime)
       const lastTouchTime = Date.now()
-      storage.setRoom.reset()
+      storage.setRoom.resetHistory()
       activity.store.touch(roomName)
       clock.tick(activity.store.flushTime)
       sinon.assert.calledTwice(storage.setRoom)

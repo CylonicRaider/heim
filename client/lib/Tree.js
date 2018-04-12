@@ -87,7 +87,7 @@ export default class Tree {
 
   _updateChanged(changed) {
     if (!_.isEmpty(changed)) {
-      const updateNode = node => {
+      const updateNode = (node) => {
         const nodeId = node.get('id')
         const existing = this.index[nodeId]
         if (!Immutable.is(node, existing)) {
@@ -99,7 +99,7 @@ export default class Tree {
       this.updateFunc(changed, updateNode)
 
       const changedIds = _.keys(changed)
-      _.each(changedIds, id => {
+      _.each(changedIds, (id) => {
         this.changes.emit(id, this.index[id])
       })
       this.changes.emit('__all', changedIds)
@@ -111,15 +111,13 @@ export default class Tree {
 
     const _changed = {}
     const _needsSort = {}
-    _.each(entryArray, entry => {
+    _.each(entryArray, (entry) => {
       this._add(entry, _changed, _needsSort)
     })
 
     if (!_sorted) {
       _.each(_needsSort, (x, id) => {
-        const resorted = this.index[id].get('children').sortBy(childId => {
-          return this.index[childId].get(this.sortProp)
-        })
+        const resorted = this.index[id].get('children').sortBy(childId => this.index[childId].get(this.sortProp))
         this.index[id] = this.index[id].set('children', resorted)
 
         // if parent now matches the original one, no need to emit the change
@@ -136,7 +134,7 @@ export default class Tree {
     const idArray = _.isArray(ids) ? ids : [ids]
 
     const changed = {}
-    _.each(idArray, id => {
+    _.each(idArray, (id) => {
       const old = this.index[id]
       this.index[id] = this.index[id].mergeDeep(data)
       if (old !== this.index[id]) {
@@ -168,7 +166,7 @@ export default class Tree {
 
   lazyMapDFS(visit, thisArg, nodeId = '__root', depth = 0) {
     const node = this.index[nodeId]
-    const children = node.get('children').toSeq().map((childId) =>
+    const children = node.get('children').toSeq().map(childId =>
       this.lazyMapDFS(visit, thisArg, childId, depth + 1)
     )
 

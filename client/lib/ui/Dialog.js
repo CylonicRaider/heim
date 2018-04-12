@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import Popup from './Popup'
@@ -6,15 +8,15 @@ import FastButton from './FastButton'
 import Spinner from './Spinner'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'Dialog',
 
   propTypes: {
-    title: React.PropTypes.string,
-    working: React.PropTypes.bool,
-    onClose: React.PropTypes.func,
-    className: React.PropTypes.string,
-    children: React.PropTypes.node,
+    title: PropTypes.string,
+    working: PropTypes.bool,
+    onClose: PropTypes.func,
+    className: PropTypes.string,
+    children: PropTypes.node,
   },
 
   onShadeClick(ev) {
@@ -24,6 +26,7 @@ export default React.createClass({
   },
 
   render() {
+    /* eslint-disable jsx-a11y/click-events-have-key-events */
     return (
       <div className="dim-shade dialog-cover fill" ref="shade" onClick={this.onShadeClick}>
         <Popup className={classNames('dialog', this.props.className)}>

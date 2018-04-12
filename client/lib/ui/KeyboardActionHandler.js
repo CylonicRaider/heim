@@ -1,14 +1,18 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 
+import forwardProps from '../forwardProps'
 
-export default React.createClass({
+
+export default createReactClass({
   displayName: 'KeyboardActionHandler',
 
   propTypes: {
-    listenTo: React.PropTypes.func,
-    keys: React.PropTypes.objectOf(React.PropTypes.func),
-    children: React.PropTypes.node,
+    listenTo: PropTypes.func,
+    keys: PropTypes.objectOf(PropTypes.func),
+    children: PropTypes.node,
   },
 
   mixins: [
@@ -51,7 +55,7 @@ export default React.createClass({
 
   render() {
     return (
-      <div onKeyDown={this.onKeyDown} {...this.props}>
+      <div onKeyDown={this.onKeyDown} {...forwardProps(this)}>
         {this.props.children}
       </div>
     )

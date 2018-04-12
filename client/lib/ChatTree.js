@@ -17,8 +17,8 @@ const initCount = Immutable.Map({
 const numericFields = initCount.filter(v => _.isNumber(v)).keySeq().cacheResult()
 
 function mergeCount(origCount, newCount) {
-  return origCount.withMutations(count => {
-    numericFields.forEach(k => {
+  return origCount.withMutations((count) => {
+    numericFields.forEach((k) => {
       count.set(k, count.get(k) + newCount.get(k))
     })
 
@@ -33,8 +33,8 @@ function mergeCount(origCount, newCount) {
 
 function subtractCount(origCount, newCount) {
   // this only works for numeric counts
-  return origCount.withMutations(count => {
-    numericFields.forEach(k => {
+  return origCount.withMutations((count) => {
+    numericFields.forEach((k) => {
       count.set(k, count.get(k) - newCount.get(k))
     })
   })
@@ -78,10 +78,10 @@ class ChatTree extends Tree {
   }
 
   calculateDescendantCount(id, skip) {
-    return initCount.withMutations(count => {
+    return initCount.withMutations((count) => {
       Immutable.Seq(this.iterChildrenOf(id))
         .skip(skip || 0)
-        .forEach(child => {
+        .forEach((child) => {
           const childDescendantCount = child.get('$count', initCount)
           mergeCount(count, childDescendantCount)
           const childNodeCount = this.calculateNodeCount(child)
@@ -104,7 +104,7 @@ class ChatTree extends Tree {
     // the ability to mark ancestors to recalculate based on their children
     // instead of incremental update.
 
-    const queue = _.pairs(oldNodes)
+    const queue = _.toPairs(oldNodes)
     const seen = _.mapValues(oldNodes, () => true)
 
     const scores = {}
@@ -145,10 +145,10 @@ class ChatTree extends Tree {
       const deltaCount = subtractCount(nodeSelfCount, oldNodeSelfCount)
 
       // walk ancestors, updating with this node's change in count
-      ancestors.forEach(ancestor => {  // eslint-disable-line no-loop-func
+      ancestors.forEach((ancestor) => {  // eslint-disable-line no-loop-func
         const ancestorId = ancestor.get('id')
         if (ancestorId === '__root') {
-          return false
+          return
         }
 
         const ancestorDescendantCount = ancestor.get('$count', initCount)
@@ -165,7 +165,7 @@ class ChatTree extends Tree {
   }
 
   updateThreads(scores) {
-    const posScores = _.pick(scores, s => s > 0)
+    const posScores = _.pickBy(scores, s => s > 0)
     if (!_.size(scores)) {
       return
     }
@@ -189,7 +189,7 @@ class ChatTree extends Tree {
         // because new threads will find the correct parent using the logic
         // above.
         if (this.threads.get(parentId)) {
-          Immutable.Seq(this.threads.iterChildrenOf(parentId)).forEach(child => {
+          Immutable.Seq(this.threads.iterChildrenOf(parentId)).forEach((child) => {
             const childId = child.get('id')
             const isChild = Immutable.Seq(this.iterAncestorsOf(childId))
               .some(ancestor => ancestor.get('id') === threadId)

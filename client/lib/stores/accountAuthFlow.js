@@ -76,7 +76,7 @@ module.exports.store = Reflux.createStore({
   },
 
   loginFailed(data) {
-    this.triggerUpdate(this.state.withMutations(state => {
+    this.triggerUpdate(this.state.withMutations((state) => {
       const step = state.get('step')
       if (step === 'signin' || step === 'forgot') {
         state.set('working', false)
@@ -105,7 +105,7 @@ module.exports.store = Reflux.createStore({
   },
 
   registerFailed(data) {
-    this.triggerUpdate(this.state.withMutations(state => {
+    this.triggerUpdate(this.state.withMutations((state) => {
       if (state.get('step') === 'register') {
         state.set('working', false)
         if (data.reason === 'personal identity already in use') {
@@ -133,7 +133,7 @@ module.exports.store = Reflux.createStore({
   },
 
   resetPasswordFailed(data) {
-    this.triggerUpdate(this.state.withMutations(state => {
+    this.triggerUpdate(this.state.withMutations((state) => {
       if (state.get('step') === 'forgot') {
         state.set('working', false)
         if (data.error === 'account not found') {

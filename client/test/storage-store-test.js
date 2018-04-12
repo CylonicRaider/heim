@@ -16,10 +16,8 @@ describe('storage store', () => {
   beforeEach(() => {
     clock = support.setupClock()
     fakeStorage = {}
-    sinon.stub(localStorage, 'getItem', key => {
-      return fakeStorage[key]
-    })
-    sinon.stub(localStorage, 'setItem', (key, value) => {
+    sinon.stub(localStorage, 'getItem').callsFake(key => fakeStorage[key])
+    sinon.stub(localStorage, 'setItem').callsFake((key, value) => {
       fakeStorage[key] = value
     })
     support.resetStore(storage.store)
@@ -38,10 +36,10 @@ describe('storage store', () => {
       assert.equal(storage.load.sync, true)
     })
 
-    it('should load JSON from localStorage upon load with default empty room index', done => {
+    it('should load JSON from localStorage upon load with default empty room index', (done) => {
       fakeStorage.data = JSON.stringify({it: 'works'})
 
-      support.listenOnce(storage.store, state => {
+      support.listenOnce(storage.store, (state) => {
         assert.deepEqual(state, {it: 'works', room: {}})
         done()
       })
@@ -77,14 +75,14 @@ describe('storage store', () => {
     it('should not save unchanged values', () => {
       storage.store.set(testKey, testValue)
       clock.tick(SLEEP_TIME)
-      localStorage.setItem.reset()
+      localStorage.setItem.resetHistory()
       storage.store.set(testKey, testValue)
       clock.tick(SLEEP_TIME)
       sinon.assert.notCalled(localStorage.setItem)
     })
 
-    it('should trigger an update event', done => {
-      support.listenOnce(storage.store, state => {
+    it('should trigger an update event', (done) => {
+      support.listenOnce(storage.store, (state) => {
         assert.equal(state[testKey], testValue)
         done()
       })
@@ -119,17 +117,17 @@ describe('storage store', () => {
 
       storage.store.setRoom(testRoom, testKey, testValue)
       clock.tick(SLEEP_TIME)
-      localStorage.setItem.reset()
+      localStorage.setItem.resetHistory()
       storage.store.setRoom(testRoom, testKey, testValue)
       clock.tick(SLEEP_TIME)
       sinon.assert.notCalled(localStorage.setItem)
     })
 
-    it('should create room config object and trigger an update event', done => {
+    it('should create room config object and trigger an update event', (done) => {
       fakeStorage.data = JSON.stringify({})
       storage.store.load()
 
-      support.listenOnce(storage.store, state => {
+      support.listenOnce(storage.store, (state) => {
         assert.deepEqual(state.room.ezzie[testKey], testValue)
         done()
       })
@@ -154,8 +152,8 @@ describe('storage store', () => {
       storage.store.load()
     })
 
-    it('should update state and trigger an update', done => {
-      support.listenOnce(storage.store, state => {
+    it('should update state and trigger an update', (done) => {
+      support.listenOnce(storage.store, (state) => {
         assert.equal(state.hello, 'ezzie')
         done()
       })
@@ -177,30 +175,33 @@ describe('storage store', () => {
       storage.store.trigger.restore()
     })
 
-    it('should not change dirty values pending save', done => {
+    it('should not change dirty values pending save', (done) => {
       storage.store.set('hello', {to: 'ezzie'})
       storage.store.setRoom('test', 'foo', 'bar')
       storage.store.setRoom('test', 'hello', {to: 'ezzie'})
-      support.listenOnce(storage.store, state => {
+      support.listenOnce(storage.store, (state) => {
         assert.deepEqual(state.hello, {to: 'ezzie'})
         assert.deepEqual(state.room.test, {foo: 'bar', hello: {to: 'ezzie'}})
         done()
       })
-      storage.store.storageChange({key: 'data', newValue: JSON.stringify({
-        'hello': {from: 'max'},
-        'test': 'abcdef',
-        'room': {
-          'test': {
-            'hello': {from: 'max'},
+      storage.store.storageChange({
+        key: 'data',
+        newValue: JSON.stringify({
+          'hello': {from: 'max'},
+          'test': 'abcdef',
+          'room': {
+            'test': {
+              'hello': {from: 'max'},
+            },
           },
-        },
-      })})
+        }),
+      })
     })
 
-    it('should change previously dirty values after a save', done => {
+    it('should change previously dirty values after a save', (done) => {
       storage.store.set('hello', 'ezzie')
       clock.tick(SLEEP_TIME)
-      support.listenOnce(storage.store, state => {
+      support.listenOnce(storage.store, (state) => {
         assert.equal(state.hello, 'max')
         done()
       })
@@ -220,8 +221,8 @@ describe('storage store', () => {
     })
 
     describe('load action', () => {
-      it('should initialize with empty store data and room index', done => {
-        support.listenOnce(storage.store, state => {
+      it('should initialize with empty store data and room index', (done) => {
+        support.listenOnce(storage.store, (state) => {
           assert.deepEqual(state, {room: {}})
           done()
         })
@@ -238,7 +239,7 @@ describe('storage store', () => {
     describe('set action', () => {
       beforeEach(() => {
         storage.store.load()
-        console.warn.reset()  // eslint-disable-line no-console
+        console.warn.resetHistory()  // eslint-disable-line no-console
       })
 
       it('should log a warning', () => {

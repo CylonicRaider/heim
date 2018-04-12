@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import classNames from 'classnames'
 import Reflux from 'reflux'
@@ -10,13 +12,13 @@ import LiveTimeAgo from './LiveTimeAgo'
 import TreeNodeMixin from './TreeNodeMixin'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'NotificationListItem',
 
   propTypes: {
-    nodeId: React.PropTypes.string.isRequired,
-    kind: React.PropTypes.string.isRequired,
-    onClick: React.PropTypes.func,
+    nodeId: PropTypes.string.isRequired,
+    kind: PropTypes.string.isRequired,
+    onClick: PropTypes.func,
   },
 
   mixins: [

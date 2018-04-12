@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 
 export default function HeimAttachPoint(props) {
@@ -6,5 +7,5 @@ export default function HeimAttachPoint(props) {
 }
 
 HeimAttachPoint.propTypes = {
-  id: React.PropTypes.string,
+  id: PropTypes.string,
 }

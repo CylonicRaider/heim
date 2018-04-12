@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import MarkdownIt from 'markdown-it'
 
 
@@ -24,12 +25,13 @@ const md = new MarkdownIt()
   })
 
 export default function Markdown(props) {
+  /* eslint-disable react/no-danger */
   return (
     <div className={props.className} dangerouslySetInnerHTML={{__html: md.render(props.content)}} />
   )
 }
 
 Markdown.propTypes = {
-  className: React.PropTypes.string,
-  content: React.PropTypes.string,
+  className: PropTypes.string,
+  content: PropTypes.string,
 }

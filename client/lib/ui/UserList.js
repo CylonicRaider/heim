@@ -1,18 +1,21 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 import classNames from 'classnames'
 
 import chat from '../stores/chat'
 import ui from '../stores/ui'
+import forwardProps from '../forwardProps'
 import MessageText from './MessageText'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'UserList',
 
   propTypes: {
-    users: React.PropTypes.instanceOf(Immutable.Map),
-    selected: React.PropTypes.instanceOf(Immutable.Set),
+    users: PropTypes.instanceOf(Immutable.Map),
+    selected: PropTypes.instanceOf(Immutable.Set),
   },
 
   mixins: [require('react-immutable-render-mixin')],
@@ -43,7 +46,7 @@ export default React.createClass({
       .sortBy(user => user.get('name').toLowerCase())
       .groupBy(user => /^bot:/.test(user.get('id')) ? 'bot' : 'human')
 
-    const formatUser = user => {
+    const formatUser = (user) => {
       const sessionId = user.get('session_id')
       const selected = this.props.selected.has(sessionId)
       return (
@@ -65,7 +68,7 @@ export default React.createClass({
 
     let prevUser
     let people = list.get('human')
-    people = people && people.filter(user => {
+    people = people && people.filter((user) => {
       if (prevUser && user.get('id') === prevUser.get('id') && user.get('name') === prevUser.get('name')) {
         return false
       }
@@ -74,7 +77,7 @@ export default React.createClass({
     }).toList()
     const bots = list.get('bot')
     return (
-      <div className="user-list" {...this.props}>
+      <div className="user-list" {...forwardProps(this)}>
         {people && <div className="list">
           <h1>people</h1>
           {people.map(formatUser).toIndexedSeq()}

@@ -4,21 +4,22 @@ import EventEmitter from 'eventemitter3'
 
 
 function logPacket(kind, data, highlight) {
+  /* eslint-disable no-console */
   const group = highlight ? 'group' : 'groupCollapsed'
   const colors = {
     'send': 'green',
     'recv': '#06f',
     'buffered-send': 'gray',
   }
-  console[group](  // eslint-disable-line no-console
+  console[group](
     '%c%s %c%s %c%s',
     'color: ' + colors[kind], kind,
     'color: black', data.type,
     highlight ? 'background: #efb' : 'color: gray; font-weight: normal', data.id ? '(id: ' + data.id + ')' : '(no id)'
   )
-  console.log(data)  // eslint-disable-line no-console
-  console.log(JSON.stringify(data, true, 2))  // eslint-disable-line no-console
-  console.groupEnd()  // eslint-disable-line no-console
+  console.log(data)
+  console.log(JSON.stringify(data, true, 2))
+  console.groupEnd()
 }
 
 

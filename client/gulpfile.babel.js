@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 // string.js (a dep) clashes with core-js string polyfill, so require first
 import 'markdown-it-anchor'
 import 'babel-polyfill'
@@ -5,7 +6,6 @@ import 'babel-polyfill'
 import _ from 'lodash'
 import merge from 'merge-stream'
 import gulp from 'gulp'
-import gutil from 'gulp-util'
 import gfile from 'gulp-file'
 import gzip from 'gulp-gzip'
 import gtemplate from 'gulp-template'
@@ -23,6 +23,11 @@ import fs from 'fs'
 import path from 'path'
 import ReactHTMLEmail from 'react-html-email'
 import { exec } from 'child_process'
+import colors from 'ansi-colors'
+import log from 'fancy-log'
+import through2 from 'through2'
+import babelify from 'babelify'
+import brfs from 'brfs'
 
 let watching = false
 const heimDest = './build/heim'
@@ -40,7 +45,7 @@ const heimOptions = {
 
 // via https://github.com/tblobaum/git-rev
 function shell(cmd, cb) {
-  exec(cmd, { cwd: __dirname }, function onExecResult(err, stdout) {
+  exec(cmd, { cwd: __dirname }, (err, stdout) => {
     if (err) {
       throw err
     }
@@ -51,12 +56,12 @@ function shell(cmd, cb) {
 // FIXME: replace with a more robust js loader
 function reload(moduleName) {
   delete require.cache[require.resolve(moduleName)]
-  return require(moduleName)
+  return require(moduleName)  // eslint-disable-line import/no-dynamic-require
 }
 
 function handleError(title) {
   return function handler(err) {
-    gutil.log(gutil.colors.red(title + ':'), err.message)
+    log(colors.red(title + ':'), err.message)
     if (watching) {
       this.emit('end')
     } else {
@@ -65,26 +70,32 @@ function handleError(title) {
   }
 }
 
+function heimBrowserify(files, args) {
+  return browserify(files, args)
+    .transform(babelify, {presets: ['env', 'react', 'stage-2']})
+    .transform(brfs)
+}
+
 function heimBundler(args) {
-  return browserify('./lib/client.js', args)
+  return heimBrowserify('./lib/client.js', args)
     .transform(envify(heimOptions))
 }
 
 function embedBundler(args) {
-  return browserify('./lib/embed.js', args)
+  return heimBrowserify('./lib/embed.js', args)
     .transform(envify({
       HEIM_ORIGIN: process.env.HEIM_ORIGIN,
     }))
 }
 
-gulp.task('heim-git-commit', done => {
-  shell('git rev-parse HEAD', gitRev => {
+gulp.task('heim-git-commit', (done) => {
+  shell('git rev-parse HEAD', (gitRev) => {
     process.env.HEIM_GIT_COMMIT = heimOptions.HEIM_GIT_COMMIT = gitRev
     done()
   })
 })
 
-gulp.task('heim-js', ['heim-git-commit', 'heim-less'], () => {
+gulp.task('heim-js', ['heim-git-commit'], () => {
   return heimBundler({debug: true})
     // share some libraries with the global namespace
     // doing this here because these exposes trip up watchify atm
@@ -98,7 +109,7 @@ gulp.task('heim-js', ['heim-git-commit', 'heim-less'], () => {
     .pipe(source('main.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-      .pipe(process.env.NODE_ENV === 'production' ? uglify() : gutil.noop())
+    .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
     .pipe(sourcemaps.write('./', {includeContent: true}))
     .on('error', handleError('heim browserify error'))
     .pipe(gulp.dest(heimStaticDest))
@@ -108,7 +119,7 @@ gulp.task('heim-js', ['heim-git-commit', 'heim-less'], () => {
 
 gulp.task('fast-touch-js', () => {
   return gulp.src('./site/lib/fast-touch.js')
-    .pipe(process.env.NODE_ENV === 'production' ? uglify() : gutil.noop())
+    .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
     .on('error', handleError('fastTouch browserify error'))
     .pipe(gulp.dest(heimStaticDest))
 })
@@ -119,7 +130,7 @@ gulp.task('embed-js', () => {
     .pipe(source('embed.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-      .pipe(process.env.NODE_ENV === 'production' ? uglify() : gutil.noop())
+    .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
     .pipe(sourcemaps.write('./', {includeContent: true}))
     .on('error', handleError('embed browserify error'))
     .pipe(gulp.dest(embedDest))
@@ -128,8 +139,8 @@ gulp.task('embed-js', () => {
 })
 
 gulp.task('raven-js', ['heim-git-commit', 'heim-js'], () => {
-  shell('md5sum build/main.js | cut -d " " -f 1', releaseHash => {
-    return browserify('./lib/raven.js')
+  shell('md5sum build/heim/static/main.js | cut -d " " -f 1', (releaseHash) => {
+    return heimBrowserify('./lib/raven.js')
       .transform(envify(_.extend({
         SENTRY_ENDPOINT: process.env.SENTRY_ENDPOINT,
         HEIM_RELEASE: releaseHash,
@@ -137,7 +148,7 @@ gulp.task('raven-js', ['heim-git-commit', 'heim-js'], () => {
       .bundle()
       .pipe(source('raven.js'))
       .pipe(buffer())
-      .pipe(process.env.NODE_ENV === 'production' ? uglify() : gutil.noop())
+      .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
       .on('error', handleError('raven browserify error'))
       .pipe(gulp.dest(heimStaticDest))
       .pipe(gzip())
@@ -160,7 +171,7 @@ gulp.task('emoji-static', () => {
   const emoji = require('./lib/emoji').default
   const twemojiPath = path.dirname(require.resolve('twemoji')) + '/svg/'
   const leadingZeroes = /^0*/
-  const lessSource = _.map(emoji.codes, code => {
+  const lessSource = _.map(emoji.codes, (code) => {
     if (!code) {
       return ''
     }
@@ -221,7 +232,7 @@ gulp.task('site-templates', ['heim-git-commit'], () => {
     'about/dmca',
   ]
 
-  return merge(_.map(pages, name => {
+  return merge(_.map(pages, (name) => {
     const html = page.render(reload('./site/' + name))
     return gfile(name + '.html', html, {src: true})
   }))
@@ -234,13 +245,13 @@ gulp.task('email-templates', () => {
   const renderEmail = require('react-html-email').renderEmail
   const emails = ['welcome', 'room-invitation', 'room-invitation-welcome', 'verification', 'password-changed', 'password-reset']
 
-  const htmls = merge(_.map(emails, name => {
+  const htmls = merge(_.map(emails, (name) => {
     const html = renderEmail(reload('./emails/' + name))
     return gfile(name + '.html', html, {src: true})
   }))
 
   const txtCommon = reload('./emails/common-txt.js').default
-  const txts = merge(_.map(emails, name => {
+  const txts = merge(_.map(emails, (name) => {
     return gulp.src('./emails/' + name + '.txt')
       .pipe(gtemplate(txtCommon))
   }))
@@ -271,7 +282,7 @@ function watchifyTask(name, bundler, outFile, dest) {
         .pipe(gulp.dest(dest))
     }
 
-    watchBundler.on('log', gutil.log.bind(gutil, gutil.colors.green('JS (' + name + ')')))
+    watchBundler.on('log', log.bind(null, colors.green('JS (' + name + ')')))
     watchBundler.on('update', rebundle)
     return rebundle()
   })
@@ -300,6 +311,7 @@ gulp.task('build', ['build-statics', 'build-browserify', 'build-emails'])
 gulp.task('default', ['build-statics', 'build-emails', 'watch', 'heim-watchify', 'embed-watchify'])
 
 gulp.task('serve-heim', serve({
+  hostname: '0.0.0.0',
   port: 8080,
   root: heimDest,
   middleware: function serveHeim(req, res, next) {
@@ -315,6 +327,7 @@ gulp.task('serve-heim', serve({
 }))
 
 gulp.task('serve-embed', serve({
+  hostname: '0.0.0.0',
   port: 8081,
   root: embedDest,
   middleware: function serveEmbed(req, res, next) {

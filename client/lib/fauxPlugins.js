@@ -1,6 +1,8 @@
-/* eslint-disable react/no-multi-comp */
+/* eslint-disable react/no-multi-comp, react/no-danger */
 
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 import Immutable from 'immutable'
 import moment from 'moment'
@@ -8,83 +10,77 @@ import moment from 'moment'
 
 export default function initPlugins(roomName) {
   if (roomName === 'thedrawingroom' || roomName === 'lovenest' || roomName === 'has') {
-    Heim.hook('page-bottom', () => {
-      return (
-        <style key="drawingroom-style" dangerouslySetInnerHTML={{__html: `
-          .chat-pane.timestamps-visible {
-            background: #333;
-          }
+    Heim.hook('page-bottom', () => (
+      <style key="drawingroom-style" dangerouslySetInnerHTML={{__html: `
+        .chat-pane.timestamps-visible {
+          background: #333;
+        }
 
-          .main-pane .room .name,
-          .info-pane .thread-list .thread .info .title {
-            color: #222;
-          }
+        .main-pane .room .name,
+        .info-pane .thread-list .thread .info .title {
+          color: #222;
+        }
 
-          .chat-pane time {
-            opacity: .5;
-          }
+        .chat-pane time {
+          opacity: .5;
+        }
 
-          .main-pane .room .state,
-          .nick {
-            background: #e8e8e8 !important;
-          }
+        .main-pane .room .state,
+        .nick {
+          background: #e8e8e8 !important;
+        }
 
-          .message-emote {
-            background: #f3f3f3 !important;
-          }
+        .message-emote {
+          background: #f3f3f3 !important;
+        }
 
-          .mention-nick {
-            color: #000 !important;
-            font-weight: bold;
-          }
+        .mention-nick {
+          color: #000 !important;
+          font-weight: bold;
+        }
 
-          a {
-            color: #444;
-            text-decoration: none;
-            font-weight: bold;
-          }
-        `}} />
-      )
-    })
+        a {
+          color: #444;
+          text-decoration: none;
+          font-weight: bold;
+        }
+      `}} />
+    ))
   }
 
   if (roomName === 'space') {
     const Embed = require('./ui/Embed').default
 
-    Heim.hook('main-sidebar', () => {
-      return (
-        <div key="norman" className="norman">
-          <p>norman</p>
-          <Embed kind="imgur" imgur_id="UKbitCO" />
-        </div>
-      )
-    })
+    Heim.hook('main-sidebar', () => (
+      <div key="norman" className="norman">
+        <p>norman</p>
+        <Embed kind="imgur" imgur_id="UKbitCO" />
+      </div>
+    ))
 
-    Heim.hook('page-bottom', () => {
-      return (
-        <style key="norman-style" dangerouslySetInnerHTML={{__html: `
-          .norman {
-            opacity: .5;
-            transition: opacity .15s ease;
-          }
+    Heim.hook('page-bottom', () => (
+      <style key="norman-style" dangerouslySetInnerHTML={{__html: `
+        .norman {
+          opacity: .5;
+          transition: opacity .15s ease;
+        }
 
-          .norman:hover {
-            opacity: 1;
-          }
+        .norman:hover {
+          opacity: 1;
+        }
 
-          .norman p {
-            margin: 0;
-            font-size: 12px;
-          }
+        .norman p {
+          margin: 0;
+          font-size: 12px;
+        }
 
-          .norman .embed {
-            width: 100% !important;
-            height: 87px;
-            border: none;
-          }
-        `}} />
-      )
-    })
+        .norman .embed {
+          width: 100% !important;
+          height: 87px;
+          border: none;
+        }
+      `}} />
+    ))
   }
 
   if (roomName === 'music' || roomName === 'youtube' || roomName === 'rmusic' || roomName === 'listentothis') {
@@ -92,7 +88,7 @@ export default function initPlugins(roomName) {
     const MessageText = require('./ui/MessageText').default
 
     let clientTimeOffset = 0
-    Heim.chat.store.socket.on('receive', ev => {
+    Heim.chat.store.socket.on('receive', (ev) => {
       if (ev.type === 'ping-event') {
         clientTimeOffset = Date.now() / 1000 - ev.data.time
       }
@@ -142,15 +138,15 @@ export default function initPlugins(roomName) {
       },
     })
 
-    const SyncedEmbed = React.createClass({
+    const SyncedEmbed = createReactClass({
       displayName: 'SyncedEmbed',
 
       propTypes: {
-        messageId: React.PropTypes.string,
-        youtubeId: React.PropTypes.string,
-        youtubeTime: React.PropTypes.number,
-        startedAt: React.PropTypes.number,
-        className: React.PropTypes.string,
+        messageId: PropTypes.string,
+        youtubeId: PropTypes.string,
+        youtubeTime: PropTypes.number,
+        startedAt: PropTypes.number,
+        className: PropTypes.string,
       },
 
       shouldComponentUpdate(nextProps) {
@@ -192,7 +188,7 @@ export default function initPlugins(roomName) {
       },
     })
 
-    const YouTubePane = React.createClass({
+    const YouTubePane = createReactClass({
       displayName: 'YouTubePane',
 
       mixins: [
@@ -227,17 +223,15 @@ export default function initPlugins(roomName) {
       return hours * 3600 + minutes * 60 + seconds
     }
 
-    Heim.hook('thread-panes', () => {
-      return <YouTubePane key="youtube-tv" />
-    })
+    Heim.hook('thread-panes', () => <YouTubePane key="youtube-tv" />)
 
     Heim.hook('main-pane-top', function YouTubeTVInject() {
       return this.state.ui.thin ? <YouTubeTV key="youtube-tv" /> : null
     })
 
-    Heim.chat.messagesChanged.listen(function onMessagesChanged(ids, state) {
+    Heim.chat.messagesChanged.listen((ids, state) => {
       const candidates = Immutable.Seq(ids)
-        .map(messageId => {
+        .map((messageId) => {
           const msg = state.messages.get(messageId)
           const valid = messageId !== '__root' && msg.get('content')
           return valid && msg
@@ -246,7 +240,7 @@ export default function initPlugins(roomName) {
 
       const playRe = /!play [^?]*\?v=([-\w]+)(?:&t=([0-9hms]+))?/
       const video = candidates
-        .map(msg => {
+        .map((msg) => {
           const match = msg.get('content').match(playRe)
           return match && {
             time: msg.get('time'),
@@ -266,7 +260,7 @@ export default function initPlugins(roomName) {
 
       const noticeRe = /^!notice(\S*?)\s([^]*)$/
       const notices = candidates
-        .map(msg => {
+        .map((msg) => {
           const match = msg.get('content').match(noticeRe)
           return match && {
             id: msg.get('id'),
@@ -279,7 +273,7 @@ export default function initPlugins(roomName) {
         .cacheResult()
 
       const noticeMaxSummaryLength = 80
-      notices.forEach(notice => {
+      notices.forEach((notice) => {
         const lines = notice.content.split('\n')
         let content = lines[0]
         if (content.length >= noticeMaxSummaryLength || lines.length > 1) {
@@ -300,76 +294,71 @@ export default function initPlugins(roomName) {
       }
     })
 
-    Heim.hook('page-bottom', () => {
-      return (
-        <style key="youtubetv-style" dangerouslySetInnerHTML={{__html: `
-          .youtube-pane {
-            z-index: 9;
-          }
+    Heim.hook('page-bottom', () => (
+      <style key="youtubetv-style" dangerouslySetInnerHTML={{__html: `
+        .youtube-pane {
+          z-index: 9;
+        }
 
-          .youtube-pane .title {
-            width: 0;
-          }
+        .youtube-pane .title {
+          width: 0;
+        }
 
-          .youtube-pane .aspect-wrapper {
-            flex-shrink: 0;
-            position: relative;
-            width: 100%;
-            box-shadow: 0 0 12px rgba(0, 0, 0, .25);
-            z-index: 5;
-          }
+        .youtube-pane .aspect-wrapper {
+          flex-shrink: 0;
+          position: relative;
+          width: 100%;
+          box-shadow: 0 0 12px rgba(0, 0, 0, .25);
+          z-index: 5;
+        }
 
-          .youtube-pane .aspect-wrapper:before {
-            content: '';
-            display: block;
-            padding-top: 75%;
-          }
+        .youtube-pane .aspect-wrapper:before {
+          content: '';
+          display: block;
+          padding-top: 75%;
+        }
 
-          .youtube-pane .youtube-tv {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-          }
+        .youtube-pane .youtube-tv {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          width: 100%;
+          height: 100%;
+        }
 
-          .youtube-tv {
-            border: none;
-            height: 60vmin;
-          }
+        .youtube-tv {
+          border: none;
+          height: 60vmin;
+        }
 
-          .youtube-pane .notice-board {
-            background: white;
-            padding: 10px;
-            overflow: auto;
-            white-space: pre-wrap;
-            flex: 1;
-          }
-        `}} />
-      )
-    })
+        .youtube-pane .notice-board {
+          background: white;
+          padding: 10px;
+          overflow: auto;
+          white-space: pre-wrap;
+          flex: 1;
+        }
+      `}} />
+    ))
   }
 
   if (roomName === 'adventure' || roomName === 'chess' || roomName === 'monospace') {
-    Heim.hook('page-bottom', () => {
-      return (
-        <style key="adventure-style" dangerouslySetInnerHTML={{__html: `
+    Heim.hook('page-bottom', () => (
+      <style key="adventure-style" dangerouslySetInnerHTML={{__html: `
           .messages-container, .messages-container input, .messages-container textarea {
             font-family: Droid Sans Mono, monospace;
           }
         `}} />
-      )
-    })
+    ))
 
     Heim.chat.setRoomSettings({collapse: false})
   }
 
   if (uiwindow.location.hash.substr(1) === 'spooky') {
-    Heim.hook('page-bottom', () => {
-      return (
-        <style key="spooky-style" dangerouslySetInnerHTML={{__html: `
+    Heim.hook('page-bottom', () => (
+      <style key="spooky-style" dangerouslySetInnerHTML={{__html: `
           #ui {
             background: #281f3d;
           }
@@ -566,21 +555,19 @@ export default function initPlugins(roomName) {
             z-index: 1000;
           }
         `}} />
-      )
-    })
+    ))
   }
 
   if (roomName === 'sandersforpresident') {
-    Heim.hook('main-pane-top', function BernieBarInject() {
+    Heim.hook('main-pane-top', () => {
       const MessageText = require('./ui/MessageText').default
       return (
-        <div key="sanders-top-bar" className="secondary-top-bar"><MessageText onlyEmoji content=":us:" /> Welcome to the <a href="https://reddit.com/r/sandersforpresident" target="_blank">/r/SandersForPresident</a> live chat! Please <a href="https://www.reddit.com/r/SandersForPresident/wiki/livechat" target="_blank">read our rules</a>.</div>
+        <div key="sanders-top-bar" className="secondary-top-bar"><MessageText onlyEmoji content=":us:" /> Welcome to the <a href="https://reddit.com/r/sandersforpresident" target="_blank" rel="noreferrer noopener">/r/SandersForPresident</a> live chat! Please <a href="https://www.reddit.com/r/SandersForPresident/wiki/livechat" target="_blank" rel="noreferrer noopener">read our rules</a>.</div>
       )
     })
 
-    Heim.hook('page-bottom', () => {
-      return (
-        <style key="sanders-style" dangerouslySetInnerHTML={{__html: `
+    Heim.hook('page-bottom', () => (
+      <style key="sanders-style" dangerouslySetInnerHTML={{__html: `
           .top-bar {
             background: #327bbe;
           }
@@ -607,14 +594,12 @@ export default function initPlugins(roomName) {
             color: #4d5763;
           },
         `}} />
-      )
-    })
+    ))
   }
 
   if (uiwindow.location.hash.substr(1) === 'darcula') {
-    Heim.hook('page-bottom', () => {
-      return (
-          <style key="darcula-style" dangerouslySetInnerHTML={{__html: `
+    Heim.hook('page-bottom', () => (
+      <style key="darcula-style" dangerouslySetInnerHTML={{__html: `
           #ui {
             background: #281f3d;
           }
@@ -785,20 +770,16 @@ export default function initPlugins(roomName) {
             display: none;
           }
         `}} />
-      )
-    })
+    ))
   }
 
   if (roomName === 'xkcd') {
-    Heim.hook('main-pane-top', () => {
-      return (
-        <div key="xkcd-top-bar" className="secondary-top-bar"><span className="motto" title="All problems are solvable by being thrown at with bots">Omnes qu&aelig;stiones solvuntur eis iactandis per machinis</span></div>
-      )
-    })
+    Heim.hook('main-pane-top', () => (
+      <div key="xkcd-top-bar" className="secondary-top-bar"><span className="motto" title="All problems are solvable by being thrown at with bots">Omnes qu&aelig;stiones solvuntur eis iactandis per machinis</span></div>
+    ))
 
-    Heim.hook('page-bottom', () => {
-      return (
-        <style key="xkcd-top-style" dangerouslySetInnerHTML={{__html: `
+    Heim.hook('page-bottom', () => (
+      <style key="xkcd-top-style" dangerouslySetInnerHTML={{__html: `
           .secondary-top-bar {
             color: black;
             background: white;
@@ -821,39 +802,33 @@ export default function initPlugins(roomName) {
             content: " ~";
           }
         `}} />
-      )
-    })
+    ))
 
     if (uiwindow.location.hash.substr(1) === 'spooky') {
-      Heim.hook('page-bottom', () => {
-        return (
-          <style key="xkcd-top-spooky-style" dangerouslySetInnerHTML={{__html: `
+      Heim.hook('page-bottom', () => (
+        <style key="xkcd-top-spooky-style" dangerouslySetInnerHTML={{__html: `
             .secondary-top-bar {
               color: darkorange;
               background: #2e293c;
             }
           `}} />
-        )
-      })
+      ))
     } else if (uiwindow.location.hash.substr(1) === 'darcula') {
-      Heim.hook('page-bottom', () => {
-        return (
-          <style key="xkcd-top-darcula-style" dangerouslySetInnerHTML={{__html: `
+      Heim.hook('page-bottom', () => (
+        <style key="xkcd-top-darcula-style" dangerouslySetInnerHTML={{__html: `
             .secondary-top-bar {
               color: #758076;
               background: #4c5053;
             }
           `}} />
-        )
-      })
+      ))
     }
   }
 
   const now = moment()
   if (now.month() === 11 && (now.date() === 13 || now.date() === 14)) {
-    Heim.hook('page-bottom', () => {
-      return (
-        <style key="anniversary-style" dangerouslySetInnerHTML={{__html: `
+    Heim.hook('page-bottom', () => (
+      <style key="anniversary-style" dangerouslySetInnerHTML={{__html: `
           .messages-content {
             background-image: url(/static/anniversary.svg) !important;
             background-repeat: no-repeat !important;
@@ -868,7 +843,6 @@ export default function initPlugins(roomName) {
             }
           }
         `}} />
-      )
-    })
+    ))
   }
 }

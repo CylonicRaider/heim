@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import chat from '../stores/chat'
 import ui from '../stores/ui'
@@ -24,7 +25,7 @@ export default function PMNotice({ pmId, nick, kind }) {
 }
 
 PMNotice.propTypes = {
-  pmId: React.PropTypes.string.isRequired,
-  nick: React.PropTypes.string.isRequired,
-  kind: React.PropTypes.string.isRequired,
+  pmId: PropTypes.string.isRequired,
+  nick: PropTypes.string.isRequired,
+  kind: PropTypes.string.isRequired,
 }

@@ -11,7 +11,7 @@ export default {
     }))
 
     return postAPI(url, data)
-      .then(response => {
+      .then((response) => {
         if (response.error) {
           this.triggerUpdate(this.state.merge({
             working: false,
@@ -24,7 +24,7 @@ export default {
           }))
         }
       })
-      .catch(err => {
+      .catch((err) => {
         Raven.captureException(err)
       })
   },

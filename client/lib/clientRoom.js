@@ -53,7 +53,7 @@ export default function clientRoom() {
     moment.relativeTimeThreshold('s', 0)
     moment.relativeTimeThreshold('m', 60)
 
-    moment.locale('en-short', {
+    moment.defineLocale('en-short', {
       relativeTime: {
         future: 'in %s',
         past: '%s ago',
@@ -71,7 +71,7 @@ export default function clientRoom() {
       },
     })
 
-    moment.locale('en', {
+    moment.updateLocale('en', {
       relativeTime: {
         future: 'in %s',
         past: '%s ago',
@@ -134,11 +134,6 @@ export default function clientRoom() {
 
     Heim.hook = Heim.plugins.hook
 
-    if (_.has(hashFlags, 'perf')) {
-      uiwindow.ReactPerf = require('react-addons-perf')
-      uiwindow.ReactPerf.start()
-    }
-
     Heim.loadCSS = function loadCSS(id) {
       const cssEl = uidocument.getElementById(id)
       const cssURL = document.getElementById(id).getAttribute('href')
@@ -169,7 +164,7 @@ export default function clientRoom() {
 
       const React = require('react')
       const ReactDOM = require('react-dom')
-      const SyntheticKeyboardEvent = require('react/lib/SyntheticKeyboardEvent')
+      const SyntheticKeyboardEvent = require('react-dom/lib/SyntheticKeyboardEvent')
       const Main = require('./ui/Main').default
 
       Heim.loadCSS('css')
@@ -189,13 +184,13 @@ export default function clientRoom() {
         Heim.activity.windowFocused()
       }
 
-      Heim.addEventListener(uiwindow, 'message', ev => {
+      Heim.addEventListener(uiwindow, 'message', (ev) => {
         if (ev.origin === process.env.EMBED_ORIGIN) {
           Heim.actions.embedMessage(ev.data)
         }
       }, false)
 
-      Heim.addEventListener(uidocument.body, 'keypress', ev => {
+      Heim.addEventListener(uidocument.body, 'keypress', (ev) => {
         if (!uiwindow.getSelection().isCollapsed) {
           return
         }
@@ -217,7 +212,7 @@ export default function clientRoom() {
         }
       }, true)
 
-      Heim.addEventListener(uidocument.body, 'keydown', originalEv => {
+      Heim.addEventListener(uidocument.body, 'keydown', (originalEv) => {
         Heim.activity.touch(roomName)
 
         // dig into React a little so it normalizes the event (namely ev.key).
@@ -237,7 +232,7 @@ export default function clientRoom() {
         }
       }, false)
 
-      Heim.addEventListener(uidocument.body, 'keyup', originalEv => {
+      Heim.addEventListener(uidocument.body, 'keyup', (originalEv) => {
         const ev = new SyntheticKeyboardEvent(null, null, originalEv)
         if (ev.key === 'Tab') {
           Heim.tabPressed = false
@@ -251,12 +246,12 @@ export default function clientRoom() {
       if (Heim.isTouch) {
         uidocument.body.classList.add('touch')
 
-        Heim.addEventListener(uidocument.body, 'touchstart', ev => {
+        Heim.addEventListener(uidocument.body, 'touchstart', (ev) => {
           Heim.activity.touch(roomName)
           ev.target.classList.add('touching')
         }, false)
 
-        Heim.addEventListener(uidocument.body, 'touchend', ev => {
+        Heim.addEventListener(uidocument.body, 'touchend', (ev) => {
           ev.target.classList.remove('touching')
         }, false)
       } else {
@@ -269,8 +264,11 @@ export default function clientRoom() {
         delete Heim._favicon
       }
 
-      Heim._getTitlePrefix = () => { return Heim._titlePrefix || roomName }
-      Heim.setTitleMsg = msg => uidocument.title = msg ? Heim._getTitlePrefix() + ' (' + msg + ')' : Heim._getTitlePrefix()
+      Heim._getTitlePrefix = () => Heim._titlePrefix || roomName
+      Heim.setTitleMsg = (msg) => {
+        uidocument.title = msg ? Heim._getTitlePrefix() + ' (' + msg + ')' : Heim._getTitlePrefix()
+        return uidocument.title
+      }
       if (Heim._titleMsg) {
         Heim.setTitleMsg(Heim._titleMsg)
         delete Heim._titleMsg
@@ -313,7 +311,7 @@ export default function clientRoom() {
       frame.contentDocument.open()
       const context = frame.contentWindow
       context.onReady = function onReady() {
-        const removeListener = context.Heim.chat.store.listen(function preUpdateChatHandler(chatState) {
+        const removeListener = context.Heim.chat.store.listen((chatState) => {
           if (chatState.joined) {
             removeListener()
 

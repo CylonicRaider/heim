@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import Reflux from 'reflux'
 import moment from 'moment'
@@ -9,11 +11,11 @@ import clock from '../stores/clock'
 import FastButton from './FastButton'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'NotificationSettings',
 
   propTypes: {
-    roomName: React.PropTypes.string,
+    roomName: PropTypes.string,
   },
 
   mixins: [

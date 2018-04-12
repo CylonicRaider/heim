@@ -1,12 +1,14 @@
 import React from 'react'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
+import { CSSTransitionGroup } from 'react-transition-group'
 
 
-module.exports = React.createClass({
+module.exports = createReactClass({
   displayName: 'Spinner',
 
   propTypes: {
-    visible: React.PropTypes.bool,
+    visible: PropTypes.bool,
   },
 
   getDefaultProps() {
@@ -14,7 +16,7 @@ module.exports = React.createClass({
   },
 
   render() {
-    return <ReactCSSTransitionGroup transitionName="spinner" transitionEnterTimeout={100} transitionLeaveTimeout={100}>{this.props.visible && <div key="spinner" className="spinner" />}</ReactCSSTransitionGroup>
+    return <CSSTransitionGroup transitionName="spinner" transitionEnterTimeout={100} transitionLeaveTimeout={100}>{this.props.visible && <div key="spinner" className="spinner" />}</CSSTransitionGroup>
   },
 })
 

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import MessageText from '../../lib/ui/MessageText'
 import FauxNick from './FauxNick'
@@ -24,8 +25,8 @@ export default function FauxMessage(props) {
 }
 
 FauxMessage.propTypes = {
-  sender: React.PropTypes.string,
-  message: React.PropTypes.string,
-  embed: React.PropTypes.string,
-  children: React.PropTypes.node,
+  sender: PropTypes.string,
+  message: PropTypes.string,
+  embed: PropTypes.string,
+  children: PropTypes.node,
 }

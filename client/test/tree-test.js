@@ -1,10 +1,20 @@
-require('./support/setup')
+import './support/setup'
 import assert from 'assert'
 import sinon from 'sinon'
 import Immutable from 'immutable'
 
 import Tree from '../lib/Tree'
 
+
+describe('JS engine', () => {
+  it('reorders object keys', () => {
+    // If this test fails, you might have to update the expectEmit() calls below
+    const obj = {}
+    obj['a'] = null  // eslint-disable-line dot-notation
+    obj['1'] = null
+    assert.deepEqual(Object.keys(obj), ['1', 'a'])
+  })
+})
 
 describe('Tree', () => {
   function debugMap(node, children, depth) {
@@ -17,7 +27,7 @@ describe('Tree', () => {
 
   function expectEmit(tree, ids) {
     sinon.assert.callCount(tree.changes.emit, ids.length + 1)
-    Immutable.Seq(ids).forEach(id => {
+    Immutable.Seq(ids).forEach((id) => {
       sinon.assert.calledWithExactly(tree.changes.emit, id, tree.get(id))
     })
     sinon.assert.calledWithExactly(tree.changes.emit, '__all', ids)
@@ -73,7 +83,7 @@ describe('Tree', () => {
     })
 
     it('should trigger a change event on the new nodes and root', () => {
-      expectEmit(tree, ['__root', '1', '2'])
+      expectEmit(tree, ['1', '2', '__root'])
     })
 
     it('should visit all nodes in a map traversal', () => {
@@ -91,8 +101,8 @@ describe('Tree', () => {
       let prev1
 
       beforeEach(() => {
-        tree.changes.emit.reset()
-        updateFunc.reset()
+        tree.changes.emit.resetHistory()
+        updateFunc.resetHistory()
         prev1 = tree.get('1')
         tree.add({id: '3', parent: '1', value: 'yo', time: 7})
       })
@@ -145,8 +155,8 @@ describe('Tree', () => {
       ]
 
       beforeEach(() => {
-        tree.changes.emit.reset()
-        updateFunc.reset()
+        tree.changes.emit.resetHistory()
+        updateFunc.resetHistory()
         prevRoot2 = tree.get('__root')
         prev1 = tree.get('1')
         tree.add(entries2)
@@ -200,13 +210,13 @@ describe('Tree', () => {
       })
 
       it('should only trigger a change event for new nodes and the parents of new nodes', () => {
-        expectEmit(tree, ['__root', '0', '1', '3', '9'])
+        expectEmit(tree, ['0', '1', '3', '9', '__root'])
       })
 
       describe('after re-adding the same nodes', () => {
         beforeEach(() => {
-          tree.changes.emit.reset()
-          updateFunc.reset()
+          tree.changes.emit.resetHistory()
+          updateFunc.resetHistory()
           tree.add(entries2)
         })
 
@@ -227,8 +237,8 @@ describe('Tree', () => {
         let prev3
 
         beforeEach(() => {
-          tree.changes.emit.reset()
-          updateFunc.reset()
+          tree.changes.emit.resetHistory()
+          updateFunc.resetHistory()
           prev3 = tree.get('3')
           tree.add({id: '3', parent: '1', time: 2})
         })
@@ -258,8 +268,8 @@ describe('Tree', () => {
 
     describe('after adding a node with a missing parent', () => {
       beforeEach(() => {
-        tree.changes.emit.reset()
-        updateFunc.reset()
+        tree.changes.emit.resetHistory()
+        updateFunc.resetHistory()
         tree.add({id: '3', parent: 'wtf', value: 'yo', time: 7})
       })
 
@@ -289,8 +299,8 @@ describe('Tree', () => {
         let prevWtf
 
         beforeEach(() => {
-          tree.changes.emit.reset()
-          updateFunc.reset()
+          tree.changes.emit.resetHistory()
+          updateFunc.resetHistory()
           prev1 = tree.get('1')
           prevWtf = tree.get('wtf')
           tree.add({id: 'wtf', parent: '1', value: 'j0', time: 6})
@@ -333,8 +343,8 @@ describe('Tree', () => {
       let prev2
 
       beforeEach(() => {
-        tree.changes.emit.reset()
-        updateFunc.reset()
+        tree.changes.emit.resetHistory()
+        updateFunc.resetHistory()
         prevRoot2 = tree.get('__root')
         prev1 = tree.get('1')
         prev2 = tree.get('2')
@@ -362,7 +372,7 @@ describe('Tree', () => {
       })
 
       it('should trigger a change event for the old parent, node, and new parent', () => {
-        expectEmit(tree, ['__root', '1', '2'])
+        expectEmit(tree, ['1', '2', '__root'])
       })
 
       it('should visit all nodes in a map traversal', () => {
@@ -378,8 +388,8 @@ describe('Tree', () => {
 
     describe('after adding a node with no parent ("shadow")', () => {
       beforeEach(() => {
-        tree.changes.emit.reset()
-        updateFunc.reset()
+        tree.changes.emit.resetHistory()
+        updateFunc.resetHistory()
         tree.add({id: 'shadow', parent: null, value: 'boo'})
       })
 
@@ -407,8 +417,8 @@ describe('Tree', () => {
         let prevShadow
 
         beforeEach(() => {
-          tree.changes.emit.reset()
-          updateFunc.reset()
+          tree.changes.emit.resetHistory()
+          updateFunc.resetHistory()
           prevRoot2 = tree.get('__root')
           prevShadow = tree.get('shadow')
           tree.add({id: 'shadow', parent: '__root', time: 1})
@@ -454,8 +464,8 @@ describe('Tree', () => {
       })
 
       it('should call updateFunc and trigger a change event', () => {
-        tree.updateFunc.reset()
-        tree.changes.emit.reset()
+        tree.updateFunc.resetHistory()
+        tree.changes.emit.resetHistory()
         const prev2 = tree.get('2')
         tree.mergeNodes('2', {value: 'dawg'})
         sinon.assert.calledWithExactly(tree.updateFunc, {
@@ -465,8 +475,8 @@ describe('Tree', () => {
       })
 
       it('should not call updateFunc or trigger a change event if unchanged', () => {
-        tree.updateFunc.reset()
-        tree.changes.emit.reset()
+        tree.updateFunc.resetHistory()
+        tree.changes.emit.resetHistory()
         tree.mergeNodes('2', {value: 'world'})
         sinon.assert.notCalled(tree.updateFunc)
         sinon.assert.notCalled(tree.changes.emit)
@@ -483,7 +493,7 @@ describe('Tree', () => {
 
     describe('after resetting to empty', () => {
       beforeEach(() => {
-        tree.changes.emit.reset()
+        tree.changes.emit.resetHistory()
         tree.reset()
       })
 
@@ -513,7 +523,7 @@ describe('Tree', () => {
     }
 
     beforeEach(() => {
-      tree = new Tree('time', function updateFunc(oldNodes, updateNode) {
+      tree = new Tree('time', (oldNodes, updateNode) => {
         Immutable.Seq(oldNodes)
           .forEach((oldNode, id) => {
             callUpdateNode(updateNode, tree.get(id).set('updated', true))
@@ -543,12 +553,12 @@ describe('Tree', () => {
     })
 
     it('should trigger a change event on the new nodes and root', () => {
-      expectEmit(tree, ['__root', '1', '2'])
+      expectEmit(tree, ['1', '2', '__root'])
     })
 
     describe('after adding a node', () => {
       beforeEach(() => {
-        tree.changes.emit.reset()
+        tree.changes.emit.resetHistory()
         tree.add({id: '3', parent: '1', value: 'yo', time: 7})
       })
 

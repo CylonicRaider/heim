@@ -1,18 +1,20 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import FastButton from './FastButton'
 import ToggleBubble from './ToggleBubble'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'RoomTitle',
 
   propTypes: {
-    name: React.PropTypes.string.isRequired,
-    title: React.PropTypes.string.isRequired,
-    connected: React.PropTypes.bool,
-    authType: React.PropTypes.string,
+    name: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    connected: PropTypes.bool,
+    authType: PropTypes.string,
   },
 
   mixins: [require('react-immutable-render-mixin')],
@@ -35,19 +37,19 @@ export default React.createClass({
       details = 'hang tight! we\'ll try again every few seconds until we get in.'
     } else {
       switch (this.props.authType) {
-      case 'passcode':
-        if (uiwindow.location.pathname.match(/^\/room\/(pm:)/)) {
-          className = caption = 'pm'
-          details = 'private messaging between you and another user'
-        } else {
-          className = caption = 'private'
-          details = 'this room requires a passcode for entry'
-        }
-        break
-      case 'public':
-        className = caption = 'public'
-        details = 'anyone with a link can join this room'
-        break
+        case 'passcode':
+          if (uiwindow.location.pathname.match(/^\/room\/(pm:)/)) {
+            className = caption = 'pm'
+            details = 'private messaging between you and another user'
+          } else {
+            className = caption = 'private'
+            details = 'this room requires a passcode for entry'
+          }
+          break
+        case 'public':
+          className = caption = 'public'
+          details = 'anyone with a link can join this room'
+          break
       // no default
       }
     }

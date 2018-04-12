@@ -1,19 +1,21 @@
-const _ = require('lodash')
-const React = require('react')
-const classNames = require('classnames')
+import _ from 'lodash'
+import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
+import classNames from 'classnames'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'Form',
 
   propTypes: {
-    context: React.PropTypes.object,
-    errors: React.PropTypes.objectOf(React.PropTypes.string),
-    validators: React.PropTypes.objectOf(React.PropTypes.func),
-    working: React.PropTypes.bool,
-    onSubmit: React.PropTypes.func,
-    className: React.PropTypes.string,
-    children: React.PropTypes.node,
+    context: PropTypes.object,
+    errors: PropTypes.objectOf(PropTypes.string),
+    validators: PropTypes.objectOf(PropTypes.func),
+    working: PropTypes.bool,
+    onSubmit: PropTypes.func,
+    className: PropTypes.string,
+    children: PropTypes.node,
   },
 
   getDefaultProps() {
@@ -47,7 +49,7 @@ export default React.createClass({
     values[name] = value
     this.setState({
       values: values,
-      errors: _.assign(this.state.errors, this._validateField(name, values), this._clearError),
+      errors: _.assignWith(this.state.errors, this._validateField(name, values), this._clearError),
     })
   },
 
@@ -61,7 +63,7 @@ export default React.createClass({
     ev.preventDefault()
     this._strict = true
     const errors = this._validateFields(this.props.validators, this.state.values, this.props.context)
-    if (!_.any(errors)) {
+    if (!_.some(errors)) {
       this.setState({errors: {}})
       this._strict = false
       this.props.onSubmit(this.state.values)
@@ -78,7 +80,7 @@ export default React.createClass({
       }
 
       const validatorValues = {}
-      fieldSpec.split(' ').forEach(field => {
+      fieldSpec.split(' ').forEach((field) => {
         validatorValues[field] = formValues[field]
       })
       if (!filter || filter(validatorValues)) {
@@ -99,7 +101,7 @@ export default React.createClass({
   _walkChildren(children, serverErrors, validatorErrors, errorSeen) {
     let foundError = errorSeen
     const errors = _.assign({}, serverErrors, validatorErrors)
-    return React.Children.map(children, child => {
+    return React.Children.map(children, (child) => {
       if (!React.isValidElement(child)) {
         return child
       } else if (!child.props.name && child.props.type !== 'submit') {
@@ -114,20 +116,26 @@ export default React.createClass({
         firstError = true
       }
 
-      return React.cloneElement(child, {
-        onModify: value => {
-          this.onFieldModify(name, value)
-          if (child.props.onModify) {
-            child.props.onModify(value)
-          }
-        },
-        onValidate: () => this.onFieldValidate(name),
+      const newProps = {
         value: this.state.values[name],
-        error: !!error,
-        isFirstError: firstError,
-        message: error,
-        disabled: this.props.working || child.props.type === 'submit' && _.any(validatorErrors),
-      }, this._walkChildren(child.props.children, serverErrors, validatorErrors, foundError))
+        disabled: this.props.working || child.props.type === 'submit' && _.some(validatorErrors),
+      }
+      if (child.type !== 'button') {
+        _.extend(newProps, {
+          onModify: (value) => {
+            this.onFieldModify(name, value)
+            if (child.props.onModify) {
+              child.props.onModify(value)
+            }
+          },
+          onValidate: () => this.onFieldValidate(name),
+          error: !!error,
+          isFirstError: firstError,
+          message: error,
+        })
+      }
+
+      return React.cloneElement(child, newProps, this._walkChildren(child.props.children, serverErrors, validatorErrors, foundError))
     })
   },
 

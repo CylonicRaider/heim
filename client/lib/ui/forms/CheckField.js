@@ -1,19 +1,21 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'CheckField',
 
   propTypes: {
-    name: React.PropTypes.string.isRequired,
-    value: React.PropTypes.bool,
-    onModify: React.PropTypes.func,
-    onValidate: React.PropTypes.func,
-    className: React.PropTypes.string,
-    tabIndex: React.PropTypes.number,
-    disabled: React.PropTypes.bool,
-    children: React.PropTypes.node,
+    name: PropTypes.string.isRequired,
+    value: PropTypes.bool,
+    onModify: PropTypes.func,
+    onValidate: PropTypes.func,
+    className: PropTypes.string,
+    tabIndex: PropTypes.number,
+    disabled: PropTypes.bool,
+    children: PropTypes.node,
   },
 
   onChange(ev) {
@@ -34,7 +36,7 @@ export default React.createClass({
           name={this.props.name}
           id={'field-' + this.props.name}
           disabled={this.props.disabled}
-          checked={this.props.value}
+          checked={this.props.value || false}
           onChange={this.onChange}
         />
         <label htmlFor={'field-' + this.props.name}>{this.props.children}</label>

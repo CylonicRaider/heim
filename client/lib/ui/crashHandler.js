@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable react/prop-types, react/no-danger */
 // (currently false positive for the nested definition)
 
 export default function displayCrashDialog(ev) {
@@ -9,6 +9,7 @@ export default function displayCrashDialog(ev) {
   // defer loading until we are actually rendering a crash dialog (speeds up initial client.js connection)
   const fs = require('fs')
   const React = require('react')
+  const PropTypes = require('prop-types')
   const ReactDOM = require('react-dom')
   const crashedSVG = 'data:image/svg+xml;base64,' + fs.readFileSync(__dirname + '/../../res/crashed.svg', 'base64')
   const crashedCSS = fs.readFileSync(__dirname + '/../../build/heim/static/crashed.css')
@@ -41,9 +42,9 @@ export default function displayCrashDialog(ev) {
   }
 
   CrashDialog.propTypes = {
-    ravenEventId: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]),
-    onReload: React.PropTypes.func,
-    onIgnore: React.PropTypes.func,
+    ravenEventId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+    onReload: PropTypes.func,
+    onIgnore: PropTypes.func,
   }
 
   const container = uidocument.createElement('div')

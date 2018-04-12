@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 import classNames from 'classnames'
 
@@ -11,17 +13,17 @@ import TreeNodeMixin from './TreeNodeMixin'
 import MessageDataMixin from './MessageDataMixin'
 
 
-const ThreadListItem = React.createClass({
+const ThreadListItem = createReactClass({
   displayName: 'ThreadListItem',
 
   propTypes: {
-    nodeId: React.PropTypes.string.isRequired,
-    tree: React.PropTypes.instanceOf(Tree).isRequired,
-    threadNodeId: React.PropTypes.string.isRequired,
-    threadTree: React.PropTypes.instanceOf(Tree).isRequired,
-    depth: React.PropTypes.number,
-    threadData: React.PropTypes.instanceOf(MessageData),
-    onClick: React.PropTypes.func,
+    nodeId: PropTypes.string.isRequired,
+    tree: PropTypes.instanceOf(Tree).isRequired,
+    threadNodeId: PropTypes.string.isRequired,
+    threadTree: PropTypes.instanceOf(Tree).isRequired,
+    depth: PropTypes.number,
+    threadData: PropTypes.instanceOf(MessageData),
+    onClick: PropTypes.func,
   },
 
   mixins: [
@@ -74,7 +76,7 @@ const ThreadListItem = React.createClass({
           <LiveTimeAgo className="ago" time={timestamp} nowText="active" />
         </FastButton>
         {this.props.depth < 3 && children.size > 0 && <div className="children">
-          {children.toSeq().map((threadId) =>
+          {children.toSeq().map(threadId =>
             <ThreadListItem key={threadId} threadData={this.props.threadData} threadTree={this.props.threadTree} threadNodeId={threadId} tree={this.props.tree} nodeId={threadId} depth={this.props.depth + 1} onClick={this.props.onClick} />
           )}
         </div>}

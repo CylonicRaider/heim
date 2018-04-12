@@ -1,15 +1,17 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'ErrorMessage',
 
   propTypes: {
-    name: React.PropTypes.string.isRequired,
-    message: React.PropTypes.string,
-    error: React.PropTypes.bool,
-    className: React.PropTypes.string,
+    name: PropTypes.string.isRequired,
+    message: PropTypes.string,
+    error: PropTypes.bool,
+    className: PropTypes.string,
   },
 
   render() {

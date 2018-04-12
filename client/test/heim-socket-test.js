@@ -69,7 +69,7 @@ describe('socket store', () => {
       sinon.assert.calledWithExactly(socket.events.emit, 'receive', receiveObj)
       assert.equal(socket._recvBuffer, null)
 
-      socket.events.emit.reset()
+      socket.events.emit.resetHistory()
       socket._emit('receive', receiveObj)
       sinon.assert.calledOnce(socket.events.emit)
       sinon.assert.calledWithExactly(socket.events.emit, 'receive', receiveObj)
@@ -78,14 +78,22 @@ describe('socket store', () => {
 
   describe('send buffering', () => {
     beforeEach(() => {
+      /* eslint-disable no-console */
       sinon.stub(socket, '_send')
       socket.connect('https://heimhost/test', 'ezzie')
-      sinon.stub(console, 'log')  // eslint-disable-line no-console
+      sinon.stub(console, 'log')
+      sinon.stub(console, 'group')
+      sinon.stub(console, 'groupCollapsed')
+      sinon.stub(console, 'groupEnd')
     })
 
     afterEach(() => {
+      /* eslint-disable no-console */
       socket._send.restore()
-      console.log.restore()  // eslint-disable-line no-console
+      console.groupEnd.restore()
+      console.groupCollapsed.restore()
+      console.group.restore()
+      console.log.restore()
     })
 
     it('should init with empty buffer', () => {
@@ -123,7 +131,7 @@ describe('socket store', () => {
     })
 
     it('should trigger a reconnect and retry once', () => {
-      fakeWebSocketContructor.reset()
+      fakeWebSocketContructor.resetHistory()
       const sendStub = fakeWebSocket.send = sinon.stub().throws()
       socket.send({
         type: 'ping',
@@ -138,7 +146,7 @@ describe('socket store', () => {
       ])
       sinon.assert.called(fakeWebSocketContructor)
       sinon.assert.calledWith(console.warn, 'error sending to socket. reconnecting and retrying.')  // eslint-disable-line no-console
-      fakeWebSocketContructor.reset()
+      fakeWebSocketContructor.resetHistory()
 
       // simulate socket crashing a second time, and ensure we don't loop
       const sendStub2 = fakeWebSocket.send = sinon.stub().throws()
@@ -168,14 +176,14 @@ describe('socket store', () => {
   })
 
   describe('when socket opened', () => {
-    it('should emit an open event', done => {
+    it('should emit an open event', (done) => {
       socket.once('open', done)
       socket._onOpen()
     })
   })
 
   function checkSocketCleanup(action) {
-    it('should emit an close event', done => {
+    it('should emit an close event', (done) => {
       socket.once('close', done)
       action()
     })
@@ -227,7 +235,7 @@ describe('socket store', () => {
 
     it('should close the socket and connect again', () => {
       const oldWs = socket.ws
-      fakeWebSocketContructor.reset()
+      fakeWebSocketContructor.resetHistory()
       socket.reconnect()
       sinon.assert.calledOnce(oldWs.close)
       sinon.assert.calledOnce(fakeWebSocketContructor)
@@ -235,10 +243,10 @@ describe('socket store', () => {
   })
 
   describe('when message received', () => {
-    it('should emit a receive event', done => {
+    it('should emit a receive event', (done) => {
       const testBody = {it: 'works'}
 
-      socket.once('receive', body => {
+      socket.once('receive', (body) => {
         assert.deepEqual(body, testBody)
         done()
       })
@@ -280,7 +288,7 @@ describe('socket store', () => {
 
     describe('when a second ping received late', () => {
       beforeEach(() => {
-        setTimeout.reset()
+        setTimeout.resetHistory()
         socket._onMessage({data: JSON.stringify({
           type: 'ping-event',
           data: {
@@ -297,7 +305,7 @@ describe('socket store', () => {
 
     describe('if another server ping isn\'t received before the next timeout', () => {
       beforeEach(() => {
-        fakeWebSocket.send.reset()
+        fakeWebSocket.send.resetHistory()
         sinon.stub(socket, 'reconnect')
         clock.tick(20000)
       })
@@ -381,7 +389,7 @@ describe('socket store', () => {
         id: '0',
         data: {},
       }))
-      fakeWebSocket.send.reset()
+      fakeWebSocket.send.resetHistory()
       clock.tick(100)
       socket.pingIfIdle()
       sinon.assert.notCalled(fakeWebSocket.send)
@@ -439,45 +447,52 @@ describe('socket store', () => {
   })
 
   describe('debug logging', () => {
+    /* eslint-disable no-console */
     const testPacket1 = {type: 'test', data: {}, id: 0}
     const testPacket2 = {type: 'test', data: {hello: 'world'}}
 
     beforeEach(() => {
       socket.connect('https://heimhost/test', 'ezzie')
-      sinon.stub(console, 'log')  // eslint-disable-line no-console
+      sinon.stub(console, 'log')
+      sinon.stub(console, 'group')
+      sinon.stub(console, 'groupCollapsed')
+      sinon.stub(console, 'groupEnd')
       socket._logPackets = true
     })
 
     afterEach(() => {
-      console.log.restore()  // eslint-disable-line no-console
+      console.groupEnd.restore()
+      console.groupCollapsed.restore()
+      console.group.restore()
+      console.log.restore()
     })
 
     it('should output packets sent', () => {
       socket.send(testPacket1)
-      sinon.assert.calledWithExactly(console.log, testPacket1)  // eslint-disable-line no-console
+      sinon.assert.calledWithExactly(console.log, testPacket1)
     })
 
     it('should output packets buffered', () => {
       fakeWebSocket.readyState = 0
       socket.send(testPacket1)
-      sinon.assert.calledWithExactly(console.log, testPacket1)  // eslint-disable-line no-console
+      sinon.assert.calledWithExactly(console.log, testPacket1)
     })
 
     it('should output packets received', () => {
       socket._onMessage({data: JSON.stringify(testPacket2)})
-      sinon.assert.calledWithExactly(console.log, testPacket2)  // eslint-disable-line no-console
+      sinon.assert.calledWithExactly(console.log, testPacket2)
     })
 
     it('should output packets sent and response received when sent with log flag', () => {
       socket._logPackets = false
 
       socket.send(testPacket1, true)
-      sinon.assert.calledWithExactly(console.log, testPacket1)  // eslint-disable-line no-console
+      sinon.assert.calledWithExactly(console.log, testPacket1)
 
-      console.log.reset()  // eslint-disable-line no-console
+      console.log.resetHistory()
 
       socket._onMessage({data: JSON.stringify(testPacket1)})
-      sinon.assert.calledWithExactly(console.log, testPacket1)  // eslint-disable-line no-console
+      sinon.assert.calledWithExactly(console.log, testPacket1)
     })
   })
 })

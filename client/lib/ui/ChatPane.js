@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import classNames from 'classnames'
 import Reflux from 'reflux'
@@ -36,18 +38,18 @@ function closestIdx(array, value, iterator) {
   return idx
 }
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'ChatPane',
 
   propTypes: {
-    disabled: React.PropTypes.bool,
-    nodeId: React.PropTypes.string,
-    afterRender: React.PropTypes.func,
-    onScrollbarSize: React.PropTypes.func,
-    showParent: React.PropTypes.bool,
-    showTimeStamps: React.PropTypes.bool,
-    showAllReplies: React.PropTypes.bool,
-    pane: React.PropTypes.instanceOf(Pane).isRequired,
+    disabled: PropTypes.bool,
+    nodeId: PropTypes.string,
+    afterRender: PropTypes.func,
+    onScrollbarSize: PropTypes.func,
+    showParent: PropTypes.bool,
+    showTimeStamps: PropTypes.bool,
+    showAllReplies: PropTypes.bool,
+    pane: PropTypes.instanceOf(Pane).isRequired,
   },
 
   mixins: [
@@ -253,7 +255,7 @@ export default React.createClass({
 
     const scrollerBox = ReactDOM.findDOMNode(this.refs.scroller).getBoundingClientRect()
     const midPoint = (scrollerBox.bottom - scrollerBox.top) / 2
-    const checkPos = el => {
+    const checkPos = (el) => {
       const box = el.getBoundingClientRect()
       if (box.bottom > scrollerBox.top && box.top < scrollerBox.bottom) {
         return true
@@ -325,37 +327,39 @@ export default React.createClass({
 
     let anchor
     switch (dir) {
-    case 'up':
-      if (idx === 0) {
-        return
-      }
-      idx--
-      anchor = anchors[idx]
-      break
-    case 'down':
-      idx++
-      anchor = anchors[idx]
-      break
-    case 'out':
-      if (!this.state.pane.focusedMessage) {
+      case 'up':
+        if (idx === 0) {
+          return
+        }
+        idx--
+        anchor = anchors[idx]
         break
-      }
-      const parentId = this.state.chat.messages.get(this.state.pane.focusedMessage).get('parent')
-      anchor = anchors[idx]
-      while (anchor && anchor.dataset.messageId !== parentId) {
+      case 'down':
         idx++
         anchor = anchors[idx]
-      }
-      break
-    case 'top':
-      break
+        break
+      case 'out':
+        if (!this.state.pane.focusedMessage) {
+          break
+        }
+        {
+          const parentId = this.state.chat.messages.get(this.state.pane.focusedMessage).get('parent')
+          anchor = anchors[idx]
+          while (anchor && anchor.dataset.messageId !== parentId) {
+            idx++
+            anchor = anchors[idx]
+          }
+        }
+        break
+      case 'top':
+        break
     // no default
     }
 
     ReactDOM.unstable_batchedUpdates(() => {
       this.props.pane.focusMessage(anchor && anchor.dataset.messageId)
       if (!Heim.isTouch) {
-        require('react/lib/ReactUpdates').asap(() => {
+        require('react-dom/lib/ReactUpdates').asap(() => {
           this.props.pane.focusEntry()
         })
       }

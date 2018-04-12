@@ -45,7 +45,7 @@ module.exports.store = Reflux.createStore({
       return
     }
 
-    const newState = this.state.withMutations(state => {
+    const newState = this.state.withMutations((state) => {
       if (!state.get('currentVersion')) {
         state.set('currentVersion', version)
       }

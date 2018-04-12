@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 
 import actions from '../actions'
@@ -8,15 +10,14 @@ import { Pane } from '../stores/ui'
 import EntryMixin from './EntryMixin'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'PasscodeEntry',
 
   propTypes: {
-    pane: React.PropTypes.instanceOf(Pane).isRequired,
+    pane: PropTypes.instanceOf(Pane).isRequired,
   },
 
   mixins: [
-    require('react-addons-linked-state-mixin'),
     EntryMixin,
     Reflux.listenTo(chat.store, '_onChatUpdate'),
   ],
@@ -62,15 +63,15 @@ export default React.createClass({
 
   render() {
     let label
-    switch (this.authState) {
-    case 'trying':
-      label = 'trying...'
-      break
-    case 'failed':
-      label = 'no dice. try again:'
-      break
-    default:
-      label = 'passcode:'
+    switch (this.state.authState) {
+      case 'trying':
+        label = 'trying...'
+        break
+      case 'failed':
+        label = 'no dice. try again:'
+        break
+      default:
+        label = 'passcode:'
     }
 
     return (
@@ -78,7 +79,7 @@ export default React.createClass({
         <p className="message">This room requires a passcode.</p>
         <form className="entry focus-target" onSubmit={this.tryPasscode}>
           <label>{label}</label>
-          <input key="passcode" ref="input" type="password" className="entry-text" autoFocus valueLink={this.linkState('value')} disabled={this.state.connected === false} />
+          <input key="passcode" ref="input" type="password" className="entry-text" autoFocus value={this.state.value} onChange={event => this.setState({value: event.target.value})} disabled={this.state.connected === false} />
         </form>
       </div>
     )

@@ -1,31 +1,33 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 import FieldLabelContainer from './FieldLabelContainer'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'TextField',
 
   propTypes: {
-    name: React.PropTypes.string.isRequired,
-    label: React.PropTypes.string.isRequired,
-    value: React.PropTypes.string,
-    onModify: React.PropTypes.func,
-    onValidate: React.PropTypes.func,
-    onFocus: React.PropTypes.func,
-    onBlur: React.PropTypes.func,
-    action: React.PropTypes.string,
-    onAction: React.PropTypes.func,
-    error: React.PropTypes.bool,
-    isFirstError: React.PropTypes.bool,
-    autoFocus: React.PropTypes.bool,
-    message: React.PropTypes.string,
-    className: React.PropTypes.string,
-    inputType: React.PropTypes.string,
-    tabIndex: React.PropTypes.number,
-    spellCheck: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
+    name: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    value: PropTypes.string,
+    onModify: PropTypes.func,
+    onValidate: PropTypes.func,
+    onFocus: PropTypes.func,
+    onBlur: PropTypes.func,
+    action: PropTypes.string,
+    onAction: PropTypes.func,
+    error: PropTypes.bool,
+    isFirstError: PropTypes.bool,
+    autoFocus: PropTypes.bool,
+    message: PropTypes.string,
+    className: PropTypes.string,
+    inputType: PropTypes.string,
+    tabIndex: PropTypes.number,
+    spellCheck: PropTypes.bool,
+    disabled: PropTypes.bool,
   },
 
   componentDidUpdate(prevProps) {
@@ -71,7 +73,7 @@ export default React.createClass({
           ref="input"
           name={this.props.name}
           type={this.props.inputType}
-          value={this.props.value}
+          value={this.props.value || ''}
           tabIndex={this.props.tabIndex}
           autoFocus={this.props.autoFocus}
           spellCheck={this.props.spellCheck}

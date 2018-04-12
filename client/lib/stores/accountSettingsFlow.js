@@ -66,7 +66,7 @@ module.exports.store = Reflux.createStore({
   },
 
   changeNameFailed(data) {
-    this.triggerUpdate(this.state.withMutations(state => {
+    this.triggerUpdate(this.state.withMutations((state) => {
       const step = state.get('step')
       if (step === 'change-name') {
         const error = new Error('failed to change name: ' + data.reason)
@@ -84,7 +84,7 @@ module.exports.store = Reflux.createStore({
   },
 
   changeEmailFailed(data) {
-    this.triggerUpdate(this.state.withMutations(state => {
+    this.triggerUpdate(this.state.withMutations((state) => {
       const step = state.get('step')
       if (step === 'change-email') {
         state.set('working', false)
@@ -107,7 +107,7 @@ module.exports.store = Reflux.createStore({
   },
 
   changePasswordFailed(data) {
-    this.triggerUpdate(this.state.withMutations(state => {
+    this.triggerUpdate(this.state.withMutations((state) => {
       const step = state.get('step')
       if (step === 'change-password') {
         state.set('working', false)

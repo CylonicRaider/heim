@@ -16,6 +16,7 @@ describe('update store', () => {
     assert.equal(initialState.get('newVersion'), null)
   })
 
+/*
   describe('on chat state change', () => {
     it('should store the current version if none set')
     describe('if the server version changes', () => {
@@ -42,4 +43,5 @@ describe('update store', () => {
   describe('perform action', () => {
     it('should call stored update finalize callback')
   })
+*/
 })

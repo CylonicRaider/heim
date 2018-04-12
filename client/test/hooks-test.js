@@ -1,4 +1,4 @@
-require('./support/setup')
+import './support/setup'
 import assert from 'assert'
 
 import Hooks from '../lib/Hooks'

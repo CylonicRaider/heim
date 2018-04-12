@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import classNames from 'classnames'
 import Immutable from 'immutable'
@@ -23,20 +25,20 @@ const linearEasing = t => t
 const snapEasing = t => (Math.pow(2.02 * t - 1.0303, 17) + t) / 3.5 + 0.475
 const colorShouldStep = (x, last) => x - last > 0.01
 
-const Message = React.createClass({
+const Message = createReactClass({
   displayName: 'Message',
 
   propTypes: {
-    nodeId: React.PropTypes.string.isRequired,
-    tree: React.PropTypes.instanceOf(Tree).isRequired,
-    pane: React.PropTypes.instanceOf(Pane).isRequired,
-    showTimeStamps: React.PropTypes.bool,
-    showTimeAgo: React.PropTypes.bool,
-    showAllReplies: React.PropTypes.bool,
-    depth: React.PropTypes.number,
-    visibleCount: React.PropTypes.number,
-    maxDepth: React.PropTypes.number,
-    roomSettings: React.PropTypes.instanceOf(Immutable.Map),
+    nodeId: PropTypes.string.isRequired,
+    tree: PropTypes.instanceOf(Tree).isRequired,
+    pane: PropTypes.instanceOf(Pane).isRequired,
+    showTimeStamps: PropTypes.bool,
+    showTimeAgo: PropTypes.bool,
+    showAllReplies: PropTypes.bool,
+    depth: PropTypes.number,
+    visibleCount: PropTypes.number,
+    maxDepth: PropTypes.number,
+    roomSettings: PropTypes.instanceOf(Immutable.Map),
   },
 
   mixins: [
@@ -70,7 +72,7 @@ const Message = React.createClass({
       const lineEl = node.querySelector('.line')
       Heim.transition.add({
         startOffset: -this._sinceNew,
-        step: x => {
+        step: (x) => {
           if (x < 1) {
             lineEl.style.background = 'rgba(0, 128, 0, ' + (1 - x) * 0.075 + ')'
           } else {
@@ -93,7 +95,7 @@ const Message = React.createClass({
 
       const lineEl = node.querySelector('.line')
       Heim.transition.add({
-        step: x => {
+        step: (x) => {
           if (x < 1) {
             lineEl.style.borderLeftColor = 'rgba(0, 128, 0, ' + (1 - x) * 0.75 + ')'
           } else {
@@ -109,7 +111,7 @@ const Message = React.createClass({
       if (this.props.showTimeStamps) {
         const timestampEl = node.querySelector('.timestamp')
         Heim.transition.add({
-          step: x => {
+          step: (x) => {
             if (x < 1) {
               timestampEl.style.color = 'rgb(170, ' + Math.round(170 + (241 - 170) * (1 - x)) + ', 170)'
             } else {
@@ -284,6 +286,7 @@ const Message = React.createClass({
     let messageReplies
     let messageIndentedReplies
     if (repliesInOtherPane) {
+      /* eslint-disable jsx-a11y/click-events-have-key-events */
       messageIndentedReplies = (
         <FastButton component="div" className={classNames('replies', 'in-pane', {'focus-target': focused})} onClick={this.focusOtherPane}>
           replies in pane <div className="pane-icon" />
@@ -449,6 +452,8 @@ const Message = React.createClass({
     } else if (this.state.contentTall && this.props.roomSettings.get('collapse') !== false) {
       const action = contentExpanded ? 'collapse' : 'expand'
       const actionMethod = action + 'Content'
+      // FIXME provide some way to do this using the keyboard
+      /* eslint-disable jsx-a11y/click-events-have-key-events */
       messageRender = (
         <div className="message-tall">
           <div className="message expando" onClick={this[actionMethod]}>
@@ -471,17 +476,19 @@ const Message = React.createClass({
     if (embeds.length) {
       messageEmbeds = (
         <div className="embeds">
-          {_.map(embeds, (embed, idx) =>
+          {_.map(embeds, (embed, idx) => (
             <a key={idx} href={embed.link} target="_blank" onMouseEnter={() => this.unfreezeEmbed(idx)} onMouseLeave={() => this.freezeEmbed(idx)}>
               <Embed ref={'embed' + idx} {...embed.props} />
             </a>
-          )}
+          ))}
           {!messageRender && messageAgo}
         </div>
       )
       lineClasses['has-embed'] = true
     }
 
+    // FIXME provide some way to do this using the keyboard?
+    /* eslint-disable jsx-a11y/click-events-have-key-events */
     return (
       <div data-message-id={message.get('id')} data-depth={this.props.depth} className={classNames('message-node', messageClasses)}>
         {this.props.showTimeStamps && <time ref="time" className="timestamp" dateTime={time.toISOString()} title={time.format('MMMM Do YYYY, h:mm:ss a')}>

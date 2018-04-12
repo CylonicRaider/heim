@@ -38,7 +38,7 @@ export default function handleCopy(ev) {
 
   const messageEls = []
   let minDepth
-  domWalkForward(startMessageEl, endMessageEl, el => {
+  domWalkForward(startMessageEl, endMessageEl, (el) => {
     if (!el.classList || !el.classList.contains('line')) {
       return
     }
@@ -55,7 +55,7 @@ export default function handleCopy(ev) {
 
   const textParts = []
   const htmlLines = []
-  _.each(messageEls, lineEl => {
+  _.each(messageEls, (lineEl) => {
     const el = lineEl.parentNode
     const messageId = el.dataset.messageId
     const message = Heim.chat.store.state.messages.get(messageId)

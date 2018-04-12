@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { Email } from 'react-html-email'
 
@@ -12,5 +13,5 @@ export default function StandardEmail({children}) {
 }
 
 StandardEmail.propTypes = {
-  children: React.PropTypes.node,
+  children: PropTypes.node,
 }

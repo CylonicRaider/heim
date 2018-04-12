@@ -1,16 +1,18 @@
 import _ from 'lodash'
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 
 import Bubble from './Bubble'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'ToggleBubble',
 
   propTypes: {
-    visible: React.PropTypes.bool,
-    sticky: React.PropTypes.bool,
-    children: React.PropTypes.node,
+    visible: PropTypes.bool,
+    sticky: PropTypes.bool,
+    children: PropTypes.node,
   },
 
   mixins: [require('react-immutable-render-mixin')],

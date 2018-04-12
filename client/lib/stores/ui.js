@@ -205,7 +205,7 @@ function createPaneStore(paneId, createOptions = {}) {
         this.state.focusedMessage = targetId
         this.trigger(this.state)
 
-        require('react/lib/ReactUpdates').asap(() => {
+        require('react-dom/lib/ReactUpdates').asap(() => {
           paneActions.scrollToEntry()
         })
       })
@@ -229,7 +229,7 @@ function createPaneStore(paneId, createOptions = {}) {
     revealMessage(messageId) {
       ReactDOM.unstable_batchedUpdates(() => {
         Immutable.Seq(this.chatState.messages.iterAncestorsOf(messageId))
-          .forEach(ancestor => {
+          .forEach((ancestor) => {
             this.setMessageData(ancestor.get('id'), {repliesExpanded: true})
           })
         this.setMessageData(messageId, {repliesExpanded: true})
@@ -520,7 +520,7 @@ const store = module.exports.store = Reflux.createStore({
       this.state.focusedPane = id
       this.trigger(this.state)
 
-      require('react/lib/ReactUpdates').asap(() => {
+      require('react-dom/lib/ReactUpdates').asap(() => {
         const lastFocusedPane = this.state.panes.get(lastFocused)
         if (lastFocusedPane) {
           // the pane has been removed while the batching occurred
@@ -585,10 +585,10 @@ const store = module.exports.store = Reflux.createStore({
         this.thawInfo()
       }
     } else {
+      /* eslint-disable no-lonely-if */
       if (target === 'info') {
         if (!this.state.selectedThread) {
           storeActions.selectThreadInList(this.state.lastSelectedThread)
-          return
         }
       } else {
         this.deselectThread()

@@ -94,7 +94,7 @@ module.exports.store = Reflux.createStore({
 
     const messageItems = chatState.selectedMessages
       .toSeq()
-      .map(id => {
+      .map((id) => {
         const message = chatState.messages.get(id)
         if (!message || !message.get('$count')) {
           return false
@@ -123,7 +123,7 @@ module.exports.store = Reflux.createStore({
       .toSet()
 
     const userItems = chatState.selectedUsers
-      .map(sessionId => {
+      .map((sessionId) => {
         const userInfo = chatState.who.get(sessionId)
         if (!userInfo) {
           return false

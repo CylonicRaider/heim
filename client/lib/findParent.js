@@ -6,4 +6,5 @@ export default function(el, predicate) {
     }
     curEl = curEl.parentNode
   }
+  return null
 }

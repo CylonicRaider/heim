@@ -1,22 +1,27 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 import classNames from 'classnames'
 import moment from 'moment'
+
+import forwardProps from '../forwardProps'
 
 
 function checkIsMoment(props, propName) {
   if (!moment.isMoment(props[propName])) {
     return new Error('not a Moment instance')
   }
+  return null
 }
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'LiveTimeAgo',
 
   propTypes: {
-    time: React.PropTypes.oneOfType([React.PropTypes.number, checkIsMoment]),
-    nowText: React.PropTypes.string,
-    className: React.PropTypes.string,
+    time: PropTypes.oneOfType([PropTypes.number, checkIsMoment]),
+    nowText: PropTypes.string,
+    className: PropTypes.string,
   },
 
   mixins: [
@@ -39,7 +44,7 @@ export default React.createClass({
     }
 
     return (
-      <time dateTime={t.toISOString()} title={t.format('MMMM Do YYYY, h:mm:ss a')} {...this.props} className={classNames(className, this.props.className)}>
+      <time dateTime={t.toISOString()} title={t.format('MMMM Do YYYY, h:mm:ss a')} {...forwardProps(this.props)} className={classNames(className, this.props.className)}>
         {display}
       </time>
     )

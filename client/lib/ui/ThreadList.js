@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 
 import Tree from '../Tree'
 import ThreadListItem from './ThreadListItem'
@@ -6,15 +8,16 @@ import MessageData from '../MessageData'
 import TreeNodeMixin from './TreeNodeMixin'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'ThreadList',
 
   propTypes: {
-    tree: React.PropTypes.instanceOf(Tree).isRequired,
-    threadTree: React.PropTypes.instanceOf(Tree).isRequired,
-    threadData: React.PropTypes.instanceOf(MessageData),
-    onScroll: React.PropTypes.func,
-    onThreadSelect: React.PropTypes.func,
+    tree: PropTypes.instanceOf(Tree).isRequired,
+    threadTree: PropTypes.instanceOf(Tree).isRequired,
+    threadData: PropTypes.instanceOf(MessageData),
+    onScroll: PropTypes.func,
+    onThreadSelect: PropTypes.func,
+    threadNodeId: PropTypes.string,
   },
 
   mixins: [
@@ -29,7 +32,7 @@ export default React.createClass({
   render() {
     return (
       <div className="thread-list" onScroll={this.props.onScroll}>
-        {this.state.threadNode.get('children').toSeq().map((threadId) =>
+        {this.state.threadNode.get('children').toSeq().map(threadId =>
           <ThreadListItem key={threadId} threadData={this.props.threadData} threadTree={this.props.threadTree} threadNodeId={threadId} tree={this.props.tree} nodeId={threadId} onClick={this.props.onThreadSelect} />
         )}
       </div>

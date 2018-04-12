@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 
 import actions from '../actions'
@@ -6,15 +8,14 @@ import { Pane } from '../stores/ui'
 import EntryMixin from './EntryMixin'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'NickEntry',
 
   propTypes: {
-    pane: React.PropTypes.instanceOf(Pane).isRequired,
+    pane: PropTypes.instanceOf(Pane).isRequired,
   },
 
   mixins: [
-    require('react-addons-linked-state-mixin'),
     EntryMixin,
     Reflux.ListenerMixin,
     Reflux.connect(require('../stores/chat').store, 'chat'),
@@ -46,7 +47,7 @@ export default React.createClass({
         </div>
         <form className="entry focus-target" onSubmit={this.setNick}>
           <label>choose your name to begin:</label>
-          <input key="nick" ref="input" type="text" className="entry-text" autoFocus valueLink={this.linkState('value')} disabled={this.state.chat.connected === false} />
+          <input key="nick" ref="input" type="text" className="entry-text" autoFocus value={this.state.value} onChange={event => this.setState({value: event.target.value})} disabled={this.state.chat.connected === false} />
         </form>
       </div>
     )

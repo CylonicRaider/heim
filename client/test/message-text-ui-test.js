@@ -2,7 +2,7 @@ import support from './support/setup'
 import assert from 'assert'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import TestUtils from 'react-addons-test-utils'
+import ReactTestUtils from 'react-dom/test-utils'
 
 import MessageText from '../lib/ui/MessageText'
 
@@ -13,7 +13,7 @@ describe('<MessageText>', () => {
   })
 
   function renderMessageText(content) {
-    return TestUtils.renderIntoDocument(
+    return ReactTestUtils.renderIntoDocument(
       <MessageText content={content} />
     )
   }
@@ -27,7 +27,7 @@ describe('<MessageText>', () => {
   it('truncates long urls', () => {
     const messageContent = renderMessageText('http://google.com/abcdefghijklmnopqrstuvwxyz1234567890')
     assert.equal(ReactDOM.findDOMNode(messageContent).innerHTML,
-      '<a href="http://google.com/abcdefghijklmnopqrstuvwxyz1234567890" target="_blank" rel="noreferrer">google.com/abcdefghijklmnopqrstuvwxyz1..</a>')
+      '<a href="http://google.com/abcdefghijklmnopqrstuvwxyz1234567890" target="_blank" rel="noreferrer" title="http://google.com/abcdefghijklmnopqrstuvwxyz1234567890">google.com/abcdefghijklmnopqrstuvwxyz\u2026</a>')
   })
 
   it('linkifies &room references', () => {
@@ -50,6 +50,6 @@ describe('<MessageText>', () => {
     // U+00A9 COPYRIGHT SIGN (no emoji)
     const messageContent = renderMessageText(':euphoria: \u25b6 \ud83d\udd14 \u2122 \u00a9')
     assert.equal(ReactDOM.findDOMNode(messageContent).innerHTML,
-      '<div class="emoji emoji-euphoria" title=":euphoria:">:euphoria:</div> <div class="emoji emoji-25b6" title=":arrow_forward:">\u25b6</div> <div class="emoji emoji-1f514" title=":bell:">\ud83d\udd14</div> \u2122 \u00a9')
+      '<span class="emoji emoji-euphoria" title=":euphoria:">:euphoria:</span> <span class="emoji emoji-25b6" title=":arrow_forward:">\u25b6</span> <span class="emoji emoji-1f514" title=":bell:">\ud83d\udd14</span> \u2122 \u00a9')
   })
 })

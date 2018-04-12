@@ -1,4 +1,6 @@
 import React from 'react'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 
 import accountSettingsFlow from '../stores/accountSettingsFlow'
@@ -9,11 +11,11 @@ import { validateEmail, validatePassword, minPasswordEntropy } from './formValid
 import hueHash from '../hueHash'
 
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'AccountSettingsDialog',
 
   propTypes: {
-    onClose: React.PropTypes.func,
+    onClose: PropTypes.func,
   },
 
   mixins: [
