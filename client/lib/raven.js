@@ -1,15 +1,15 @@
 import Raven from 'raven-js'
+import consolePlugin from 'raven-js/plugins/console'
 
 // Hack: Raven not currently setting window.Raven itself; perhaps this will be
-// fixed in a future version. We need to use require() here because imports
-// seem to be reordered by babel.
+// fixed in a future version.
 window.Raven = Raven
-require('raven-js/plugins/console')
 
 Raven.config(process.env.SENTRY_ENDPOINT, {
   release: process.env.HEIM_RELEASE,
-  tags: {'git_commit': process.env.HEIM_GIT_COMMIT},
-}).install()
+  tags: {git_commit: process.env.HEIM_GIT_COMMIT},
+  autoBreadcrumbs: {console: false},
+}).addPlugin(consolePlugin).install()
 
 // Hack: After Raven is done with it, requestAnimationFrame stops working
 // altogether (for me?)
