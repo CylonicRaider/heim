@@ -36,7 +36,7 @@ export default createReactClass({
           name={this.props.name}
           id={'field-' + this.props.name}
           disabled={this.props.disabled}
-          checked={this.props.value}
+          checked={this.props.value || false}
           onChange={this.onChange}
         />
         <label htmlFor={'field-' + this.props.name}>{this.props.children}</label>
