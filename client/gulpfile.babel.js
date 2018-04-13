@@ -36,11 +36,24 @@ const heimPagesDest = './build/heim/pages'
 const embedDest = './build/embed'
 const emailDest = './build/email'
 
+const production = process.env.NODE_ENV === 'production'
+
 const heimOptions = {
   HEIM_ORIGIN: process.env.HEIM_ORIGIN,
   HEIM_PREFIX: process.env.HEIM_PREFIX || '',
   EMBED_ORIGIN: process.env.EMBED_ORIGIN,
   NODE_ENV: process.env.NODE_ENV,
+}
+
+// more meaningful name
+function noop() {
+  return through2.obj()
+}
+
+// allow disabling this one on weak machines
+function heimUglify() {
+  if (! production || process.env.HEIM_NO_UGLIFY) return noop()
+  return uglify()
 }
 
 // via https://github.com/tblobaum/git-rev
@@ -109,7 +122,7 @@ gulp.task('heim-js', ['heim-git-commit'], () => {
     .pipe(source('main.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
+    .pipe(heimUglify())
     .pipe(sourcemaps.write('./', {includeContent: true}))
     .on('error', handleError('heim browserify error'))
     .pipe(gulp.dest(heimStaticDest))
@@ -118,8 +131,8 @@ gulp.task('heim-js', ['heim-git-commit'], () => {
 })
 
 gulp.task('fast-touch-js', () => {
-  return babelify('./site/lib/fast-touch.js')
-    .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
+  return gulp.src('./site/lib/fast-touch.js')
+    .pipe(heimUglify())
     .on('error', handleError('fastTouch browserify error'))
     .pipe(gulp.dest(heimStaticDest))
 })
@@ -130,7 +143,7 @@ gulp.task('embed-js', () => {
     .pipe(source('embed.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
+    .pipe(heimUglify())
     .pipe(sourcemaps.write('./', {includeContent: true}))
     .on('error', handleError('embed browserify error'))
     .pipe(gulp.dest(embedDest))
@@ -148,7 +161,7 @@ gulp.task('raven-js', ['heim-git-commit', 'heim-js'], () => {
       .bundle()
       .pipe(source('raven.js'))
       .pipe(buffer())
-      .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
+      .pipe(heimUglify())
       .on('error', handleError('raven browserify error'))
       .pipe(gulp.dest(heimStaticDest))
       .pipe(gzip())
