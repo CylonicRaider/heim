@@ -118,7 +118,7 @@ gulp.task('heim-js', ['heim-git-commit'], () => {
 })
 
 gulp.task('fast-touch-js', () => {
-  return gulp.src('./site/lib/fast-touch.js')
+  return babelify('./site/lib/fast-touch.js')
     .pipe(process.env.NODE_ENV === 'production' ? uglify() : through2.obj())
     .on('error', handleError('fastTouch browserify error'))
     .pipe(gulp.dest(heimStaticDest))
