@@ -129,12 +129,18 @@ const Message = createReactClass({
     this.afterRender()
   },
 
-  onClick() {
+  onClick(ev) {
     if (ui.store.state.managerMode) {
       return
     }
 
     if (!uiwindow.getSelection().isCollapsed) {
+      return
+    }
+
+    // Do not move input bar when clicking links
+    if (ev.target.nodeName === 'A') {
+      ev.stopPropagation()
       return
     }
 

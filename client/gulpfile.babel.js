@@ -52,7 +52,7 @@ function noop() {
 
 // allow disabling this one on weak machines
 function heimUglify() {
-  if (! production || process.env.HEIM_NO_UGLIFY) return noop()
+  if (!production || process.env.HEIM_NO_UGLIFY) return noop()
   return uglify()
 }
 
