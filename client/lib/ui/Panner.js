@@ -221,7 +221,7 @@ export default createReactClass({
             stopPoint = this._x
           }
 
-          const point = _.min(this._snapPoints, snapPoint => Math.abs(snapPoint - stopPoint))
+          const point = _.minBy(this._snapPoints, snapPoint => Math.abs(snapPoint - stopPoint))
           this.flingTo(point, this._drag.vx)
         }
         this._drag = null
