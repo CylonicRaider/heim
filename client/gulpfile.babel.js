@@ -103,6 +103,11 @@ function embedBundler(args) {
 
 gulp.task('heim-git-commit', (done) => {
   shell('git rev-parse HEAD', (gitRev) => {
+    if (gitRev) {
+      log('Git commit:', colors.bold(gitRev))
+    } else {
+      log('Git commit: N/A')
+    }
     process.env.HEIM_GIT_COMMIT = heimOptions.HEIM_GIT_COMMIT = gitRev
     done()
   })
@@ -151,9 +156,14 @@ gulp.task('embed-js', () => {
     .pipe(gulp.dest(embedDest))
 })
 
-gulp.task('raven-js', ['heim-git-commit', 'heim-js'], () => {
+gulp.task('raven-js', ['heim-git-commit', 'heim-js'], (done) => {
   shell('md5sum build/heim/static/main.js | cut -d " " -f 1', (releaseHash) => {
-    return heimBrowserify('./lib/raven.js')
+    if (releaseHash) {
+      log('Release hash:', colors.bold(releaseHash))
+    } else {
+      log('Release hash: N/A')
+    }
+    heimBrowserify('./lib/raven.js')
       .transform(envify(_.extend({
         SENTRY_ENDPOINT: process.env.SENTRY_ENDPOINT,
         HEIM_RELEASE: releaseHash,
@@ -166,6 +176,7 @@ gulp.task('raven-js', ['heim-git-commit', 'heim-js'], () => {
       .pipe(gulp.dest(heimStaticDest))
       .pipe(gzip())
       .pipe(gulp.dest(heimStaticDest))
+      .on('end', done)
   })
 })
 
