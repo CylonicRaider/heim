@@ -21,16 +21,14 @@ sentry:
   volumes:
     - ./_psqldata/sentry:/data
   ports:
-    - "8062:9000"
+    - "9000:9000"
   environment:
-    SENTRY_URL_PREFIX: https://sentry.euphoria.leet.nu
-    SENTRY_ALLOW_ORIGIN: https://euphoria.leet.nu
+    SENTRY_URL_PREFIX: http://localhost:9000
     SENTRY_INITIAL_TEAM: euphoria
     SENTRY_INITIAL_PROJECT: heim-client
     SENTRY_INITIAL_PLATFORM: javascript
     SENTRY_INITIAL_KEY: sentry:sentry
-    SENTRY_INITIAL_DOMAINS: euphoria.leet.nu
-    SENTRY_SECURE_PROXY_SSL_HEADER: HTTP_X_FORWARDED_PROTO,https
+    SENTRY_INITIAL_DOMAINS: localhost
     SECRET_KEY: onlyfordevelopment
 
 # The frontend container runs an ongoing gulp build.
@@ -46,9 +44,9 @@ frontend:
     - "8081:8081"
   environment:
     NODE_ENV: development
-    SENTRY_ENDPOINT: https://sentry@sentry.euphoria.leet.nu/1
-    HEIM_ORIGIN: https://euphoria.leet.nu
-    EMBED_ORIGIN: https://embed.euphoria.leet.nu
+    SENTRY_ENDPOINT: http://sentry@localhost:9000/2
+    HEIM_ORIGIN: http://localhost:8080
+    EMBED_ORIGIN: http://localhost:8081
 
 # The upgradedb container runs the upgradedb command against the psql container.
 upgradedb:
@@ -69,7 +67,7 @@ backend:
     - ./client/build:/srv/heim/client/src/build
     - ./backend/console/keys:/keys
   ports:
-    - "8060:80"
+    - "8080:80"
     - "2222:2222"
   environment:
     HEIM_ID: dev1
@@ -107,7 +105,7 @@ embed:
     - ./_deps/godeps:/godeps
     - ./client/build:/srv/heim/client/src/build
   ports:
-    - "8061:80"
+    - "8081:80"
   command: run.sh heimctl serve-embed -http :80 -static /srv/heim/client/src/build/embed
 
 presence:
