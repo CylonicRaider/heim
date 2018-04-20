@@ -113,7 +113,7 @@ gulp.task('heim-git-commit', (done) => {
   })
 })
 
-gulp.task('heim-js', ['heim-git-commit'], () => {
+gulp.task('heim-js', ['heim-git-commit', 'heim-less'], () => {
   return heimBundler({debug: true})
     // share some libraries with the global namespace
     // doing this here because these exposes trip up watchify atm
