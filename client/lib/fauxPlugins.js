@@ -3,6 +3,7 @@
 import React from 'react'
 import moment from 'moment'
 
+import heimURL from './heimURL'
 
 const roomStylesheets = {
   thedrawingroom: 'thedrawingroom',
@@ -22,7 +23,7 @@ export default function initPlugins(roomName) {
   const stylesheet = roomStylesheets[roomName]
   if (stylesheet) {
     Heim.hook('page-bottom', () => (
-      <link key="custom-style" rel="stylesheet" type="text/css" href={'/static/' + stylesheet + '.css'} />
+      <link key="custom-style" rel="stylesheet" type="text/css" href={heimURL('/static/' + stylesheet + '.css')} />
     ))
   }
 
@@ -64,13 +65,13 @@ export default function initPlugins(roomName) {
   /* Alternate themes */
   if (uiwindow.location.hash.substr(1) === 'spooky') {
     Heim.hook('page-bottom', () => (
-      <link key="spooky-theme" rel="stylesheet" type="text/css" href="/static/theme-spooky.css" />
+      <link key="spooky-theme" rel="stylesheet" type="text/css" href={heimURL('/static/theme-spooky.css')} />
     ))
   }
 
   if (uiwindow.location.hash.substr(1) === 'darcula') {
     Heim.hook('page-bottom', () => (
-      <link key="darcula-theme" rel="stylesheet" type="text/css" href="/static/theme-darcula.css" />
+      <link key="darcula-theme" rel="stylesheet" type="text/css" href={heimURL('/static/theme-darcula.css')} />
     ))
   }
 
@@ -78,7 +79,7 @@ export default function initPlugins(roomName) {
   const now = moment()
   if (now.month() === 11 && (now.date() === 13 || now.date() === 14)) {
     Heim.hook('page-bottom', () => (
-      <link key="anniversary-style" rel="stylesheet" type="text/css" href="/static/anniversary.css" />
+      <link key="anniversary-style" rel="stylesheet" type="text/css" href={heimURL('/static/anniversary.css')} />
     ))
   }
 }
