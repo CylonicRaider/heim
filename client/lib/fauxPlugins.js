@@ -13,17 +13,20 @@ const roomStylesheets = {
   monospace: 'monospace',
   space: 'norman',
   sandersforpresident: 'sandersforpresident',
-  xkcd: 'xkcd'
-};
+  xkcd: 'xkcd',
+}
 
 export default function initPlugins(roomName) {
-  const stylesheet = roomStylesheets[roomName];
+  /* Custom stylesheets */
+  // Add a new .less file in gadgets/ and amend the table above to create a new one.
+  const stylesheet = roomStylesheets[roomName]
   if (stylesheet) {
     Heim.hook('page-bottom', () => (
       <link key="custom-style" rel="stylesheet" type="text/css" href={'/static/' + stylesheet + '.css'} />
     ))
   }
 
+  /* Per-room customizations */
   if (roomName === 'space') {
     const Embed = require('./ui/Embed').default
 
@@ -58,6 +61,7 @@ export default function initPlugins(roomName) {
     ))
   }
 
+  /* Alternate themes */
   if (uiwindow.location.hash.substr(1) === 'spooky') {
     Heim.hook('page-bottom', () => (
       <link key="spooky-theme" rel="stylesheet" type="text/css" href="/static/theme-spooky.css" />
@@ -70,6 +74,7 @@ export default function initPlugins(roomName) {
     ))
   }
 
+  /* Anniversary gadget */
   const now = moment()
   if (now.month() === 11 && (now.date() === 13 || now.date() === 14)) {
     Heim.hook('page-bottom', () => (
