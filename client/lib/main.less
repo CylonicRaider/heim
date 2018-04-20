@@ -824,19 +824,22 @@ iframe.js {
   }
 }
 
-.top-bar {
+.top-bar, .secondary-top-bar {
   position: relative;
   display: flex;
   flex-shrink: 0;
   align-items: center;
   position: relative;
-  padding: 6px 10px;
   min-height: 20px;
   background: white;
   box-shadow: 0 0 8px fade(black, 25%);
   white-space: nowrap;
-  z-index: 12;
   user-select: none;
+}
+
+.top-bar {
+  padding: 6px 10px;
+  z-index: 13;
 
   .update-available, .user-count {
     height: 20px;
@@ -859,6 +862,11 @@ iframe.js {
     .button-icon('../res/close-pane.svg', 14px, 0, 1);
     .larger-touch-target(10px, 10px);
   }
+}
+
+.secondary-top-bar {
+  padding: 3px 10px;
+  z-index: 12;
 }
 
 .main-pane .top-bar {

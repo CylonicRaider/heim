@@ -1,0 +1,44 @@
+.youtube-pane {
+  z-index: 9;
+}
+
+.youtube-pane .title {
+  width: 0;
+}
+
+.youtube-pane .aspect-wrapper {
+  flex-shrink: 0;
+  position: relative;
+  width: 100%;
+  box-shadow: 0 0 12px rgba(0, 0, 0, .25);
+  z-index: 5;
+}
+
+.youtube-pane .aspect-wrapper:before {
+  content: '';
+  display: block;
+  padding-top: 75%;
+}
+
+.youtube-pane .youtube-tv {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.youtube-tv {
+  border: none;
+  height: 60vmin;
+}
+
+.youtube-pane .notice-board {
+  background: white;
+  padding: 10px;
+  overflow: auto;
+  white-space: pre-wrap;
+  flex: 1;
+}

@@ -31,8 +31,8 @@ import brfs from 'brfs'
 
 let watching = false
 const heimDest = './build/heim'
-const heimStaticDest = './build/heim/static'
-const heimPagesDest = './build/heim/pages'
+const heimStaticDest = heimDest + '/static'
+const heimPagesDest = heimDest + '/pages'
 const embedDest = './build/embed'
 const emailDest = './build/email'
 
@@ -181,7 +181,7 @@ gulp.task('raven-js', ['heim-git-commit', 'heim-js'], (done) => {
 })
 
 gulp.task('heim-less', () => {
-  return gulp.src(['./lib/main.less', './lib/crashed.less', './lib/od.less', './site/*.less'])
+  return gulp.src(['./lib/main.less', './lib/crashed.less', './lib/od.less', './lib/gadgets/*.less', './site/*.less'])
     .pipe(less({compress: true}))
     .on('error', handleError('LESS error'))
     .pipe(autoprefixer({cascade: false}))
