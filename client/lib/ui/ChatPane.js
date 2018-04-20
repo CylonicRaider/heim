@@ -29,7 +29,7 @@ function boxMiddle(el) {
 }
 
 function closestIdx(array, value, iterator) {
-  let idx = _.sortedIndex(array, value, iterator)
+  let idx = _.sortedIndexBy(array, value, iterator)
   // reminder: sortedIndex can return an index after the last index if
   // the element belongs at the end of the array.
   if (idx > 0 && idx < array.length && value - iterator(array[idx - 1]) < iterator(array[idx]) - value) {
