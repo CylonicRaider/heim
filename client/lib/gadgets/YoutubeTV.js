@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 import Immutable from 'immutable'
 
+import heimURL from '../heimURL'
 import Embed from '../ui/Embed'
 import MessageText from '../ui/MessageText'
 
@@ -232,6 +233,6 @@ export function install() {
   })
 
   Heim.hook('page-bottom', () => (
-    <link key="youtubetv-style" rel="stylesheet" type="text/css" href="/static/youtube-tv.css" />
+    <link key="youtubetv-style" rel="stylesheet" type="text/css" href={heimURL('/static/youtube-tv.css')} />
   ))
 }
