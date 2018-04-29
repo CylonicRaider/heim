@@ -60,7 +60,7 @@ export default createReactClass({
     let content = this.props.content
 
     if (this.props.maxLength) {
-      content = _.truncate(content, this.props.maxLength)
+      content = _.truncate(content, {length: this.props.maxLength})
     }
 
     let html = _.escape(content)
