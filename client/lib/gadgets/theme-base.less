@@ -1,0 +1,365 @@
+
+// Basic colors
+@background: #000000;
+@primary: #c00000;
+@secondary: #808000;
+@text: #c0c0c0;
+
+// Supplementary colors and values
+@dark-theme: if((lightness(@background) < 0.5), true, false);
+@mention-background: #fdf9e7;
+@mention-text: #000000;
+@link-color: #0000ff;
+@nick-brightness: if((@dark-theme), 0.85, 1.0);
+@shadow-radius: 8px;
+
+// Derived colors
+@ui-background: if((@dark-theme), lighten(@background, 10%), darken(@background, 20%));
+@pane-background: if((@dark-theme), @background, darken(@background, 5%));
+@pane-selected-background: if((@dark-theme), lighten(@background, 5%), darken(@background, 10%));
+@bar-background: @background;
+@primary-background: if((@dark-theme), fadeout(@primary, 80%), fadeout(@primary, 90%));
+@secondary-background: if((@dark-theme), fadeout(@secondary, 80%), fadeout(@secondary, 90%));
+
+@button-background: if((@dark-theme), lighten(@background, 10%), darken(@background, 10%));
+@button-active-background: if((@dark-theme), lighten(@background, 20%), darken(@background, 20%));
+@button-selected-background: if((@dark-theme), lighten(@background, 25%), darken(@background, 25%));
+@button-color: @text;
+
+@timestamp-background: if((@dark-theme), lighten(@background, 5%), darken(@background, 50%));
+@timestamp-color: if((@dark-theme), lighten(@background, 25%), darken(@background, 25%));
+@chat-background: @background;
+@indent-line-base: fadeout(@text, 50%);
+@indent-line-focused: @secondary;
+@entry-background: @background;
+@entry-border: @background;
+@entry-focus-background: fadeout(@primary, 80%);
+@entry-focus-border: @primary;
+
+@shadow-color: fadeout(@text, 85%);
+
+// Mixins
+.grayscale-icon() {
+  .inner::before {
+    filter: grayscale(1) brightness(0) invert(0.5);
+  }
+}
+
+.opaque-button() {
+  .grayscale-icon;
+  background: @button-background;
+  color: @button-color;
+
+  &.touching, &:active {
+    background: @button-active-background;
+  }
+}
+
+// This should make most enclosed rules take precedence
+#container {
+
+  color: @text;
+
+  #ui-panes {
+    background: @ui-background;
+  }
+
+  .info-pane {
+    background: @pane-background;
+    color: @secondary;
+
+    .account-area .account-button {
+      background: @primary-background;
+
+      .inner {
+        color: @primary;
+
+        &::before {
+          filter: grayscale(1) brightness(0) invert(0.5);
+        }
+      }
+    }
+
+    .account-area, .toolbox-button, .thread-list-container {
+      border-bottom: none;
+    }
+
+    .thread-list-container {
+      .thread {
+        .info {
+          opacity: 1;
+
+          .title, .title a {
+            color: @secondary;
+          }
+        }
+
+        .children {
+          border-color: @secondary;
+        }
+      }
+
+      &::after {
+        box-shadow: none;
+      }
+    }
+
+    .notification-settings .mode-selector {
+      background: @button-background;
+
+      .mode {
+        .grayscale-icon;
+      }
+
+      .mode.selected {
+        background: @button-selected-background;
+      }
+    }
+
+    .notification-list {
+      .notification.new-mention, .notification.new-reply, .notification.new-message {
+        .grayscale-icon;
+        background: @pane-background;
+      }
+    }
+
+    .notification-list, .thread-list-container {
+      &, & .thread {
+        .notification, .info {
+          &:hover, &.selected {
+            background: @pane-selected-background;
+          }
+        }
+      }
+    }
+  }
+
+  .thread-popup .top-line {
+    background: @pane-background;
+
+    button {
+      .grayscale-icon;
+      color: @secondary;
+    }
+  }
+
+  .top-bar, .secondary-top-bar, #ui.disconnected .top-bar {
+    background: @bar-background;
+    box-shadow: 0 0 @shadow-radius @shadow-color;
+  }
+
+  .top-bar {
+    .room .name, .title {
+      color: @secondary;
+    }
+
+    .expand-info-pane, .collapse-info-pane, .close {
+      .grayscale-icon;
+      opacity: 1;
+    }
+
+    .room .state {
+      color: @text;
+      filter: brightness(@nick-brightness);
+
+      &.public, &.pm {
+        color: black;
+      }
+    }
+
+    .user-count {
+      .opaque-button;
+    }
+  }
+
+  .spinner {
+    opacity: 1;
+    filter: grayscale(1) brightness(0) invert(0.5);
+  }
+
+  .main-pane-stack, .info-pane, .sidebar-pane, .chat-pane-container {
+    box-shadow: 0 0 @shadow-radius @shadow-color;
+  }
+
+  .chat-pane-container {
+    .notice {
+      color: contrast(@primary);
+
+      .content .actions button {
+        color: @primary;
+      }
+
+      &.notifications {
+        background: @primary;
+      }
+    }
+  }
+
+  .chat-pane {
+    background: @chat-background;
+    color: @text;
+
+    &.timestamps-visible {
+      background: @timestamp-background;
+    }
+
+    .messages-container {
+      .messages-content {
+        background: @chat-background;
+      }
+
+      .entry-box label {
+        color: @text;
+      }
+
+      .entry-box.welcome {
+        background: @primary-background;
+        color: @primary;
+
+        .message {
+          border-color: @primary;
+        }
+
+        p {
+          color: inherit;
+        }
+      }
+    }
+  }
+
+  .messages {
+    .timestamp {
+      color: @timestamp-color;
+    }
+
+    .message-node.mention > .line .message {
+      background: @mention-background;
+      color: @mention-text;
+      filter: brightness(@nick-brightness);
+    }
+
+    .line .message-tall .message.expando::after {
+      background: linear-gradient(to top, @chat-background, #fff0 100px);
+    }
+
+    .entry, .focus-target {
+      border-color: @entry-border;
+      background: @entry-background;
+      box-shadow: 0 0 @shadow-radius @shadow-color;
+    }
+
+    .entry {
+      // I have no idea how that works in the main stylesheet.
+      input.nick {
+        color: black;
+        z-index: 10;
+      }
+
+      input, textarea {
+        color: @text;
+      }
+    }
+
+    .replies.collapsed, .expand-rest, .replies.in-pane {
+      .grayscale-icon;
+      color: @secondary;
+
+      .message-preview {
+        color: @text;
+      }
+
+      &, &.focus-target {
+        &.touching, &:active {
+          background: @secondary-background;
+        }
+      }
+    }
+
+    .replies.inline, .replies.expanded {
+      & > .indent-line {
+        background: linear-gradient(to right, @indent-line-base 0, @indent-line-base 2px, transparent 2px);
+      }
+
+      &.focused {
+        & > .indent-line {
+          background: linear-gradient(to right, @indent-line-focused 0, @indent-line-focused 2px, transparent 2px);
+        }
+
+        .entry::before {
+          // Those are hard to reproduce without recreating the images.
+          display: none;
+        }
+      }
+    }
+
+    .line.marker {
+      hr {
+        border-color: @primary;
+      }
+
+      .label {
+        color: @primary;
+      }
+    }
+
+    .drag-handle-container .drag-handle::before {
+      filter: grayscale(1) brightness(0) invert(0.5);
+    }
+  }
+
+  .messages.entry-focus {
+    .entry, .focus-target {
+      background: @entry-focus-background;
+      border-color: @entry-focus-border;
+    }
+  }
+
+  .sidebar-pane {
+    background: @pane-background;
+  }
+
+  .nick:not(input), .message-emote {
+    color: black;
+    filter: brightness(@nick-brightness);
+  }
+
+  .dialog {
+    background: @pane-background;
+
+    .top-line .close {
+      .grayscale-icon;
+    }
+  }
+
+  button.major-action {
+    .opaque-button;
+    background: @primary-background;
+    color: @primary;
+
+    &.touching, &:active {
+      background: @primary-background;
+    }
+  }
+
+  button.minor-action {
+    .opaque-button;
+    color: @primary;
+  }
+
+  button.major-secondary-action, button.minor-secondary-action, button.action {
+    .opaque-button;
+    color: fadeout(@text, 50%);
+  }
+
+  .fields .field-action-box, .fields .text-field input {
+    color: inherit;
+    background: transparent;
+    box-shadow: 0 0 @shadow-radius @shadow-color;
+  }
+
+  .account-settings-dialog .content .big-nick {
+    color: black;
+    filter: brightness(@nick-brightness);
+  }
+
+}

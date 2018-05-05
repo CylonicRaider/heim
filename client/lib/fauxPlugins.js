@@ -2,6 +2,7 @@
 
 import React from 'react'
 import moment from 'moment'
+import queryString from 'querystring'
 
 import heimURL from './heimURL'
 
@@ -15,6 +16,12 @@ const roomStylesheets = {
   space: 'norman',
   sandersforpresident: 'sandersforpresident',
   xkcd: 'xkcd',
+}
+
+const themeStylesheets = {
+  spooky: 'theme-spooky',
+  darcula: 'theme-darcula',
+  devel: 'theme-base',
 }
 
 export default function initPlugins(roomName) {
@@ -63,16 +70,12 @@ export default function initPlugins(roomName) {
   }
 
   /* Alternate themes */
-  if (uiwindow.location.hash.substr(1) === 'spooky') {
+  const hashFlags = queryString.parse(uiwindow.location.hash.substr(1))
+  const themeStylesheet = themeStylesheets[hashFlags.theme || ''];
+  if (themeStylesheet) {
     Heim.hook('page-bottom', () => (
-      <link key="spooky-theme" rel="stylesheet" type="text/css" href={heimURL('/static/theme-spooky.css')} />
-    ))
-  }
-
-  if (uiwindow.location.hash.substr(1) === 'darcula') {
-    Heim.hook('page-bottom', () => (
-      <link key="darcula-theme" rel="stylesheet" type="text/css" href={heimURL('/static/theme-darcula.css')} />
-    ))
+      <link key="user-theme" rel="stylesheet" type="text/css" href={heimURL('/static/' + themeStylesheet + '.css')} />
+    ));
   }
 
   /* Anniversary gadget */
