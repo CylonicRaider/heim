@@ -10,11 +10,11 @@ import Immutable from 'immutable'
 import heimURL from '../heimURL'
 import Embed from '../ui/Embed'
 import MessageText from '../ui/MessageText'
+import { NoticeBoard } from './NoticeBoard'
 
 
 const TVActions = Reflux.createActions([
   'changeVideo',
-  'changeNotice',
 ])
 _.extend(module.exports, TVActions)
 
@@ -33,10 +33,6 @@ export const TVStore = Reflux.createStore({
         youtubeTime: 0,
         title: '',
       },
-      notice: {
-        time: 0,
-        content: '',
-      },
     })
   },
 
@@ -46,11 +42,6 @@ export const TVStore = Reflux.createStore({
 
   changeVideo(video) {
     this.state = this.state.set('video', Immutable.fromJS(video))
-    this.trigger(this.state)
-  },
-
-  changeNotice(notice) {
-    this.state = this.state.set('notice', Immutable.fromJS(notice))
     this.trigger(this.state)
   },
 })
@@ -133,7 +124,7 @@ export const YouTubePane = createReactClass({
         <div className="aspect-wrapper">
           <YouTubeTV clientTimeOffset={this.props.clientTimeOffset} />
         </div>
-        <MessageText className="notice-board" content={this.state.tv.getIn(['notice', 'content'])} />
+        <NoticeBoard className="notice-board" />
       </div>
     )
   },
@@ -189,46 +180,10 @@ export function install() {
         }
       })
       .filter(Boolean)
-      .sortBy(v => v.time)
-      .last()
+      .maxBy(v => v.time)
 
     if (video && video.time > TVStore.state.getIn(['video', 'time'])) {
       TVActions.changeVideo(video)
-    }
-
-    const noticeRe = /^!notice(\S*?)\s([^]*)$/
-    const notices = candidates
-      .map((msg) => {
-        const match = msg.get('content').match(noticeRe)
-        return match && {
-          id: msg.get('id'),
-          time: msg.get('time'),
-          display: !match[1].length,
-          content: match[2],
-        }
-      })
-      .filter(Boolean)
-      .cacheResult()
-
-    const noticeMaxSummaryLength = 80
-    notices.forEach((notice) => {
-      const lines = notice.content.split('\n')
-      let content = lines[0]
-      if (content.length >= noticeMaxSummaryLength || lines.length > 1) {
-        content = content.substr(0, noticeMaxSummaryLength) + '…'
-      }
-      state.messages.mergeNodes(notice.id, {
-        content: '/me changed the notice to: "' + content + '"',
-      })
-    })
-
-    const latestNotice = notices
-      .filter(n => n.display)
-      .sortBy(notice => notice.time)
-      .last()
-
-    if (latestNotice && latestNotice.time > TVStore.state.getIn(['notice', 'time'])) {
-      TVActions.changeNotice(latestNotice)
     }
   })
 
