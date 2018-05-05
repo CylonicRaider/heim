@@ -41,7 +41,7 @@ export default createReactClass({
       .filter(user => user.get('present') && user.get('name'))
       .sortBy(user => user.get('name').toLowerCase())
       .groupBy(user => /^bot:/.test(user.get('id')) ? 'bot' : 'human')
-    const humanCount = (list.get('human')  || {size: 0}).size
+    const humanCount = (list.get('human') || {size: 0}).size
     const botCount = (list.get('bot') || {size: 0}).size
 
     const lurkers = this.props.users
