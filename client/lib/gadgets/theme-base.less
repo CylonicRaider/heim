@@ -39,9 +39,12 @@
 @shadow-color: fadeout(@text, 85%);
 
 // Mixins
+.grayscale() {
+  filter: grayscale(1) brightness(0) invert(0.5);
+}
 .grayscale-icon() {
   .inner::before {
-    filter: grayscale(1) brightness(0) invert(0.5);
+    .grayscale;
   }
 }
 
@@ -75,7 +78,7 @@
         color: @primary;
 
         &::before {
-          filter: grayscale(1) brightness(0) invert(0.5);
+          .grayscale;
         }
       }
     }
@@ -176,7 +179,7 @@
 
   .spinner {
     opacity: 1;
-    filter: grayscale(1) brightness(0) invert(0.5);
+    .grayscale;
   }
 
   .main-pane-stack, .info-pane, .sidebar-pane, .chat-pane-container {
@@ -306,7 +309,7 @@
     }
 
     .drag-handle-container .drag-handle::before {
-      filter: grayscale(1) brightness(0) invert(0.5);
+      .grayscale;
     }
   }
 
@@ -332,6 +335,12 @@
     .top-line .close {
       .grayscale-icon;
     }
+
+    // Okaaay...
+    .content .bottom.green-bg {
+      background: fadeout(@primary-background, 50%, relative);
+      border-top-width: none;
+    }
   }
 
   button.major-action {
@@ -354,15 +363,34 @@
     color: fadeout(@text, 50%);
   }
 
-  .fields .field-action-box, .fields .text-field input {
-    color: inherit;
-    background: transparent;
-    box-shadow: 0 0 @shadow-radius @shadow-color;
-  }
-
   .account-settings-dialog .content .big-nick {
     color: black;
     filter: brightness(@nick-brightness);
+  }
+
+  .fields {
+    .field-action-box, .text-field input {
+      color: inherit;
+      background: transparent;
+      box-shadow: 0 0 @shadow-radius @shadow-color;
+    }
+
+    .check-field {
+      input[type="checkbox"] + label {
+        &::before {
+          .grayscale;
+        }
+
+        &::after {
+          background: @button-background;
+          box-shadow: none;
+        }
+      }
+
+      a {
+        color: @primary;
+      }
+    }
   }
 
 }
