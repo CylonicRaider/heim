@@ -36,9 +36,7 @@ export default createReactClass({
   },
 
   render() {
-    let list
-
-    list = this.props.users
+    const list = this.props.users
       .toSeq()
       .filter(user => user.get('present') && user.get('name'))
       .sortBy(user => user.get('name').toLowerCase())

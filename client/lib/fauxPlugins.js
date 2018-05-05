@@ -71,11 +71,11 @@ export default function initPlugins(roomName) {
 
   /* Alternate themes */
   const hashFlags = queryString.parse(uiwindow.location.hash.substr(1))
-  const themeStylesheet = themeStylesheets[hashFlags.theme || ''];
+  const themeStylesheet = themeStylesheets[hashFlags.theme || '']
   if (themeStylesheet) {
     Heim.hook('page-bottom', () => (
       <link key="user-theme" rel="stylesheet" type="text/css" href={heimURL('/static/' + themeStylesheet + '.css')} />
-    ));
+    ))
   }
 
   /* Anniversary gadget */
