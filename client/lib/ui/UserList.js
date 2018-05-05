@@ -41,10 +41,17 @@ export default createReactClass({
     list = this.props.users
       .toSeq()
       .filter(user => user.get('present') && user.get('name'))
-
-    list = list
       .sortBy(user => user.get('name').toLowerCase())
       .groupBy(user => /^bot:/.test(user.get('id')) ? 'bot' : 'human')
+    const humanCount = (list.get('human')  || {size: 0}).size
+    const botCount = (list.get('bot') || {size: 0}).size
+
+    const lurkers = this.props.users
+      .toSeq()
+      .filter(user => user.get('present') && !user.get('name'))
+      .groupBy(user => /^bot:/.test(user.get('id')) ? 'bot' : 'human')
+    const humanLurkerCount = (lurkers.get('human') || {size: 0}).size
+    const botLurkerCount = (lurkers.get('bot') || {size: 0}).size
 
     const formatUser = (user) => {
       const sessionId = user.get('session_id')
@@ -79,11 +86,11 @@ export default createReactClass({
     return (
       <div className="user-list" {...forwardProps(this)}>
         {people && <div className="list">
-          <h1>people</h1>
+          <h1>people <span className="user-counter">({humanCount}{humanLurkerCount ? '+' + humanLurkerCount : ''})</span></h1>
           {people.map(formatUser).toIndexedSeq()}
         </div>}
         {bots && <div className="list">
-          <h1>bots <span className="user-counter">({bots.size})</span></h1>
+          <h1>bots <span className="user-counter">({botCount}{botLurkerCount ? '+' + botLurkerCount : ''})</span></h1>
           {bots.map(formatUser).toIndexedSeq()}
         </div>}
       </div>
