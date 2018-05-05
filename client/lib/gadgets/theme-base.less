@@ -10,7 +10,7 @@
 @mention-background: #fdf9e7;
 @mention-text: #000000;
 @link-color: #0000ff;
-@nick-brightness: if((@dark-theme), 0.85, 1.0);
+@nick-brightness: if((@dark-theme), 0.75, 1.0);
 @shadow-radius: 8px;
 
 // Derived colors
@@ -120,6 +120,7 @@
       .notification.new-mention, .notification.new-reply, .notification.new-message {
         .grayscale-icon;
         background: @pane-background;
+        animation: none;
       }
     }
 
@@ -159,11 +160,12 @@
     }
 
     .room .state {
-      color: @text;
+      background: @primary;
+      color: contrast(@primary);
       filter: brightness(@nick-brightness);
 
-      &.public, &.pm {
-        color: black;
+      &.touching, &:active {
+        background: fadeout(@primary, 50%);
       }
     }
 
@@ -183,7 +185,6 @@
 
   .chat-pane-container {
     .notice {
-      color: contrast(@primary);
 
       .content .actions button {
         color: @primary;
@@ -191,6 +192,8 @@
 
       &.notifications {
         background: @primary;
+        color: contrast(@primary);
+        filter: brightness(@nick-brightness);
       }
     }
   }
