@@ -184,7 +184,7 @@ const Message = createReactClass({
     ev.stopPropagation()
   },
 
-  expandReplies() {
+  expandReplies(ev) {
     if (this.state.node.get('repliesExpanded')) {
       return
     }
@@ -192,6 +192,7 @@ const Message = createReactClass({
     if (this.state.paneData.get('focused')) {
       this.props.pane.focusEntry()
     }
+    ev.stopPropagation()
   },
 
   collapseReplies() {
