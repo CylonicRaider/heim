@@ -76,6 +76,7 @@ export const NoticeBoard = createReactClass({
   displayName: 'NoticeBoard',
 
   mixins: [
+    require('react-addons-pure-render-mixin'),
     Reflux.connect(store, 'data'),
   ],
 
