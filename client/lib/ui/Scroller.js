@@ -231,7 +231,7 @@ export default createReactClass({
         node = ReactDOM.findDOMNode(this)
       } catch (ex) {
         // HACK: React complains loudly if we are not mounted
-        if (ex.name != 'Invariant Violation') throw ex
+        if (ex.name !== 'Invariant Violation') throw ex
         return
       }
       const nodeBox = dimensions(node)
