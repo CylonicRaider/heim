@@ -69,7 +69,7 @@ export default createReactClass({
     // https://bugzilla.mozilla.org/show_bug.cgi?id=984869#c2
     return React.createElement(
       this.props.component,
-      _.extend(forwardProps(this), {
+      _.extend(forwardProps(this, {'href': true, 'target': true}), {
         onClick: this.onClick,
         onTouchStart: this.onTouchStart,
         onTouchEnd: this.onTouchEnd,

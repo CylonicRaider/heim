@@ -15,7 +15,8 @@ const hooks = module.exports.hooks = new Hooks(
   'main-sidebar',
   'thread-panes',
   'incoming-messages',
-  'main-pane-top'
+  'main-pane-top',
+  'top-bar-middle',
 )
 
 module.exports.hook = hooks.register.bind(hooks)

@@ -870,6 +870,67 @@ iframe.js {
 }
 
 .main-pane .top-bar {
+  .room-switcher {
+    display: inline-block;
+
+    .room-switcher-expand {
+      .button-icon('../res/to-room.svg', 18px);
+    }
+
+    .room-switcher-apply {
+      display: inline-block;
+      cursor: pointer;
+      .button-icon('../res/to-room.svg', 18px);
+    }
+
+    .room-switcher-cancel {
+      .button-icon('../res/to-room-cancel.svg', 18px);
+    }
+
+    .room-switcher-expand, .room-switcher-apply, .room-switcher-cancel {
+      border-radius: 2px;
+      .touchable-bg(@neutral-color);
+      .larger-touch-target(20px, 10pt);
+
+      .inner::before {
+        margin-right: 0;
+      }
+    }
+
+    .room-switcher-prompt {
+      margin-left: 6px;
+    }
+
+    .room-switcher-inner {
+      margin: 0 6px;
+      background: white;
+      box-shadow: 0 0 5px fade(black, 50%);
+
+      &.valid {
+        box-shadow: 0 0 5px fade(green, 50%);
+      }
+
+      &.invalid {
+        box-shadow: 0 0 5px fade(red, 50%);
+      }
+
+      .room-switcher-room {
+        margin: 0;
+        border: 0;
+        padding: 0;
+        font: inherit;
+        background: none;
+      }
+    }
+
+    &.expanded {
+      background: darken(white, 25%);
+      margin: -4px;
+      padding: 4px;
+      border-radius: 2px;
+    }
+  }
+
   .right {
     display: flex;
     align-items: center;
