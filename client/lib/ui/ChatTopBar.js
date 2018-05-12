@@ -35,6 +35,7 @@ export default createReactClass({
     managerMode: PropTypes.bool,
     toggleManagerMode: PropTypes.func,
     working: PropTypes.bool,
+    thin: PropTypes.bool,
   },
 
   mixins: [HooksMixin],
@@ -63,8 +64,8 @@ export default createReactClass({
         {this.props.showInfoPaneButton && <FastButton className={classNames(this.props.infoPaneOpen ? 'collapse-info-pane' : 'expand-info-pane')} onClick={this.props.infoPaneOpen ? this.props.collapseInfoPane : this.props.expandInfoPane} />}
         <RoomTitle name={this.props.roomName} title={this.props.roomTitle} authType={this.props.authType} connected={this.props.connected} joined={this.props.joined} />
         {this.props.isManager && <FastButton className={classNames('manager-toggle', {'on': this.props.managerMode})} onClick={this.props.toggleManagerMode}><div className="hex left" dangerouslySetInnerHTML={{__html: hexLeftSVG}} />{this.props.managerMode ? 'host mode' : 'host'}<div className="hex right" dangerouslySetInnerHTML={{__html: hexRightSVG}} /></FastButton>}
+        {!this.props.thin && <RoomSwitcher />}
         {this.templateHook('top-bar-middle')}
-        <RoomSwitcher />
         <div className="right">
           <Spinner visible={this.props.working} />
           {this.props.joined && <FastButton fastTouch className="user-count" onClick={this.props.toggleUserList}>{userCount}{lurkerCount ? <span className="lurker-count">+{lurkerCount}</span> : null}</FastButton>}

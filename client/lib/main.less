@@ -871,7 +871,7 @@ iframe.js {
 
 .main-pane .top-bar {
   .room-switcher {
-    display: inline-block;
+    display: flex;
 
     .room-switcher-expand {
       .button-icon('../res/to-room.svg', 18px);
@@ -888,6 +888,7 @@ iframe.js {
     }
 
     .room-switcher-expand, .room-switcher-apply, .room-switcher-cancel {
+      margin: auto 0;
       border-radius: 2px;
       .touchable-bg(@neutral-color);
       .larger-touch-target(20px, 10pt);
@@ -898,11 +899,11 @@ iframe.js {
     }
 
     .room-switcher-prompt {
-      margin-left: 6px;
+      margin: auto 0 auto 6px;
     }
 
     .room-switcher-inner {
-      margin: 0 6px;
+      margin: auto 6px;
       background: white;
       box-shadow: 0 0 5px fade(black, 50%);
 
@@ -918,13 +919,14 @@ iframe.js {
         margin: 0;
         border: 0;
         padding: 0;
+        width: 6em;
         font: inherit;
         background: none;
       }
     }
 
     &.expanded {
-      background: darken(white, 25%);
+      background: @neutral-color;
       margin: -4px;
       padding: 4px;
       border-radius: 2px;
