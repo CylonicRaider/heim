@@ -20,13 +20,15 @@ window.requestAnimationFrame = function requestAnimationFrameShim(cb) {
 const origCaptureException = Raven.captureException
 window.Raven.captureException = function captureException(ex, options) {
   const newOptions = options || {}
-  if (ex.action) {
-    newOptions.tags = newOptions.tags || {}
-    newOptions.tags.action = ex.action
-  }
-  if (ex.response) {
-    newOptions.extra = newOptions.extra || {}
-    newOptions.extra.response = ex.response
+  if (ex) {
+    if (ex.action) {
+      newOptions.tags = newOptions.tags || {}
+      newOptions.tags.action = ex.action
+    }
+    if (ex.response) {
+      newOptions.extra = newOptions.extra || {}
+      newOptions.extra.response = ex.response
+    }
   }
   origCaptureException.call(Raven, ex, newOptions)
 }
