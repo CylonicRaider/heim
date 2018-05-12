@@ -226,7 +226,14 @@ export default createReactClass({
     // out that setting scrollTop inside a requestAnimationFrame callback
     // circumvents this issue.
     this._chromeRAFHack('scroll', () => {
-      const node = ReactDOM.findDOMNode(this)
+      let node
+      try {
+        node = ReactDOM.findDOMNode(this)
+      } catch (ex) {
+        // HACK: React complains loudly if we are not mounted
+        if (ex.name != 'Invariant Violation') throw ex
+        return
+      }
       const nodeBox = dimensions(node)
       const viewTop = nodeBox.top
       const viewHeight = nodeBox.height
