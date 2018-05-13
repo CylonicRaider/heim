@@ -46,7 +46,7 @@ const heimOptions = {
   NODE_ENV: process.env.NODE_ENV,
 }
 
-// nullify an ansi-colors function if color is not supported
+// apply an ansi-colors function if the terminal supports color
 function doColor(color, string) {
   return colorSupport.hasBasic ? color(string) : string
 }
