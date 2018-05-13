@@ -28,6 +28,7 @@ import log from 'fancy-log'
 import through2 from 'through2'
 import babelify from 'babelify'
 import brfs from 'brfs'
+import colorSupport from 'color-support'
 
 let watching = false
 const heimDest = './build/heim'
@@ -43,6 +44,11 @@ const heimOptions = {
   HEIM_PREFIX: process.env.HEIM_PREFIX || '',
   EMBED_ORIGIN: process.env.EMBED_ORIGIN,
   NODE_ENV: process.env.NODE_ENV,
+}
+
+// nullify an ansi-colors function if color is not supported
+function doColor(color, string) {
+  return colorSupport.hasBasic ? color(string) : string
 }
 
 // more meaningful name
@@ -104,7 +110,7 @@ function embedBundler(args) {
 gulp.task('heim-git-commit', (done) => {
   shell('git rev-parse HEAD', (gitRev) => {
     if (gitRev) {
-      log('Git commit:', colors.bold(gitRev))
+      log('Git commit:', doColor(colors.bold, gitRev))
     } else {
       log('Git commit: N/A')
     }
@@ -159,7 +165,7 @@ gulp.task('embed-js', () => {
 gulp.task('raven-js', ['heim-git-commit', 'heim-js'], (done) => {
   shell('md5sum build/heim/static/main.js | cut -d " " -f 1', (releaseHash) => {
     if (releaseHash) {
-      log('Release hash:', colors.bold(releaseHash))
+      log('Release hash:', doColor(colors.bold, releaseHash))
     } else {
       log('Release hash: N/A')
     }
@@ -306,7 +312,7 @@ function watchifyTask(name, bundler, outFile, dest) {
         .pipe(gulp.dest(dest))
     }
 
-    watchBundler.on('log', log.bind(null, colors.green('JS (' + name + ')')))
+    watchBundler.on('log', log.bind(null, doColor(colors.green, 'JS (' + name + ')')))
     watchBundler.on('update', rebundle)
     return rebundle()
   })
