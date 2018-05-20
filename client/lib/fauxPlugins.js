@@ -78,6 +78,8 @@ export default function initPlugins(roomName) {
     ))
   }
 
+  require('./gadgets/ThemeChooser').install()
+
   /* Anniversary gadget */
   const now = moment()
   if (now.month() === 11 && (now.date() === 13 || now.date() === 14)) {

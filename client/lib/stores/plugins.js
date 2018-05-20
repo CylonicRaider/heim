@@ -17,6 +17,7 @@ const hooks = module.exports.hooks = new Hooks(
   'incoming-messages',
   'main-pane-top',
   'top-bar-middle',
+  'info-pane',
 )
 
 module.exports.hook = hooks.register.bind(hooks)
