@@ -113,7 +113,7 @@ iframe.js {
     flex-shrink: 0;
   }
 
-  h1, h2, .notification-settings .notification-toggle .inner, .toolbox-button .inner, .account-button .inner {
+  h1, h2, .notification-settings .notification-toggle .inner, .toolbox-button .inner, .account-button .inner, .theme-button .inner {
     font-size: .85rem;
     font-weight: bold;
     color: #777;
@@ -127,13 +127,13 @@ iframe.js {
 .info-pane {
   width: @info-pane-width;
 
-  .notification-list, .thread-list-container, .toolbox-button, .account-area {
+  .notification-list, .thread-list-container, .toolbox-button, .theme-button, .account-area {
     margin-top: 4px;
     margin-left: -10px;
     margin-right: -10px;
   }
 
-  .toolbox-button, .thread-list-container, .account-area {
+  .toolbox-button, .theme-button, .thread-list-container, .account-area {
     border-bottom: 1px solid #ccc;
     margin-bottom: 8px;
   }
@@ -379,6 +379,20 @@ iframe.js {
 
     &.empty .count {
       background: fade(@manager-dark-color, 50%);
+    }
+  }
+
+  .theme-button {
+    margin-top: -8px;
+    padding: 10px;
+    text-align: left;
+    background: fade(@topic-color, 15%);
+    .touchable-custom({
+      background: fade(@topic-color, 30%);
+    });
+
+    .inner {
+      color: @topic-color;
     }
   }
 
