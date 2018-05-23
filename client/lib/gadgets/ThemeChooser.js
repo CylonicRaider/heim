@@ -145,7 +145,7 @@ export const ThemeChooserDialog = createReactClass({
 
   render() {
     return (
-      <Bubble transition="slide-right" visible={this.state.settings.get('dialogVisible')} anchorEl={this.anchorEl} onDismiss={this.dismiss}>
+      <Bubble transition="slide-right" offset={() => ({ left: 5, top: 0 })} visible={this.state.settings.get('dialogVisible')} anchorEl={this.anchorEl} onDismiss={this.dismiss}>
         <div>
           <input type="checkbox" checked={this.state.settings.get('showAllReplies')} onChange={this.onShowAllReplies} id="theme-showAllReplies"/>
           <label htmlFor="theme-showAllReplies">Show all replies</label>
