@@ -15,6 +15,7 @@ import CheckField from '../ui/forms/CheckField'
 
 const storeActions = Reflux.createActions([
   'setTheme',
+  'showAllReplies',
   'showThemeDialog',
 ])
 _.extend(module.exports, storeActions)
@@ -27,7 +28,7 @@ export const store = Reflux.createStore({
   ],
 
   init() {
-    this.state = Immutable.fromJS({theme: null, dialogVisible: false})
+    this.state = Immutable.fromJS({theme: null, showAllReplies: false, dialogVisible: false})
     this.chatState = null
     this.storageState = null
   },
@@ -37,39 +38,51 @@ export const store = Reflux.createStore({
   },
 
   setTheme(newTheme) {
-    if (newTheme === this.state.get('theme')) {
+    this._updateState(this.state.set('theme', newTheme))
+  },
+
+  showAllReplies(newState) {
+    this._updateState(this.state.set('showAllReplies', newState))
+  },
+
+  showThemeDialog(newState) {
+    this._updateState(this.state.set('dialogVisible', newState))
+  },
+
+  _updateState(newState) {
+    if (newState.equals(this.state)) {
       return
     }
 
-    storage.store.setRoom(this.chatState.roomName, 'theme', newTheme)
+    if (newState.get('theme') !== this.state.get('theme')) {
+      storage.setRoom(this.chatState.roomName, 'theme', newState.get('theme'))
+    }
+    if (newState.get('showAllReplies') !== this.state.get('showAllReplies')) {
+      storage.setRoom(this.chatState.roomName, 'showAllReplies', newState.get('showAllReplies'))
+    }
 
-    this.state = this.state.set('theme', newTheme)
+    this.state = newState
     this.trigger(this.state)
   },
 
-  showThemeDialog(state) {
-    this.state = this.state.set('dialogVisible', state)
-    this.trigger(this.state)
-  },
-
-  _update() {
+  _sync() {
     // Poll of the user base resulted in a total of one valid vote, which was in favor of room-per-room settings.
     if (this.storageState && this.chatState && this.chatState.roomName) {
       const roomData = this.storageState.room[this.chatState.roomName]
       if (roomData) {
-        this.setTheme(roomData.theme)
+        this._updateState(this.state.merge({theme: roomData.theme, showAllReplies: roomData.showAllReplies}))
       }
     }
   },
 
   chatChange(state) {
     this.chatState = state
-    this._update()
+    this._sync()
   },
 
   storageChange(data) {
     this.storageState = data
-    this._update()
+    this._sync()
   },
 })
 
@@ -126,10 +139,17 @@ export const ThemeChooserDialog = createReactClass({
     this._updateAnchor()
   },
 
+  onShowAllReplies(ev) {
+    storeActions.showAllReplies(ev.target.checked)
+  },
+
   render() {
     return (
       <Bubble transition="slide-right" visible={this.state.settings.get('dialogVisible')} anchorEl={this.anchorEl} onDismiss={this.dismiss}>
-        Hello World!
+        <div>
+          <input type="checkbox" checked={this.state.settings.get('showAllReplies')} onChange={this.onShowAllReplies} id="theme-showAllReplies"/>
+          <label htmlFor="theme-showAllReplies">Show all replies</label>
+        </div>
       </Bubble>
     )
   },
