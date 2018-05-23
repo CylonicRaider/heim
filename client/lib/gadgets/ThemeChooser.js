@@ -104,11 +104,14 @@ export const ThemeChooserDialog = createReactClass({
     Reflux.connect(store, 'settings')
   ],
 
-  dismiss() {
+  dismiss(ev) {
     // ensure the bubble can be closed by clicking the button
     setImmediate(() => {
       storeActions.showThemeDialog(false)
     })
+    if (ev) {
+      ev.stopPropagation()
+    }
   },
 
   _updateAnchor() {
