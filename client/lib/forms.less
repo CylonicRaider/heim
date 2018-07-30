@@ -1,6 +1,8 @@
 @import "defs.less";
 
 
+@form-control-size: 14pt;
+
 .line-button(@color) {
   position: relative;
   color: @color;
@@ -241,5 +243,61 @@ button.major-secondary-action {
 
   .error .message, .message.error {
     color: darken(@error-color, 5%);
+  }
+}
+
+.form-control {
+  line-height: @form-control-size;
+  margin: 3px 0;
+  cursor: pointer;
+
+  &, & &-button, & &-text {
+    display: inline-block;
+  }
+
+  .form-control-button {
+    position: relative;
+    width: @form-control-size * 1.25;
+    height: @form-control-size;
+    vertical-align: bottom;
+
+    span {
+      overflow: hidden;
+
+      input {
+        opacity: 0;
+      }
+    }
+  }
+
+  .form-control-checkbox::before, .form-control-checkbox::after,
+  .form-control-radiobox::before, .form-control-radiobox::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: @form-control-size;
+    height: @form-control-size;
+  }
+
+  .form-control-checkbox::before {
+    box-shadow: 0 0 5px black;
+    background-color: white;
+  }
+
+  &.checked .form-control-checkbox::after {
+    width: @form-control-size * 1.25;
+    background: center/cover data-uri('../res/check.svg');
+  }
+
+  .form-control-radiobox::before {
+    border-radius: 50%;
+    box-shadow: 0 0 5px black;
+    background-color: white;
+  }
+
+  &.checked .form-control-radiobox::after {
+    background: center/cover data-uri('../res/radio.svg');
   }
 }
