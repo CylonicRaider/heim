@@ -113,7 +113,7 @@ iframe.js {
     flex-shrink: 0;
   }
 
-  h1, h2, .notification-settings .notification-toggle .inner, .toolbox-button .inner, .account-button .inner, .theme-button .inner {
+  h1, h2, .notification-settings .notification-toggle .inner, .toolbox-button .inner, .account-button .inner, .theme-chooser-button .inner {
     font-size: .85rem;
     font-weight: bold;
     color: #777;
@@ -127,13 +127,13 @@ iframe.js {
 .info-pane {
   width: @info-pane-width;
 
-  .notification-list, .thread-list-container, .toolbox-button, .theme-button, .account-area {
+  .notification-list, .thread-list-container, .toolbox-button, .theme-chooser-button, .account-area {
     margin-top: 4px;
     margin-left: -10px;
     margin-right: -10px;
   }
 
-  .toolbox-button, .theme-button, .thread-list-container, .account-area {
+  .toolbox-button, .theme-chooser-button, .thread-list-container, .account-area {
     border-bottom: 1px solid #ccc;
     margin-bottom: 8px;
   }
@@ -382,7 +382,7 @@ iframe.js {
     }
   }
 
-  .theme-button {
+  .theme-chooser-button {
     margin-top: -8px;
     padding: 10px;
     text-align: left;
@@ -2254,6 +2254,19 @@ iframe.js {
         margin-right: 3px;
       }
     }
+  }
+}
+
+.theme-chooser-dialog {
+  .field-group, .field-group-label, .form-control {
+    display: block;
+  }
+
+  .spacer {
+    margin: 5px 0;
+    border: none;
+    height: 1px;
+    background: black;
   }
 }
 

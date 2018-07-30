@@ -18,12 +18,6 @@ const roomStylesheets = {
   xkcd: 'room-xkcd',
 }
 
-const themeStylesheets = {
-  spooky: 'theme-spooky',
-  darcula: 'theme-darcula',
-  devel: 'theme-base',
-}
-
 export default function initPlugins(roomName) {
   /* Custom stylesheets */
   // Add a new .less file in gadgets/ and amend the table above to create a new one.
@@ -71,14 +65,7 @@ export default function initPlugins(roomName) {
 
   /* Alternate themes */
   const hashFlags = queryString.parse(uiwindow.location.hash.substr(1))
-  const themeStylesheet = themeStylesheets[hashFlags.theme || '']
-  if (themeStylesheet) {
-    Heim.hook('page-bottom', () => (
-      <link key="user-theme" rel="stylesheet" type="text/css" href={heimURL('/static/' + themeStylesheet + '.css')} />
-    ))
-  }
-
-  require('./gadgets/ThemeChooser').install()
+  require('./gadgets/ThemeChooser').install({theme: hashFlags.theme})
 
   /* Anniversary gadget */
   const now = moment()

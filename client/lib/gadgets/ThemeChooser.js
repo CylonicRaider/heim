@@ -10,7 +10,8 @@ import chat from '../stores/chat'
 import storage from '../stores/storage'
 import FastButton from '../ui/FastButton'
 import Bubble from '../ui/Bubble'
-import CheckField from '../ui/forms/CheckField'
+import heimURL from '../heimURL'
+import { CheckBox, RadioBox } from './formControls'
 
 
 const storeActions = Reflux.createActions([
@@ -99,7 +100,7 @@ export const ThemeChooserButton = createReactClass({
 
   render() {
     return (
-      <FastButton fastTouch className="theme-button" onClick={this.toggleSettings}>
+      <FastButton fastTouch className="theme-chooser-button" onClick={this.toggleSettings}>
         theme
       </FastButton>
     )
@@ -143,20 +144,35 @@ export const ThemeChooserDialog = createReactClass({
     storeActions.showAllReplies(ev.target.checked)
   },
 
+  onThemeChange(ev) {
+    const theme = ev.target.value ? ev.target.value : null
+    storeActions.setTheme(theme)
+  },
+
   render() {
     return (
-      <Bubble transition="slide-right" offset={() => ({ left: 5, top: 0 })} visible={this.state.settings.get('dialogVisible')} anchorEl={this.anchorEl} onDismiss={this.dismiss}>
-        <div>
-          <input type="checkbox" checked={this.state.settings.get('showAllReplies')} onChange={this.onShowAllReplies} id="theme-showAllReplies"/>
-          <label htmlFor="theme-showAllReplies">Show all replies</label>
+      <Bubble className="theme-chooser-dialog" transition="slide-right" offset={() => ({ left: 5, top: 0 })} visible={this.state.settings.get('dialogVisible')} anchorEl={this.anchorEl} onDismiss={this.dismiss}>
+        <div className="field-group">
+          <span className="field-group-label">Theme:</span>
+          <RadioBox name="theme" value="" checked={this.state.settings.get('theme') == null} onChange={this.onThemeChange}>Default</RadioBox>
+          <RadioBox name="theme" value="base" checked={this.state.settings.get('theme') == 'base'} onChange={this.onThemeChange}>Development</RadioBox>
+          <RadioBox name="theme" value="darcula" checked={this.state.settings.get('theme') == 'darcula'} onChange={this.onThemeChange}>Darcula</RadioBox>
+          <RadioBox name="theme" value="spooky" checked={this.state.settings.get('theme') == 'spooky'} onChange={this.onThemeChange}>Spooky</RadioBox>
         </div>
+        <hr className="spacer" />
+        <CheckBox checked={this.state.settings.get('showAllReplies')} onChange={this.onShowAllReplies}>Show all replies</CheckBox>
       </Bubble>
     )
   },
 })
 
-export function install() {
+export function install(params) {
   let buttonComp
+
+  if (params.theme) {
+    // delay setting the theme because doing is synchonously crashes
+    setImmediate(() => storeActions.setTheme(params.theme))
+  }
 
   Heim.hook('info-pane', () => (
     <ThemeChooserButton key="theme-chooser-button" ref={(el) => { buttonComp = el }} />
@@ -165,4 +181,12 @@ export function install() {
   Heim.hook('page-bottom', () => (
     <ThemeChooserDialog key="theme-chooser-dialog" anchor={buttonComp} />
   ))
+
+  Heim.hook('page-bottom', () => {
+    const theme = store.state.get('theme')
+    if (theme == null) return null
+    return (
+      <link key="user-theme" rel="stylesheet" type="text/css" href={heimURL('/static/theme-' + theme + '.css')} />
+    )
+  })
 }
