@@ -159,7 +159,7 @@ export const ThemeChooserDialog = createReactClass({
           <RadioBox name="theme" value="darcula" checked={this.state.settings.get('theme') == 'darcula'} onChange={this.onThemeChange}>Darcula</RadioBox>
           <RadioBox name="theme" value="spooky" checked={this.state.settings.get('theme') == 'spooky'} onChange={this.onThemeChange}>Spooky</RadioBox>
         </div>
-        <hr className="spacer" />
+        <hr className="separator" />
         <CheckBox checked={this.state.settings.get('showAllReplies')} onChange={this.onShowAllReplies}>Show all replies</CheckBox>
       </Bubble>
     )
