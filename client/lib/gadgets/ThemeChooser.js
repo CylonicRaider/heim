@@ -156,7 +156,6 @@ export const ThemeChooserDialog = createReactClass({
           <span className="field-group-label">Theme:</span>
           <RadioBox name="theme" value="" checked={this.state.settings.get('theme') == null} onChange={this.onThemeChange}>Default</RadioBox>
           <RadioBox name="theme" value="dark" checked={this.state.settings.get('theme') == 'dark'} onChange={this.onThemeChange}>Dark</RadioBox>
-          <RadioBox name="theme" value="darcula" checked={this.state.settings.get('theme') == 'darcula'} onChange={this.onThemeChange}>Darcula</RadioBox>
           <RadioBox name="theme" value="spooky" checked={this.state.settings.get('theme') == 'spooky'} onChange={this.onThemeChange}>Spooky</RadioBox>
         </div>
         <hr className="separator" />

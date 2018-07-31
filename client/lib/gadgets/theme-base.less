@@ -4,7 +4,7 @@
 @primary: #008000;
 @secondary: #4040a8;
 @text: #000000;
-@icon-mode: keep; // One of keep, invert, grayscale.
+@icon-mode: keep; // One of "keep", "invert", "grayscale".
 // Notes in @icon-mode:
 // keep     : Keeps the colors of various embedded graphics that have a
 //            hard-coded tint unmodified. Use this together with Heim's
@@ -19,7 +19,7 @@
 @dark-theme: if((lightness(@background) < 0.5), true, false);
 @mention-background: #fdf9e7;
 @mention-text: #000000;
-@link-color: #0000ff;
+@link-color: none; // "none" to not override.
 @nick-brightness: if((@dark-theme), 0.65, 1.0);
 @shadow-radius: 8px;
 
@@ -92,6 +92,10 @@
 #container {
 
   color: @text;
+
+  a when not (@link-color = none) {
+    color: @link-color;
+  }
 
   #ui-panes {
     background: @ui-background;
