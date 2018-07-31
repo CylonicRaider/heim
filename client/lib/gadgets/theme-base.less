@@ -26,6 +26,7 @@
 @button-selected-background: if((@dark-theme), lighten(@background, 25%), darken(@background, 25%));
 @button-color: @text;
 
+@pane-separator: if((@dark-theme), lighten(@background, 15%), darken(@background, 25%));
 @timestamp-background: if((@dark-theme), lighten(@background, 5%), darken(@background, 50%));
 @timestamp-color: if((@dark-theme), lighten(@background, 25%), darken(@background, 25%));
 @chat-background: @background;
@@ -36,6 +37,7 @@
 @entry-focus-background: fadeout(@primary, 80%);
 @entry-focus-border: @primary;
 
+@intense-shadow-color: if((@dark-theme), darken(white, 25%), black);
 @shadow-color: fadeout(@text, 85%);
 
 // Mixins
@@ -83,8 +85,16 @@
       }
     }
 
-    .account-area, .toolbox-button, .thread-list-container {
-      border-bottom: none;
+    .account-area, .toolbox-button, .theme-chooser-button, .thread-list-container {
+      border-color: @pane-separator;
+    }
+
+    .theme-chooser-button {
+      background: @secondary-background;
+
+      .inner {
+        color: @secondary;
+      }
     }
 
     .thread-list-container {
@@ -169,6 +179,29 @@
 
       &.touching, &:active {
         background: fadeout(@primary, 50%);
+      }
+    }
+
+    .room-switcher {
+      .room-switcher-expand, .room-switcher-apply, .room-switcher-cancel {
+        .grayscale-icon;
+      }
+
+      .room-switcher-inner {
+        background: @pane-background;
+        box-shadow: 0 0 @shadow-radius @intense-shadow-color;
+
+        &.valid {
+          box-shadow: 0 0 @shadow-radius fade(green, 50%);
+        }
+
+        &.invalid {
+          box-shadow: 0 0 @shadow-radius fade(red, 50%);
+        }
+      }
+
+      &.expanded {
+        background: @pane-selected-background;
       }
     }
 
@@ -389,6 +422,22 @@
 
       a {
         color: @primary;
+      }
+    }
+  }
+
+  .theme-chooser-dialog {
+    background: @pane-background;
+    color: @text;
+
+    .form-control-button {
+      &::before {
+        background: @pane-background;
+        box-shadow: 0 0 @shadow-radius @intense-shadow-color;
+      }
+
+      &::after {
+        .grayscale;
       }
     }
   }
