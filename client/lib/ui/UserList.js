@@ -80,11 +80,13 @@ export default createReactClass({
       prevUser = user
       return true
     }).toList()
+    const humanUniqueCount = (people || {size: 0}).size
+    const humanDuplicateCount = humanCount - humanUniqueCount
     const bots = list.get('bot')
     return (
       <div className="user-list" {...forwardProps(this)}>
         {people && <div className="list">
-          <h1>people <span className="user-counter">({humanCount}{humanLurkerCount ? '+' + humanLurkerCount : ''})</span></h1>
+          <h1>people <span className="user-counter">({humanUniqueCount}{humanDuplicateCount ? '(+' + humanDuplicateCount + ')' : ''}{humanLurkerCount ? '+' + humanLurkerCount : ''})</span></h1>
           {people.map(formatUser).toIndexedSeq()}
         </div>}
         {bots && <div className="list">
