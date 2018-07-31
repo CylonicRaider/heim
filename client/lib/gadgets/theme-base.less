@@ -1,16 +1,26 @@
 
 // Basic colors
-@background: #000000;
-@primary: #c00000;
-@secondary: #808000;
-@text: #c0c0c0;
+@background: #ffffff;
+@primary: #008000;
+@secondary: #4040a8;
+@text: #000000;
+@icon-mode: keep; // One of "keep", "invert", "grayscale".
+// Notes in @icon-mode:
+// keep     : Keeps the colors of various embedded graphics that have a
+//            hard-coded tint unmodified. Use this together with Heim's
+//            standard primary and secondary color.
+// invert   : Inverts UI elements using the secondary color and grayscales
+//            the remaining ones. Mostly there for the spooky theme.
+// grayscale: Grayscales all colored icons and disables the graphics used for
+//            indent lines. Use this if the other options do not match your
+//            color choices.
 
 // Supplementary colors and values
 @dark-theme: if((lightness(@background) < 0.5), true, false);
 @mention-background: #fdf9e7;
 @mention-text: #000000;
-@link-color: #0000ff;
-@nick-brightness: if((@dark-theme), 0.75, 1.0);
+@link-color: none; // "none" to not override.
+@nick-brightness: if((@dark-theme), 0.65, 1.0);
 @shadow-radius: 8px;
 
 // Derived colors
@@ -19,12 +29,17 @@
 @pane-selected-background: if((@dark-theme), lighten(@background, 5%), darken(@background, 10%));
 @bar-background: @background;
 @primary-background: if((@dark-theme), fadeout(@primary, 80%), fadeout(@primary, 90%));
+@primary-active-background: if((@dark-theme), fadeout(@primary, 70%), fadeout(@primary, 80%));
 @secondary-background: if((@dark-theme), fadeout(@secondary, 80%), fadeout(@secondary, 90%));
+@secondary-active-background: if((@dark-theme), fadeout(@secondary, 70%), fadeout(@secondary, 80%));
 
 @button-background: if((@dark-theme), lighten(@background, 10%), darken(@background, 10%));
 @button-active-background: if((@dark-theme), lighten(@background, 20%), darken(@background, 20%));
 @button-selected-background: if((@dark-theme), lighten(@background, 25%), darken(@background, 25%));
 @button-color: @text;
+
+@notification-selector-background: if((@dark-theme), lighten(@background, 5%), darken(@background, 10%));
+@notification-button-selected-background: if((@dark-theme), lighten(@background, 15%), darken(@background, 25%));
 
 @timestamp-background: if((@dark-theme), lighten(@background, 5%), darken(@background, 50%));
 @timestamp-color: if((@dark-theme), lighten(@background, 25%), darken(@background, 25%));
@@ -36,20 +51,35 @@
 @entry-focus-background: fadeout(@primary, 80%);
 @entry-focus-border: @primary;
 
+@pane-separator: if((@dark-theme), lighten(@background, 15%), darken(@background, 25%));
+@intense-shadow-color: if((@dark-theme), darken(white, 25%), black);
 @shadow-color: fadeout(@text, 85%);
 
-// Mixins
-.grayscale() {
-  filter: grayscale(1) brightness(0) invert(0.5);
+// Icon transformation
+.transform-icon() when (@icon-mode = grayscale) {
+  .grayscale-icon;
 }
-.grayscale-icon() {
+.transform-icon() when (@icon-mode = invert) {
+  filter: invert(1);
+}
+.transform-inner-icon() {
   .inner::before {
-    .grayscale;
+    .transform-icon;
   }
 }
 
+.grayscale-icon() {
+  filter: grayscale(1) brightness(0) invert(0.5);
+}
+.grayscale-inner-icon() {
+  .inner::before {
+    .grayscale-icon;
+  }
+}
+
+// Other mixins
 .opaque-button() {
-  .grayscale-icon;
+  .grayscale-inner-icon;
   background: @button-background;
   color: @button-color;
 
@@ -62,6 +92,10 @@
 #container {
 
   color: @text;
+
+  a when not (@link-color = none) {
+    color: @link-color;
+  }
 
   #ui-panes {
     background: @ui-background;
@@ -78,13 +112,29 @@
         color: @primary;
 
         &::before {
-          .grayscale;
+          .grayscale-icon;
         }
+      }
+
+      &.touching, &:active {
+        background: @primary-active-background;
       }
     }
 
-    .account-area, .toolbox-button, .thread-list-container {
-      border-bottom: none;
+    .account-area, .toolbox-button, .theme-chooser-button, .thread-list-container {
+      border-color: @pane-separator;
+    }
+
+    .theme-chooser-button {
+      background: @secondary-background;
+
+      .inner {
+        color: @secondary;
+      }
+
+      &.touching, &:active {
+        background: @secondary-active-background;
+      }
     }
 
     .thread-list-container {
@@ -108,20 +158,20 @@
     }
 
     .notification-settings .mode-selector {
-      background: @button-background;
+      background: @notification-selector-background;
 
-      .mode {
-        .grayscale-icon;
+      .mode when not (@icon-mode = keep) {
+        .grayscale-inner-icon;
       }
 
       .mode.selected {
-        background: @button-selected-background;
+        background: @notification-button-selected-background;
       }
     }
 
     .notification-list {
       .notification.new-mention, .notification.new-reply, .notification.new-message {
-        .grayscale-icon;
+        .transform-inner-icon;
         background: @pane-background;
         animation: none;
       }
@@ -142,7 +192,7 @@
     background: @pane-background;
 
     button {
-      .grayscale-icon;
+      .transform-inner-icon;
       color: @secondary;
     }
   }
@@ -158,7 +208,7 @@
     }
 
     .expand-info-pane, .collapse-info-pane, .close {
-      .grayscale-icon;
+      .transform-inner-icon;
       opacity: 1;
     }
 
@@ -172,6 +222,29 @@
       }
     }
 
+    .room-switcher {
+      .room-switcher-expand, .room-switcher-apply, .room-switcher-cancel {
+        .transform-inner-icon;
+      }
+
+      .room-switcher-inner {
+        background: @pane-background;
+        box-shadow: 0 0 @shadow-radius @intense-shadow-color;
+
+        &.valid {
+          box-shadow: 0 0 @shadow-radius fade(green, 50%);
+        }
+
+        &.invalid {
+          box-shadow: 0 0 @shadow-radius fade(red, 50%);
+        }
+      }
+
+      &.expanded {
+        background: @pane-selected-background;
+      }
+    }
+
     .user-count {
       .opaque-button;
     }
@@ -179,7 +252,7 @@
 
   .spinner {
     opacity: 1;
-    .grayscale;
+    .transform-icon;
   }
 
   .main-pane-stack, .info-pane, .sidebar-pane, .chat-pane-container {
@@ -255,10 +328,10 @@
     }
 
     .entry {
-      // I have no idea how that works in the main stylesheet.
       input.nick {
         color: black;
         z-index: 10;
+        filter: brightness(@nick-brightness);
       }
 
       input, textarea {
@@ -267,7 +340,7 @@
     }
 
     .replies.collapsed, .expand-rest, .replies.in-pane {
-      .grayscale-icon;
+      .transform-inner-icon;
       color: @secondary;
 
       .message-preview {
@@ -283,16 +356,44 @@
 
     .replies.inline, .replies.expanded {
       & > .indent-line {
+        filter: brightness(@nick-brightness);
+      }
+
+      & > .indent-line when (@icon-mode = invert) {
+        filter: invert(1);
+      }
+
+      & > .indent-line when (@icon-mode = grayscale) {
         background: linear-gradient(to right, @indent-line-base 0, @indent-line-base 2px, transparent 2px);
       }
 
       &.focused {
         & > .indent-line {
+          filter: brightness(@nick-brightness);
+        }
+
+        & > .indent-line when (@icon-mode = invert) {
+          filter: invert(1);
+        }
+
+        & > .indent-line when (@icon-mode = grayscale) {
           background: linear-gradient(to right, @indent-line-focused 0, @indent-line-focused 2px, transparent 2px);
         }
 
         .entry::before {
+          background-color: @chat-background;
+          filter: brightness(@nick-brightness);
+        }
+
+        .entry::before when (@icon-mode = invert) {
+          filter: invert(1);
+          // Since we are being inverted, we have to invert the background color another time.
+          background-color: rgba(255, 255, 255, 1) - @chat-background;
+        }
+
+        .entry::before when (@icon-mode = grayscale) {
           // Those are hard to reproduce without recreating the images.
+          // TODO: Replicate at least the "hook" (without an arrowhead).
           display: none;
         }
       }
@@ -309,7 +410,7 @@
     }
 
     .drag-handle-container .drag-handle::before {
-      .grayscale;
+      .grayscale-icon;
     }
   }
 
@@ -333,7 +434,7 @@
     background: @pane-background;
 
     .top-line .close {
-      .grayscale-icon;
+      .grayscale-inner-icon;
     }
 
     // Okaaay...
@@ -377,8 +478,8 @@
 
     .check-field {
       input[type="checkbox"] + label {
-        &::before {
-          .grayscale;
+        &::before when not (@icon-mode = keep) {
+          .grayscale-icon;
         }
 
         &::after {
@@ -389,6 +490,28 @@
 
       a {
         color: @primary;
+      }
+    }
+  }
+
+  .theme-chooser-dialog {
+    background: @pane-background;
+    color: @text;
+
+    .separator {
+      background: @text;
+    }
+  }
+
+  .form-control {
+    .form-control-button {
+      &::before {
+        background: @pane-background;
+        box-shadow: 0 0 @shadow-radius @intense-shadow-color;
+      }
+
+      &::after when not (@icon-mode = keep) {
+        .grayscale-icon;
       }
     }
   }

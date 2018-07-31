@@ -7,21 +7,15 @@ import queryString from 'querystring'
 import heimURL from './heimURL'
 
 const roomStylesheets = {
-  thedrawingroom: 'thedrawingroom',
-  lovenest: 'thedrawingroom',
-  has: 'thedrawingroom',
-  adventure: 'monospace',
-  chess: 'monospace',
-  monospace: 'monospace',
-  space: 'norman',
-  sandersforpresident: 'sandersforpresident',
-  xkcd: 'xkcd',
-}
-
-const themeStylesheets = {
-  spooky: 'theme-spooky',
-  darcula: 'theme-darcula',
-  devel: 'theme-base',
+  thedrawingroom: 'room-thedrawingroom',
+  lovenest: 'room-thedrawingroom',
+  has: 'room-thedrawingroom',
+  adventure: 'room-monospace',
+  chess: 'room-monospace',
+  monospace: 'room-monospace',
+  space: 'room-space',
+  sandersforpresident: 'room-sandersforpresident',
+  xkcd: 'room-xkcd',
 }
 
 export default function initPlugins(roomName) {
@@ -71,12 +65,7 @@ export default function initPlugins(roomName) {
 
   /* Alternate themes */
   const hashFlags = queryString.parse(uiwindow.location.hash.substr(1))
-  const themeStylesheet = themeStylesheets[hashFlags.theme || '']
-  if (themeStylesheet) {
-    Heim.hook('page-bottom', () => (
-      <link key="user-theme" rel="stylesheet" type="text/css" href={heimURL('/static/' + themeStylesheet + '.css')} />
-    ))
-  }
+  require('./gadgets/ThemeChooser').install({theme: hashFlags.theme})
 
   /* Anniversary gadget */
   const now = moment()

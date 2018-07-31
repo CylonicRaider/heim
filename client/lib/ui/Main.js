@@ -277,6 +277,7 @@ export default createReactClass({
           <div className="info-pane" onMouseEnter={ui.freezeInfo} onMouseLeave={ui.thawInfo}>
             {this.state.ui.managerMode && <FastButton ref="toolboxButton" className={classNames('toolbox-button', {'empty': !this.state.chat.selectedMessages.size, 'selected': !!this.state.ui.managerToolboxAnchorEl})} onClick={this.state.ui.managerToolboxAnchorEl ? ui.closeManagerToolbox : this.openManagerToolbox}>toolbox {selectedThingCount > -1 && <span className="count">{selectedThingCount} selected</span>}</FastButton>}
             {this.state.chat.connected && <div className="account-area"><AccountButton ref="accountButton" account={this.state.chat.account} onOpenAccountAuthDialog={ui.openAccountAuthDialog} onOpenAccountSettingsDialog={ui.openAccountSettingsDialog} /></div>}
+            {this.templateHook('info-pane')}
             <h2>discussions</h2>
             <div className="thread-list-container">
               <ThreadList ref="threadList" threadData={ui.store.threadData} threadTree={this.state.ui.frozenThreadList || this.state.chat.messages.threads} tree={this.state.chat.messages} onScroll={this.onThreadsScroll} onThreadSelect={this.onThreadSelect} />

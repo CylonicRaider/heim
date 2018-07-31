@@ -60,6 +60,7 @@ iframe.js {
   display: flex;
   align-items: stretch;
   background: #ccc;
+  transition: background 0.25s ease;
   z-index: 0;
 
   &.disconnected {
@@ -108,12 +109,13 @@ iframe.js {
   padding: 8px 10px;
   box-sizing: border-box;
   background: @pane-bg-color;
+  transition: background 0.25s ease;
 
   & > * {
     flex-shrink: 0;
   }
 
-  h1, h2, .notification-settings .notification-toggle .inner, .toolbox-button .inner, .account-button .inner {
+  h1, h2, .notification-settings .notification-toggle .inner, .toolbox-button .inner, .account-button .inner, .theme-chooser-button .inner {
     font-size: .85rem;
     font-weight: bold;
     color: #777;
@@ -127,13 +129,13 @@ iframe.js {
 .info-pane {
   width: @info-pane-width;
 
-  .notification-list, .thread-list-container, .toolbox-button, .account-area {
+  .notification-list, .thread-list-container, .toolbox-button, .theme-chooser-button, .account-area {
     margin-top: 4px;
     margin-left: -10px;
     margin-right: -10px;
   }
 
-  .toolbox-button, .thread-list-container, .account-area {
+  .toolbox-button, .theme-chooser-button, .thread-list-container, .account-area {
     border-bottom: 1px solid #ccc;
     margin-bottom: 8px;
   }
@@ -379,6 +381,33 @@ iframe.js {
 
     &.empty .count {
       background: fade(@manager-dark-color, 50%);
+    }
+  }
+
+  .theme-chooser-button {
+    position: relative;
+    margin-top: -8px;
+    padding: 10px;
+    text-align: left;
+    background: fade(@topic-color, 15%);
+    .touchable-custom({
+      background: fade(@topic-color, 30%);
+    });
+
+    .inner {
+      color: @topic-color;
+    }
+
+    &:not(.thin-ui) .anchor {
+      position: absolute;
+      top: 0;
+      right: 5px;
+    }
+
+    &.thin-ui .anchor {
+      position: absolute;
+      bottom: 5px;
+      left: 0;
     }
   }
 
@@ -740,6 +769,7 @@ iframe.js {
       display: flex;
       flex-direction: column-reverse;
       background: white;
+      transition: background 0.25s ease;
       min-height: 100%;
       box-sizing: border-box;
     }
@@ -923,6 +953,7 @@ iframe.js {
         padding: 0;
         width: 6em;
         font: inherit;
+        color: inherit;
         background: none;
       }
     }
@@ -2241,6 +2272,19 @@ iframe.js {
         margin-right: 3px;
       }
     }
+  }
+}
+
+.theme-chooser-dialog {
+  .field-group, .field-group-label, .form-control {
+    display: block;
+  }
+
+  .separator {
+    margin: 5px 0;
+    border: none;
+    height: 1px;
+    background: black;
   }
 }
 
