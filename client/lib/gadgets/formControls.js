@@ -1,3 +1,5 @@
+/* eslint-disable react/no-multi-comp */
+
 import React from 'react'
 import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
@@ -11,6 +13,7 @@ export const CheckBox = createReactClass({
     name: PropTypes.string,
     checked: PropTypes.bool,
     onChange: PropTypes.func,
+    children: PropTypes.node,
   },
 
   render() {
@@ -32,6 +35,7 @@ export const RadioBox = createReactClass({
     value: PropTypes.string,
     checked: PropTypes.bool,
     onChange: PropTypes.func,
+    children: PropTypes.node,
   },
 
   render() {

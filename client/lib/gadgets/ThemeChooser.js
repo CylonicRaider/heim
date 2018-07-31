@@ -1,3 +1,5 @@
+/* eslint-disable react/no-multi-comp */
+
 import _ from 'lodash'
 import React from 'react'
 import createReactClass from 'create-react-class'
@@ -94,7 +96,7 @@ export const ThemeChooserButton = createReactClass({
 
   mixins: [
     Reflux.connect(store, 'settings'),
-    Reflux.connect(ui.store, 'ui')
+    Reflux.connect(ui.store, 'ui'),
   ],
 
   toggleSettings() {
@@ -104,7 +106,7 @@ export const ThemeChooserButton = createReactClass({
   render() {
     return (
       <FastButton fastTouch className={classNames('theme-chooser-button', this.state.ui.thin && 'thin-ui')} onClick={this.toggleSettings}>
-        <span ref="anchor" className="anchor"/>
+        <span ref="anchor" className="anchor" />
         theme
       </FastButton>
     )
@@ -115,27 +117,13 @@ export const ThemeChooserDialog = createReactClass({
   displayName: 'ThemeChooserDialog',
 
   propTypes: {
-    anchorEl: PropTypes.any,
+    anchor: PropTypes.any,
   },
 
   mixins: [
     Reflux.connect(store, 'settings'),
-    Reflux.connect(ui.store, 'ui')
+    Reflux.connect(ui.store, 'ui'),
   ],
-
-  dismiss(ev) {
-    // ensure the bubble can be closed by clicking the button
-    setImmediate(() => {
-      storeActions.showThemeDialog(false)
-    })
-    if (ev) {
-      ev.stopPropagation()
-    }
-  },
-
-  _updateAnchor() {
-    this.anchorEl = this.props.anchor && ReactDOM.findDOMNode(this.props.anchor)
-  },
 
   componentDidMount() {
     this._updateAnchor()
@@ -154,7 +142,22 @@ export const ThemeChooserDialog = createReactClass({
     storeActions.setTheme(theme)
   },
 
+  _updateAnchor() {
+    this.anchorEl = this.props.anchor && ReactDOM.findDOMNode(this.props.anchor)
+  },
+
+  dismiss(ev) {
+    // ensure the bubble can be closed by clicking the button
+    setImmediate(() => {
+      storeActions.showThemeDialog(false)
+    })
+    if (ev) {
+      ev.stopPropagation()
+    }
+  },
+
   render() {
+    /* eslint-disable eqeqeq */
     return (
       <Bubble className="theme-chooser-dialog" transition={this.state.ui.thin ? 'slide-down' : 'slide-right'} visible={this.state.settings.get('dialogVisible')} anchorEl={this.anchorEl} onDismiss={this.dismiss}>
         <div className="field-group">
@@ -187,6 +190,7 @@ export function install(params) {
   ))
 
   Heim.hook('page-bottom', () => {
+    /* eslint-disable eqeqeq */
     const theme = store.state.get('theme')
     if (theme == null) return null
     return (
