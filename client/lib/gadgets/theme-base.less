@@ -1,10 +1,10 @@
 
 // Basic colors
-@background: #000000;
-@primary: #c00000;
-@secondary: #808000;
-@text: #c0c0c0;
-@icon-mode: grayscale; // One of keep, invert, grayscale.
+@background: #ffffff;
+@primary: #008000;
+@secondary: #4040a8;
+@text: #000000;
+@icon-mode: keep; // One of keep, invert, grayscale.
 // Notes in @icon-mode:
 // keep     : Keeps the colors of various embedded graphics that have a
 //            hard-coded tint unmodified. Use this together with Heim's
@@ -29,14 +29,18 @@
 @pane-selected-background: if((@dark-theme), lighten(@background, 5%), darken(@background, 10%));
 @bar-background: @background;
 @primary-background: if((@dark-theme), fadeout(@primary, 80%), fadeout(@primary, 90%));
+@primary-active-background: if((@dark-theme), fadeout(@primary, 70%), fadeout(@primary, 80%));
 @secondary-background: if((@dark-theme), fadeout(@secondary, 80%), fadeout(@secondary, 90%));
+@secondary-active-background: if((@dark-theme), fadeout(@secondary, 70%), fadeout(@secondary, 80%));
 
 @button-background: if((@dark-theme), lighten(@background, 10%), darken(@background, 10%));
 @button-active-background: if((@dark-theme), lighten(@background, 20%), darken(@background, 20%));
 @button-selected-background: if((@dark-theme), lighten(@background, 25%), darken(@background, 25%));
 @button-color: @text;
 
-@pane-separator: if((@dark-theme), lighten(@background, 15%), darken(@background, 25%));
+@notification-selector-background: if((@dark-theme), lighten(@background, 5%), darken(@background, 10%));
+@notification-button-selected-background: if((@dark-theme), lighten(@background, 15%), darken(@background, 25%));
+
 @timestamp-background: if((@dark-theme), lighten(@background, 5%), darken(@background, 50%));
 @timestamp-color: if((@dark-theme), lighten(@background, 25%), darken(@background, 25%));
 @chat-background: @background;
@@ -47,6 +51,7 @@
 @entry-focus-background: fadeout(@primary, 80%);
 @entry-focus-border: @primary;
 
+@pane-separator: if((@dark-theme), lighten(@background, 15%), darken(@background, 25%));
 @intense-shadow-color: if((@dark-theme), darken(white, 25%), black);
 @shadow-color: fadeout(@text, 85%);
 
@@ -63,7 +68,7 @@
   }
 }
 
-.grayscale-icon() when ((@icon-mode = grayscale) or (@icon-mode = invert)) {
+.grayscale-icon() {
   filter: grayscale(1) brightness(0) invert(0.5);
 }
 .grayscale-inner-icon() {
@@ -103,8 +108,12 @@
         color: @primary;
 
         &::before {
-          .transform-icon;
+          .grayscale-icon;
         }
+      }
+
+      &.touching, &:active {
+        background: @primary-active-background;
       }
     }
 
@@ -117,6 +126,10 @@
 
       .inner {
         color: @secondary;
+      }
+
+      &.touching, &:active {
+        background: @secondary-active-background;
       }
     }
 
@@ -141,14 +154,14 @@
     }
 
     .notification-settings .mode-selector {
-      background: @button-background;
+      background: @notification-selector-background;
 
-      .mode {
+      .mode when not (@icon-mode = keep) {
         .grayscale-inner-icon;
       }
 
       .mode.selected {
-        background: @button-selected-background;
+        background: @notification-button-selected-background;
       }
     }
 
@@ -338,29 +351,42 @@
     }
 
     .replies.inline, .replies.expanded {
+      & > .indent-line {
+        filter: brightness(@nick-brightness);
+      }
+
       & > .indent-line when (@icon-mode = invert) {
         filter: invert(1);
       }
+
       & > .indent-line when (@icon-mode = grayscale) {
         background: linear-gradient(to right, @indent-line-base 0, @indent-line-base 2px, transparent 2px);
       }
 
       &.focused {
+        & > .indent-line {
+          filter: brightness(@nick-brightness);
+        }
+
         & > .indent-line when (@icon-mode = invert) {
           filter: invert(1);
         }
+
         & > .indent-line when (@icon-mode = grayscale) {
           background: linear-gradient(to right, @indent-line-focused 0, @indent-line-focused 2px, transparent 2px);
         }
 
         .entry::before {
           background-color: @chat-background;
+          filter: brightness(@nick-brightness);
         }
+
         .entry::before when (@icon-mode = invert) {
           filter: invert(1);
           // Since we are being inverted, we have to invert the background color another time.
           background-color: rgba(255, 255, 255, 1) - @chat-background;
         }
+
         .entry::before when (@icon-mode = grayscale) {
           // Those are hard to reproduce without recreating the images.
           // TODO: Replicate at least the "hook" (without an arrowhead).
@@ -380,7 +406,7 @@
     }
 
     .drag-handle-container .drag-handle::before {
-      .transform-icon;
+      .grayscale-icon;
     }
   }
 
@@ -404,7 +430,7 @@
     background: @pane-background;
 
     .top-line .close {
-      .transform-inner-icon;
+      .grayscale-inner-icon;
     }
 
     // Okaaay...
@@ -448,7 +474,7 @@
 
     .check-field {
       input[type="checkbox"] + label {
-        &::before {
+        &::before when not (@icon-mode = keep) {
           .grayscale-icon;
         }
 
@@ -480,7 +506,7 @@
         box-shadow: 0 0 @shadow-radius @intense-shadow-color;
       }
 
-      &::after {
+      &::after when not (@icon-mode = keep) {
         .grayscale-icon;
       }
     }
