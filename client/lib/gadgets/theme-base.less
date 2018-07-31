@@ -10,7 +10,7 @@
 @mention-background: #fdf9e7;
 @mention-text: #000000;
 @link-color: #0000ff;
-@nick-brightness: if((@dark-theme), 0.75, 1.0);
+@nick-brightness: if((@dark-theme), 0.65, 1.0);
 @shadow-radius: 8px;
 
 // Derived colors
@@ -288,10 +288,10 @@
     }
 
     .entry {
-      // I have no idea how that works in the main stylesheet.
       input.nick {
         color: black;
         z-index: 10;
+        filter: brightness(@nick-brightness);
       }
 
       input, textarea {
