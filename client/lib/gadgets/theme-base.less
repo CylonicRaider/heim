@@ -4,6 +4,16 @@
 @primary: #c00000;
 @secondary: #808000;
 @text: #c0c0c0;
+@icon-mode: grayscale; // One of keep, invert, grayscale.
+// Notes in @icon-mode:
+// keep     : Keeps the colors of various embedded graphics that have a
+//            hard-coded tint unmodified. Use this together with Heim's
+//            standard primary and secondary color.
+// invert   : Inverts UI elements using the secondary color and grayscales
+//            the remaining ones. Mostly there for the spooky theme.
+// grayscale: Grayscales all colored icons and disables the graphics used for
+//            indent lines. Use this if the other options do not match your
+//            color choices.
 
 // Supplementary colors and values
 @dark-theme: if((lightness(@background) < 0.5), true, false);
@@ -40,18 +50,31 @@
 @intense-shadow-color: if((@dark-theme), darken(white, 25%), black);
 @shadow-color: fadeout(@text, 85%);
 
-// Mixins
-.grayscale() {
-  filter: grayscale(1) brightness(0) invert(0.5);
+// Icon transformation
+.transform-icon() when (@icon-mode = grayscale) {
+  .grayscale-icon;
 }
-.grayscale-icon() {
+.transform-icon() when (@icon-mode = invert) {
+  filter: invert(1);
+}
+.transform-inner-icon() {
   .inner::before {
-    .grayscale;
+    .transform-icon;
   }
 }
 
+.grayscale-icon() when ((@icon-mode = grayscale) or (@icon-mode = invert)) {
+  filter: grayscale(1) brightness(0) invert(0.5);
+}
+.grayscale-inner-icon() {
+  .inner::before {
+    .grayscale-icon;
+  }
+}
+
+// Other mixins
 .opaque-button() {
-  .grayscale-icon;
+  .grayscale-inner-icon;
   background: @button-background;
   color: @button-color;
 
@@ -80,7 +103,7 @@
         color: @primary;
 
         &::before {
-          .grayscale;
+          .transform-icon;
         }
       }
     }
@@ -121,7 +144,7 @@
       background: @button-background;
 
       .mode {
-        .grayscale-icon;
+        .grayscale-inner-icon;
       }
 
       .mode.selected {
@@ -131,7 +154,7 @@
 
     .notification-list {
       .notification.new-mention, .notification.new-reply, .notification.new-message {
-        .grayscale-icon;
+        .transform-inner-icon;
         background: @pane-background;
         animation: none;
       }
@@ -152,7 +175,7 @@
     background: @pane-background;
 
     button {
-      .grayscale-icon;
+      .transform-inner-icon;
       color: @secondary;
     }
   }
@@ -168,7 +191,7 @@
     }
 
     .expand-info-pane, .collapse-info-pane, .close {
-      .grayscale-icon;
+      .transform-inner-icon;
       opacity: 1;
     }
 
@@ -184,7 +207,7 @@
 
     .room-switcher {
       .room-switcher-expand, .room-switcher-apply, .room-switcher-cancel {
-        .grayscale-icon;
+        .transform-inner-icon;
       }
 
       .room-switcher-inner {
@@ -212,7 +235,7 @@
 
   .spinner {
     opacity: 1;
-    .grayscale;
+    .transform-icon;
   }
 
   .main-pane-stack, .info-pane, .sidebar-pane, .chat-pane-container {
@@ -300,7 +323,7 @@
     }
 
     .replies.collapsed, .expand-rest, .replies.in-pane {
-      .grayscale-icon;
+      .transform-inner-icon;
       color: @secondary;
 
       .message-preview {
@@ -315,17 +338,32 @@
     }
 
     .replies.inline, .replies.expanded {
-      & > .indent-line {
+      & > .indent-line when (@icon-mode = invert) {
+        filter: invert(1);
+      }
+      & > .indent-line when (@icon-mode = grayscale) {
         background: linear-gradient(to right, @indent-line-base 0, @indent-line-base 2px, transparent 2px);
       }
 
       &.focused {
-        & > .indent-line {
+        & > .indent-line when (@icon-mode = invert) {
+          filter: invert(1);
+        }
+        & > .indent-line when (@icon-mode = grayscale) {
           background: linear-gradient(to right, @indent-line-focused 0, @indent-line-focused 2px, transparent 2px);
         }
 
         .entry::before {
+          background-color: @chat-background;
+        }
+        .entry::before when (@icon-mode = invert) {
+          filter: invert(1);
+          // Since we are being inverted, we have to invert the background color another time.
+          background-color: rgba(255, 255, 255, 1) - @chat-background;
+        }
+        .entry::before when (@icon-mode = grayscale) {
           // Those are hard to reproduce without recreating the images.
+          // TODO: Replicate at least the "hook" (without an arrowhead).
           display: none;
         }
       }
@@ -342,7 +380,7 @@
     }
 
     .drag-handle-container .drag-handle::before {
-      .grayscale;
+      .transform-icon;
     }
   }
 
@@ -366,7 +404,7 @@
     background: @pane-background;
 
     .top-line .close {
-      .grayscale-icon;
+      .transform-inner-icon;
     }
 
     // Okaaay...
@@ -411,7 +449,7 @@
     .check-field {
       input[type="checkbox"] + label {
         &::before {
-          .grayscale;
+          .grayscale-icon;
         }
 
         &::after {
@@ -437,7 +475,7 @@
       }
 
       &::after {
-        .grayscale;
+        .grayscale-icon;
       }
     }
   }
