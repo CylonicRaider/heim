@@ -2,11 +2,13 @@ import _ from 'lodash'
 import React from 'react'
 import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 import ReactDOM from 'react-dom'
 import Reflux from 'reflux'
 import Immutable from 'immutable'
 
 import chat from '../stores/chat'
+import ui from '../stores/ui'
 import storage from '../stores/storage'
 import FastButton from '../ui/FastButton'
 import Bubble from '../ui/Bubble'
@@ -91,7 +93,8 @@ export const ThemeChooserButton = createReactClass({
   displayName: 'ThemeChooserButton',
 
   mixins: [
-    Reflux.connect(store, 'settings')
+    Reflux.connect(store, 'settings'),
+    Reflux.connect(ui.store, 'ui')
   ],
 
   toggleSettings() {
@@ -100,7 +103,8 @@ export const ThemeChooserButton = createReactClass({
 
   render() {
     return (
-      <FastButton fastTouch className="theme-chooser-button" onClick={this.toggleSettings}>
+      <FastButton fastTouch className={classNames('theme-chooser-button', this.state.ui.thin && 'thin-ui')} onClick={this.toggleSettings}>
+        <span ref="anchor" className="anchor"/>
         theme
       </FastButton>
     )
@@ -115,7 +119,8 @@ export const ThemeChooserDialog = createReactClass({
   },
 
   mixins: [
-    Reflux.connect(store, 'settings')
+    Reflux.connect(store, 'settings'),
+    Reflux.connect(ui.store, 'ui')
   ],
 
   dismiss(ev) {
@@ -151,7 +156,7 @@ export const ThemeChooserDialog = createReactClass({
 
   render() {
     return (
-      <Bubble className="theme-chooser-dialog" transition="slide-right" offset={() => ({ left: 5, top: 0 })} visible={this.state.settings.get('dialogVisible')} anchorEl={this.anchorEl} onDismiss={this.dismiss}>
+      <Bubble className="theme-chooser-dialog" transition={this.state.ui.thin ? 'slide-down' : 'slide-right'} visible={this.state.settings.get('dialogVisible')} anchorEl={this.anchorEl} onDismiss={this.dismiss}>
         <div className="field-group">
           <span className="field-group-label">Theme:</span>
           <RadioBox name="theme" value="" checked={this.state.settings.get('theme') == null} onChange={this.onThemeChange}>Default</RadioBox>
@@ -178,7 +183,7 @@ export function install(params) {
   ))
 
   Heim.hook('page-bottom', () => (
-    <ThemeChooserDialog key="theme-chooser-dialog" anchor={buttonComp} />
+    <ThemeChooserDialog key="theme-chooser-dialog" anchor={buttonComp && buttonComp.refs.anchor} />
   ))
 
   Heim.hook('page-bottom', () => {

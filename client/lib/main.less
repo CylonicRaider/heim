@@ -385,6 +385,7 @@ iframe.js {
   }
 
   .theme-chooser-button {
+    position: relative;
     margin-top: -8px;
     padding: 10px;
     text-align: left;
@@ -395,6 +396,18 @@ iframe.js {
 
     .inner {
       color: @topic-color;
+    }
+
+    &:not(.thin-ui) .anchor {
+      position: absolute;
+      top: 0;
+      right: 5px;
+    }
+
+    &.thin-ui .anchor {
+      position: absolute;
+      bottom: 5px;
+      left: 0;
     }
   }
 
