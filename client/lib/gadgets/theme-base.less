@@ -17,10 +17,10 @@
 
 // Supplementary colors and values
 @dark-theme: if((lightness(@background) < 0.5), true, false);
-@mention-background: #fdf9e7;
-@mention-text: #000000;
 @link-color: none; // "none" to not override.
 @nick-brightness: if((@dark-theme), 0.65, 1.0);
+@mention-background: if((@dark-theme), #d1cdbf, #fdf9e7);
+@mention-text: #000000;
 @shadow-radius: 8px;
 
 // Derived colors
@@ -314,7 +314,6 @@
     .message-node.mention > .line .message {
       background: @mention-background;
       color: @mention-text;
-      filter: brightness(@nick-brightness);
     }
 
     .line .message-tall .message.expando::after {
