@@ -317,7 +317,7 @@
     }
 
     .line .message-tall .message.expando::after {
-      background: linear-gradient(to top, @chat-background, #fff0 100px);
+      background: linear-gradient(to top, @chat-background, transparent 100px);
     }
 
     .entry, .focus-target {
@@ -408,8 +408,25 @@
       }
     }
 
-    .drag-handle-container .drag-handle::before {
-      .grayscale-icon;
+    .drag-handle-container {
+      .drag-handle::before {
+        .grayscale-icon;
+      }
+
+      .jump-to-bottom {
+        background: @background;
+        box-shadow: 0 0 @shadow-radius @shadow-color;
+
+        &:active, &.touching {
+          // LESS does apparently not provide a function for proper alpha blending, so this will have to do.
+          background: fade(@secondary-background, 100%);
+          box-shadow: 0 0 @shadow-radius @secondary;
+        }
+
+        &::before {
+          .grayscale-icon;
+        }
+      }
     }
   }
 
