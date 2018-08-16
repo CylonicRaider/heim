@@ -1,5 +1,5 @@
 /* eslint-disable arrow-body-style */
-// string.js (a dep) clashes with core-js string polyfill, so require first
+// string.js (a dep) clashed with core-js string polyfill, so require first
 import 'markdown-it-anchor'
 import 'babel-polyfill'
 
@@ -201,14 +201,22 @@ gulp.task('emoji-static', () => {
   const emoji = require('./lib/emoji').default
   const twemojiPath = path.dirname(require.resolve('twemoji')) + '/svg/'
   const leadingZeroes = /^0*/
-  const lessSource = _.map(emoji.codes, (code) => {
-    if (!code) {
-      return ''
+  const emojiFiles = _.map(fs.readdirSync(twemojiPath), (path) => {
+    const m = /^([0-9a-f-]+)\.svg$/.exec(path)
+    if (!m) {
+      return null
     }
+    return m[1]
+  })
+  const emojiCodes = _.uniq(_.concat(emoji.codes, emojiFiles))
+  const lessSource = _.map(_.compact(emojiCodes), (code) => {
     const twemojiName = code.replace(leadingZeroes, '')
     let emojiPath = './res/emoji/' + twemojiName + '.svg'
     if (!fs.existsSync(emojiPath)) {
       emojiPath = twemojiPath + twemojiName + '.svg'
+    }
+    if (!fs.existsSync(emojiPath)) {
+      return ''
     }
     return '.emoji-' + code + ' { background-image: data-uri("' + emojiPath + '") }'
   }).join('\n')
