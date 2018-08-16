@@ -49,9 +49,6 @@ function nameToUnicode(name) {
 
 export function lookupEmojiCharacter(icon) {
   const codePoint = twemoji.convert.toCodePoint(icon)
-  if (!names[codePoint]) {
-    return null
-  }
   // Don't display ™ as an emoji.
   if (codePoint === '2122') {
     return null

@@ -85,7 +85,7 @@ export default createReactClass({
       if (!codePoint) {
         return match
       }
-      const emojiName = emoji.names[codePoint] && ':' + emoji.names[codePoint] + ':'
+      const emojiName = emoji.names[codePoint] ? ':' + emoji.names[codePoint] + ':' : match
       return ReactDOMServer.renderToStaticMarkup(<span className={'emoji emoji-' + codePoint} title={emojiName}>{match}</span>)
     })
 
