@@ -321,8 +321,14 @@
       color: @mention-text;
     }
 
-    .line .message-tall .message.expando::after {
-      background: linear-gradient(to top, @chat-background, transparent 100px);
+    .line .message-tall .message.expando {
+      &::after {
+        background: linear-gradient(to top, @chat-background, transparent 100px);
+      }
+
+      .expand {
+        .opaque-button;
+      }
     }
 
     .entry, .focus-target {
