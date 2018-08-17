@@ -17,7 +17,8 @@
 
 // Supplementary colors and values
 @dark-theme: if((lightness(@background) < 0.5), true, false);
-@link-color: none; // "none" to not override.
+@link-color: keep;
+@visited-link-color: keep;
 @nick-brightness: if((@dark-theme), 0.65, 1.0);
 @mention-background: if((@dark-theme), #d1cdbf, #fdf9e7);
 @mention-text: #000000;
@@ -93,8 +94,12 @@
 
   color: @text;
 
-  a when not (@link-color = none) {
+  a:link when not (@link-color = keep) {
     color: @link-color;
+  }
+
+  a:visited when not (@visited-link-color = keep) {
+    color: @visited-link-color;
   }
 
   #ui-panes {
