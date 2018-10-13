@@ -65,11 +65,17 @@ export default function initPlugins(roomName) {
 
   /* Alternate themes */
   const hashFlags = queryString.parse(uiwindow.location.hash.substr(1))
-  require('./gadgets/ThemeChooser').install({theme: hashFlags.theme})
+  const ThemeChooser = require('./gadgets/ThemeChooser')
+  ThemeChooser.install({theme: hashFlags.theme})
 
-  /* Anniversary gadget */
+  /* Anniversary and Halloween gadgets */
   const now = moment()
-  if (now.month() === 11 && (now.date() === 13 || now.date() === 14)) {
+  if (now.month() === 9 && now.date() === 31) {
+    // FIXME: Set the theme only once
+    if (! hashFlags.theme) {
+      setImmediate(() => ThemeChooser.setTheme('spooky'))
+    }
+  } else if (now.month() === 11 && (now.date() === 13 || now.date() === 14)) {
     Heim.hook('page-bottom', () => (
       <link key="anniversary-style" rel="stylesheet" type="text/css" href={heimURL('/static/anniversary.css')} />
     ))
