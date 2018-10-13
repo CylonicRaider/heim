@@ -33,7 +33,7 @@ export const store = Reflux.createStore({
   ],
 
   init() {
-    this.state = Immutable.fromJS({theme: null, showAllReplies: false, dialogVisible: false})
+    this.state = Immutable.fromJS({theme: 'default', showAllReplies: false, dialogVisible: false})
     this.chatState = null
     this.storageState = null
   },
@@ -75,7 +75,8 @@ export const store = Reflux.createStore({
     if (this.storageState && this.chatState && this.chatState.roomName) {
       const roomData = this.storageState.room[this.chatState.roomName]
       if (roomData) {
-        this._updateState(this.state.merge({theme: roomData.theme, showAllReplies: roomData.showAllReplies}))
+        const newTheme = roomData.theme || 'default'
+        this._updateState(this.state.merge({theme: newTheme, showAllReplies: roomData.showAllReplies}))
       }
     }
   },
@@ -162,7 +163,7 @@ export const ThemeChooserDialog = createReactClass({
       <Bubble className="theme-chooser-dialog" transition={this.state.ui.thin ? 'slide-down' : 'slide-right'} visible={this.state.settings.get('dialogVisible')} anchorEl={this.anchorEl} onDismiss={this.dismiss}>
         <div className="field-group">
           <span className="field-group-label">Theme:</span>
-          <RadioBox name="theme" value="" checked={this.state.settings.get('theme') == null} onChange={this.onThemeChange}>Default</RadioBox>
+          <RadioBox name="theme" value="default" checked={this.state.settings.get('theme') == 'default'} onChange={this.onThemeChange}>Default</RadioBox>
           <RadioBox name="theme" value="dark" checked={this.state.settings.get('theme') == 'dark'} onChange={this.onThemeChange}>Dark</RadioBox>
           <RadioBox name="theme" value="spooky" checked={this.state.settings.get('theme') == 'spooky'} onChange={this.onThemeChange}>Spooky</RadioBox>
         </div>
@@ -192,7 +193,7 @@ export function install(params) {
   Heim.hook('page-bottom', () => {
     /* eslint-disable eqeqeq */
     const theme = store.state.get('theme')
-    if (theme == null) return null
+    if (theme == null || theme == 'default') return null
     return (
       <link key="user-theme" rel="stylesheet" type="text/css" href={heimURL('/static/theme-' + theme + '.css')} />
     )
