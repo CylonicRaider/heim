@@ -33,7 +33,6 @@ const index = _.extend({}, unicodeIndex, {
 delete index.iphone
 
 const names = _.invert(index)
-
 const codes = _.uniq(_.values(index))
 
 const emojiNames = _.filter(_.map(index, (code, name) => code && _.escapeRegExp(name)))
@@ -48,12 +47,17 @@ function nameToUnicode(name) {
 }
 
 export function lookupEmojiCharacter(icon) {
-  const codePoint = twemoji.convert.toCodePoint(icon)
-  // Don't display ™ as an emoji.
-  if (codePoint === '2122') {
+  // U+FE0E VARIATION SELECTOR-14 signifies text-style display; bail out.
+  if (/\ufe0e/.test(icon)) {
+    // FIXME: This might appear in the middle of an emoji sequence; I'm not
+    //        entirely sure about the semantics in that case.
     return null
   }
-  return codePoint
+  // Algorithm adapted from grabTheRightIcon() from twemoji.
+  if (!/\u200d/.test(icon)) {
+    icon = icon.replace(/\ufe0f/g, '')
+  }
+  return twemoji.convert.toCodePoint(icon)
 }
 
 export default { index, names, codes, namesRe, nameToUnicode, lookupEmojiCharacter }
