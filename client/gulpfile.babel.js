@@ -1,7 +1,5 @@
 /* eslint-disable arrow-body-style */
-// string.js (a dep) clashed with core-js string polyfill, so require first
-import 'markdown-it-anchor'
-import 'babel-polyfill'
+import '@babel/polyfill'
 
 import _ from 'lodash'
 import merge from 'merge-stream'
@@ -91,7 +89,8 @@ function handleError(title) {
 
 function heimBrowserify(files, args) {
   return browserify(files, args)
-    .transform(babelify, {presets: ['env', 'react', 'stage-2']})
+    .transform(babelify, {presets: ['@babel/preset-env',
+                                    '@babel/preset-react']})
     .transform(brfs)
 }
 
