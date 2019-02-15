@@ -61,4 +61,3 @@ export function lookupEmojiCharacter(icon) {
 }
 
 export default { index, names, codes, namesRe, nameToUnicode, lookupEmojiCharacter }
-

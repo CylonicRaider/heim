@@ -166,9 +166,7 @@ export default class Tree {
 
   lazyMapDFS(visit, thisArg, nodeId = '__root', depth = 0) {
     const node = this.index[nodeId]
-    const children = node.get('children').toSeq().map(childId =>
-      this.lazyMapDFS(visit, thisArg, childId, depth + 1)
-    )
+    const children = node.get('children').toSeq().map(childId => this.lazyMapDFS(visit, thisArg, childId, depth + 1))
 
     return visit.call(thisArg, node, children, depth)
   }

@@ -12,11 +12,13 @@ export default function FauxMessage(props) {
         <FauxNick nick={props.sender} />
         <div className="content">
           <MessageText className="message" content={props.message} />
-          {props.embed && <div className="embed">
-            <div className="wrapper">
-              <img className="embed" src={props.embed} alt="" />
+          {props.embed && (
+            <div className="embed">
+              <div className="wrapper">
+                <img className="embed" src={props.embed} alt="" />
+              </div>
             </div>
-          </div>}
+          )}
         </div>
       </div>
       {props.children}

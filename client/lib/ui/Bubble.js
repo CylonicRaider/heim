@@ -75,11 +75,11 @@ export default createReactClass({
   render() {
     return (
       <CSSTransitionGroup transitionName={this.props.transition} transitionEnterTimeout={150} transitionLeaveTimeout={150}>
-        {this.props.visible &&
+        {this.props.visible && (
           <Popup ref={(el) => { this.bubbleElem = el }} key="bubble" className={classNames('bubble', this.props.className)} onDismiss={this.onDismiss}>
             {this.props.children}
           </Popup>
-        }
+        )}
       </CSSTransitionGroup>
     )
   },

@@ -405,9 +405,7 @@ const Message = createReactClass({
           <div ref="replies" className={classNames('replies', {'collapsible': canCollapse, 'expanded': canCollapse && repliesExpanded, 'inline': inlineReplies, 'empty': children.size === 0, 'focused': focused})}>
             <FastButton className="indent-line" onClick={collapseAction} empty />
             <div className="content">
-              {children.toIndexedSeq().map((nodeId, idx) =>
-                <Message key={nodeId} pane={this.props.pane} tree={this.props.tree} nodeId={nodeId} depth={this.props.depth + 1} visibleCount={canCollapse && repliesExpanded || this.props.maxDepth === 0 ? Message.visibleCount : Math.floor((this.props.visibleCount - 1) / 2)} maxDepth={this.props.maxDepth === 0 ? Message.maxDepth - 1 : this.props.maxDepth - 1} showTimeAgo={!expandRestOfReplies && idx === children.size - 1} showTimeStamps={this.props.showTimeStamps} roomSettings={this.props.roomSettings} />
-              )}
+              {children.toIndexedSeq().map((nodeId, idx) => <Message key={nodeId} pane={this.props.pane} tree={this.props.tree} nodeId={nodeId} depth={this.props.depth + 1} visibleCount={canCollapse && repliesExpanded || this.props.maxDepth === 0 ? Message.visibleCount : Math.floor((this.props.visibleCount - 1) / 2)} maxDepth={this.props.maxDepth === 0 ? Message.maxDepth - 1 : this.props.maxDepth - 1} showTimeAgo={!expandRestOfReplies && idx === children.size - 1} showTimeStamps={this.props.showTimeStamps} roomSettings={this.props.roomSettings} />)}
               {focusAction}
             </div>
           </div>
@@ -498,9 +496,11 @@ const Message = createReactClass({
     /* eslint-disable jsx-a11y/click-events-have-key-events */
     return (
       <div data-message-id={message.get('id')} data-depth={this.props.depth} className={classNames('message-node', messageClasses)}>
-        {this.props.showTimeStamps && <time ref="time" className="timestamp" dateTime={time.toISOString()} title={time.format('MMMM Do YYYY, h:mm:ss a')}>
-          {time.format('h:mma')}
-        </time>}
+        {this.props.showTimeStamps && (
+          <time ref="time" className="timestamp" dateTime={time.toISOString()} title={time.format('MMMM Do YYYY, h:mm:ss a')}>
+            {time.format('h:mma')}
+          </time>
+        )}
         <div className={classNames(lineClasses)} onClick={this.onClick} onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter}>
           <MessageText className="nick" onlyEmoji style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 85%)'}} content={message.getIn(['sender', 'name'])} />
           <span className="content">

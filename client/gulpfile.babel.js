@@ -90,7 +90,7 @@ function handleError(title) {
 function heimBrowserify(files, args) {
   return browserify(files, args)
     .transform(babelify, {presets: ['@babel/preset-env',
-                                    '@babel/preset-react']})
+      '@babel/preset-react']})
     .transform(brfs)
 }
 

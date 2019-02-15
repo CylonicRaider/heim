@@ -1,6 +1,6 @@
-import support from './support/setup'
 import assert from 'assert'
 import sinon from 'sinon'
+import support from './support/setup'
 
 import Socket from '../lib/heim/Socket'
 

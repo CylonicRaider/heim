@@ -69,14 +69,16 @@ export default createReactClass({
             <option value="pm">pm</option>
           </select>
           <div className="preview">{toolboxData.activeItemSummary}</div>
-          {!isEmpty && inputDuration && <select ref="banDuration" defaultValue="h">
-            <option value="M">for 5 minutes</option>
-            <option value="h">for 1 hour</option>
-            <option value="d">for 1 day</option>
-            <option value="w">for 1 week</option>
-            <option value="m">for 30 days</option>
-            <option value="f">forever</option>
-          </select>}
+          {!isEmpty && inputDuration && (
+            <select ref="banDuration" defaultValue="h">
+              <option value="M">for 5 minutes</option>
+              <option value="h">for 1 hour</option>
+              <option value="d">for 1 day</option>
+              <option value="w">for 1 week</option>
+              <option value="m">for 30 days</option>
+              <option value="f">forever</option>
+            </select>
+          )}
           {!isEmpty && selectedCommand === 'banIP' && this.state.chat.isStaff && <label className="toggle-global"><input type="checkbox" ref="banGlobally" /> everywhere</label>}
           <div className="spacer" />
           <FastButton className="apply" onClick={this.apply}>

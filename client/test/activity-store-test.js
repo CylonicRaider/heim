@@ -1,6 +1,6 @@
-import support from './support/setup'
 import assert from 'assert'
 import sinon from 'sinon'
+import support from './support/setup'
 
 import activity from '../lib/stores/activity'
 import storage from '../lib/stores/storage'

@@ -22,22 +22,18 @@ const commands = {
   delete: {
     kind: 'message',
     execute(items) {
-      items.forEach(item =>
-        chat.editMessage(item.get('id'), {
-          delete: true,
-          announce: true,
-        })
-      )
+      items.forEach(item => chat.editMessage(item.get('id'), {
+        delete: true,
+        announce: true,
+      }))
     },
   },
   ban: {
     kind: 'user',
     execute(items, commandParams) {
-      items.forEach(item =>
-        chat.banUser(item.get('id'), {
-          seconds: commandParams.seconds,
-        })
-      )
+      items.forEach(item => chat.banUser(item.get('id'), {
+        seconds: commandParams.seconds,
+      }))
     },
   },
   banIP: {
@@ -46,20 +42,16 @@ const commands = {
       return !!item.get('addr')
     },
     execute(items, commandParams) {
-      items.forEach(item =>
-        chat.banIP(item.get('addr'), {
-          seconds: commandParams.seconds,
-          global: commandParams.global,
-        })
-      )
+      items.forEach(item => chat.banIP(item.get('addr'), {
+        seconds: commandParams.seconds,
+        global: commandParams.global,
+      }))
     },
   },
   pm: {
     kind: 'user',
     execute(items) {
-      items.forEach(item =>
-        chat.pmInitiate(item.get('id'))
-      )
+      items.forEach(item => chat.pmInitiate(item.get('id')))
     },
   },
 }

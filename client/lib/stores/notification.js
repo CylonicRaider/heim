@@ -1,5 +1,3 @@
-const fs = require('fs')  // needs to be a require to work with brfs for now: https://github.com/babel/babelify/issues/81
-
 import _ from 'lodash'
 import Reflux from 'reflux'
 import Immutable from 'immutable'
@@ -7,6 +5,8 @@ import Immutable from 'immutable'
 import storage from './storage'
 import chat from './chat'
 import activity from './activity'
+
+const fs = require('fs')  // needs to be a require to work with brfs for now: https://github.com/babel/babelify/issues/81
 
 
 const favicons = module.exports.favicons = {
@@ -414,7 +414,8 @@ module.exports.store = Reflux.createStore({
     const notifyMode = _.get(this._roomStorage, [roomName, 'notifyMode'], 'mention')
     if (notifyMode === 'none') {
       return false
-    } else if (priority < this.priority['new-' + notifyMode]) {
+    }
+    if (priority < this.priority['new-' + notifyMode]) {
       return false
     }
     return true

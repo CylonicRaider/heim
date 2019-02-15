@@ -66,9 +66,7 @@ export default createReactClass({
     let html = _.escape(content)
 
     if (!this.props.onlyEmoji) {
-      html = html.replace(/\B&amp;(\w+)(?=$|[^\w;])/g, (match, name) =>
-        ReactDOMServer.renderToStaticMarkup(<a href={heimURL('/room/' + name + '/')} target="_blank">&amp;{name}</a>)
-      )
+      html = html.replace(/\B&amp;(\w+)(?=$|[^\w;])/g, (match, name) => ReactDOMServer.renderToStaticMarkup(<a href={heimURL('/room/' + name + '/')} target="_blank">&amp;{name}</a>))
 
       html = html.replace(chat.mentionFindRe, (match, pre, name) => {
         const color = 'hsl(' + hueHash.hue(name) + ', 50%, 42%)'
@@ -76,9 +74,7 @@ export default createReactClass({
       })
     }
 
-    html = html.replace(emoji.namesRe, (match, name) =>
-      ReactDOMServer.renderToStaticMarkup(<span className={'emoji emoji-' + emoji.index[name]} title={match}>{match}</span>)
-    )
+    html = html.replace(emoji.namesRe, (match, name) => ReactDOMServer.renderToStaticMarkup(<span className={'emoji emoji-' + emoji.index[name]} title={match}>{match}</span>))
 
     html = twemoji.replace(html, (match) => {
       const codePoint = emoji.lookupEmojiCharacter(match)

@@ -72,7 +72,7 @@ export default function initPlugins(roomName) {
   const now = moment()
   if (now.month() === 9 && now.date() === 31) {
     // FIXME: Set the theme only once
-    if (! hashFlags.theme) {
+    if (!hashFlags.theme) {
       setImmediate(() => ThemeChooser.setTheme('spooky'))
     }
   } else if (now.month() === 11 && (now.date() === 13 || now.date() === 14)) {

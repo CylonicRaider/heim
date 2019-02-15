@@ -19,4 +19,3 @@ module.exports = createReactClass({
     return <CSSTransitionGroup transitionName="spinner" transitionEnterTimeout={100} transitionLeaveTimeout={100}>{this.props.visible && <div key="spinner" className="spinner" />}</CSSTransitionGroup>
   },
 })
-

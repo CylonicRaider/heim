@@ -61,9 +61,7 @@ export default class Socket {
   }
 
   endBuffering() {
-    _.each(this._recvBuffer, ([name, data]) =>
-      this.events.emit(name, data)
-    )
+    _.each(this._recvBuffer, ([name, data]) => this.events.emit(name, data))
     this._recvBuffer = null
   }
 

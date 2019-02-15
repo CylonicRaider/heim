@@ -1,5 +1,3 @@
-const fs = require('fs')  // needs to be a require to work with brfs for now: https://github.com/babel/babelify/issues/81
-
 import React from 'react'
 import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
@@ -11,6 +9,8 @@ import RoomSwitcher from './RoomSwitcher'
 import FastButton from './FastButton'
 import RoomTitle from './RoomTitle'
 import Spinner from './Spinner'
+
+const fs = require('fs')  // needs to be a require to work with brfs for now: https://github.com/babel/babelify/issues/81
 
 
 const hexLeftSVG = fs.readFileSync(__dirname + '/../../res/hex-left-side.svg')
@@ -41,8 +41,7 @@ export default createReactClass({
   mixins: [HooksMixin],
 
   render() {
-    let people = this.props.who.filter(user =>
-      user.get('present') && user.get('name') && !/^bot:/.test(user.get('id')))
+    let people = this.props.who.filter(user => user.get('present') && user.get('name') && !/^bot:/.test(user.get('id')))
     let prevUser
     people = people.filter((user) => {
       if (prevUser && user.get('id') === prevUser.get('id') && user.get('name') === prevUser.get('name')) {
@@ -52,8 +51,7 @@ export default createReactClass({
       return true
     })
     const userCount = people.size
-    const lurkers = this.props.who.filter(user =>
-      user.get('present') && !user.get('name') && !/^bot:/.test(user.get('id')))
+    const lurkers = this.props.who.filter(user => user.get('present') && !user.get('name') && !/^bot:/.test(user.get('id')))
     const lurkerCount = lurkers.size
 
     /* eslint-disable react/no-danger */

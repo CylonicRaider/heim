@@ -1,7 +1,7 @@
-import support from './support/setup'
 import _ from 'lodash'
 import assert from 'assert'
 import sinon from 'sinon'
+import support from './support/setup'
 
 import ChatTree from '../lib/ChatTree'
 import notification from '../lib/stores/notification'
@@ -345,9 +345,7 @@ describe('notification store', () => {
 
     function simulateMessages(ids, state) {
       notification.store.messagesChanged(ids, state)
-      _.each(ids, id =>
-        notification.store.messageReceived(state.messages.get(id), state)
-      )
+      _.each(ids, id => notification.store.messageReceived(state.messages.get(id), state))
     }
 
     let fakeNotification
@@ -460,9 +458,7 @@ describe('notification store', () => {
 
         it('should add notification', (done) => {
           support.listenOnce(notification.store, (state) => {
-            _.each(opts.messageIds, messageId =>
-              assert.equal(state.notifications.get(messageId), opts.expectKind)
-            )
+            _.each(opts.messageIds, messageId => assert.equal(state.notifications.get(messageId), opts.expectKind))
             done()
           })
           clock.tick(1)

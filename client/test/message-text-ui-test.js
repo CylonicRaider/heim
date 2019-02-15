@@ -1,8 +1,8 @@
-import support from './support/setup'
 import assert from 'assert'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactTestUtils from 'react-dom/test-utils'
+import support from './support/setup'
 
 import MessageText from '../lib/ui/MessageText'
 

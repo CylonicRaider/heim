@@ -1,8 +1,8 @@
-import support from './support/setup'
 import _ from 'lodash'
 import assert from 'assert'
 import sinon from 'sinon'
 import Immutable from 'immutable'
+import support from './support/setup'
 
 import chat from '../lib/stores/chat'
 import storage from '../lib/stores/storage'

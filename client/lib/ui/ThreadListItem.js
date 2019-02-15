@@ -75,11 +75,12 @@ const ThreadListItem = createReactClass({
           {newCount > 0 && <span className={classNames('new-count', {'new-mention': count.get('newMentionDescendants') > 0})}>{newCount}</span>}
           <LiveTimeAgo className="ago" time={timestamp} nowText="active" />
         </FastButton>
-        {this.props.depth < 3 && children.size > 0 && <div className="children">
-          {children.toSeq().map(threadId =>
-            <ThreadListItem key={threadId} threadData={this.props.threadData} threadTree={this.props.threadTree} threadNodeId={threadId} tree={this.props.tree} nodeId={threadId} depth={this.props.depth + 1} onClick={this.props.onClick} />
-          )}
-        </div>}
+        {this.props.depth < 3 && children.size > 0 && (
+          <div className="children">
+            {children.toSeq().map(threadId => <ThreadListItem key={threadId} threadData={this.props.threadData} threadTree={this.props.threadTree} threadNodeId={threadId} tree={this.props.tree} nodeId={threadId} depth={this.props.depth + 1} onClick={this.props.onClick} />
+            )}
+          </div>
+        )}
       </div>
     )
   },

@@ -289,67 +289,81 @@ export default createReactClass({
             <ChatTopBar who={this.state.chat.who} roomName={roomName} roomTitle={roomTitle} connected={this.state.chat.connected} joined={!!this.state.chat.joined} authType={this.state.chat.authType} isManager={this.state.chat.isManager} managerMode={this.state.ui.managerMode} working={this.state.chat.loadingLogs} showInfoPaneButton={!thin || !Heim.isTouch} infoPaneOpen={infoPaneOpen} collapseInfoPane={ui.collapseInfoPane} expandInfoPane={ui.expandInfoPane} toggleUserList={ui.toggleUserList} toggleManagerMode={ui.toggleManagerMode} thin={thin} />
             {this.templateHook('main-pane-top')}
             <CSSTransitionGroup className="notice-stack" transitionName="slide-down" transitionEnterTimeout={150} transitionLeaveTimeout={150}>
-              {this.state.ui.notices.has('notifications') && this.state.notification.popupsSupported && <div className="notice dark notifications">
-                <div className="content">
-                  <span className="title">what would you like notifications for?</span>
-                  <div className="actions">
-                    <FastButton onClick={() => ui.notificationsNoticeChoice('message')}>new messages</FastButton>,
-                    <FastButton onClick={() => ui.notificationsNoticeChoice('reply')}>replies</FastButton>,
-                    or
-                    <FastButton onClick={() => ui.notificationsNoticeChoice('mention')}>just mentions<span className="long"> of @{hueHash.normalize(this.state.chat.nick)}</span></FastButton>
+              {this.state.ui.notices.has('notifications') && this.state.notification.popupsSupported && (
+                <div className="notice dark notifications">
+                  <div className="content">
+                    <span className="title">what would you like notifications for?</span>
+                    <div className="actions">
+                      <FastButton onClick={() => ui.notificationsNoticeChoice('message')}>new messages</FastButton>,
+                      <FastButton onClick={() => ui.notificationsNoticeChoice('reply')}>replies</FastButton>,
+                      or
+                      <FastButton onClick={() => ui.notificationsNoticeChoice('mention')}>just mentions<span className="long"> of @{hueHash.normalize(this.state.chat.nick)}</span></FastButton>
+                    </div>
                   </div>
+                  <FastButton className="close" onClick={() => ui.dismissNotice('notifications')} />
                 </div>
-                <FastButton className="close" onClick={() => ui.dismissNotice('notifications')} />
-              </div>}
+              )}
               {pmNotices.map(pm => <PMNotice key={pm.get('kind') + pm.get('id')} pmId={pm.get('id')} nick={pm.get('nick')} kind={pm.get('kind')} />) }
               {this.state.update.get('ready') && <FastButton className="update-button" onClick={update.perform}><p>update ready<em>{Heim.isTouch ? 'tap' : 'click'} to reload</em></p></FastButton>}
             </CSSTransitionGroup>
             <div className="main-pane-stack">
               <ChatPane pane={this.state.ui.panes.get('main')} showTimeStamps={this.state.ui.showTimestamps} onScrollbarSize={this.onScrollbarSize} disabled={!!mainPaneThreadId} />
               <CSSTransitionGroup transitionName="slide" transitionLeave={!mainPaneThreadId} transitionLeaveTimeout={200} transitionEnter={false}>
-                {mainPaneThreadId && <div key={mainPaneThreadId} className="main-pane-cover main-pane-thread">
-                  <div className="top-bar">
-                    <MessageText className="title" content={this.state.chat.messages.get(selectedThread).get('content')} />
-                    <FastButton className="close" onClick={ui.deselectThread} />
+                {mainPaneThreadId && (
+                  <div key={mainPaneThreadId} className="main-pane-cover main-pane-thread">
+                    <div className="top-bar">
+                      <MessageText className="title" content={this.state.chat.messages.get(selectedThread).get('content')} />
+                      <FastButton className="close" onClick={ui.deselectThread} />
+                    </div>
+                    <ChatPane key={mainPaneThreadId} pane={this.state.ui.panes.get(mainPaneThreadId)} showTimeStamps={this.state.ui.showTimestamps} showParent showAllReplies onScrollbarSize={this.onScrollbarSize} />
                   </div>
-                  <ChatPane key={mainPaneThreadId} pane={this.state.ui.panes.get(mainPaneThreadId)} showTimeStamps={this.state.ui.showTimestamps} showParent showAllReplies onScrollbarSize={this.onScrollbarSize} />
-                </div>}
-                {thin && this.state.ui.managerToolboxAnchorEl && <div key="manager-toolbox" className="main-pane-cover">
-                  <ManagerToolbox />
-                </div>}
+                )}
+                {thin && this.state.ui.managerToolboxAnchorEl && (
+                  <div key="manager-toolbox" className="main-pane-cover">
+                    <ManagerToolbox />
+                  </div>
+                )}
               </CSSTransitionGroup>
             </div>
           </div>
-          {(thin || this.state.ui.sidebarPaneExpanded) && <div className="sidebar-pane">
-            <UserList users={this.state.chat.who} selected={this.state.chat.selectedUsers} />
-            {this.templateHook('main-sidebar')}
-          </div>}
-          {!thin && <div className="thread-panes" style={{flex: threadPanesFlex, WebkitFlex: threadPanesFlex}}>
-            {extraPanes}
-            {threadPanes.entrySeq().map(([paneId, pane], idx) => {
-              const threadId = paneId.substr('thread-'.length)
-              const title = this.state.chat.messages.get(threadId).get('content')
-              return (
-                <div key={paneId} className="chat-pane-container" style={{zIndex: threadPanes.size - idx}} onClickCapture={_.partial(this.onPaneClick, paneId)}>
-                  <div className="top-bar">
-                    <MessageText className="title" content={title} title={title} />
-                    <FastButton className="close" onClick={_.partial(ui.closeThreadPane, threadId)} />
-                  </div>
-                  <ChatPane pane={pane} showParent showAllReplies />
-                </div>
-              )
-            })}
-          </div>}
-          {!thin && <Bubble ref="threadPopup" className="thread-popup" transition="slide-right" anchorEl={this.state.ui.threadPopupAnchorEl} visible={!!this.state.ui.threadPopupAnchorEl} onDismiss={this.dismissThreadPopup} offset={() => ({ left: ReactDOM.findDOMNode(this).getBoundingClientRect().left + 5, top: 26 })}>
-            <div className="top-line">
-              <FastButton className="to-pane" onClick={ui.popupToThreadPane}>new pane</FastButton>
-              <FastButton className="scroll-to" onClick={ui.gotoPopupMessage}>go to</FastButton>
+          {(thin || this.state.ui.sidebarPaneExpanded) && (
+            <div className="sidebar-pane">
+              <UserList users={this.state.chat.who} selected={this.state.chat.selectedUsers} />
+              {this.templateHook('main-sidebar')}
             </div>
-            {selectedThread && <ChatPane key={this.state.ui.popupPane} pane={this.state.ui.panes.get(this.state.ui.popupPane)} afterRender={() => this.refs.threadPopup.reposition()} showParent showAllReplies />}
-          </Bubble>}
-          {!thin && this.state.ui.managerMode && <Bubble ref="managerToolboxPopup" className="manager-toolbox-popup" transition="slide-down" anchorEl={this.state.ui.managerToolboxAnchorEl} visible={!!this.state.ui.managerToolboxAnchorEl} offset={anchorBox => ({ left: anchorBox.width, top: -anchorBox.height })}>
-            <ManagerToolbox />
-          </Bubble>}
+          )}
+          {!thin && (
+            <div className="thread-panes" style={{flex: threadPanesFlex, WebkitFlex: threadPanesFlex}}>
+              {extraPanes}
+              {threadPanes.entrySeq().map(([paneId, pane], idx) => {
+                const threadId = paneId.substr('thread-'.length)
+                const title = this.state.chat.messages.get(threadId).get('content')
+                return (
+                  <div key={paneId} className="chat-pane-container" style={{zIndex: threadPanes.size - idx}} onClickCapture={_.partial(this.onPaneClick, paneId)}>
+                    <div className="top-bar">
+                      <MessageText className="title" content={title} title={title} />
+                      <FastButton className="close" onClick={_.partial(ui.closeThreadPane, threadId)} />
+                    </div>
+                    <ChatPane pane={pane} showParent showAllReplies />
+                  </div>
+                )
+              })}
+            </div>
+          )}
+          {!thin && (
+            <Bubble ref="threadPopup" className="thread-popup" transition="slide-right" anchorEl={this.state.ui.threadPopupAnchorEl} visible={!!this.state.ui.threadPopupAnchorEl} onDismiss={this.dismissThreadPopup} offset={() => ({ left: ReactDOM.findDOMNode(this).getBoundingClientRect().left + 5, top: 26 })}>
+              <div className="top-line">
+                <FastButton className="to-pane" onClick={ui.popupToThreadPane}>new pane</FastButton>
+                <FastButton className="scroll-to" onClick={ui.gotoPopupMessage}>go to</FastButton>
+              </div>
+              {selectedThread && <ChatPane key={this.state.ui.popupPane} pane={this.state.ui.panes.get(this.state.ui.popupPane)} afterRender={() => this.refs.threadPopup.reposition()} showParent showAllReplies />}
+            </Bubble>
+          )}
+          {!thin && this.state.ui.managerMode && (
+            <Bubble ref="managerToolboxPopup" className="manager-toolbox-popup" transition="slide-down" anchorEl={this.state.ui.managerToolboxAnchorEl} visible={!!this.state.ui.managerToolboxAnchorEl} offset={anchorBox => ({ left: anchorBox.width, top: -anchorBox.height })}>
+              <ManagerToolbox />
+            </Bubble>
+          )}
           {this.templateHook('page-bottom')}
         </Panner>
         {this.state.ui.modalDialog === 'account-auth' && <AccountAuthDialog onClose={ui.closeDialog} />}

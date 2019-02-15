@@ -48,6 +48,7 @@
     "react/jsx-filename-extension": 0,
     "react/jsx-first-prop-new-line": 0,
     "react/jsx-max-props-per-line": 0,
+    "react/jsx-one-expression-per-line": 0,
     "react/no-find-dom-node": 0,
     "react/no-string-refs": 0,
     "react/no-unescaped-entities": 0,

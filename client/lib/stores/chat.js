@@ -295,9 +295,7 @@ module.exports.store = Reflux.createStore({
     const processedMessages = this._handleMessagesData([message])
     this.state.messages.add(processedMessages)
     if (received) {
-      _.each(processedMessages, m =>
-        storeActions.messageReceived(this.state.messages.get(m.id), this.state)
-      )
+      _.each(processedMessages, m => storeActions.messageReceived(this.state.messages.get(m.id), this.state))
     }
   },
 

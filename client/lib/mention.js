@@ -12,7 +12,8 @@ function compareArrays(a, b) {
     const elB = b[i]
     if (elA < elB) {
       return -1
-    } else if (elA > elB) {
+    }
+    if (elA > elB) {
       return 1
     }
     // continue if equal...

@@ -104,7 +104,8 @@ export default createReactClass({
     return React.Children.map(children, (child) => {
       if (!React.isValidElement(child)) {
         return child
-      } else if (!child.props.name && child.props.type !== 'submit') {
+      }
+      if (!child.props.name && child.props.type !== 'submit') {
         return React.cloneElement(child, {}, this._walkChildren(child.props.children, serverErrors, validatorErrors, foundError))
       }
 

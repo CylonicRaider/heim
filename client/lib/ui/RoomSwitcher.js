@@ -56,9 +56,11 @@ export default createReactClass({
       <form className={classNames('room-switcher', this.state.expanded && 'expanded')} action={url} target="_blank" onSubmit={this.apply}>
         <FastButton fastTouch type="button" className={this.state.expanded ? 'room-switcher-cancel' : 'room-switcher-expand'} title="go to another room" onClick={this.toggle} />
         {this.state.expanded && <span className="room-switcher-prompt">go to</span>}
-        {this.state.expanded && <span className={classNames('room-switcher-inner', this.state.valid === true && 'valid', this.state.valid === false && 'invalid')}>
-          &amp;<input type="text" autoFocus className="room-switcher-room" value={this.state.text} onKeyDown={this.onKeyDown} onChange={this.onChange} />
-        </span>}
+        {this.state.expanded && (
+          <span className={classNames('room-switcher-inner', this.state.valid === true && 'valid', this.state.valid === false && 'invalid')}>
+            &amp;<input type="text" autoFocus className="room-switcher-room" value={this.state.text} onKeyDown={this.onKeyDown} onChange={this.onChange} />
+          </span>
+        )}
         {this.state.expanded && <FastButton fastTouch type="submit" className="room-switcher-apply" />}
       </form>
     )
