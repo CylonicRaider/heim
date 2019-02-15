@@ -482,7 +482,7 @@ const Message = createReactClass({
       messageEmbeds = (
         <div className="embeds">
           {_.map(embeds, (embed, idx) => (
-            <a key={idx} href={embed.link} target="_blank" onMouseEnter={() => this.unfreezeEmbed(idx)} onMouseLeave={() => this.freezeEmbed(idx)}>
+            <a key={idx} href={embed.link} target="_blank" rel="noopener noreferrer" onMouseEnter={() => this.unfreezeEmbed(idx)} onMouseLeave={() => this.freezeEmbed(idx)}>
               <Embed ref={'embed' + idx} {...embed.props} />
             </a>
           ))}

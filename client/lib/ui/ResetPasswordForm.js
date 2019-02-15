@@ -41,7 +41,7 @@ export default createReactClass({
           tabIndex={1}
         />
         <ErrorMessage name="reason" />
-        {flow.done ? <button className="major-action done" disabled>your new password is saved.</button> : <button type="submit" className="major-action">save new password</button>}
+        {flow.done ? <button type="button" className="major-action done" disabled>your new password is saved.</button> : <button type="submit" className="major-action">save new password</button>}
       </Form>
     )
   },

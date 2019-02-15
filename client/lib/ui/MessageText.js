@@ -16,6 +16,8 @@ const autolinker = new Autolinker({
   truncate: 40,
   replaceFn(match) {
     if (match.getType() === 'url') {
+      /* eslint-disable react/no-this-in-sfc */
+      // Okay, *that* linter warning is dumb.
       const url = match.getUrl()
       const tag = this.getTagBuilder().build(match)
 
@@ -66,6 +68,7 @@ export default createReactClass({
     let html = _.escape(content)
 
     if (!this.props.onlyEmoji) {
+      /* eslint-disable react/jsx-no-target-blank */
       html = html.replace(/\B&amp;(\w+)(?=$|[^\w;])/g, (match, name) => ReactDOMServer.renderToStaticMarkup(<a href={heimURL('/room/' + name + '/')} target="_blank">&amp;{name}</a>))
 
       html = html.replace(chat.mentionFindRe, (match, pre, name) => {

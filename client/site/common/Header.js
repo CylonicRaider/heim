@@ -4,6 +4,7 @@ import heimURL from '../../lib/heimURL'
 
 
 export default function Header() {
+  /* eslint-disable react/jsx-no-target-blank */
   return (
     <header>
       <div className="container">

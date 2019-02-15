@@ -1,3 +1,4 @@
+/* eslint-disable react/no-access-state-in-setstate */
 import _ from 'lodash'
 import React from 'react'
 import createReactClass from 'create-react-class'

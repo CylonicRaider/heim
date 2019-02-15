@@ -37,7 +37,7 @@ export default createReactClass({
   },
 
   componentWillMount() {
-    this.setState({empty: !this.state.chat.entryText})
+    this.setState({empty: !this.state.chat.entryText})  // eslint-disable-line react/no-access-state-in-setstate
   },
 
   componentDidMount() {
@@ -69,7 +69,7 @@ export default createReactClass({
       setImmediate(() => input.focus())
       ev.stopPropagation()
     } else if (ev.key === 'Escape') {
-      this.setState({nickText: this.state.chat.nick}, () => input.focus())
+      this.setState({nickText: this.state.chat.nick}, () => input.focus())  // eslint-disable-line react/no-access-state-in-setstate
       ev.stopPropagation()
     } else if (/^Arrow/.test(ev.key) || ev.key === 'Tab' || ev.key === 'Backspace') {
       // don't let the keyboard action handler react to these

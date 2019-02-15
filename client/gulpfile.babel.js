@@ -200,8 +200,8 @@ gulp.task('emoji-static', () => {
   const emoji = require('./lib/emoji').default
   const twemojiPath = path.dirname(require.resolve('twemoji')) + '/svg/'
   const leadingZeroes = /^0*/
-  const emojiFiles = _.map(fs.readdirSync(twemojiPath), (path) => {
-    const m = /^([0-9a-f-]+)\.svg$/.exec(path)
+  const emojiFiles = _.map(fs.readdirSync(twemojiPath), (p) => {
+    const m = /^([0-9a-f-]+)\.svg$/.exec(p)
     if (!m) {
       return null
     }

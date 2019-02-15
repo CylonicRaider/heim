@@ -42,6 +42,7 @@
     "prefer-destructuring": 0,
     "prefer-template": 0,
     "quote-props": 0,
+    "react/destructuring-assignment": [2, "never"],
     "react/forbid-prop-types": 0,
     "react/jsx-closing-bracket-location": 0,
     "react/jsx-closing-tag-location": 0,

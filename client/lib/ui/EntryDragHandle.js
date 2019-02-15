@@ -31,8 +31,8 @@ export default createReactClass({
     const showJumpToBottom = this.state.pane.draggingEntry && this.state.pane.focusedMessage !== null
     return (
       <div className="drag-handle-container">
-        <button className={classNames('drag-handle', {'touching': this.state.pane.draggingEntry})} />
-        {showJumpToBottom && <button className={classNames('jump-to-bottom', {'touching': this.state.pane.draggingEntryCommand === 'to-bottom'})} />}
+        <button type="button" className={classNames('drag-handle', {'touching': this.state.pane.draggingEntry})} />
+        {showJumpToBottom && <button type="button" className={classNames('jump-to-bottom', {'touching': this.state.pane.draggingEntryCommand === 'to-bottom'})} />}
       </div>
     )
   },

@@ -17,6 +17,7 @@ export const CheckBox = createReactClass({
   },
 
   render() {
+    /* eslint-disable jsx-a11y/label-has-associated-control */
     return (
       <label className={classNames('form-control', {'checked': this.props.checked})}>
         <span className="form-control-button form-control-checkbox"><span><input type="checkbox" name={this.props.name} checked={this.props.checked} onChange={this.props.onChange} /></span></span>
@@ -39,6 +40,7 @@ export const RadioBox = createReactClass({
   },
 
   render() {
+    /* eslint-disable jsx-a11y/label-has-associated-control */
     return (
       <label className={classNames('form-control', {'checked': this.props.checked})}>
         <span className="form-control-button form-control-radiobox"><span><input type="radio" name={this.props.name} value={this.props.value} checked={this.props.checked} onChange={this.props.onChange} /></span></span>

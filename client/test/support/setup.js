@@ -1,4 +1,4 @@
-import 'babel-polyfill'
+import '@babel/polyfill'
 import sinon from 'sinon'
 import Immutable from 'immutable'
 import Reflux from 'reflux'

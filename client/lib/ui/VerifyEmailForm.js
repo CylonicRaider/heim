@@ -30,7 +30,7 @@ export default createReactClass({
         <h1>verify email</h1>
         <h2>shall we use <strong>{flow.email}</strong> for your euphoria account?</h2>
         <ErrorMessage name="reason" />
-        {flow.done ? <button className="major-action done" disabled>great! your email address is verified.</button> : <button type="submit" tabIndex={1} className="major-action big-green-button">yep! that's me!</button>}
+        {flow.done ? <button type="button" className="major-action done" disabled>great! your email address is verified.</button> : <button type="submit" tabIndex={1} className="major-action big-green-button">yep! that's me!</button>}
       </Form>
     )
   },

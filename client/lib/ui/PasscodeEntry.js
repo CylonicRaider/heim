@@ -75,11 +75,12 @@ export default createReactClass({
     }
 
     return (
+      /* eslint-disable jsx-a11y/label-has-associated-control */
       <div className="entry-box passcode">
         <p className="message">This room requires a passcode.</p>
         <form className="entry focus-target" onSubmit={this.tryPasscode}>
-          <label>{label}</label>
-          <input key="passcode" ref="input" type="password" className="entry-text" autoFocus value={this.state.value} onChange={event => this.setState({value: event.target.value})} disabled={this.state.connected === false} />
+          <label htmlFor="passcode-entry">{label}</label>
+          <input key="passcode" ref="input" type="password" id="passcode-entry" className="entry-text" autoFocus value={this.state.value} onChange={event => this.setState({value: event.target.value})} disabled={this.state.connected === false} />
         </form>
       </div>
     )

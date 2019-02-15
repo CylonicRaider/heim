@@ -44,6 +44,7 @@ export default createReactClass({
   },
 
   render() {
+    /* eslint-disable jsx-a11y/label-has-associated-control */
     const toolboxData = this.state.toolbox
     const isEmpty = !toolboxData.items.size
     const selectedCommand = this.state.toolbox.selectedCommand

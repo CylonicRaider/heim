@@ -32,8 +32,8 @@ export default function displayCrashDialog(ev) {
             <h1>sorry, euphoria had an <span style={{whiteSpace: 'nowrap'}}>error :(</span></h1>
             <p>we'd like to help. if this is happening frequently, please let us know in <a href={process.env.HEIM_PREFIX + '/room/heim'}>&amp;heim</a> or <a href="mailto:hi@euphoria.io">send us an email</a>.</p>
             <div className="raven-status-container">{ravenStatus}</div>
-            <button onClick={props.onReload} className="reload">reload (recommended)</button>
-            <button onClick={props.onIgnore}>ignore</button>
+            <button type="button" onClick={props.onReload} className="reload">reload (recommended)</button>
+            <button type="button" onClick={props.onIgnore}>ignore</button>
           </div>
         </div>
         <style dangerouslySetInnerHTML={{__html: crashedCSS}} />

@@ -78,6 +78,7 @@ export default createReactClass({
     } else {
       let bottom
       if (flow.step === 'register') {
+        /* eslint-disable react/jsx-no-target-blank */
         title = 'register'
         bottom = (
           <div className="bottom green-bg">

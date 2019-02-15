@@ -46,6 +46,7 @@ export default createReactClass({
   },
 
   toggle() {
+    /* eslint-disable react/no-access-state-in-setstate */
     this.setState({expanded: !this.state.expanded})
   },
 

@@ -4,6 +4,7 @@ import classNames from 'classnames'
 
 
 export default function FieldLabelContainer(props) {
+  /* eslint-disable jsx-a11y/label-has-associated-control */
   return (
     <label className={classNames('field-label-container', props.error && 'error', props.className)}>
       <div className="label-line">

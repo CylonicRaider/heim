@@ -39,6 +39,7 @@ export default createReactClass({
   },
 
   render() {
+    /* eslint-disable jsx-a11y/label-has-associated-control */
     return (
       <div className="entry-box welcome">
         <div className="message">
@@ -46,8 +47,8 @@ export default createReactClass({
           <p>To reply to a message directly, {Heim.isTouch ? 'tap' : 'use the arrow keys or click on'} it.</p>
         </div>
         <form className="entry focus-target" onSubmit={this.setNick}>
-          <label>choose your name to begin:</label>
-          <input key="nick" ref="input" type="text" className="entry-text" autoFocus value={this.state.value} onChange={event => this.setState({value: event.target.value})} disabled={this.state.chat.connected === false} />
+          <label htmlFor="nick-entry">choose your name to begin:</label>
+          <input key="nick" id="nick-entry" ref="input" type="text" className="entry-text" autoFocus value={this.state.value} onChange={event => this.setState({value: event.target.value})} disabled={this.state.chat.connected === false} />
         </form>
       </div>
     )
