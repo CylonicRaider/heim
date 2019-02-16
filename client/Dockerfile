@@ -1,4 +1,4 @@
-FROM ubuntu:17.10
+FROM ubuntu:18.04
 MAINTAINER Max Goodman <max@euphoria.io>
 
 RUN apt-get update && apt-get dist-upgrade -y
