@@ -70,7 +70,7 @@ storeActions.focusPane.sync = true
 // sync so window.open works
 storeActions.openPMWindow.sync = true
 
-export class Pane {
+const Pane = module.exports.Pane = class Pane {
   constructor(paneActions, store, id, readOnly) {
     this.store = store
     this.id = id
@@ -720,6 +720,6 @@ const store = module.exports.store = Reflux.createStore({
   },
 })
 
-export function createCustomPane(paneId, options) {
+const createCustomPane = module.exports.createCustomPane = function createCustomPane(paneId, options) {
   return store._createCustomPane(paneId, options)
 }
