@@ -28,6 +28,7 @@
 @ui-background: if((@dark-theme), lighten(@background, 10%), darken(@background, 20%));
 @pane-background: if((@dark-theme), @background, darken(@background, 5%));
 @pane-selected-background: if((@dark-theme), lighten(@background, 5%), darken(@background, 10%));
+@pane-heading-color: if((@dark-theme), darken(@text, 45%, relative), lighten(@text, 45%, relative));
 @bar-background: @background;
 @primary-background: if((@dark-theme), fadeout(@primary, 80%), fadeout(@primary, 90%));
 @primary-active-background: if((@dark-theme), fadeout(@primary, 70%), fadeout(@primary, 80%));
@@ -47,6 +48,7 @@
 @chat-background: @background;
 @indent-line-base: fadeout(@text, 50%);
 @indent-line-focused: @secondary;
+@ago-color: if((@dark-theme), darken(@text, 50%, relative), lighten(@text, 50%, relative));
 @entry-background: @background;
 @entry-border: @background;
 @entry-focus-background: fadeout(@primary, 80%);
@@ -87,6 +89,10 @@
   &.touching, &:active {
     background: @button-active-background;
   }
+}
+
+.nick-filter() {
+  filter: brightness(@nick-brightness);
 }
 
 // This should make most enclosed rules take precedence
@@ -162,15 +168,21 @@
       }
     }
 
-    .notification-settings .mode-selector {
-      background: @notification-selector-background;
-
-      .mode when not (@icon-mode = keep) {
-        .grayscale-inner-icon;
+    .notification-settings {
+      .notification-toggle .inner {
+        color: @pane-heading-color;
       }
 
-      .mode.selected {
-        background: @notification-button-selected-background;
+      .mode-selector {
+        background: @notification-selector-background;
+
+        .mode when not (@icon-mode = keep) {
+          .grayscale-inner-icon;
+        }
+
+        .mode.selected {
+          background: @notification-button-selected-background;
+        }
       }
     }
 
@@ -190,6 +202,12 @@
           }
         }
       }
+    }
+  }
+
+  .info-pane, .sidebar-pane {
+    h1, h2 {
+      color: @pane-heading-color;
     }
   }
 
@@ -454,7 +472,13 @@
 
   .nick:not(input), .message-emote {
     color: black;
-    filter: brightness(@nick-brightness);
+    .nick-filter;
+  }
+
+  .replies.collapsed, .expand-rest, .message-node .content, .thread-list, .notification-list {
+    .ago {
+      color: @ago-color;
+    }
   }
 
   .dialog {

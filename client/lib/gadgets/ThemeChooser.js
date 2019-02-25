@@ -18,6 +18,9 @@ import heimURL from '../heimURL'
 import { CheckBox, RadioBox } from './formControls'
 
 
+const themes = ['default', 'dark', 'spooky']
+const themeNames = {default: 'Default', dark: 'Dark', spooky: 'Spooky'}
+
 const storeActions = Reflux.createActions([
   'setTheme',
   'showAllReplies',
@@ -158,14 +161,13 @@ export const ThemeChooserDialog = createReactClass({
   },
 
   render() {
-    /* eslint-disable eqeqeq */
     return (
       <Bubble className="theme-chooser-dialog" transition={this.state.ui.thin ? 'slide-down' : 'slide-right'} visible={this.state.settings.get('dialogVisible')} anchorEl={this.anchorEl} onDismiss={this.dismiss}>
         <div className="field-group">
           <span className="field-group-label">Theme:</span>
-          <RadioBox name="theme" value="default" checked={this.state.settings.get('theme') == 'default'} onChange={this.onThemeChange}>Default</RadioBox>
-          <RadioBox name="theme" value="dark" checked={this.state.settings.get('theme') == 'dark'} onChange={this.onThemeChange}>Dark</RadioBox>
-          <RadioBox name="theme" value="spooky" checked={this.state.settings.get('theme') == 'spooky'} onChange={this.onThemeChange}>Spooky</RadioBox>
+          {themes.map(name => (
+            <RadioBox name="theme" key={name} value={name} checked={this.state.settings.get('theme') === name} onChange={this.onThemeChange}>{themeNames[name]}</RadioBox>
+          ))}
         </div>
         <hr className="separator" />
         <CheckBox checked={this.state.settings.get('showAllReplies')} onChange={this.onShowAllReplies}>Show all replies</CheckBox>
@@ -191,9 +193,8 @@ export function install(params) {
   ))
 
   Heim.hook('page-bottom', () => {
-    /* eslint-disable eqeqeq */
     const theme = store.state.get('theme')
-    if (theme == null || theme == 'default') return null
+    if (theme == null || theme === 'default') return null // eslint-disable-line eqeqeq
     return (
       <link key="user-theme" rel="stylesheet" type="text/css" href={heimURL('/static/theme-' + theme + '.css')} />
     )
