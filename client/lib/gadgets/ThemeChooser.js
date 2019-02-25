@@ -18,8 +18,8 @@ import heimURL from '../heimURL'
 import { CheckBox, RadioBox } from './formControls'
 
 
-const themes = ['default', 'dark', 'spooky']
-const themeNames = {default: 'Default', dark: 'Dark', spooky: 'Spooky'}
+const themes = ['default', 'dark', 'spooky', 'hackerman']
+const themeNames = {default: 'Default', dark: 'Dark', spooky: 'Spooky', hackerman: 'Hackerman'}
 
 const storeActions = Reflux.createActions([
   'setTheme',

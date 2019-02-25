@@ -1,0 +1,47 @@
+@import "theme-base.less";
+
+
+@GREEN: #00c000;
+
+@background: #000000;
+@primary: @GREEN;
+@secondary: @GREEN;
+@text: @GREEN;
+@icon-mode: grayscale;
+
+@link-color: #0060c0;
+@visited-link-color: #800080;
+@mention-background: @GREEN;
+
+@ui-background: darken(@GREEN, 95%, relative);
+@entry-border: rgba(0, 0, 0, .25);
+@entry-focus-background: @primary-background;
+@entry-focus-border: @primary;
+
+.nick-filter() {
+  filter: brightness(@nick-brightness) saturate(2);
+}
+
+#container {
+  .message-node.mention > .line {
+    .mention-nick {
+      font-weight: bold;
+      color: black !important;
+    }
+  }
+
+  .message-node:not(.mention) > .line .mention-nick {
+    filter: saturate(2);
+  }
+
+  .messages .entry .auto-size-container {
+    .nick, input.nick:focus {
+      background: @GREEN;
+      color: black;
+    }
+
+    input.nick:focus {
+      filter: none;
+    }
+  }
+}
