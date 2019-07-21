@@ -31,6 +31,7 @@ export default createReactClass({
           d: 24 * 60 * 60,
           w: 7 * 24 * 60 * 60,
           m: 30 * 24 * 60 * 60,
+          y: 365 * 24 * 60 * 60,
           f: null,
         }[this.refs.banDuration.value],
       }
@@ -77,6 +78,7 @@ export default createReactClass({
               <option value="d">for 1 day</option>
               <option value="w">for 1 week</option>
               <option value="m">for 30 days</option>
+              <option value="y">for 365 days</option>
               <option value="f">forever</option>
             </select>
           )}
