@@ -1,4 +1,4 @@
-FROM golang:1.5.2
+FROM golang:latest
 MAINTAINER Logan Hanks <logan@euphoria.io>
 
 ENV GOPATH /godeps:/go

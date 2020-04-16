@@ -454,6 +454,16 @@ const Message = createReactClass({
         </div>
       )
       lineClasses['line-emote'] = true
+    } else if (/^\/user(black|white)list\b/.test(content)) {
+      const match = /^\/user(black|white)list\s*(.*?)\s*$/.exec(content)
+      content = (match[1] == 'black' ? 'added' : 'removed') + ' user blacklist with parameters ' + match[2]
+      messageRender = (
+        <div className="message">
+          <MessageText content={content} className="message-emote" style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 95%)'}} />
+          {messageAgo}
+        </div>
+      )
+      lineClasses['line-emote'] = true
     } else if (this.state.contentTall && this.props.roomSettings.get('collapse') !== false) {
       const action = contentExpanded ? 'collapse' : 'expand'
       const actionMethod = action + 'Content'

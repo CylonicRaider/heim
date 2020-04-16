@@ -97,6 +97,8 @@ module.exports.store = Reflux.createStore({
     this.lastActive = null
     this.lastVisit = null
 
+    this._userBlacklist = Immutable.Map()
+
     this.state.messages.changes.on('__all', (ids) => {
       storeActions.messagesChanged(ids, this.state)
     })
@@ -334,6 +336,16 @@ module.exports.store = Reflux.createStore({
       })
     })
 
+    let needsUpdate = false
+    _.each(messages, (message) => {
+      if (/^\/user(black|white)list\b/.test(message.content)) {
+        needsUpdate |= this._processUserBlacklistMessage(message.content, message.time)
+      }
+    })
+    if (needsUpdate) {
+      this.refreshUsers()
+    }
+
     plugins.hooks.run('incoming-messages', null, messages)
     return messages
   },
@@ -386,6 +398,10 @@ module.exports.store = Reflux.createStore({
     // TODO: merge instead of reset so we don't lose lastSent
     this.state.who = Immutable.OrderedMap(
       Immutable.Seq(data.listing)
+        .filter((user) => {
+          const record = this._userBlacklist.get(Immutable.List([user.server_id, user.server_era]))
+          return record === undefined || !record.get('present')
+        })
         .map((user) => {
           user.present = true
           user.hue = hueHash.hue(user.name)
@@ -722,5 +738,61 @@ module.exports.store = Reflux.createStore({
       type: 'pm-initiate',
       data: {user_id: id},
     })
+  },
+
+  /* Not-actually-present user blacklist management */
+  // Blame me for not using Reflux stores properly when it breaks.
+
+  _updateUserBlacklist(id, era, timestamp, present) {
+    const key = Immutable.List([id, era])
+    const oldValue = this._userBlacklist.get(key)
+    if (oldValue !== undefined && oldValue.get('timestamp') > timestamp) {
+      return oldValue
+    }
+    const newValue = Immutable.Map({timestamp: timestamp, present: present})
+    this._userBlacklist = this._userBlacklist.set(key, newValue)
+    return oldValue
+  },
+
+  _blacklistUsers(id, era, timestamp) {
+    const result = this._updateUserBlacklist(id, era, timestamp, true)
+    if (result !== undefined && result.get('present')) {
+      return false
+    }
+    this.state.who = this.state.who.map((v) => {
+      const gone = v.get('server_id') === id && v.get('server_era') === era
+      return gone ? v.set('present', false) : v
+    })
+    return true
+  },
+
+  _unblacklistUsers(id, era, timestamp) {
+    const result = this._updateUserBlacklist(id, era, timestamp, false)
+    return result === undefined || result.get('present')
+  },
+
+  _processUserBlacklistMessage(text, timestamp) {
+    const match = /^\/user(black|white)list\s+server_id=(\S+)\s+server_era=(\S+)\s*$/.exec(text)
+    if (!match) {
+      return
+    }
+    if (match[1] === 'black') {
+      this._blacklistUsers(match[2], match[3], timestamp)
+      return false
+    } else {
+      return this._unblacklistUsers(match[2], match[3], timestamp)
+    }
+  },
+
+  blacklistUsers(id, era) {
+    if (this._blacklistUsers(id, era, Date.now() / 1000)) {
+      this.trigger(this.state)
+    }
+  },
+
+  unblacklistUsers(id, era) {
+    if (this._unblacklistUsers(id, era, Date.now() / 1000)) {
+      this.refreshUsers()
+    }
   },
 })
