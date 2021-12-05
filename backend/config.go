@@ -234,7 +234,7 @@ func (c *ClusterConfig) EtcdCluster(ctx scope.Context) (cluster.Cluster, error) 
 	case "":
 		return nil, fmt.Errorf("cluster: etcd-host must be specified")
 	case "mock":
-		return &cluster.TestCluster{}, nil
+		return cluster.NewMockCluster(), nil
 	default:
 		return etcd.EtcdCluster(ctx, c.EtcdHome, c.EtcdHost, c.DescribeSelf())
 	}

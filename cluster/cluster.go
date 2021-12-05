@@ -207,3 +207,9 @@ func (tc *TestCluster) Watch() <-chan PeerEvent {
 	}
 	return tc.c
 }
+
+// For non-testing non-etcd use.
+// The channel must be buffered as the backend's background goroutine both reads to and writes from it.
+func NewMockCluster() *TestCluster {
+	return &TestCluster{c: make(chan PeerEvent, 16)}
+}
