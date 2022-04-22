@@ -6,7 +6,6 @@ import support from './support/setup'
 
 import MessageText from '../lib/ui/MessageText'
 
-
 describe('<MessageText>', () => {
   support.fakeEnv({
     HEIM_PREFIX: '/test',

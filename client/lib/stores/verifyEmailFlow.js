@@ -6,7 +6,6 @@ import heimURL from '../heimURL'
 import ImmutableMixin from './ImmutableMixin'
 import PostFlowMixin from './PostFlowMixin'
 
-
 const storeActions = Reflux.createActions([
   'initData',
   'verify',

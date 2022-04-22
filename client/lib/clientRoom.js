@@ -240,8 +240,8 @@ export default function clientRoom() {
       })
 
       // helpers for catching those pesky mouse-escaped-window-and-released cases
-      Heim.addEventListener(uiwindow, 'mouseup', ev => Heim.ui.globalMouseUp(ev), false)
-      Heim.addEventListener(uiwindow, 'mousemove', ev => Heim.ui.globalMouseMove(ev), false)
+      Heim.addEventListener(uiwindow, 'mouseup', (ev) => Heim.ui.globalMouseUp(ev), false)
+      Heim.addEventListener(uiwindow, 'mousemove', (ev) => Heim.ui.globalMouseMove(ev), false)
 
       if (Heim.isTouch) {
         uidocument.body.classList.add('touch')
@@ -274,6 +274,7 @@ export default function clientRoom() {
         delete Heim._titleMsg
       }
 
+      /* eslint-disable react/no-render-return-value */
       Heim.mainComponent = ReactDOM.render(
         <Main />,
         uidocument.getElementById('container')

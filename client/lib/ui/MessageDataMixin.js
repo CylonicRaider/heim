@@ -1,4 +1,4 @@
-export default function(getter, fieldName) {
+export default function createMessageDataMixin(getter, fieldName) {
   const mixin = {
     getInitialState() {
       return {

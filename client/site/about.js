@@ -3,7 +3,6 @@ import React from 'react'
 import { MainPage, FancyLogo, FauxNick, FauxMessage } from './common'
 import heimURL from '../lib/heimURL'
 
-
 module.exports = (
   <MainPage title="about euphoria" className="about">
     <div className="primary">

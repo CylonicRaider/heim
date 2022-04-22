@@ -1,6 +1,5 @@
 import { stripSpaces } from './hueHash'
 
-
 /**
  * Custom lexicographic comparator on pairs of equal-length
  * arrays. Does not do a deep comparison on sub-arrays.
@@ -127,16 +126,16 @@ export function rankCompletions(names, part) {
   const partStrip = stripSpaces(part)
   return names
     .filter(Boolean)
-    .map(name => annotateScore(name, partStrip))
-    .filter(entry => entry.score)
+    .map((name) => annotateScore(name, partStrip))
+    .filter((entry) => entry.score)
     // Use a custom lexicographic array sorter because JS's native
     // array comparison stringifies numeric elements for comparison,
     // meaning negative numbers compare incorrectly. We need negative
     // numbers in the score so that better matches come up at the
     // front -- because that needs to match the tie-breaker of
     // asciibetical ordering!
-    .sortBy(entry => entry.score, compareArrays)
-    .map(entry => entry.completion)
+    .sortBy((entry) => entry.score, compareArrays)
+    .map((entry) => entry.completion)
 }
 
 export default { findSubseq, matchPinningCase, scoreMatch, rankCompletions }

@@ -10,7 +10,6 @@ import storage from '../stores/storage'
 import clock from '../stores/clock'
 import FastButton from './FastButton'
 
-
 export default createReactClass({
   displayName: 'NotificationSettings',
 

@@ -4,7 +4,6 @@ import classNames from 'classnames'
 
 import FastButton from './FastButton'
 
-
 const roomNameRe = /^(pm:)?[a-z0-9]+$/
 
 export default createReactClass({

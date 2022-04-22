@@ -8,7 +8,6 @@ import activity from './activity'
 
 const fs = require('fs')  // needs to be a require to work with brfs for now: https://github.com/babel/babelify/issues/81
 
-
 const favicons = module.exports.favicons = {
   'active': 'data:image/png;base64,' + fs.readFileSync(__dirname + '/../../res/favicon-active.png', 'base64'),
   'highlight': 'data:image/png;base64,' + fs.readFileSync(__dirname + '/../../res/favicon-highlight.png', 'base64'),
@@ -168,7 +167,7 @@ module.exports.store = Reflux.createStore({
       module.exports.dismissNotification(parentId)
       const parentMessage = state.messages.get(parentId)
       Immutable.Seq(parentMessage.get('children'))
-        .forEach(id => module.exports.dismissNotification(id))
+        .forEach((id) => module.exports.dismissNotification(id))
     }
   },
 
@@ -200,7 +199,7 @@ module.exports.store = Reflux.createStore({
       .filter(Boolean)
       .cacheResult()
 
-    unseen.forEach(msg => this._markNotification('new-message', state.roomName, state.roomTitle, msg))
+    unseen.forEach((msg) => this._markNotification('new-message', state.roomName, state.roomTitle, msg))
 
     unseen
       .filter((msg) => {
@@ -221,11 +220,11 @@ module.exports.store = Reflux.createStore({
         const prevChild = children.get(children.indexOf(msgId) - 1)
         return prevChild && state.messages.get(prevChild).get('_own')
       })
-      .forEach(msg => this._markNotification('new-reply', state.roomName, state.roomTitle, msg))
+      .forEach((msg) => this._markNotification('new-reply', state.roomName, state.roomTitle, msg))
 
     unseen
-      .filter(msg => msg.get('_mention'))
-      .forEach(msg => this._markNotification('new-mention', state.roomName, state.roomTitle, msg))
+      .filter((msg) => msg.get('_mention'))
+      .forEach((msg) => this._markNotification('new-mention', state.roomName, state.roomTitle, msg))
   },
 
   _markNotification(kind, roomName, roomTitle, message) {
@@ -280,13 +279,13 @@ module.exports.store = Reflux.createStore({
           }
         })
       })
-      .sortBy(notification => notification.message.get('time'))
-      .groupBy(notification => notification.kind)
+      .sortBy((notification) => notification.message.get('time'))
+      .groupBy((notification) => notification.kind)
 
     const newMention = alerts['new-mention']
     if (newMention) {
       const newMentionId = newMention.message.get('id')
-      alerts = _.reject(alerts, a => a.message.get('id') === newMentionId)
+      alerts = _.reject(alerts, (a) => a.message.get('id') === newMentionId)
       this._notifyAlert('new-mention', newMention.roomName, newMention.roomTitle, newMention.message, {
         favicon: favicons.highlight,
         icon: icons.highlight,
@@ -323,7 +322,7 @@ module.exports.store = Reflux.createStore({
         }
         return false
       })
-      .map(notification => notification.kind)
+      .map((notification) => notification.kind)
 
     this._newNotifications = []
 

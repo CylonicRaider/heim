@@ -6,7 +6,6 @@ import resetPasswordFlow from '../stores/resetPasswordFlow'
 import { Form, PasswordStrengthField, ErrorMessage } from './forms'
 import { validatePassword, minPasswordEntropy } from './formValidators'
 
-
 export default createReactClass({
   displayName: 'ResetPasswordForm',
 

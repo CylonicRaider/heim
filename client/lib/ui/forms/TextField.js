@@ -5,7 +5,6 @@ import classNames from 'classnames'
 
 import FieldLabelContainer from './FieldLabelContainer'
 
-
 export default createReactClass({
   displayName: 'TextField',
 

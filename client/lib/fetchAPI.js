@@ -19,5 +19,5 @@ export function postAPI(url, data) {
       error.response = response
       throw error
     })
-    .then(response => response.json())
+    .then((response) => response.json())
 }

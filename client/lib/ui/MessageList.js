@@ -4,15 +4,14 @@ import PropTypes from 'prop-types'
 
 import Message from './Message'
 import Tree from '../Tree'
-import { Pane } from '../stores/ui'
+import ui from '../stores/ui'
 import TreeNodeMixin from './TreeNodeMixin'
-
 
 export default createReactClass({
   displayName: 'MessageList',
 
   propTypes: {
-    pane: PropTypes.instanceOf(Pane).isRequired,
+    pane: PropTypes.instanceOf(ui.Pane).isRequired,
     tree: PropTypes.instanceOf(Tree).isRequired,
     showTimeStamps: PropTypes.bool,
     roomSettings: PropTypes.object,

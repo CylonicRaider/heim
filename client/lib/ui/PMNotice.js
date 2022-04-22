@@ -6,7 +6,6 @@ import ui from '../stores/ui'
 import hueHash from '../hueHash'
 import FastButton from './FastButton'
 
-
 export default function PMNotice(props) {
   const bgColor = 'hsl(' + hueHash.hue(props.nick) + ', 67%, 85%)'
   const textLightColor = 'hsl(' + hueHash.hue(props.nick) + ', 28%, 28%)'

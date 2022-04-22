@@ -3,7 +3,6 @@ import React from 'react'
 import { A, Span, textDefaults } from 'react-html-email'
 import Footer from './Footer'
 
-
 export default (
   <Footer>
     <Span {...textDefaults} fontSize={13} color="#7d7d7d">

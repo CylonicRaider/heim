@@ -7,7 +7,6 @@ import Popup from './Popup'
 import FastButton from './FastButton'
 import Spinner from './Spinner'
 
-
 export default createReactClass({
   displayName: 'Dialog',
 

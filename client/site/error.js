@@ -2,7 +2,6 @@ import React from 'react'
 
 import { MainPage } from './common'
 
-
 module.exports = (
   <MainPage title="euphoria: error" className="error-page">
     <h1>error</h1>

@@ -5,19 +5,18 @@ import classNames from 'classnames'
 import Reflux from 'reflux'
 
 import actions from '../actions'
-import { Pane } from '../stores/ui'
+import ui from '../stores/ui'
 import chat from '../stores/chat'
 import mention from '../mention'
 import KeyboardActionHandler from './KeyboardActionHandler'
 import EntryMixin from './EntryMixin'
 import EntryDragHandle from './EntryDragHandle'
 
-
 export default createReactClass({
   displayName: 'ChatEntry',
 
   propTypes: {
-    pane: PropTypes.instanceOf(Pane).isRequired,
+    pane: PropTypes.instanceOf(ui.Pane).isRequired,
     onChange: PropTypes.func,
   },
 
@@ -41,7 +40,7 @@ export default createReactClass({
   },
 
   componentDidMount() {
-    this.listenTo(this.props.pane.store, state => this.setState({'pane': state}))
+    this.listenTo(this.props.pane.store, (state) => this.setState({'pane': state}))
     this.listenTo(this.props.pane.focusEntry, 'focus')
     this.listenTo(this.props.pane.blurEntry, 'blur')
     const input = this.refs.input
@@ -176,8 +175,8 @@ export default createReactClass({
     const word = text.substring(wordStart, wordEnd)
     const nameSeq = this.state.chat.who
       .toSeq()
-      .filter(user => user.get('present'))
-      .map(user => user.get('name', ''))
+      .filter((user) => user.get('present'))
+      .map((user) => user.get('name', ''))
     const match = mention.rankCompletions(nameSeq, word).first()
 
     if (!match) {
@@ -222,7 +221,7 @@ export default createReactClass({
         Backspace: this.proxyKeyDown,
         Tab: this.complete,
       }}>
-        <form className={classNames('entry', 'focus-target', {'empty': this.state.empty})} onSubmit={ev => ev.preventDefault()} autoComplete="off">
+        <form className={classNames('entry', 'focus-target', {'empty': this.state.empty})} onSubmit={(ev) => ev.preventDefault()} autoComplete="off">
           <div className="nick-box">
             <div className="auto-size-container">
               <input className="nick" ref="nick" value={nick} onFocus={this.onNickFocus} onBlur={this.onNickBlur} onChange={this.onNickChange} onKeyDown={this.onNickKeyDown} />

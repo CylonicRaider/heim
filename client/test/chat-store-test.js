@@ -7,7 +7,6 @@ import support from './support/setup'
 import chat from '../lib/stores/chat'
 import storage from '../lib/stores/storage'
 
-
 describe('chat store', () => {
   let clock
 
@@ -779,7 +778,7 @@ describe('chat store', () => {
     it('should trigger messagesChanged action', (done) => {
       chat.actions.messagesChanged.resetHistory()
       handleSocket(msgBody, (state) => {
-        const ids = Immutable.Seq(msgBody.data.log).map(msg => msg.id).toArray()
+        const ids = Immutable.Seq(msgBody.data.log).map((msg) => msg.id).toArray()
         ids.unshift('__root')
         sinon.assert.calledOnce(chat.actions.messagesChanged)
         sinon.assert.calledWithExactly(chat.actions.messagesChanged, ids, state)
@@ -933,7 +932,7 @@ describe('chat store', () => {
 
     it('users should all be assigned hues', (done) => {
       handleSocket(msgBody, (state) => {
-        assert(state.who.every(whoEntry => !!whoEntry.has('hue')))
+        assert(state.who.every((whoEntry) => !!whoEntry.has('hue')))
         done()
       })
     })

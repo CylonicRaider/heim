@@ -4,13 +4,13 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import Reflux from 'reflux'
 
-import { Pane } from '../stores/ui'
+import ui from '../stores/ui'
 
 export default createReactClass({
   displayName: 'EntryDragHandle',
 
   propTypes: {
-    pane: PropTypes.instanceOf(Pane).isRequired,
+    pane: PropTypes.instanceOf(ui.Pane).isRequired,
   },
 
   mixins: [
@@ -24,7 +24,7 @@ export default createReactClass({
   },
 
   componentDidMount() {
-    this.listenTo(this.props.pane.store, state => this.setState({'pane': state}))
+    this.listenTo(this.props.pane.store, (state) => this.setState({'pane': state}))
   },
 
   render() {

@@ -1,7 +1,6 @@
 import Immutable from 'immutable'
 import emoji from './emoji'
 
-
 export function stripSpaces(text) {
   return text.replace(/[^\S]/g, '')
 }

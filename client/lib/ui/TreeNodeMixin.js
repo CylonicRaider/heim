@@ -1,7 +1,6 @@
 import _ from 'lodash'
 
-
-export default function(prefix) {
+export default function createTreeNodeMixin(prefix) {
   const treeField = prefix ? prefix + 'Tree' : 'tree'
   const nodeField = prefix ? prefix + 'Node' : 'node'
   const nodeIdField = prefix ? prefix + 'NodeId' : 'nodeId'

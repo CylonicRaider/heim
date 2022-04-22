@@ -11,7 +11,6 @@ import chat from '../stores/chat'
 import hueHash from '../hueHash'
 import heimURL from '../heimURL'
 
-
 const autolinker = new Autolinker({
   truncate: 40,
   replaceFn(match) {

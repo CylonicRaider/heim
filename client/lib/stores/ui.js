@@ -13,7 +13,6 @@ import accountSettingsFlow from './accountSettingsFlow'
 import notification from './notification'
 import MessageData from '../MessageData'
 
-
 const storeActions = Reflux.createActions([
   'keydownOnPage',
   'tabKeyCombo',
@@ -536,8 +535,8 @@ const store = module.exports.store = Reflux.createStore({
   _moveFocusedPane(delta) {
     const focusablePanes = this.state.visiblePanes
       .toKeyedSeq()
-      .map(paneId => this.state.panes.get(paneId))
-      .filterNot(pane => pane.readOnly)
+      .map((paneId) => this.state.panes.get(paneId))
+      .filterNot((pane) => pane.readOnly)
       .cacheResult()
 
     let idx
@@ -620,8 +619,8 @@ const store = module.exports.store = Reflux.createStore({
 
   gotoMessageInPane(messageId) {
     const parentPaneId = Immutable.Seq(this.chatState.messages.iterAncestorsOf(messageId))
-      .map(ancestor => 'thread-' + ancestor.get('id'))
-      .find(threadId => this.state.visiblePanes.has(threadId))
+      .map((ancestor) => 'thread-' + ancestor.get('id'))
+      .find((threadId) => this.state.visiblePanes.has(threadId))
 
     const parentPane = this.state.panes.get(parentPaneId || 'main')
 
@@ -720,6 +719,6 @@ const store = module.exports.store = Reflux.createStore({
   },
 })
 
-const createCustomPane = module.exports.createCustomPane = function createCustomPane(paneId, options) {
+module.exports.createCustomPane = function createCustomPane(paneId, options) {
   return store._createCustomPane(paneId, options)
 }

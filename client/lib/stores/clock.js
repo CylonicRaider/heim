@@ -1,6 +1,5 @@
 import Reflux from 'reflux'
 
-
 export const second = Reflux.createStore({
   init() {
     this.state = Date.now()
@@ -18,7 +17,6 @@ export const second = Reflux.createStore({
     setTimeout(this._tick, 1000 - (now % 1000))
   },
 })
-
 
 export const minute = Reflux.createStore({
   listenables: [

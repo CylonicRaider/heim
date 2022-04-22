@@ -3,7 +3,6 @@ import 'string.fromcodepoint'
 import unicodeIndex from 'emoji-annotation-to-unicode'
 import twemoji from 'twemoji'
 
-
 const index = _.extend({}, unicodeIndex, {
   '+1': 'plusone',
   'bronze': 'bronze',

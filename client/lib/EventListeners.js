@@ -1,7 +1,6 @@
 /* eslint-disable prefer-rest-params, prefer-spread */
 import _ from 'lodash'
 
-
 export default class EventListeners {
   constructor() {
     this._listeners = []
@@ -15,11 +14,11 @@ export default class EventListeners {
   removeEventListener(target, type, listener, useCapture) {
     target.removeEventListener(type, listener, useCapture)
     const toRemove = _.toArray(arguments)
-    _.remove(this._listeners, l => _.isEqual(l, toRemove))
+    _.remove(this._listeners, (l) => _.isEqual(l, toRemove))
   }
 
   removeAllEventListeners() {
     // iterate in reverse order so removals don't affect iteration
-    _.eachRight(this._listeners, l => this.removeEventListener.apply(this, l))
+    _.eachRight(this._listeners, (l) => this.removeEventListener.apply(this, l))
   }
 }

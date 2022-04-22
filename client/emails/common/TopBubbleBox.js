@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 
 import { Box, Item, A, Image } from 'react-html-email'
 
-
 export default function TopBubbleBox(props) {
   return (
     <Item align="center">

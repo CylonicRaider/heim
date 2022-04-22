@@ -3,7 +3,6 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import { CSSTransitionGroup } from 'react-transition-group'
 
-
 module.exports = createReactClass({
   displayName: 'Spinner',
 

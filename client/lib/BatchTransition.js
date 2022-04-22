@@ -1,6 +1,5 @@
 import _ from 'lodash'
 
-
 /* This object animates transitions, aggressively batching and downstepping
  * framerate to reduce redraws. When animating slowly changing CSS properties,
  * this can significantly reduce CPU/GPU usage. */
@@ -71,7 +70,7 @@ export default class BatchTransition {
 
     // if we have a lot of finished transitions hanging around, clean them up
     if (toReap >= 10) {
-      this._transitions = _.filter(this._transitions, transition => !transition.finished)
+      this._transitions = _.filter(this._transitions, (transition) => !transition.finished)
     }
 
     if (nextFrame !== Number.MAX_VALUE) {

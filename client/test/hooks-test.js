@@ -3,7 +3,6 @@ import assert from 'assert'
 
 import Hooks from '../lib/Hooks'
 
-
 describe('Hooks', () => {
   it('should create hooks named in the constructor arguments', () => {
     const hooks = new Hooks('a', 'b', 'c')

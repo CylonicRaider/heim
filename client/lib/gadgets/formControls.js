@@ -5,7 +5,6 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-
 export const CheckBox = createReactClass({
   displayName: 'CheckBox',
 

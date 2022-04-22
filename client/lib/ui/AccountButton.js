@@ -5,7 +5,6 @@ import Immutable from 'immutable'
 
 import FastButton from './FastButton'
 
-
 export default createReactClass({
   displayName: 'AccountButton',
 

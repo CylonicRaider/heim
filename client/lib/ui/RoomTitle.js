@@ -6,7 +6,6 @@ import classNames from 'classnames'
 import FastButton from './FastButton'
 import ToggleBubble from './ToggleBubble'
 
-
 export default createReactClass({
   displayName: 'RoomTitle',
 
@@ -57,7 +56,7 @@ export default createReactClass({
     return (
       <span className="room-container">
         <span className="room">
-          <a className="name" href={'/room/' + this.props.name} onClick={ev => ev.preventDefault()}>{this.props.title}</a>
+          <a className="name" href={'/room/' + this.props.name} onClick={(ev) => ev.preventDefault()}>{this.props.title}</a>
           <FastButton fastTouch className={classNames('state', className)} onClick={this.showPrivacyInfo}>{caption}</FastButton>
         </span>
         <ToggleBubble ref="privacyInfo" className="small-text privacy-info" visible={this.props.connected === false}>

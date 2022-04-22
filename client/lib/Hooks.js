@@ -1,10 +1,9 @@
 import _ from 'lodash'
 
-
 class Hooks {
   constructor(...names) {
     this._hooks = {}
-    _.each(names, n => this.create(n))
+    _.each(names, (n) => this.create(n))
   }
 
   create(name) {
@@ -16,7 +15,7 @@ class Hooks {
   }
 
   run(name, context, ...args) {
-    return _.map(this._hooks[name], h => h.apply(context, args))
+    return _.map(this._hooks[name], (h) => h.apply(context, args))
   }
 }
 

@@ -6,7 +6,6 @@ import ReactDOM from 'react-dom'
 
 import clamp from '../clamp'
 
-
 function dimensions(el, prop) {
   const rect = el.getBoundingClientRect()
   if (prop) {

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 
 import { Item, Box } from 'react-html-email'
 
-
 export default function BodyBox(props) {
   return (
     <Item style={{paddingTop: '12px'}}>

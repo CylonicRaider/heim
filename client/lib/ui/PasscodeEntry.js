@@ -6,15 +6,14 @@ import Reflux from 'reflux'
 
 import actions from '../actions'
 import chat from '../stores/chat'
-import { Pane } from '../stores/ui'
+import ui from '../stores/ui'
 import EntryMixin from './EntryMixin'
-
 
 export default createReactClass({
   displayName: 'PasscodeEntry',
 
   propTypes: {
-    pane: PropTypes.instanceOf(Pane).isRequired,
+    pane: PropTypes.instanceOf(ui.Pane).isRequired,
   },
 
   mixins: [
@@ -80,7 +79,7 @@ export default createReactClass({
         <p className="message">This room requires a passcode.</p>
         <form className="entry focus-target" onSubmit={this.tryPasscode}>
           <label htmlFor="passcode-entry">{label}</label>
-          <input key="passcode" ref="input" type="password" id="passcode-entry" className="entry-text" autoFocus value={this.state.value} onChange={event => this.setState({value: event.target.value})} disabled={this.state.connected === false} />
+          <input key="passcode" ref="input" type="password" id="passcode-entry" className="entry-text" autoFocus value={this.state.value} onChange={(event) => this.setState({value: event.target.value})} disabled={this.state.connected === false} />
         </form>
       </div>
     )

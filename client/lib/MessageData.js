@@ -1,7 +1,6 @@
 import Immutable from 'immutable'
 import EventEmitter from 'eventemitter3'
 
-
 export default class MessageData {
   constructor(initMessageData) {
     this.initMessageData = Immutable.fromJS(initMessageData)

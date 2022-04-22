@@ -7,7 +7,6 @@ import forwardProps from '../forwardProps'
 import chat from '../stores/chat'
 import MessageText from '../ui/MessageText'
 
-
 const noticeRe = /^!notice(\S*?)\s([^]*)$/
 const noticeMaxSummaryLength = 80
 
@@ -58,8 +57,8 @@ export const store = Reflux.createStore({
 
     // Select the newest notice change
     const latestNotice = notices
-      .filter(n => n.display)
-      .maxBy(n => n.time)
+      .filter((n) => n.display)
+      .maxBy((n) => n.time)
 
     // Incorporate it into our state
     if (latestNotice && latestNotice.time > this.state.get('time')) {

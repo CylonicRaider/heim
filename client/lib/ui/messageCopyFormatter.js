@@ -6,7 +6,6 @@ import findParent from '../findParent'
 import domWalkForward from '../domWalkForward'
 import emoji from '../emoji'
 
-
 export default function handleCopy(ev) {
   const selection = uiwindow.getSelection()
   if (selection.rangeCount === 0) {
@@ -18,7 +17,7 @@ export default function handleCopy(ev) {
   // first, if the selection start and end are within the same message
   // line, do nothing.
   function findParentMessageLine(el) {
-    return findParent(el, el2 => el2.classList && (el2.classList.contains('line') || el2.classList.contains('message-node')))
+    return findParent(el, (el2) => el2.classList && (el2.classList.contains('line') || el2.classList.contains('message-node')))
   }
   const startMessageEl = findParentMessageLine(range.startContainer)
   const endMessageEl = findParentMessageLine(range.endContainer)

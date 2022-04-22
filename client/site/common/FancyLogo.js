@@ -2,7 +2,6 @@ import React from 'react'
 
 import heimURL from '../../lib/heimURL'
 
-
 export default function FancyLogo() {
   return (
     <div className="fancy-logo">

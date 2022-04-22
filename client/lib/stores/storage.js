@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import Reflux from 'reflux'
 
-
 const storeActions = Reflux.createActions([
   'load',
   'set',

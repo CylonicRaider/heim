@@ -3,7 +3,6 @@ import support from './support/setup'
 
 import update from '../lib/stores/update'
 
-
 describe('update store', () => {
   beforeEach(() => {
     support.resetStore(update.store)

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import MessageText from '../../lib/ui/MessageText'
 import FauxNick from './FauxNick'
 
-
 export default function FauxMessage(props) {
   return (
     <div className="faux-message">

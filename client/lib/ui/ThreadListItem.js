@@ -12,7 +12,6 @@ import MessageData from '../MessageData'
 import TreeNodeMixin from './TreeNodeMixin'
 import MessageDataMixin from './MessageDataMixin'
 
-
 const ThreadListItem = createReactClass({
   displayName: 'ThreadListItem',
 
@@ -30,7 +29,7 @@ const ThreadListItem = createReactClass({
     require('react-immutable-render-mixin'),
     TreeNodeMixin('thread'),
     TreeNodeMixin(),
-    MessageDataMixin(props => props.threadData, 'threadData'),
+    MessageDataMixin((props) => props.threadData, 'threadData'),
     Reflux.connect(require('../stores/clock').minute, 'now'),
   ],
 
@@ -58,7 +57,7 @@ const ThreadListItem = createReactClass({
 
     if (children.size) {
       const childrenNewCount = children
-        .map(childId => this.props.tree.getCount(childId).get('newDescendants'))
+        .map((childId) => this.props.tree.getCount(childId).get('newDescendants'))
         .reduce((a, b) => a + b, 0)
       newCount -= childrenNewCount
       timestamp = this.props.tree.get(message.get('children').last()).get('time')
@@ -70,14 +69,14 @@ const ThreadListItem = createReactClass({
 
     return (
       <div className="thread">
-        <FastButton component="div" data-thread-id={this.props.threadNodeId} className={classNames('info', {'selected': this.state.threadData.get('selected'), 'active': isActive})} onClick={ev => this.props.onClick(ev, this.props.threadNodeId)}>
+        <FastButton component="div" data-thread-id={this.props.threadNodeId} className={classNames('info', {'selected': this.state.threadData.get('selected'), 'active': isActive})} onClick={(ev) => this.props.onClick(ev, this.props.threadNodeId)}>
           <MessageText className="title" content={(message.get('content') || '').trim()} maxLength={140} />
           {newCount > 0 && <span className={classNames('new-count', {'new-mention': count.get('newMentionDescendants') > 0})}>{newCount}</span>}
           <LiveTimeAgo className="ago" time={timestamp} nowText="active" />
         </FastButton>
         {this.props.depth < 3 && children.size > 0 && (
           <div className="children">
-            {children.toSeq().map(threadId => <ThreadListItem key={threadId} threadData={this.props.threadData} threadTree={this.props.threadTree} threadNodeId={threadId} tree={this.props.tree} nodeId={threadId} depth={this.props.depth + 1} onClick={this.props.onClick} />
+            {children.toSeq().map((threadId) => <ThreadListItem key={threadId} threadData={this.props.threadData} threadTree={this.props.threadTree} threadNodeId={threadId} tree={this.props.tree} nodeId={threadId} depth={this.props.depth + 1} onClick={this.props.onClick} />
             )}
           </div>
         )}

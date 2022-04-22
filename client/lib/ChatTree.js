@@ -3,7 +3,6 @@ import Immutable from 'immutable'
 
 import Tree from './Tree'
 
-
 const initCount = Immutable.Map({
   descendants: 0,
   newDescendants: 0,
@@ -14,7 +13,7 @@ const initCount = Immutable.Map({
   latestDescendant: null,
 })
 
-const numericFields = initCount.filter(v => _.isNumber(v)).keySeq().cacheResult()
+const numericFields = initCount.filter((v) => _.isNumber(v)).keySeq().cacheResult()
 
 function mergeCount(origCount, newCount) {
   return origCount.withMutations((count) => {
@@ -127,8 +126,8 @@ class ChatTree extends Tree {
         // should queue any child nodes for updating. either they are queued
         // already, or are orphan childs that now need counts.
         node.get('children')
-          .filterNot(nid => _.has(seen, nid))  // eslint-disable-line no-loop-func
-          .forEach(nid => queue.push([nid, true]))  // eslint-disable-line no-loop-func
+          .filterNot((nid) => _.has(seen, nid))  // eslint-disable-line no-loop-func
+          .forEach((nid) => queue.push([nid, true]))  // eslint-disable-line no-loop-func
         node = update(node.set('$count', initCount))
       }
 
@@ -165,7 +164,7 @@ class ChatTree extends Tree {
   }
 
   updateThreads(scores) {
-    const posScores = _.pickBy(scores, s => s > 0)
+    const posScores = _.pickBy(scores, (s) => s > 0)
     if (!_.size(scores)) {
       return
     }
@@ -181,8 +180,8 @@ class ChatTree extends Tree {
         parentId = curThread.get('parent')
       } else {
         parentId = Immutable.Seq(this.iterAncestorsOf(threadId))
-          .map(ancestor => ancestor.get('id'))
-          .find(ancestorId => _.has(posScores, ancestorId) || this.threads.get(ancestorId))
+          .map((ancestor) => ancestor.get('id'))
+          .find((ancestorId) => _.has(posScores, ancestorId) || this.threads.get(ancestorId))
 
         // search for children of the parent that should now be children of the
         // current thread. we only need to check threads existing in the tree
@@ -192,7 +191,7 @@ class ChatTree extends Tree {
           Immutable.Seq(this.threads.iterChildrenOf(parentId)).forEach((child) => {
             const childId = child.get('id')
             const isChild = Immutable.Seq(this.iterAncestorsOf(childId))
-              .some(ancestor => ancestor.get('id') === threadId)
+              .some((ancestor) => ancestor.get('id') === threadId)
             if (isChild) {
               changedThreads[childId] = _.extend(changedThreads[childId] || {id: childId}, {parent: threadId})
             }

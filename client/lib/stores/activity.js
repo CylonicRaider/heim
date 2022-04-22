@@ -3,7 +3,6 @@ import Reflux from 'reflux'
 
 import storage from './storage'
 
-
 const storeActions = Reflux.createActions([
   'windowFocused',
   'windowBlurred',

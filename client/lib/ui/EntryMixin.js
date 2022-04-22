@@ -1,6 +1,5 @@
 import ReactDOM from 'react-dom'
 
-
 export default {
   focus(withChar) {
     let node

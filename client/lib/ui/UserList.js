@@ -9,7 +9,6 @@ import ui from '../stores/ui'
 import forwardProps from '../forwardProps'
 import MessageText from './MessageText'
 
-
 export default createReactClass({
   displayName: 'UserList',
 
@@ -38,16 +37,16 @@ export default createReactClass({
   render() {
     const list = this.props.users
       .toSeq()
-      .filter(user => user.get('present') && user.get('name'))
-      .sortBy(user => user.get('name').toLowerCase())
-      .groupBy(user => /^bot:/.test(user.get('id')) ? 'bot' : 'human')
+      .filter((user) => user.get('present') && user.get('name'))
+      .sortBy((user) => user.get('name').toLowerCase())
+      .groupBy((user) => /^bot:/.test(user.get('id')) ? 'bot' : 'human')
     const humanCount = (list.get('human') || {size: 0}).size
     const botCount = (list.get('bot') || {size: 0}).size
 
     const lurkers = this.props.users
       .toSeq()
-      .filter(user => user.get('present') && !user.get('name'))
-      .groupBy(user => /^bot:/.test(user.get('id')) ? 'bot' : 'human')
+      .filter((user) => user.get('present') && !user.get('name'))
+      .groupBy((user) => /^bot:/.test(user.get('id')) ? 'bot' : 'human')
     const humanLurkerCount = (lurkers.get('human') || {size: 0}).size
     const botLurkerCount = (lurkers.get('bot') || {size: 0}).size
 
@@ -57,7 +56,7 @@ export default createReactClass({
       return (
         <span
           key={sessionId}
-          onMouseDown={ev => this.onMouseDown(ev, sessionId)}
+          onMouseDown={(ev) => this.onMouseDown(ev, sessionId)}
           onMouseEnter={() => this.onMouseEnter(sessionId)}
         >
           <MessageText

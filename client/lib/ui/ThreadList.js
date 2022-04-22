@@ -7,7 +7,6 @@ import ThreadListItem from './ThreadListItem'
 import MessageData from '../MessageData'
 import TreeNodeMixin from './TreeNodeMixin'
 
-
 export default createReactClass({
   displayName: 'ThreadList',
 
@@ -32,7 +31,7 @@ export default createReactClass({
   render() {
     return (
       <div className="thread-list" onScroll={this.props.onScroll}>
-        {this.state.threadNode.get('children').toSeq().map(threadId => <ThreadListItem key={threadId} threadData={this.props.threadData} threadTree={this.props.threadTree} threadNodeId={threadId} tree={this.props.tree} nodeId={threadId} onClick={this.props.onThreadSelect} />)}
+        {this.state.threadNode.get('children').toSeq().map((threadId) => <ThreadListItem key={threadId} threadData={this.props.threadData} threadTree={this.props.threadTree} threadNodeId={threadId} tree={this.props.tree} nodeId={threadId} onClick={this.props.onThreadSelect} />)}
       </div>
     )
   },

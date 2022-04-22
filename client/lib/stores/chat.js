@@ -10,7 +10,6 @@ import activity from './activity'
 import plugins from './plugins'
 import hueHash from '../hueHash'
 
-
 const mentionDelim = String.raw`^|$|[,.!?;&<'"\s]|&#39;|&quot;|&amp;`
 const mentionFindRe = module.exports.mentionFindRe = new RegExp('(' + mentionDelim + String.raw`)@(\S+?)(?=` + mentionDelim + ')', 'g')
 
@@ -159,9 +158,6 @@ module.exports.store = Reflux.createStore({
       this.state.isStaff = ev.data.session.is_staff
       this.state.authType = ev.data.room_is_private ? 'passcode' : 'public'
       this.state.account = Immutable.fromJS(ev.data.account)
-      if (this.state.account) {
-        this.state.account = this.state.account
-      }
       this.state.accountEmailVerified = ev.data.account_email_verified
       if (ev.data.account_has_access) {
         // note: if there was a stored passcode, we could have an outgoing
@@ -297,7 +293,7 @@ module.exports.store = Reflux.createStore({
     const processedMessages = this._handleMessagesData([message])
     this.state.messages.add(processedMessages)
     if (received) {
-      _.each(processedMessages, m => storeActions.messageReceived(this.state.messages.get(m.id), this.state))
+      _.each(processedMessages, (m) => storeActions.messageReceived(this.state.messages.get(m.id), this.state))
     }
   },
 
@@ -310,7 +306,7 @@ module.exports.store = Reflux.createStore({
         if (nick) {
           const mention = message.content.match(mentionFindRe)
           // Note: we are relying on hueHash.normalize to strip the preceding and following characters from the mention regex match here.
-          if (mention && _.some(mention, m => hueHash.normalize(m.substr(1)) === hueHash.normalize(nick))) {
+          if (mention && _.some(mention, (m) => hueHash.normalize(m.substr(1)) === hueHash.normalize(nick))) {
             message._mention = true
           }
         }
@@ -389,7 +385,7 @@ module.exports.store = Reflux.createStore({
         this.state.messages.reset(shadows)
       }
       this.state.messages.add(log)
-      storeActions.logsReceived(_.map(log, m => m.id), this.state)
+      storeActions.logsReceived(_.map(log, (m) => m.id), this.state)
       this.trigger(this.state)
     })
   },
@@ -588,16 +584,16 @@ module.exports.store = Reflux.createStore({
     const now = Date.now()
 
     const unseen = Immutable.Seq(ids)
-      .filterNot(id => this.state.messages.get(id).get('_seen'))
+      .filterNot((id) => this.state.messages.get(id).get('_seen'))
       .cacheResult()
 
     this.state.messages.mergeNodes(unseen.toJS(), {_seen: now})
 
     const expireThreshold = now - this.seenTTL
     const seenMessages = unseen
-      .map(id => [id, now])
+      .map((id) => [id, now])
       .fromEntrySeq()
-      .concat(this._seenMessages.filterNot(ts => ts < expireThreshold))
+      .concat(this._seenMessages.filterNot((ts) => ts < expireThreshold))
 
     if (!Immutable.is(seenMessages, this._seenMessages)) {
       storage.setRoom(this.state.roomName, 'seenMessages', seenMessages.toJS())
@@ -774,14 +770,13 @@ module.exports.store = Reflux.createStore({
   _processUserBlacklistMessage(text, timestamp) {
     const match = /^\/user(black|white)list\s+server_id=(\S+)\s+server_era=(\S+)\s*$/.exec(text)
     if (!match) {
-      return
+      return false
     }
     if (match[1] === 'black') {
       this._blacklistUsers(match[2], match[3], timestamp)
       return false
-    } else {
-      return this._unblacklistUsers(match[2], match[3], timestamp)
     }
+    return this._unblacklistUsers(match[2], match[3], timestamp)
   },
 
   blacklistUsers(id, era) {

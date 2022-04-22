@@ -1,6 +1,5 @@
 import queryString from 'querystring'
 
-
 const allowedImageDomains = {
   'imgs.xkcd.com': true,
   'i.ytimg.com': true,

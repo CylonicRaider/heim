@@ -5,7 +5,6 @@ import classNames from 'classnames'
 import Page from './Page'
 import Footer from './Footer'
 
-
 export default function MainPage(props) {
   return (
     <Page className={classNames('page', props.className)} title={props.title} heimPage={props.heimPage}>

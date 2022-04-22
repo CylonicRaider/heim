@@ -4,7 +4,6 @@ import sinon from 'sinon'
 
 import EventListeners from '../lib/EventListeners'
 
-
 describe('EventListeners', () => {
   const eventType = 'test'
   const eventCallback = () => {}

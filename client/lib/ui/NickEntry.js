@@ -4,15 +4,14 @@ import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 
 import actions from '../actions'
-import { Pane } from '../stores/ui'
+import ui from '../stores/ui'
 import EntryMixin from './EntryMixin'
-
 
 export default createReactClass({
   displayName: 'NickEntry',
 
   propTypes: {
-    pane: PropTypes.instanceOf(Pane).isRequired,
+    pane: PropTypes.instanceOf(ui.Pane).isRequired,
   },
 
   mixins: [
@@ -48,7 +47,7 @@ export default createReactClass({
         </div>
         <form className="entry focus-target" onSubmit={this.setNick}>
           <label htmlFor="nick-entry">choose your name to begin:</label>
-          <input key="nick" id="nick-entry" ref="input" type="text" className="entry-text" autoFocus value={this.state.value} onChange={event => this.setState({value: event.target.value})} disabled={this.state.chat.connected === false} />
+          <input key="nick" id="nick-entry" ref="input" type="text" className="entry-text" autoFocus value={this.state.value} onChange={(event) => this.setState({value: event.target.value})} disabled={this.state.chat.connected === false} />
         </form>
       </div>
     )

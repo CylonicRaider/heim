@@ -5,7 +5,6 @@ import Immutable from 'immutable'
 import chat from './chat'
 import ImmutableMixin from './ImmutableMixin'
 
-
 const storeActions = Reflux.createActions([
   'reset',
   'openSignIn',

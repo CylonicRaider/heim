@@ -2,7 +2,6 @@ import _ from 'lodash'
 import url from 'url'
 import EventEmitter from 'eventemitter3'
 
-
 function logPacket(kind, data, highlight) {
   /* eslint-disable no-console */
   const group = highlight ? 'group' : 'groupCollapsed'
@@ -21,7 +20,6 @@ function logPacket(kind, data, highlight) {
   console.log(JSON.stringify(data, true, 2))
   console.groupEnd()
 }
-
 
 export default class Socket {
   constructor() {
@@ -95,7 +93,7 @@ export default class Socket {
 
   _onOpen() {
     this._emit('open')
-    this._sendBuffer.forEach(item => this._send(item.data, item.log))
+    this._sendBuffer.forEach((item) => this._send(item.data, item.log))
     this._sendBuffer = []
   }
 

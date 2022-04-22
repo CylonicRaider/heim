@@ -246,7 +246,7 @@ export default createReactClass({
     const threadPanes = this.state.ui.visiblePanes
       .filter((v, k) => /^thread-/.test(k))
       .toKeyedSeq()
-      .map(paneId => this.state.ui.panes.get(paneId))
+      .map((paneId) => this.state.ui.panes.get(paneId))
     const extraPanes = this.templateHook('thread-panes')
     const threadPanesFlex = threadPanes.size + extraPanes.length
 
@@ -256,7 +256,7 @@ export default createReactClass({
 
     const roomName = this.state.chat.roomName
     const roomTitle = this.state.chat.roomTitle || ''
-    const pmNotices = this.state.chat.activePMs.filterNot(pm => this.state.chat.pmRoom || this.state.chat.dismissedPMNotices.contains(pm.get('id')))
+    const pmNotices = this.state.chat.activePMs.filterNot((pm) => this.state.chat.pmRoom || this.state.chat.dismissedPMNotices.contains(pm.get('id')))
 
     const snapPoints = {main: 0}
     if (infoPaneHidden) {
@@ -303,7 +303,7 @@ export default createReactClass({
                   <FastButton className="close" onClick={() => ui.dismissNotice('notifications')} />
                 </div>
               )}
-              {pmNotices.map(pm => <PMNotice key={pm.get('kind') + pm.get('id')} pmId={pm.get('id')} nick={pm.get('nick')} kind={pm.get('kind')} />) }
+              {pmNotices.map((pm) => <PMNotice key={pm.get('kind') + pm.get('id')} pmId={pm.get('id')} nick={pm.get('nick')} kind={pm.get('kind')} />) }
               {this.state.update.get('ready') && <FastButton className="update-button" onClick={update.perform}><p>update ready<em>{Heim.isTouch ? 'tap' : 'click'} to reload</em></p></FastButton>}
             </CSSTransitionGroup>
             <div className="main-pane-stack">
@@ -360,7 +360,7 @@ export default createReactClass({
             </Bubble>
           )}
           {!thin && this.state.ui.managerMode && (
-            <Bubble ref="managerToolboxPopup" className="manager-toolbox-popup" transition="slide-down" anchorEl={this.state.ui.managerToolboxAnchorEl} visible={!!this.state.ui.managerToolboxAnchorEl} offset={anchorBox => ({ left: anchorBox.width, top: -anchorBox.height })}>
+            <Bubble ref="managerToolboxPopup" className="manager-toolbox-popup" transition="slide-down" anchorEl={this.state.ui.managerToolboxAnchorEl} visible={!!this.state.ui.managerToolboxAnchorEl} offset={(anchorBox) => ({ left: anchorBox.width, top: -anchorBox.height })}>
               <ManagerToolbox />
             </Bubble>
           )}

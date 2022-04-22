@@ -7,7 +7,6 @@ import chat from '../stores/chat'
 import toolbox from '../stores/toolbox'
 import FastButton from './FastButton'
 
-
 export default createReactClass({
   displayName: 'ManagerToolbox',
 
@@ -54,7 +53,7 @@ export default createReactClass({
       <div className="manager-toolbox">
         <div className={classNames('items', {'empty': isEmpty})} onCopy={this.onCopy}>
           {isEmpty && 'nothing selected'}
-          {toolboxData.items.toSeq().map(item => (
+          {toolboxData.items.toSeq().map((item) => (
             <span key={item.get('kind') + '-' + item.get('id') + '-' + item.get('name', '')} className={classNames('item', item.get('kind'), {'active': item.get('active'), 'removed': item.get('removed')})}>
               {item.has('name') && <div className="name">{item.get('name')}</div>}
               <div className="id">{item.get('id')}</div>

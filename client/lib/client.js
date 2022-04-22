@@ -5,7 +5,6 @@ import clientRoom from './clientRoom'
 import clientVerifyEmail from './clientVerifyEmail'
 import clientResetPassword from './clientResetPassword'
 
-
 // setup globals (used by env frame)
 window.uiwindow = window.top
 window.uidocument = window.top.document

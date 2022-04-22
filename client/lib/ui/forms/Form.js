@@ -5,7 +5,6 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-
 export default createReactClass({
   displayName: 'Form',
 
@@ -92,7 +91,7 @@ export default createReactClass({
   },
 
   _validateField(name, formValues) {
-    return this._validateFields(this.props.validators, formValues, this.props.context, values => values.hasOwnProperty(name))
+    return this._validateFields(this.props.validators, formValues, this.props.context, (values) => values.hasOwnProperty(name))
   },
 
   _clearError(origError, newError) {

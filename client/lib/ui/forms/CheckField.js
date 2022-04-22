@@ -3,7 +3,6 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-
 export default createReactClass({
   displayName: 'CheckField',
 

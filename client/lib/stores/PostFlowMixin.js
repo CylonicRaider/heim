@@ -2,7 +2,6 @@ import Immutable from 'immutable'
 
 import { postAPI } from '../fetchAPI'
 
-
 export default {
   _postAPI(url, data) {
     this.triggerUpdate(this.state.merge({

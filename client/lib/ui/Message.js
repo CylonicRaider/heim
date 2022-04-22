@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import Immutable from 'immutable'
 import moment from 'moment'
 
-import ui, { Pane } from '../stores/ui'
+import ui from '../stores/ui'
 import chat from '../stores/chat'
 import Tree from '../Tree'
 import FastButton from './FastButton'
@@ -20,9 +20,8 @@ import EntryDragHandle from './EntryDragHandle'
 import TreeNodeMixin from './TreeNodeMixin'
 import MessageDataMixin from './MessageDataMixin'
 
-
-const linearEasing = t => t
-const snapEasing = t => (Math.pow(2.02 * t - 1.0303, 17) + t) / 3.5 + 0.475
+const linearEasing = (t) => t
+const snapEasing = (t) => (Math.pow(2.02 * t - 1.0303, 17) + t) / 3.5 + 0.475
 const colorShouldStep = (x, last) => x - last > 0.01
 
 const Message = createReactClass({
@@ -31,7 +30,7 @@ const Message = createReactClass({
   propTypes: {
     nodeId: PropTypes.string.isRequired,
     tree: PropTypes.instanceOf(Tree).isRequired,
-    pane: PropTypes.instanceOf(Pane).isRequired,
+    pane: PropTypes.instanceOf(ui.Pane).isRequired,
     showTimeStamps: PropTypes.bool,
     showTimeAgo: PropTypes.bool,
     showAllReplies: PropTypes.bool,
@@ -44,7 +43,7 @@ const Message = createReactClass({
   mixins: [
     require('react-immutable-render-mixin'),
     TreeNodeMixin(),
-    MessageDataMixin(props => props.pane.store.messageData, 'paneData'),
+    MessageDataMixin((props) => props.pane.store.messageData, 'paneData'),
   ],
 
   statics: {
@@ -297,7 +296,7 @@ const Message = createReactClass({
       messageIndentedReplies = (
         <FastButton component="div" className={classNames('replies', 'in-pane', {'focus-target': focused})} onClick={this.focusOtherPane}>
           replies in pane <div className="pane-icon" />
-          {focused && <div className="spacer" onClick={ev => ev.stopPropagation()}><EntryDragHandle pane={this.props.pane} /></div>}
+          {focused && <div className="spacer" onClick={(ev) => ev.stopPropagation()}><EntryDragHandle pane={this.props.pane} /></div>}
         </FastButton>
       )
       if (focused) {
@@ -338,8 +337,8 @@ const Message = createReactClass({
               {replyLabel}
               {childNewCount > 0 && <span className={classNames('new-count', {'new-mention': count.get('newMentionDescendants') > 0})}>{childNewCount}</span>}
               {childCount > 0 && <LiveTimeAgo className="ago" time={count.get('latestDescendantTime')} nowText="active" />}
-              {<MessageText className="message-preview" content={this.props.tree.get(count.get('latestDescendant')).get('content').trim()} />}
-              {focused && <div className="spacer" onClick={ev => ev.stopPropagation()}><EntryDragHandle pane={this.props.pane} /></div>}
+              <MessageText className="message-preview" content={this.props.tree.get(count.get('latestDescendant')).get('content').trim()} />
+              {focused && <div className="spacer" onClick={(ev) => ev.stopPropagation()}><EntryDragHandle pane={this.props.pane} /></div>}
             </FastButton>
           </div>
         )
@@ -371,8 +370,8 @@ const Message = createReactClass({
               {childCount} more
               {childNewCount > 0 && <span className={classNames('new-count', {'new-mention': descCount.get('newMentionDescendants') > 0})}>{childNewCount}</span>}
               <LiveTimeAgo className="ago" time={descCount.get('latestDescendantTime')} nowText="active" />
-              {<MessageText className="message-preview" content={this.props.tree.get(descCount.get('latestDescendant')).get('content').trim()} />}
-              {focused && <div className="spacer" onClick={ev => ev.stopPropagation()}><EntryDragHandle pane={this.props.pane} /></div>}
+              <MessageText className="message-preview" content={this.props.tree.get(descCount.get('latestDescendant')).get('content').trim()} />
+              {focused && <div className="spacer" onClick={(ev) => ev.stopPropagation()}><EntryDragHandle pane={this.props.pane} /></div>}
             </FastButton>
           )
           if (focused) {
@@ -456,7 +455,7 @@ const Message = createReactClass({
       lineClasses['line-emote'] = true
     } else if (/^\/user(black|white)list\b/.test(content)) {
       const match = /^\/user(black|white)list\s*(.*?)\s*$/.exec(content)
-      content = (match[1] == 'black' ? 'added' : 'removed') + ' user blacklist with parameters ' + match[2]
+      content = (match[1] === 'black' ? 'added' : 'removed') + ' user blacklist with parameters ' + match[2]
       messageRender = (
         <div className="message">
           <MessageText content={content} className="message-emote" style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 95%)'}} />

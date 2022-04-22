@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 
 import { Item, A, Span, textDefaults } from 'react-html-email'
 
-
 export default function BigButton(props) {
   return (
     <Item align="center">

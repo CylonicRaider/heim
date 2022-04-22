@@ -9,7 +9,7 @@ import Reflux from 'reflux'
 import isTextInput from '../isTextInput'
 import actions from '../actions'
 import chat from '../stores/chat'
-import ui, {Pane} from '../stores/ui'
+import ui from '../stores/ui'
 import activity from '../stores/activity'
 import Scroller from './Scroller'
 import Message from './Message'
@@ -18,7 +18,6 @@ import ChatEntry from './ChatEntry'
 import NickEntry from './NickEntry'
 import PasscodeEntry from './PasscodeEntry'
 import messageCopyFormatter from './messageCopyFormatter'
-
 
 function boxMiddle(el) {
   if (_.isNumber(el)) {
@@ -49,7 +48,7 @@ export default createReactClass({
     showParent: PropTypes.bool,
     showTimeStamps: PropTypes.bool,
     showAllReplies: PropTypes.bool,
-    pane: PropTypes.instanceOf(Pane).isRequired,
+    pane: PropTypes.instanceOf(ui.Pane).isRequired,
   },
 
   mixins: [
@@ -89,7 +88,7 @@ export default createReactClass({
   },
 
   componentDidMount() {
-    this.listenTo(this.props.pane.store, state => this.setState({'pane': state}))
+    this.listenTo(this.props.pane.store, (state) => this.setState({'pane': state}))
     this.listenTo(this.props.pane.scrollToEntry, 'scrollToEntry')
     this.listenTo(this.props.pane.afterMessagesRendered, 'scrollUpdatePosition')
     this.listenTo(this.props.pane.moveMessageFocus, 'moveMessageFocus')

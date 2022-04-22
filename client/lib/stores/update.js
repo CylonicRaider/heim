@@ -5,7 +5,6 @@ import Immutable from 'immutable'
 import activity from './activity'
 import ImmutableMixin from './ImmutableMixin'
 
-
 const storeActions = Reflux.createActions([
   'prepare',
   'setReady',

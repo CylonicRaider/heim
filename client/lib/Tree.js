@@ -2,7 +2,6 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import EventEmitter from 'eventemitter3'
 
-
 function iterator(next) {
   return {
     [Symbol.iterator]() {
@@ -126,7 +125,7 @@ export default class Tree {
 
     if (!_sorted) {
       _.each(_needsSort, (x, id) => {
-        const resorted = this.index[id].get('children').sortBy(childId => this.index[childId].get(this.sortProp))
+        const resorted = this.index[id].get('children').sortBy((childId) => this.index[childId].get(this.sortProp))
         this.index[id] = this.index[id].set('children', resorted)
 
         // if parent now matches the original one, no need to emit the change
@@ -175,7 +174,7 @@ export default class Tree {
 
   lazyMapDFS(visit, thisArg, nodeId = '__root', depth = 0) {
     const node = this.index[nodeId]
-    const children = node.get('children').toSeq().map(childId => this.lazyMapDFS(visit, thisArg, childId, depth + 1))
+    const children = node.get('children').toSeq().map((childId) => this.lazyMapDFS(visit, thisArg, childId, depth + 1))
 
     return visit.call(thisArg, node, children, depth)
   }

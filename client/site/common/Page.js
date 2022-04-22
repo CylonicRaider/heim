@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 
 import heimURL from '../../lib/heimURL'
 
-
 export default function Page(props) {
   return (
     <html lang="en-US">

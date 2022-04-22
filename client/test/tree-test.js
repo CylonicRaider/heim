@@ -5,11 +5,10 @@ import Immutable from 'immutable'
 
 import Tree from '../lib/Tree'
 
-
 function equalsImmutable(reference) {
   return sinon.match(
-    value => Immutable.is(value, reference),
-    'equivalent Immutable',
+    (value) => Immutable.is(value, reference),
+    'equivalent Immutable'
   )
 }
 
@@ -195,13 +194,13 @@ describe('Tree', () => {
 
         it('should visit all children of node 1 in a child traversal', () => {
           const nodes = Immutable.Seq(tree.iterChildrenOf('1'))
-          const expectedNodes = Immutable.Seq(['3', '2']).map(id => tree.get(id))
+          const expectedNodes = Immutable.Seq(['3', '2']).map((id) => tree.get(id))
           assert.deepEqual(nodes.toJS(), expectedNodes.toJS())
         })
 
         it('should visit all ancestors of node 3 in an ancestor traversal', () => {
           const nodes = Immutable.Seq(tree.iterAncestorsOf('3'))
-          const expectedNodes = Immutable.Seq(['1', '__root']).map(id => tree.get(id))
+          const expectedNodes = Immutable.Seq(['1', '__root']).map((id) => tree.get(id))
           assert.deepEqual(nodes.toJS(), expectedNodes.toJS())
         })
       }

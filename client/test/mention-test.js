@@ -3,7 +3,6 @@ import Immutable from 'immutable'
 
 import mention from '../lib/mention'
 
-
 describe('mention', () => {
   describe('findSubseq', () => {
     function assertFinding(n, p, start) {

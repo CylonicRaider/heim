@@ -17,7 +17,6 @@ import Bubble from '../ui/Bubble'
 import heimURL from '../heimURL'
 import { CheckBox, RadioBox } from './formControls'
 
-
 const themes = ['default', 'dark', 'spooky', 'hackerman']
 const themeNames = {default: 'Default', dark: 'Dark', spooky: 'Spooky', hackerman: 'Hackerman'}
 
@@ -165,7 +164,7 @@ export const ThemeChooserDialog = createReactClass({
       <Bubble className="theme-chooser-dialog" transition={this.state.ui.thin ? 'slide-down' : 'slide-right'} visible={this.state.settings.get('dialogVisible')} anchorEl={this.anchorEl} onDismiss={this.dismiss}>
         <div className="field-group">
           <span className="field-group-label">Theme:</span>
-          {themes.map(name => (
+          {themes.map((name) => (
             <RadioBox name="theme" key={name} value={name} checked={this.state.settings.get('theme') === name} onChange={this.onThemeChange}>{themeNames[name]}</RadioBox>
           ))}
         </div>

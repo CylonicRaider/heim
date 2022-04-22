@@ -10,7 +10,6 @@ import { Form, TextField, FieldLabelContainer, PasswordStrengthField } from './f
 import { validateEmail, validatePassword, minPasswordEntropy } from './formValidators'
 import hueHash from '../hueHash'
 
-
 export default createReactClass({
   displayName: 'AccountSettingsDialog',
 

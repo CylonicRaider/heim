@@ -5,7 +5,6 @@ import Reflux from 'reflux'
 
 import forwardProps from '../forwardProps'
 
-
 export default createReactClass({
   displayName: 'KeyboardActionHandler',
 

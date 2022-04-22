@@ -5,7 +5,6 @@ import PropTypes from 'prop-types'
 
 import Bubble from './Bubble'
 
-
 export default createReactClass({
   displayName: 'ToggleBubble',
 

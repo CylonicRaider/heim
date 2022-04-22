@@ -4,7 +4,6 @@ import support from './support/setup'
 
 import Socket from '../lib/heim/Socket'
 
-
 describe('socket store', () => {
   let clock
   const realWebSocket = window.WebSocket

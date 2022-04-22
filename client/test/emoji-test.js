@@ -1,9 +1,8 @@
 import './support/setup'
 import assert from 'assert'
 
-
 describe('emoji', () => {
-  const emoji = require('../lib/emoji.js')
+  const emoji = require('../lib/emoji')
 
   describe('toCodePoint', () => {
     it('translates regular emoji', () => {

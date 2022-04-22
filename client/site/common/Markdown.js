@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import MarkdownIt from 'markdown-it'
 
-
 const sectionRe = /^section (\w+)$/
 const md = new MarkdownIt()
   .use(require('markdown-it-anchor'), {

@@ -7,7 +7,6 @@ import Immutable from 'immutable'
 import NotificationListItem from './NotificationListItem'
 import Tree from '../Tree'
 
-
 export default createReactClass({
   displayName: 'NotificationList',
 

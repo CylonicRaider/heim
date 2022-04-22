@@ -7,7 +7,6 @@ import ReactDOM from 'react-dom'
 import clamp from '../clamp'
 import forwardProps from '../forwardProps'
 
-
 export default createReactClass({
   displayName: 'Panner',
 
@@ -179,7 +178,7 @@ export default createReactClass({
     _.identity(node.offsetHeight)  // reflow so transition starts immediately
 
     if (this.props.onMove) {
-      this.props.onMove(_.findKey(this.props.snapPoints, snap => snap === point), duration)
+      this.props.onMove(_.findKey(this.props.snapPoints, (snap) => snap === point), duration)
     }
   },
 
@@ -221,7 +220,7 @@ export default createReactClass({
             stopPoint = this._x
           }
 
-          const point = _.minBy(this._snapPoints, snapPoint => Math.abs(snapPoint - stopPoint))
+          const point = _.minBy(this._snapPoints, (snapPoint) => Math.abs(snapPoint - stopPoint))
           this.flingTo(point, this._drag.vx)
         }
         this._drag = null

@@ -11,7 +11,6 @@ import MessageText from './MessageText'
 import LiveTimeAgo from './LiveTimeAgo'
 import TreeNodeMixin from './TreeNodeMixin'
 
-
 export default createReactClass({
   displayName: 'NotificationListItem',
 
@@ -53,7 +52,7 @@ export default createReactClass({
     const message = this.state.node
 
     return (
-      <FastButton component="div" className={classNames('notification', this.props.kind, {'seen': message.get('_seen')})} onClick={ev => this.props.onClick(ev, this.props.nodeId)}>
+      <FastButton component="div" className={classNames('notification', this.props.kind, {'seen': message.get('_seen')})} onClick={(ev) => this.props.onClick(ev, this.props.nodeId)}>
         <MessageText className="title" content={(message.get('content') || '').trim()} maxLength={140} />
         <LiveTimeAgo className="ago" time={message.get('time')} nowText="active" />
       </FastButton>

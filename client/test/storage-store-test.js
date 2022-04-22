@@ -4,7 +4,6 @@ import support from './support/setup'
 
 import storage from '../lib/stores/storage'
 
-
 const SLEEP_TIME = 200
 
 describe('storage store', () => {
@@ -16,7 +15,7 @@ describe('storage store', () => {
   beforeEach(() => {
     clock = support.setupClock()
     fakeStorage = {}
-    sinon.stub(localStorage, 'getItem').callsFake(key => fakeStorage[key])
+    sinon.stub(localStorage, 'getItem').callsFake((key) => fakeStorage[key])
     sinon.stub(localStorage, 'setItem').callsFake((key, value) => {
       fakeStorage[key] = value
     })

@@ -4,9 +4,8 @@ import Immutable from 'immutable'
 import Reflux from 'reflux'
 import _ from 'lodash'
 
-
 Immutable.Iterable.noLengthWarning = true
-Reflux.nextTick(callback => window.setTimeout(callback, 0))
+Reflux.nextTick((callback) => window.setTimeout(callback, 0))
 
 export function setupClock() {
   const clock = sinon.useFakeTimers()

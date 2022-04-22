@@ -7,7 +7,6 @@ import moment from 'moment'
 
 import forwardProps from '../forwardProps'
 
-
 function checkIsMoment(props, propName) {
   if (!moment.isMoment(props[propName])) {
     return new Error('not a Moment instance')

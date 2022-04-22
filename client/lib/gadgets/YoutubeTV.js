@@ -12,7 +12,6 @@ import Embed from '../ui/Embed'
 import MessageText from '../ui/MessageText'
 import { NoticeBoard } from './NoticeBoard'
 
-
 const TVActions = Reflux.createActions([
   'changeVideo',
 ])
@@ -180,7 +179,7 @@ export function install() {
         }
       })
       .filter(Boolean)
-      .maxBy(v => v.time)
+      .maxBy((v) => v.time)
 
     if (video && video.time > TVStore.state.getIn(['video', 'time'])) {
       TVActions.changeVideo(video)

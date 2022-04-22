@@ -7,7 +7,6 @@ import classNames from 'classnames'
 
 import Popup from './Popup'
 
-
 export default createReactClass({
   displayName: 'Bubble',
 

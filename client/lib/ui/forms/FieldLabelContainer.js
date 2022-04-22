@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-
 export default function FieldLabelContainer(props) {
   /* eslint-disable jsx-a11y/label-has-associated-control */
   return (

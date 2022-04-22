@@ -10,7 +10,6 @@ import { Form, CheckField, TextField, PasswordStrengthField, ErrorMessage } from
 import { validateEmail, validatePassword, minPasswordEntropy } from './formValidators'
 import heimURL from '../heimURL'
 
-
 export default createReactClass({
   displayName: 'AccountAuthDialog',
 

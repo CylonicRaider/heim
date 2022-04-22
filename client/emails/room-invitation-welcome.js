@@ -3,7 +3,6 @@ import React from 'react'
 import { Item, Span, A } from 'react-html-email'
 import { StandardEmail, TopBubbleBox, BodyBox, standardFooter, textDefaults } from './common'
 
-
 module.exports = (
   <StandardEmail>
     <TopBubbleBox logo="logo.png">

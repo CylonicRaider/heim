@@ -5,7 +5,6 @@ import Immutable from 'immutable'
 import chat from './chat'
 import ImmutableMixin from './ImmutableMixin'
 
-
 const storeActions = Reflux.createActions([
   'chooseCommand',
   'apply',
@@ -22,7 +21,7 @@ const commands = {
   delete: {
     kind: 'message',
     execute(items) {
-      items.forEach(item => chat.editMessage(item.get('id'), {
+      items.forEach((item) => chat.editMessage(item.get('id'), {
         delete: true,
         announce: true,
       }))
@@ -31,7 +30,7 @@ const commands = {
   ban: {
     kind: 'user',
     execute(items, commandParams) {
-      items.forEach(item => chat.banUser(item.get('id'), {
+      items.forEach((item) => chat.banUser(item.get('id'), {
         seconds: commandParams.seconds,
       }))
     },
@@ -42,7 +41,7 @@ const commands = {
       return !!item.get('addr')
     },
     execute(items, commandParams) {
-      items.forEach(item => chat.banIP(item.get('addr'), {
+      items.forEach((item) => chat.banIP(item.get('addr'), {
         seconds: commandParams.seconds,
         global: commandParams.global,
       }))
@@ -51,7 +50,7 @@ const commands = {
   pm: {
     kind: 'user',
     execute(items) {
-      items.forEach(item => chat.pmInitiate(item.get('id')))
+      items.forEach((item) => chat.pmInitiate(item.get('id')))
     },
   },
 }
@@ -138,7 +137,7 @@ module.exports.store = Reflux.createStore({
       state = state.set('items',
         messageItems
           .union(userItems)
-          .sortBy(item => [!item.get('removed'), item.get('kind')])
+          .sortBy((item) => [!item.get('removed'), item.get('kind')])
       )
       state = this._updateFilter(state)
     } else {
@@ -155,11 +154,11 @@ module.exports.store = Reflux.createStore({
 
     state = state.set('items',
       state.items.map(
-        item => item.set('active', !item.get('removed') && item.get('kind') === commandKind && commandFilter(item))
+        (item) => item.set('active', !item.get('removed') && item.get('kind') === commandKind && commandFilter(item))
       )
     )
 
-    const activeCount = state.items.count(item => item.get('active'))
+    const activeCount = state.items.count((item) => item.get('active'))
 
     if (activeCount) {
       // TODO: tricky localization
@@ -177,7 +176,7 @@ module.exports.store = Reflux.createStore({
   },
 
   apply(commandParams) {
-    const activeItems = this.state.items.filter(item => item.get('active'))
+    const activeItems = this.state.items.filter((item) => item.get('active'))
     commands[this.state.selectedCommand].execute(activeItems, commandParams)
   },
 })

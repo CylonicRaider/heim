@@ -10,7 +10,7 @@ import actions from '../actions'
 
 let nextEmbedId = 0
 const embedIndex = new EventEmitter()
-actions.embedMessage.listen(data => embedIndex.emit(data.id, data))
+actions.embedMessage.listen((data) => embedIndex.emit(data.id, data))
 
 export default createReactClass({
   displayName: 'Embed',

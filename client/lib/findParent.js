@@ -1,4 +1,4 @@
-export default function(el, predicate) {
+export default function findParent(el, predicate) {
   let curEl = el
   while (curEl) {
     if (predicate(curEl)) {

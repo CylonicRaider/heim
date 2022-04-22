@@ -6,7 +6,6 @@ import Entropizer from 'entropizer'
 
 import TextField from './TextField'
 
-
 const entropizer = new Entropizer()
 
 export default createReactClass({
