@@ -18,7 +18,6 @@ import browserify from 'browserify'
 import envify from 'envify/custom'
 import serve from 'gulp-serve'
 import fs from 'fs'
-import path from 'path'
 import ReactHTMLEmail from 'react-html-email'
 import { exec } from 'child_process'
 import colors from 'ansi-colors'
@@ -27,6 +26,7 @@ import through2 from 'through2'
 import babelify from 'babelify'
 import brfs from 'brfs'
 import colorSupport from 'color-support'
+import curCommit from 'current-commit'
 
 let watching = false
 const heimDest = './build/heim'
@@ -107,7 +107,7 @@ function embedBundler(args) {
 }
 
 gulp.task('heim-git-commit', (done) => {
-  shell('git rev-parse HEAD', (gitRev) => {
+  curCommit('..', (err, gitRev) => {
     if (gitRev) {
       log('Git commit:', doColor(colors.bold, gitRev))
     } else {
@@ -198,7 +198,7 @@ gulp.task('heim-less', () => {
 
 gulp.task('emoji-static', () => {
   const emoji = require('./lib/emoji').default
-  const twemojiPath = path.dirname(require.resolve('twemoji')) + '/svg/'
+  const twemojiPath = 'node_modules/.resources/emoji-svg'
   const leadingZeroes = /^0*/
   const emojiFiles = _.map(fs.readdirSync(twemojiPath), (p) => {
     const m = /^([0-9a-f-]+)\.svg$/.exec(p)
