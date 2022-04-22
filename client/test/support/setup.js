@@ -11,9 +11,6 @@ Reflux.nextTick(callback => window.setTimeout(callback, 0))
 export function setupClock() {
   const clock = sinon.useFakeTimers()
 
-  // manually fix Sinon #624 until it updates Lolex to 1.2.0
-  Date.now = () => Date().getTime()
-
   // set up fake clock to work with lodash
 
   const origDebounce = _.debounce

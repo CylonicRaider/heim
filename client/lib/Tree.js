@@ -3,6 +3,15 @@ import Immutable from 'immutable'
 import EventEmitter from 'eventemitter3'
 
 
+function iterator(next) {
+  return {
+    [Symbol.iterator]() {
+      return this
+    },
+    next: next,
+  }
+}
+
 export default class Tree {
   constructor(sortProp, updateFunc) {
     this.sortProp = sortProp
@@ -178,28 +187,24 @@ export default class Tree {
 
   iterChildrenOf(nodeId) {
     const children = this.index[nodeId].get('children').toJS()
-    return {
-      next: () => {
-        const childId = children.shift()
-        if (!childId) {
-          return {done: true}
-        }
-        return {done: false, value: this.index[childId]}
-      },
-    }
+    return iterator(() => {
+      const childId = children.shift()
+      if (!childId) {
+        return {done: true}
+      }
+      return {done: false, value: this.index[childId]}
+    })
   }
 
   iterAncestorsOf(nodeId) {
     let curNodeId = nodeId
-    return {
-      next: () => {
-        curNodeId = this.index[curNodeId].get('parent')
-        if (!curNodeId) {
-          return {done: true}
-        }
-        return {done: false, value: this.index[curNodeId]}
-      },
-    }
+    return iterator(() => {
+      curNodeId = this.index[curNodeId].get('parent')
+      if (!curNodeId) {
+        return {done: true}
+      }
+      return {done: false, value: this.index[curNodeId]}
+    })
   }
 
   last() {

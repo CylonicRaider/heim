@@ -211,8 +211,8 @@ describe('storage store', () => {
 
   describe('when storage unavailable or disabled', () => {
     beforeEach(() => {
-      localStorage.getItem = sinon.stub.throws()
-      localStorage.setItem = sinon.stub.throws()
+      localStorage.getItem = sinon.stub().throws()
+      localStorage.setItem = sinon.stub().throws()
       sinon.stub(console, 'warn')  // eslint-disable-line no-console
     })
 

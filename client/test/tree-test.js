@@ -6,6 +6,13 @@ import Immutable from 'immutable'
 import Tree from '../lib/Tree'
 
 
+function equalsImmutable(reference) {
+  return sinon.match(
+    value => Immutable.is(value, reference),
+    'equivalent Immutable',
+  )
+}
+
 describe('JS engine', () => {
   it('reorders object keys', () => {
     // If this test fails, you might have to update the expectEmit() calls below
@@ -76,7 +83,7 @@ describe('Tree', () => {
 
     it('should call the updateFunc with the old changed nodes and root', () => {
       sinon.assert.calledWithExactly(tree.updateFunc, {
-        '__root': prevRoot,
+        '__root': equalsImmutable(prevRoot),
         '1': true,
         '2': true,
       }, sinon.match.func)
@@ -201,8 +208,8 @@ describe('Tree', () => {
 
       it('should call the updateFunc with the old changed nodes', () => {
         sinon.assert.calledWithExactly(tree.updateFunc, {
-          '__root': prevRoot2,
-          '1': prev1,
+          '__root': equalsImmutable(prevRoot2),
+          '1': equalsImmutable(prev1),
           '0': true,
           '3': true,
           '9': true,
