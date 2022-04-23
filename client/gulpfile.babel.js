@@ -187,7 +187,7 @@ gulp.task('raven-js', ['heim-git-commit', 'heim-js'], (done) => {
 
 gulp.task('heim-less', () => {
   return gulp.src(['./lib/main.less', './lib/crashed.less', './lib/od.less', './lib/gadgets/*.less', './site/*.less'])
-    .pipe(less({compress: true}))
+    .pipe(less({compress: true, math: 'always'}))
     .on('error', handleError('LESS error'))
     .pipe(autoprefixer({cascade: false}))
     .on('error', handleError('autoprefixer error'))
@@ -198,7 +198,7 @@ gulp.task('heim-less', () => {
 
 gulp.task('emoji-static', () => {
   const emoji = require('./lib/emoji').default
-  const twemojiPath = 'node_modules/.resources/emoji-svg'
+  const twemojiPath = 'node_modules/.resources/emoji-svg/'
   const leadingZeroes = /^0*/
   const emojiFiles = _.map(fs.readdirSync(twemojiPath), (p) => {
     const m = /^([0-9a-f-]+)\.svg$/.exec(p)
