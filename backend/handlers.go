@@ -38,8 +38,7 @@ func (s *Server) route() {
 	s.r.PathPrefix("/about").Handler(
 		prometheus.InstrumentHandler("about", http.HandlerFunc(s.handleAboutStatic)))
 
-	// No API serving
-	//s.r.HandleFunc("/room/{prefix:(?:pm:)?}{room:[a-z0-9]+}/ws", instrumentSocketHandlerFunc("ws", s.handleRoom))
+	s.r.HandleFunc("/room/{prefix:(?:pm:)?}{room:[a-z0-9]+}/ws", instrumentSocketHandlerFunc("ws", s.handleRoom))
 	s.r.Handle(
 		"/room/{prefix:(?:pm:)?}{room:[a-z0-9]+}/", prometheus.InstrumentHandlerFunc("room_static", s.handleRoomStatic))
 
@@ -163,6 +162,11 @@ func (s *Server) resolveRoom(ctx scope.Context, prefix, roomName string, client 
 }
 
 func (s *Server) handleRoom(w http.ResponseWriter, r *http.Request) {
+	if !s.allowAPI {
+		http.Error(w, "403 forbidden", http.StatusForbidden)
+		return
+	}
+
 	ctx := s.rootCtx.Fork()
 
 	client, cookie, agentKey, err := getClient(ctx, s, r)
