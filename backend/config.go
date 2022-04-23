@@ -71,6 +71,7 @@ func init() {
 
 	flag.BoolVar(&Config.AllowRoomCreation, "allow-room-creation", true, "allow rooms to be created")
 	flag.BoolVar(&Config.AllowAPI, "allow-api", true, "enable API access")
+	flag.BoolVar(&Config.ShowAllRooms, "show-all-rooms", false, "display UI even for nonexistent rooms")
 	flag.BoolVar(&Config.SetInsecureCookies, "set-insecure-cookies", false, "allow non-https cookies")
 
 	flag.StringVar(&Config.Email.Server, "smtp-server", "", "address of SMTP server to send mail through")
@@ -102,6 +103,7 @@ type ServerConfig struct {
 
 	AllowRoomCreation     bool          `yaml:"allow_room_creation"`
 	AllowAPI              bool          `yaml:"allow_api"`
+	ShowAllRooms          bool          `yaml:"show_all_rooms"`
 	NewAccountMinAgentAge time.Duration `yaml:"new_account_min_agent_age"`
 	RoomEntryMinAgentAge  time.Duration `yaml:"room_entry_min_agent_age"`
 	SetInsecureCookies    bool          `yaml:"set_insecure_cookies"`

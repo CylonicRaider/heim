@@ -94,6 +94,7 @@ func (cmd *serveCmd) run(ctx scope.Context, args []string) error {
 	server.SetInsecureCookies(backend.Config.SetInsecureCookies)
 	server.AllowRoomCreation(backend.Config.AllowRoomCreation)
 	server.AllowAPI(backend.Config.AllowAPI)
+	server.ShowAllRooms(backend.Config.ShowAllRooms)
 	server.NewAccountMinAgentAge(backend.Config.NewAccountMinAgentAge)
 
 	// Spin off goroutine to watch ctx and close listener if shutdown requested.

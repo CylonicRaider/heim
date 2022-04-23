@@ -88,10 +88,10 @@ func (s *Server) handleRoomStatic(w http.ResponseWriter, r *http.Request) {
 	room, err := s.resolveRoom(ctx, prefix, roomName, client)
 	if err != nil {
 		if err == proto.ErrRoomNotFound {
-			//if !s.allowRoomCreation || prefix != "" {
-			//	s.serveErrorPage("room not found", http.StatusNotFound, w, r)
-			//	return
-			//}
+			if (!s.allowRoomCreation || prefix != "") && !s.showAllRooms {
+				s.serveErrorPage("room not found", http.StatusNotFound, w, r)
+				return
+			}
 		} else {
 			s.serveErrorPage(err.Error(), http.StatusInternalServerError, w, r)
 			return

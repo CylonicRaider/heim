@@ -45,6 +45,7 @@ type Server struct {
 
 	allowRoomCreation     bool
 	allowAPI              bool
+	showAllRooms          bool
 	newAccountMinAgentAge time.Duration
 	roomEntryMinAgentAge  time.Duration
 	setInsecureCookies    bool
@@ -81,6 +82,7 @@ func NewServer(heim *proto.Heim, id, era string) (*Server, error) {
 
 func (s *Server) AllowRoomCreation(allow bool)            { s.allowRoomCreation = allow }
 func (s *Server) AllowAPI(allow bool)                     { s.allowAPI = allow }
+func (s *Server) ShowAllRooms(enable bool)                { s.showAllRooms = enable }
 func (s *Server) NewAccountMinAgentAge(age time.Duration) { s.newAccountMinAgentAge = age }
 func (s *Server) RoomEntryMinAgentAge(age time.Duration)  { s.roomEntryMinAgentAge = age }
 func (s *Server) SetInsecureCookies(allow bool)           { s.setInsecureCookies = allow }
