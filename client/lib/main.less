@@ -919,10 +919,11 @@ iframe.js {
     }
 
     .room-switcher-expand, .room-switcher-apply, .room-switcher-cancel {
+      position: relative;
       margin: auto 0;
       border-radius: 2px;
       .touchable-bg(@neutral-color);
-      .larger-touch-target(20px, 10pt);
+      .larger-touch-target(7.5px, 10px);
 
       .inner::before {
         margin-right: 0;
@@ -1005,6 +1006,7 @@ iframe.js {
   }
 
   .collapse-info-pane, .expand-info-pane {
+    position: relative;
     padding: 9px;
     margin: -9px;
     padding-left: 0;
@@ -1012,6 +1014,7 @@ iframe.js {
     margin-left: -10px;
     margin-right: 5px;
     .touchable-bg(white);
+    .larger-touch-target(7.5px, 10px);
     opacity: .35;
 
     &.collapse-info-pane {
@@ -1098,7 +1101,7 @@ iframe.js {
     padding: 2px 4px;
     margin: 0 7px 0 14px;
     .bgcolor(@manager-color);
-    .larger-touch-target(10px, 10px);
+    .larger-touch-target(7.5px, 10px);
     .touchable-custom({
       .bgcolor(@manager-dark-color);
       .hex {
