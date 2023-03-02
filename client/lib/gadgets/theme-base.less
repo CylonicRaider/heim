@@ -95,6 +95,12 @@
   filter: brightness(@nick-brightness);
 }
 
+// Some browsers use the body background color to tweak the style of their
+// chrome. The body is the one thing *not* nested below #container.
+html body {
+  background: @ui-background;
+}
+
 // This should make most enclosed rules take precedence
 #container {
 

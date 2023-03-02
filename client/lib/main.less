@@ -8,6 +8,7 @@
 body {
   overflow-y: hidden;  // prevent mobile Chrome pull to refresh
   font-size: @base-font-size;
+  background: @body-bg-color;
 
   &.ready > #container {
     display: block;
@@ -59,7 +60,7 @@ iframe.js {
   position: relative;
   display: flex;
   align-items: stretch;
-  background: #ccc;
+  background: @body-bg-color;
   transition: background 0.25s ease;
   z-index: 0;
 
