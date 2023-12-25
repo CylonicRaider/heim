@@ -3,6 +3,7 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 
+import accountAuthFlow from '../stores/accountAuthFlow'
 import FastButton from './FastButton'
 
 export default createReactClass({
@@ -29,6 +30,8 @@ export default createReactClass({
         </FastButton>
       )
     }
-    return <FastButton className="account-button" onClick={this.props.onOpenAccountAuthDialog}>sign in or register</FastButton>
+
+    const title = accountAuthFlow.registerAvailable ? 'sign in or register' : 'sign in'
+    return <FastButton className="account-button" onClick={this.props.onOpenAccountAuthDialog}>{title}</FastButton>
   },
 })

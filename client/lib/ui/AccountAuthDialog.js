@@ -111,13 +111,13 @@ export default createReactClass({
           </div>
         )
       } else {
-        title = 'sign in or register'
+        title = accountAuthFlow.registerAvailable ? 'sign in or register' : 'sign in'
         bottom = (
           <div className="bottom">
             <div className="action-line">
               <button type="button" tabIndex="4" className={classNames('forgot', 'minor-secondary-action', flow.highlightForgot && 'highlight')} disabled={flow.working} onClick={this.onForgotClick}>forgot<span className="long"> password</span>?</button>
               <div className="spacer" />
-              <button key="register" type="button" tabIndex="4" className="open-register minor-action" onClick={this.onRegisterClick}>register</button>
+              {accountAuthFlow.registerAvailable && <button key="register" type="button" tabIndex="4" className="open-register minor-action" onClick={this.onRegisterClick}>register</button>}
               <button key="sign-in" type="submit" tabIndex="3" className="sign-in major-action">sign in</button>
             </div>
           </div>

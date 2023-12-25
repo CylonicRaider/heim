@@ -42,6 +42,7 @@ const heimOptions = {
   HEIM_PREFIX: process.env.HEIM_PREFIX || '',
   EMBED_ORIGIN: process.env.EMBED_ORIGIN,
   NODE_ENV: process.env.NODE_ENV,
+  ACCOUNTS_DISABLED_NOTE: process.env.ACCOUNTS_DISABLED_NOTE,
 }
 
 // apply an ansi-colors function if the terminal supports color
