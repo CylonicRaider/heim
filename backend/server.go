@@ -199,7 +199,7 @@ func checkOrigin(r *http.Request) bool {
 	}
 
 	// If Origin matches any of these prefix/requested-host combinations, accept.
-	for _, prefix := range []string{"", "www.", "alpha."} {
+	for _, prefix := range []string{""} {
 		if u.Host == prefix+r.Host {
 			return true
 		}
