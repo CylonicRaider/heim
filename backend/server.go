@@ -44,6 +44,7 @@ type Server struct {
 	rootCtx       scope.Context
 
 	allowRoomCreation     bool
+	allowAccountCreation  bool
 	allowAPI              bool
 	showAllRooms          bool
 	newAccountMinAgentAge time.Duration
@@ -81,6 +82,7 @@ func NewServer(heim *proto.Heim, id, era string) (*Server, error) {
 }
 
 func (s *Server) AllowRoomCreation(allow bool)            { s.allowRoomCreation = allow }
+func (s *Server) AllowAccountCreation(allow bool)         { s.allowAccountCreation = allow }
 func (s *Server) AllowAPI(allow bool)                     { s.allowAPI = allow }
 func (s *Server) ShowAllRooms(enable bool)                { s.showAllRooms = enable }
 func (s *Server) NewAccountMinAgentAge(age time.Duration) { s.newAccountMinAgentAge = age }

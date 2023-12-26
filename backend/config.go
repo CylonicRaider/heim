@@ -102,6 +102,7 @@ type ServerConfig struct {
 	*proto.CommonEmailParams `yaml:"site"`
 
 	AllowRoomCreation     bool          `yaml:"allow_room_creation"`
+	AllowAccountCreation  bool          `yaml:"allow_account_creation"`
 	AllowAPI              bool          `yaml:"allow_api"`
 	ShowAllRooms          bool          `yaml:"show_all_rooms"`
 	NewAccountMinAgentAge time.Duration `yaml:"new_account_min_agent_age"`

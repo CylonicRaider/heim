@@ -624,6 +624,11 @@ func (s *session) handleResetPasswordCommand(msg *proto.ResetPasswordCommand) *r
 }
 
 func (s *session) handleRegisterAccountCommand(cmd *proto.RegisterAccountCommand) *response {
+	// Account creation must be enabled in the first place.
+	if !s.server.allowAccountCreation {
+		return &response{packet: &proto.RegisterAccountReply{Reason: "globally disabled"}}
+	}
+
 	// Session must not be logged in.
 	if s.client.Account != nil {
 		return &response{packet: &proto.RegisterAccountReply{Reason: "already logged in"}}
