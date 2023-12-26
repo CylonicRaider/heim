@@ -46,8 +46,8 @@ export default React.createClass({
     this.props.message.get('children').map(id => {
       const content = this.props.tree.get(id).get('content')
 
-      if (/\s*\+1\s*/.test(content)) upvotes++
-      if (/\s*-1\s*/.test(content)) downvotes++
+      if (/^\s*\+1\s*$/.test(content)) upvotes++
+      if (/^\s*-1\s*$/.test(content)) downvotes++
     })
 
     const result = upvotes - downvotes
