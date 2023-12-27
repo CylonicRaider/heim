@@ -1,5 +1,3 @@
-/* eslint-disable react/no-danger */
-
 import React from 'react'
 import moment from 'moment'
 import queryString from 'querystring'
@@ -7,14 +5,9 @@ import queryString from 'querystring'
 import heimURL from './heimURL'
 
 const roomStylesheets = {
-  thedrawingroom: 'room-thedrawingroom',
-  lovenest: 'room-thedrawingroom',
-  has: 'room-thedrawingroom',
+  ezziethedog: 'room-grayscale',
   adventure: 'room-monospace',
-  chess: 'room-monospace',
   monospace: 'room-monospace',
-  space: 'room-space',
-  sandersforpresident: 'room-sandersforpresident',
   xkcd: 'room-xkcd',
 }
 
@@ -29,32 +22,12 @@ export default function initPlugins(roomName) {
   }
 
   /* Per-room customizations */
-  if (roomName === 'space') {
-    const Embed = require('./ui/Embed').default
-
-    Heim.hook('main-sidebar', () => (
-      <div key="norman" className="norman">
-        <p>norman</p>
-        <Embed kind="imgur" imgur_id="UKbitCO" />
-      </div>
-    ))
-  }
-
-  if (roomName === 'music' || roomName === 'youtube' || roomName === 'rmusic' || roomName === 'listentothis') {
+  if (roomName === 'music' || roomName === 'youtube') {
     require('./gadgets/YoutubeTV').install()
   }
 
-  if (roomName === 'adventure' || roomName === 'chess' || roomName === 'monospace') {
+  if (roomName === 'adventure' || roomName === 'monospace') {
     Heim.chat.setRoomSettings({collapse: false})
-  }
-
-  if (roomName === 'sandersforpresident') {
-    Heim.hook('main-pane-top', () => {
-      const MessageText = require('./ui/MessageText').default
-      return (
-        <div key="sanders-top-bar" className="secondary-top-bar"><span><MessageText onlyEmoji content=":us:" /> Welcome to the <a href="https://reddit.com/r/sandersforpresident" target="_blank" rel="noreferrer noopener">/r/SandersForPresident</a> live chat! Please <a href="https://www.reddit.com/r/SandersForPresident/wiki/livechat" target="_blank" rel="noreferrer noopener">read our rules</a>.</span></div>
-      )
-    })
   }
 
   if (roomName === 'xkcd') {
