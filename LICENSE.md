@@ -1,31 +1,26 @@
 # Heim Licensing
 
-All software in this repository is open source. Most components are offered
-under a permissive MIT license, but a few are offered under the Affero GPL.
+All software in this repository is open source. The source code is a
+combination of contributions licensed under the GNU Affero GPL and the MIT
+license. Consequently, the combination is offered under the terms of the AGPL.
 Files other than source code are offered under the CC-BY 4.0 license.
 
-Please pay careful attention to the license that applies if you reuse or modify
-any of these components.
-
-## aws, backend, cluster, and heimctl
-
-Source code under the `aws`, `backend`, `cluster`, and `heimctl` directories is licensed
-under the terms of the
-[GNU Affero General Public License (Version 3)](https://www.gnu.org/licenses/agpl-3.0.html).
-Copies of this license are available at the root of the repository,
-(`LICENSE.agpl`), as well as in a file named `LICENSE` in each of the
-aforementioned directories.
+Please pay careful attention to the license that applies if you reuse or
+modify any of these components.
 
 ## art, doc, and client/res
 
 Files under the `art`, `doc`, and `client/res` directories are offered under
 the terms of the [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/)
-license.  You'll find a copy in the `LICENSE` file in each of these
-directories.
+license. A copy of this license is included at the root of the repository as
+`LICENSE.CC-BY`.
 
-## client and all else
+## Everything else
 
-The client code (under the `client` directory) is licensed to the public under
-the terms of the MIT license. See `LICENSE.mit` for details.
-Source code under the `ci`, `containers`, `heimlich`, and `proto` directories
-is also offered under the MIT license.
+Source code in the rest of the repository is licensed under the
+[GNU Affero General Public License (Version 3)](https://www.gnu.org/licenses/agpl-3.0.html)
+and the MIT license. Copies of these licenses are included at the root of the
+repository as `LICENSE.AGPL` and `LICENSE.MIT`, respectively.
+
+The individual top-level directories include more details about their
+contents' licensing terms in files called `LICENSE`.
