@@ -8,7 +8,10 @@
 body {
   overflow-y: hidden;  // prevent mobile Chrome pull to refresh
   font-size: @base-font-size;
-  background: @body-bg-color;
+
+  &.body-room {
+    background: @body-bg-color;
+  }
 
   &.ready > #container {
     display: block;
