@@ -1,13 +1,12 @@
 # Terms of Service  *updated Oct 29, 2015*
 
 
-Welcome to our online chat service run by Euphoria Ops, Inc. ("**Euphoria**"),
-located at [euphoria.io](https://euphoria.io) (the "**Site**"). Please read
-these Terms of Service (the "**Terms**") and our [Privacy
-Policy](https://euphoria.io/about/privacy) carefully because they
-govern your use of our Site and our services  that enable you to chat, create
-chat rooms, and otherwise interact via our Site (collectively, the
-"**Services**").
+Welcome to our online chat service ("**Euphoria**"), located at
+[euphoria.leet.nu](https://euphoria.leet.nu) (the "**Site**"). Please read
+these Terms of Service (the "**Terms**") and our
+[Privacy Policy](/about/privacy) carefully because they govern your use of our
+Site and our services  that enable you to chat, create chat rooms, and
+otherwise interact via our Site (collectively, the "**Services**").
 
 
 ::: section summary
@@ -20,15 +19,14 @@ IS NOT THE COMPLETE TERMS. HENCE, YOU SHOULD READ THE ENTIRE TERMS OF SERVICE
 BEFORE USING OUR SERVICES.**
 
  * Euphoria is for people 13 years and older. Everyone who uses Euphoria must
-   follow our [Code of Conduct](https://euphoria.io/about/conduct). You don't
-   need an account to chat, but you will need one to create a room or use other
-   features. You're responsible for all activities under your account. If you
-   become responsible for a room (by creating or managing a chat room) on
-   Euphoria, you'll need to follow some additional [room host
-   rules](https://euphoria.io/about/hosts).
+   follow our [Code of Conduct](/about/conduct). You don't need an account to
+   chat, but you will need one to create a room or use other features. You're
+   responsible for all activities under your account. If you become
+   responsible for a room (by creating or managing a chat room) on Euphoria,
+   you'll need to follow some additional [room host rules](/about/hosts).
 
- * Please read our [Privacy Policy](https://euphoria.io/about/privacy) for
-   details on how we collect, use, and disclose your information.
+ * Please read our [Privacy Policy](/about/privacy) for details on how we
+   collect, use, and disclose your information.
 
  * Please only post content on Euphoria that you have a legal right to. By
    posting, you give us the right and license to store and use your content for
@@ -48,8 +46,7 @@ BEFORE USING OUR SERVICES.**
    important that you review these changes, and the entire terms below, because
    by using Euphoria you agree to be bound to them.
 
-   If you have any questions about our Terms of Service, please contact us at
-   [help@euphoria.io](mailto:help@euphoria.io).
+   If you have any questions about our Terms of Service, please contact us.
 :::
 
 
@@ -100,18 +97,18 @@ occur under your Account, whether or not you know about them.
 ## Feedback
 
 We welcome feedback, comments and suggestions for improvements to the Services
-("**Feedback**"). You can submit Feedback by emailing us at
-[hi@euphoria.io](mailto:hi@euphoria.io). You grant to us a non-exclusive,
-worldwide, perpetual, irrevocable, fully-paid, royalty-free, sublicensable, and
-transferable license under any and all intellectual property rights that you
-own or control to use, copy, modify, create derivative works based upon, and
-otherwise exploit the Feedback for any purpose.
+("**Feedback**"). You can submit Feedback by emailing us or submitting it in
+chat. You grant to us a non-exclusive, worldwide, perpetual, irrevocable,
+fully-paid, royalty-free, sublicensable, and transferable license under any
+and all intellectual property rights that you own or control to use, copy,
+modify, create derivative works based upon, and otherwise exploit the Feedback
+for any purpose.
 
 
 ## Privacy Policy
 
-Please refer to our [Privacy Policy](https://euphoria.io/about/privacy) for
-information on how we collect, use, and disclose information from our users.
+Please refer to our [Privacy Policy](/about/privacy) for information on how we
+collect, use, and disclose information from our users.
 
 
 ## Content and Content Rights
@@ -173,15 +170,14 @@ non-commercial purposes.
 
 ## Code of Conduct
 
-You agree to comply with our [Code of
-Conduct](https://euphoria.io/about/conduct) and general rules and restrictions
-regarding your use of our Services.
+You agree to comply with our [Code of Conduct](/about/conduct) and general
+rules and restrictions regarding your use of our Services.
 
 
 ## Rules Applicable to Hosts
 
-If you are a Host, you have additional obligations. Please see [Rules for
-Hosts](https://euphoria.io/about/hosts) for more information on rules
+If you are a Host, you have additional obligations. Please see
+[Rules for Hosts](/about/hosts) for more information on rules
 applicable to Hosts.
 
 
@@ -190,8 +186,8 @@ applicable to Hosts.
 Euphoria respects copyright law and expects its users to do the same. It is
 Euphoria's policy to terminate, in appropriate circumstances, the Services of
 users who repeatedly infringe or are believed to be repeatedly infringing the
-rights of copyright holders. Please see our [Copyright and IP
-Policy](https://euphoria.io/about/dmca) for further information.
+rights of copyright holders. Please see our
+[Copyright and IP Policy](/about/dmca) for further information.
 
 
 ## Links to Third Party Websites or Resources
@@ -208,13 +204,12 @@ resources.
 
 We may terminate your access to and use of the Services, at our sole
 discretion, at any time and without notice to you. You may cancel your Account
-at any time by sending an email to us at
-[help@euphoria.io](mailto:help@euphoria.io), or if you are not an Account
-holder, you may just stop using our Services. Upon any termination,
-discontinuation, or cancellation of Services or your Account, the provisions of
-these Terms relating to Feedback, ownership provisions (including, without
-limitation, Content and Content Ownership) and Euphoria's enforcement rights,
-warranty disclaimers, indemnity, limitations of liability, dispute resolution
+at any time by sending an email to us, or if you are not an Account holder,
+you may just stop using our Services. Upon any termination, discontinuation,
+or cancellation of Services or your Account, the provisions of these Terms
+relating to Feedback, ownership provisions (including, without limitation,
+Content and Content Ownership) and Euphoria's enforcement rights, warranty
+disclaimers, indemnity, limitations of liability, dispute resolution
 provisions, and general terms shall survive any such termination,
 discontinuation, or cancellation.
 
@@ -359,14 +354,13 @@ Procedure 11(b)).
 Notwithstanding the provisions of the "Changes to Terms or Services" section
 above, if Euphoria changes this "Dispute Resolution" section after the date you
 first accepted these Terms (or accepted any subsequent changes to these Terms),
-you may reject any such change by sending us written notice (including by email
-to [help@euphoria.io](mailto:help@euphoria.io)) within 30 days of the date such
-change became effective, as indicated in the "Last Updated" date above or in
-the date of Euphoria's email to you notifying you of such change. By rejecting
-any change, you are agreeing that you will arbitrate any Dispute between you
-and Euphoria in accordance with the provisions of this "Dispute Resolution"
-section as of the date you first accepted these Terms (or accepted any
-subsequent changes to these Terms).
+you may reject any such change by sending us written notice (including by
+email) within 30 days of the date such change became effective, as indicated in
+the "Last Updated" date above or in the date of Euphoria's email to you
+notifying you of such change. By rejecting any change, you are agreeing that
+you will arbitrate any Dispute between you and Euphoria in accordance with the
+provisions of this "Dispute Resolution" section as of the date you first
+accepted these Terms (or accepted any subsequent changes to these Terms).
 
 
 ## General Terms
@@ -403,4 +397,4 @@ without prejudice to its other remedies under these Terms or otherwise.
 ## Contact Information
 
 If you have any questions about these Terms or the Services, please contact
-Euphoria at [help@euphoria.io](mailto:help@euphoria.io).
+Euphoria.

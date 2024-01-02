@@ -1,16 +1,17 @@
 # Privacy Policy  *updated Oct 29, 2015*
 
 
-Protecting your privacy is really important to Euphoria Ops, Inc. ("**Euphoria**",
-"**we**" or "**us**"). With this in mind, we're providing this Privacy Policy to
-explain our practices regarding the collection, use and disclosure of
+Protecting your privacy is really important to Euphoria ("**Euphoria**",
+"**we**" or "**us**"). With this in mind, we're providing this Privacy Policy
+to explain our practices regarding the collection, use and disclosure of
 information that we receive through our services providing you the ability to
-create and participate in chat rooms ("**Services**"). This Privacy Policy does not
-apply to any third-party websites, services or applications, even if they are
-accessible through our Services. Also, please note that, unless we define a
-term in this Privacy Policy, all capitalized terms used in this Privacy Policy
-have the same meanings as in our Terms of Service. So, please make sure that
-you have read and understand our [Terms of Service](https://euphoria.io/about/terms).
+create and participate in chat rooms ("**Services**"). This Privacy Policy
+does not apply to any third-party websites, services or applications, even if
+they are accessible through our Services. Also, please note that, unless we
+define a term in this Privacy Policy, all capitalized terms used in this
+Privacy Policy have the same meanings as in our Terms of Service. So, please
+make sure that you have read and understand our
+[Terms of Service](/about/terms).
 
 
 ::: section summary
@@ -55,8 +56,8 @@ POLICY BEFORE USING OUR SERVICES.**
    privacy policy below, because by using Euphoria you agree to be bound to
    them.
 
- * If you have any questions about our Privacy Policy, please contact us at
-   [help@euphoria.io](mailto:help@euphoria.io).
+ * If you have any questions about our Privacy Policy, please contact us via
+   email.
 :::
 
 
@@ -237,10 +238,8 @@ or communication in connection with your Account (if applicable).
 ### Modifying Your Information
 
 You can access and modify the PII associated with your Account by logging in to
-your account or by sending us an email at
-[help@euphoria.io](mailto:help@euphoria.io). If you want us to delete your PII
-and your Account, please contact us at
-[help@euphoria.io](mailto:help@euphoria.io) with your request. We'll take steps
+your account or by sending us an email. If you want us to delete your PII and
+your Account, please contact us via email with your request. We'll take steps
 to delete your information as soon we can, but some information may remain in
 archive/backup copies for our records or as otherwise required by law.
 
@@ -267,8 +266,8 @@ security of any information.
 ## Links to Other Sites
 
 Our Services may contain links to websites and services that are owned or
-operated by third parties (each, a "**Third-party Service**"). Any information that
-you provide on or to a Third-party Service or that is collected by a
+operated by third parties (each, a "**Third-party Service**"). Any information
+that you provide on or to a Third-party Service or that is collected by a
 Third-party Service is provided directly to the owner or operator of the
 Third-party Service and is subject to the owner's or operator's privacy policy.
 We're not responsible for the content, privacy, or security practices and
@@ -294,22 +293,6 @@ child under 13 we will take steps to delete such information from our files as
 soon as possible.
 
 
-## Your California Privacy Rights
-
-California residents may request and obtain from us, once a year, free of
-charge, a list of third parties, if any, to which we disclosed their PII for
-direct marketing purposes during the preceding calendar year and the categories
-of PII shared with those third parties. If you are a California resident and
-wish to obtain that information, please submit your request by sending us an
-email at [help@euphoria.io](mailto:help@euphoria.io) with "California Privacy
-Rights" in the subject line or by writing to us at:
-
- > WeWork c/o Euphoria  
- > 1161 Mission St  
- > San Francisco, CA 94103
-
-
 ## Questions?
 
-Please contact us at [help@euphoria.io](mailto:help@euphoria.io) if you have
-any questions about our Privacy Policy.
+Please contact us if you have any questions about our Privacy Policy.

@@ -10,7 +10,7 @@ module.exports = (
         <Span {...textDefaults} fontSize={18}>Hi! <strong>{'{{.SenderName}}'}</strong> invites you to join a {'{{.RoomPrivacy}}'} chat room:</Span>
       </Item>
       <Item align="center">
-        <A href="https://euphoria.io/room/space">
+        <A href="{{.RoomURL}}">
           <Span {...textDefaults} fontSize={28} color={null}>&{'{{.RoomName}}'}</Span>
         </A>
       </Item>

@@ -13,9 +13,7 @@ export default function Footer() {
         <a href={heimURL('/about/values')}>values</a>
         <a href={heimURL('/about/conduct')}><span className="long">code of </span>conduct</a>
         <span className="spacer" />
-        <a href="https://github.com/euphoria-io/heim"><span className="long">source </span>code</a>
-        <a href="http://andeuphoria.tumblr.com/">blog</a>
-        <a href="mailto:hi@euphoria.io">contact</a>
+        <a href="https://github.com/CylonicRaider/heim"><span className="long">source </span>code</a>
       </div>
     </footer>
   )

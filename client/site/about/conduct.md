@@ -1,4 +1,4 @@
-# Euphorian Code of Conduct  *updated April 12th, 2016*
+# Euphorian Code of Conduct
 
 
 ## Purpose
@@ -67,16 +67,14 @@ We may take various actions to enforce this Code of Conduct, such as:
 
 ## Reporting
 
-If you are subject to or witness behavior that violates these guidelines, or if
-you have any other concerns or questions, please [contact
-us](mailto:help@euphoria.io).
+If you are subject to or witness behavior that violates these guidelines, or
+if you have any other concerns or questions, please contact us.
 
 
 ## Addressing grievances
-If you feel you have been unfairly sanctioned, please send us an
-[email](mailto:help@euphoria.io) with a concise description of your
-grievance. We'll respond within three days to offer our rationale
-and discuss any disciplinary decisions.
+If you feel you have been unfairly sanctioned, please send us an email with a
+concise description of your grievance. We'll respond within three days to
+offer our rationale and discuss any disciplinary decisions.
 
 ---
 

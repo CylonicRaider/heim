@@ -1,10 +1,10 @@
-# Copyright Policy  *updated Oct 29, 2015*
+# Copyright Policy
 
 
 ## Notification of Copyright Infringement:
 
-Euphoria Ops, Inc. ("**Euphoria**") respects the intellectual property rights
-of others and expects its users to do the same.
+Euphoria ("**Euphoria**") respects the intellectual property rights of others
+and expects its users to do the same.
 
 It is Euphoria's policy to terminate in appropriate circumstances and at its
 discretion account holders or subscribers who repeatedly infringe or who are
@@ -56,10 +56,4 @@ Services.
  > 5. Provide your full legal name and your electronic or physical signature.
  >
  > Deliver this Notice, with all items completed, to Euphoria's Designated
- > Copyright Agent:
- >
- > [dmca@euphoria.io](mailto:dmca@euphoria.io)
- >
- > WeWork c/o Euphoria  
- > 1161 Mission St  
- > San Francisco, CA 94103
+ > Copyright Agent.
