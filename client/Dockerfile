@@ -1,5 +1,4 @@
 FROM ubuntu:20.04
-MAINTAINER Max Goodman <max@euphoria.io>
 
 RUN apt-get update && apt-get dist-upgrade -y
 RUN DEBIAN_FRONTEND=noninteractive \

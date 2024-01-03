@@ -1,5 +1,4 @@
 FROM gliderlabs/alpine
-MAINTAINER Logan Hanks <logan@euphoria.io>
 
 ADD https://github.com/coreos/etcd/releases/download/v0.4.6/etcd-v0.4.6-linux-amd64.tar.gz etcd-v0.4.6-linux-amd64.tar.gz
 RUN tar xzvf etcd-v0.4.6-linux-amd64.tar.gz
