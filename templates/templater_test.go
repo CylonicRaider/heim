@@ -35,7 +35,7 @@ func TestTemplater(t *testing.T) {
 		td := tempdir()
 		defer os.RemoveAll(td)
 
-		write(td, "welcome.hdr", "Subject: {{.Subject}}\nReply-To: max@euphoria.io")
+		write(td, "welcome.hdr", "Subject: {{.Subject}}\nReply-To: max@euphoria.example")
 		write(td, "welcome.txt", "subject was {{.Subject}}")
 		write(td, "welcome.html", "<h1>{{.Subject}}</h1>")
 

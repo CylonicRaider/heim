@@ -1114,7 +1114,7 @@ func testAccountsLowLevel(s *serverUnderTest) {
 
 	Convey("Account registration", func() {
 		account, key, err := b.AccountManager().Register(
-			ctx, kms, "email", "logan@euphoria.io", "hunter2", loganAgent.IDString(), agentKey)
+			ctx, kms, "email", "logan@euphoria.example", "hunter2", loganAgent.IDString(), agentKey)
 		So(err, ShouldBeNil)
 		So(account, ShouldNotBeNil)
 		So(key, ShouldNotBeNil)
@@ -1133,7 +1133,7 @@ func testAccountsLowLevel(s *serverUnderTest) {
 		So(kp, ShouldNotBeNil)
 
 		dup, _, err := b.AccountManager().Register(
-			ctx, kms, "email", "logan@euphoria.io", "hunter2", loganAgent.IDString(), agentKey)
+			ctx, kms, "email", "logan@euphoria.example", "hunter2", loganAgent.IDString(), agentKey)
 		So(err, ShouldEqual, proto.ErrPersonalIdentityInUse)
 		So(dup, ShouldBeNil)
 	})
@@ -1145,15 +1145,15 @@ func testAccountsLowLevel(s *serverUnderTest) {
 		So(err, ShouldEqual, proto.ErrAccountNotFound)
 		So(account, ShouldBeNil)
 
-		account, err = b.AccountManager().Resolve(ctx, "email", "max@euphoria.io")
+		account, err = b.AccountManager().Resolve(ctx, "email", "max@euphoria.example")
 		So(err, ShouldEqual, proto.ErrAccountNotFound)
 		So(account, ShouldBeNil)
 
 		_, _, err = b.AccountManager().Register(
-			ctx, kms, "email", "max@euphoria.io", "hunter2", maxAgent.IDString(), agentKey)
+			ctx, kms, "email", "max@euphoria.example", "hunter2", maxAgent.IDString(), agentKey)
 		So(err, ShouldBeNil)
 
-		account, err = b.AccountManager().Resolve(ctx, "email", "max@euphoria.io")
+		account, err = b.AccountManager().Resolve(ctx, "email", "max@euphoria.example")
 		So(err, ShouldBeNil)
 
 		kp, err := account.Unlock(account.KeyFromPassword(""))
@@ -1730,7 +1730,7 @@ func testAccountLogin(s *serverUnderTest) {
 
 func testAccountRegistration(s *serverUnderTest) {
 	Convey("Agent upgrades to account", func() {
-		inbox := s.app.heim.MockDeliverer().Inbox("registration@euphoria.io")
+		inbox := s.app.heim.MockDeliverer().Inbox("registration@euphoria.example")
 
 		// Add observer for timing control.
 		observer := s.Connect("registration")
@@ -1759,7 +1759,7 @@ func testAccountRegistration(s *serverUnderTest) {
 
 		// Upgrade to account.
 		conn.send("1", "register-account",
-			`{"namespace":"email","id":"registration@euphoria.io","password":"hunter2"}`)
+			`{"namespace":"email","id":"registration@euphoria.example","password":"hunter2"}`)
 		capture := conn.expect("1", "register-account-reply", `{"success":true,"account_id":"*"}`)
 		accountID := capture["account_id"]
 		conn.expect("", "disconnect-event", `{"reason":"authentication changed"}`)
@@ -1789,7 +1789,7 @@ func testAccountRegistration(s *serverUnderTest) {
 
 		// Observer should fail to register the same personal identity.
 		observer.send("1", "register-account",
-			`{"namespace":"email","id":"registration@euphoria.io","password":"hunter2"}`)
+			`{"namespace":"email","id":"registration@euphoria.example","password":"hunter2"}`)
 		observer.expect("1", "register-account-reply",
 			`{"success":false,"reason":"personal identity already in use"}`)
 
@@ -1805,7 +1805,7 @@ func testAccountRegistration(s *serverUnderTest) {
 			Email        string `json:"email"`
 		}{
 			Confirmation: params.VerificationToken,
-			Email:        "registration@euphoria.io",
+			Email:        "registration@euphoria.example",
 		}
 		reqBytes, err := json.Marshal(req)
 		So(err, ShouldBeNil)
@@ -1815,7 +1815,7 @@ func testAccountRegistration(s *serverUnderTest) {
 
 		// Personal identity should now be verified.
 		ctx := scope.New()
-		account, err := s.backend.AccountManager().Resolve(ctx, "email", "registration@euphoria.io")
+		account, err := s.backend.AccountManager().Resolve(ctx, "email", "registration@euphoria.example")
 		So(err, ShouldBeNil)
 		verified := false
 		for _, pid := range account.PersonalIdentities() {
@@ -1833,7 +1833,7 @@ func testAccountRegistration(s *serverUnderTest) {
 		conn.expectPing()
 		conn.expectSnapshot(s.backend.Version(), nil, nil)
 		conn.send("1", "register-account",
-			`{"namespace":"email","id":"newaccount@euphoria.io","password":"hunter2"}`)
+			`{"namespace":"email","id":"newaccount@euphoria.example","password":"hunter2"}`)
 		conn.expect("1", "register-account-reply",
 			`{"success":false,"reason":"not familiar yet, try again later"}`)
 	})
