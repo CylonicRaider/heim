@@ -7,7 +7,7 @@ import (
 	"net/smtp"
 	"time"
 
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 func NewSMTPDeliverer(localAddr, serverAddr, sslHost string, auth smtp.Auth) *SMTPDeliverer {

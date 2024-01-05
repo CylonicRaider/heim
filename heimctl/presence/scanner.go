@@ -10,7 +10,7 @@ import (
 	"euphoria.leet.nu/heim/backend/psql"
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 const (

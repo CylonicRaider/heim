@@ -12,13 +12,12 @@ import (
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/templates"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 
 	gorillactx "github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/websocket"
-	"github.com/prometheus/client_golang/prometheus"
 )
 
 const cookieKeySize = 32
@@ -167,7 +166,7 @@ func instrumentSocketHandlerFunc(name string, handler http.HandlerFunc) http.Han
 		handler(w, r)
 	}
 
-	promHandler := prometheus.InstrumentHandlerFunc(name, loadHijacker)
+	promHandler := instrumentHttpHandlerFunc(name, loadHijacker)
 
 	saveHijacker := func(w http.ResponseWriter, r *http.Request) {
 		if hj, ok := w.(http.Hijacker); ok {

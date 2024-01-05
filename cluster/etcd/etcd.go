@@ -11,7 +11,7 @@ import (
 
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto/security"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 
 	"github.com/coreos/go-etcd/etcd"
 	"github.com/prometheus/client_golang/prometheus"

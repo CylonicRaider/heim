@@ -8,7 +8,7 @@ import (
 
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/templates"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 func init() {

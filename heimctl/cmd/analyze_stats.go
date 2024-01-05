@@ -7,7 +7,7 @@ import (
 
 	"gopkg.in/gorp.v1"
 
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 func init() {

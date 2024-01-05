@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"euphoria.leet.nu/heim/proto"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 
 	. "github.com/smartystreets/goconvey/convey"
 )

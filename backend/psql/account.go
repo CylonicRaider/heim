@@ -14,7 +14,7 @@ import (
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 const OTPKeyType = security.AES128

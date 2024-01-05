@@ -7,7 +7,7 @@ import (
 	"euphoria.leet.nu/heim/backend/mock"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/security"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 
 	. "github.com/smartystreets/goconvey/convey"
 )

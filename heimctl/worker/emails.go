@@ -6,7 +6,7 @@ import (
 	"euphoria.leet.nu/heim/proto/jobs"
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 type EmailWorker struct {

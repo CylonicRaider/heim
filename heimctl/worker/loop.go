@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"euphoria.leet.nu/heim/proto"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 func Loop(ctx scope.Context, heim *proto.Heim, workerName, queueName string) error {

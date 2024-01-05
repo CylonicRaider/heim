@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"euphoria.leet.nu/heim/proto/logging"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 var (

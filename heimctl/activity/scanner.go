@@ -8,7 +8,7 @@ import (
 	"euphoria.leet.nu/heim/backend/psql"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/logging"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 func ScanLoop(ctx scope.Context, listener *pq.Listener) {

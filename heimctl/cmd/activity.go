@@ -8,7 +8,7 @@ import (
 	"github.com/lib/pq"
 
 	"euphoria.leet.nu/heim/heimctl/activity"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 func init() {

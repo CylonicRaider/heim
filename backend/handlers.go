@@ -14,10 +14,15 @@ import (
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+func instrumentHttpHandlerFunc(label string, h http.HandlerFunc) http.HandlerFunc {
+	// FIXME: figure out how prometheus wants us to do things now
+	return h
+}
 
 func (s *Server) route() {
 	s.r = mux.NewRouter().StrictSlash(true)
@@ -27,26 +32,24 @@ func (s *Server) route() {
 
 	s.r.Path("/").Methods("OPTIONS").HandlerFunc(s.handleProbe)
 	s.r.Path("/robots.txt").HandlerFunc(s.handleRobotsTxt)
-	s.r.Path("/metrics").Handler(
-		prometheus.InstrumentHandler("metrics", prometheus.UninstrumentedHandler()))
+	s.r.Path("/metrics").Handler(promhttp.Handler())
 
-	s.r.PathPrefix("/static/").Handler(
-		prometheus.InstrumentHandler("static", http.HandlerFunc(s.handleStatic)))
+	s.r.PathPrefix("/static/").Handler(instrumentHttpHandlerFunc("static", http.HandlerFunc(s.handleStatic)))
 
-	s.r.Handle("/", prometheus.InstrumentHandlerFunc("home", s.handleHomeStatic))
+	s.r.Handle("/", instrumentHttpHandlerFunc("home", s.handleHomeStatic))
 
 	s.r.PathPrefix("/about").Handler(
-		prometheus.InstrumentHandler("about", http.HandlerFunc(s.handleAboutStatic)))
+		instrumentHttpHandlerFunc("about", http.HandlerFunc(s.handleAboutStatic)))
 
 	s.r.HandleFunc("/room/{prefix:(?:pm:)?}{room:[a-z0-9]+}/ws", instrumentSocketHandlerFunc("ws", s.handleRoom))
 	s.r.Handle(
-		"/room/{prefix:(?:pm:)?}{room:[a-z0-9]+}/", prometheus.InstrumentHandlerFunc("room_static", s.handleRoomStatic))
+		"/room/{prefix:(?:pm:)?}{room:[a-z0-9]+}/", instrumentHttpHandlerFunc("room_static", s.handleRoomStatic))
 
 	s.r.Handle(
 		"/prefs/reset-password",
-		prometheus.InstrumentHandlerFunc("prefsResetPassword", s.handlePrefsResetPassword))
+		instrumentHttpHandlerFunc("prefsResetPassword", s.handlePrefsResetPassword))
 	s.r.Handle(
-		"/prefs/verify", prometheus.InstrumentHandlerFunc("prefsVerify", s.handlePrefsVerify))
+		"/prefs/verify", instrumentHttpHandlerFunc("prefsVerify", s.handlePrefsVerify))
 }
 
 func (s *Server) handleProbe(w http.ResponseWriter, r *http.Request) {

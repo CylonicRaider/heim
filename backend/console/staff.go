@@ -2,7 +2,7 @@ package console
 
 import (
 	"euphoria.leet.nu/heim/proto/security"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 func init() {

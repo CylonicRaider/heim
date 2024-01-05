@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"euphoria.leet.nu/heim/proto/logging"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 
 	"gopkg.in/gorp.v1"
 )

@@ -1,6 +1,6 @@
 package console
 
-import "euphoria.io/scope"
+import "github.com/euphoria-io/scope"
 
 func init() {
 	register("peers", peers{})

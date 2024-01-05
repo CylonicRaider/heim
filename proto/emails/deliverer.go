@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 type Deliverer interface {

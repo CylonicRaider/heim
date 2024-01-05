@@ -14,7 +14,7 @@ import (
 	"euphoria.leet.nu/heim/proto/emails"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/templates"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 type Heim struct {

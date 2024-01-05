@@ -13,7 +13,7 @@ import (
 
 	"euphoria.leet.nu/heim/proto/jobs"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 	"gopkg.in/gorp.v1"
 )
 

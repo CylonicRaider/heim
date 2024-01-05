@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 type logCtxKey int

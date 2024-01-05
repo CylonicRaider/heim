@@ -7,7 +7,7 @@ import (
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 
 	"gopkg.in/gorp.v1"
 )

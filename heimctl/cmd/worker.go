@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"euphoria.leet.nu/heim/heimctl/worker"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 func init() {

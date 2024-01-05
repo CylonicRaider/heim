@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 func init() { register("help", &helpCmd{}) }

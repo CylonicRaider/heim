@@ -14,7 +14,7 @@ import (
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 
 	"github.com/gorilla/websocket"
 	"github.com/juju/ratelimit"

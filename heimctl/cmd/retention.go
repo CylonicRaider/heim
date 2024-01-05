@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"euphoria.leet.nu/heim/heimctl/retention"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 func init() {

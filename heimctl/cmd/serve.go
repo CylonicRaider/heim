@@ -11,9 +11,9 @@ import (
 	"euphoria.leet.nu/heim/backend"
 	"euphoria.leet.nu/heim/backend/console"
 	"euphoria.leet.nu/heim/proto"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 
-	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {
@@ -234,7 +234,7 @@ func (cmd *serveEmbedCmd) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		r.URL.Path = "/embed.html"
 	}
 	if r.URL.Path == "/metrics" {
-		prometheus.Handler().ServeHTTP(w, r)
+		promhttp.Handler().ServeHTTP(w, r)
 		return
 	}
 	http.FileServer(http.Dir(cmd.static)).ServeHTTP(w, r)

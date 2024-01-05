@@ -15,7 +15,7 @@ import (
 
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/cluster/etcd"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 func pickPort() (int, error) {

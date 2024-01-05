@@ -20,7 +20,7 @@ import (
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/security"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"

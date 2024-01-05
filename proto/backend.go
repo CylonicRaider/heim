@@ -6,7 +6,7 @@ import (
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto/jobs"
 	"euphoria.leet.nu/heim/proto/security"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 // A Backend provides Rooms and an implementation version.

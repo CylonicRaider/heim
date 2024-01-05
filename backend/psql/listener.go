@@ -6,7 +6,7 @@ import (
 
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/logging"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 type Listener struct {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"euphoria.leet.nu/heim/proto/security"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 type CapabilityTable interface {

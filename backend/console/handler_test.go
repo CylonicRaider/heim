@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 
 	. "github.com/smartystreets/goconvey/convey"
 )

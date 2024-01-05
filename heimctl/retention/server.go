@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"sync"
 
-	"euphoria.io/scope"
-	"github.com/prometheus/client_golang/prometheus"
+	"github.com/euphoria-io/scope"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func Serve(ctx scope.Context, addr string) {
-	http.Handle("/metrics", prometheus.Handler())
+	http.Handle("/metrics", promhttp.Handler())
 
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {

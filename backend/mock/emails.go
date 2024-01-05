@@ -11,7 +11,7 @@ import (
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.leet.nu/heim/templates"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 type EmailTracker struct {

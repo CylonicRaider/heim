@@ -3,7 +3,7 @@ package worker
 import (
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/jobs"
-	"euphoria.io/scope"
+	"github.com/euphoria-io/scope"
 )
 
 type Worker interface {
