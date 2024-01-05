@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"euphoria.io/heim/heimctl/worker"
+	"euphoria.leet.nu/heim/heimctl/worker"
 	"euphoria.io/scope"
 )
 

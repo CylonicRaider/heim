@@ -11,7 +11,7 @@ import (
 	"text/template"
 	"time"
 
-	"euphoria.io/heim/proto/logging"
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.io/scope"
 )
 

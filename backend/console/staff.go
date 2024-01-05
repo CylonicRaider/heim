@@ -1,7 +1,7 @@
 package console
 
 import (
-	"euphoria.io/heim/proto/security"
+	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.io/scope"
 )
 

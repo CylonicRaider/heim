@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"euphoria.io/heim/proto"
+	"euphoria.leet.nu/heim/proto"
 	"euphoria.io/scope"
 )
 

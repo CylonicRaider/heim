@@ -7,7 +7,7 @@ import (
 
 	"github.com/lib/pq"
 
-	"euphoria.io/heim/heimctl/activity"
+	"euphoria.leet.nu/heim/heimctl/activity"
 	"euphoria.io/scope"
 )
 

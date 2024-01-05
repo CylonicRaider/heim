@@ -10,10 +10,10 @@ import (
 
 	"encoding/hex"
 
-	"euphoria.io/heim/cluster"
-	"euphoria.io/heim/proto/emails"
-	"euphoria.io/heim/proto/security"
-	"euphoria.io/heim/templates"
+	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/proto/emails"
+	"euphoria.leet.nu/heim/proto/security"
+	"euphoria.leet.nu/heim/templates"
 	"euphoria.io/scope"
 )
 

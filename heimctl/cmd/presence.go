@@ -4,7 +4,7 @@ import (
 	"flag"
 	"time"
 
-	"euphoria.io/heim/heimctl/presence"
+	"euphoria.leet.nu/heim/heimctl/presence"
 	"euphoria.io/scope"
 )
 

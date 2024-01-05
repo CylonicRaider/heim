@@ -4,11 +4,11 @@ import (
 	"sync"
 	"time"
 
-	"euphoria.io/heim/cluster"
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/jobs"
-	"euphoria.io/heim/proto/security"
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/jobs"
+	"euphoria.leet.nu/heim/proto/security"
+	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.io/scope"
 )
 

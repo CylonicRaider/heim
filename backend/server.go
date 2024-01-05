@@ -9,9 +9,9 @@ import (
 	"sync"
 	"time"
 
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/security"
-	"euphoria.io/heim/templates"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/security"
+	"euphoria.leet.nu/heim/templates"
 	"euphoria.io/scope"
 
 	gorillactx "github.com/gorilla/context"

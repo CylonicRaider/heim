@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.io/scope"
 )
 

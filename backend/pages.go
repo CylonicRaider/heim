@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"euphoria.io/heim/templates"
+	"euphoria.leet.nu/heim/templates"
 )
 
 const (

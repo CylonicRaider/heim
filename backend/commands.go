@@ -11,10 +11,10 @@ import (
 
 	"golang.org/x/net/context"
 
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/logging"
-	"euphoria.io/heim/proto/security"
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/logging"
+	"euphoria.leet.nu/heim/proto/security"
+	"euphoria.leet.nu/heim/proto/snowflake"
 )
 
 const authDelay = 2 * time.Second

@@ -10,10 +10,10 @@ import (
 
 	"gopkg.in/gorp.v1"
 
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/logging"
-	"euphoria.io/heim/proto/security"
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/logging"
+	"euphoria.leet.nu/heim/proto/security"
+	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.io/scope"
 )
 

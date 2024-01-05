@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"euphoria.io/heim/proto/security"
+	"euphoria.leet.nu/heim/proto/security"
 )
 
 func DecryptPayload(payload interface{}, auth *Authorization, level PrivilegeLevel) (interface{}, error) {

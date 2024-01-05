@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"time"
 
-	"euphoria.io/heim/proto/snowflake"
-	"euphoria.io/heim/templates"
+	"euphoria.leet.nu/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/templates"
 	"euphoria.io/scope"
 )
 

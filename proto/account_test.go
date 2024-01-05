@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"euphoria.io/heim/proto/security"
+	"euphoria.leet.nu/heim/proto/security"
 
 	. "github.com/smartystreets/goconvey/convey"
 )

@@ -3,7 +3,7 @@ package worker
 import (
 	"fmt"
 
-	"euphoria.io/heim/proto"
+	"euphoria.leet.nu/heim/proto"
 	"euphoria.io/scope"
 )
 

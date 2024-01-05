@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"euphoria.io/heim/proto"
+	"euphoria.leet.nu/heim/proto"
 )
 
 type Presence struct {

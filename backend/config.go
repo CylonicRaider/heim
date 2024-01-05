@@ -17,13 +17,13 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"euphoria.io/heim/aws/kms"
-	"euphoria.io/heim/cluster"
-	"euphoria.io/heim/cluster/etcd"
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/emails"
-	"euphoria.io/heim/proto/security"
-	"euphoria.io/heim/templates"
+	"euphoria.leet.nu/heim/aws/kms"
+	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/cluster/etcd"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/emails"
+	"euphoria.leet.nu/heim/proto/security"
+	"euphoria.leet.nu/heim/templates"
 	"euphoria.io/scope"
 )
 

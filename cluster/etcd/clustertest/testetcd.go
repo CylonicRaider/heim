@@ -13,8 +13,8 @@ import (
 	"testing"
 	"time"
 
-	"euphoria.io/heim/cluster"
-	"euphoria.io/heim/cluster/etcd"
+	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/cluster/etcd"
 	"euphoria.io/scope"
 )
 

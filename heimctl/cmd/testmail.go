@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/templates"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/templates"
 	"euphoria.io/scope"
 )
 

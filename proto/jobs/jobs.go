@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"time"
 
-	"euphoria.io/heim/proto/logging"
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/proto/logging"
+	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.io/scope"
 )
 

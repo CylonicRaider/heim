@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/proto/snowflake"
 )
 
 type Time time.Time

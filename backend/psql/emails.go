@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/emails"
-	"euphoria.io/heim/proto/jobs"
-	"euphoria.io/heim/proto/logging"
-	"euphoria.io/heim/proto/snowflake"
-	"euphoria.io/heim/templates"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/emails"
+	"euphoria.leet.nu/heim/proto/jobs"
+	"euphoria.leet.nu/heim/proto/logging"
+	"euphoria.leet.nu/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/templates"
 	"euphoria.io/scope"
 
 	"gopkg.in/gorp.v1"

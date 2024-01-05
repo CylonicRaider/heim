@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"euphoria.io/heim/backend"
-	"euphoria.io/heim/cluster"
-	"euphoria.io/heim/proto"
+	"euphoria.leet.nu/heim/backend"
+	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/proto"
 
 	"github.com/rubenv/sql-migrate"
 )

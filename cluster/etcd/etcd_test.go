@@ -3,9 +3,9 @@ package etcd_test
 import (
 	"testing"
 
-	"euphoria.io/heim/cluster"
-	"euphoria.io/heim/cluster/etcd/clustertest"
-	"euphoria.io/heim/proto/security"
+	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/cluster/etcd/clustertest"
+	"euphoria.leet.nu/heim/proto/security"
 
 	. "github.com/smartystreets/goconvey/convey"
 )

@@ -3,8 +3,8 @@ package mock
 import (
 	"sync"
 
-	"euphoria.io/heim/backend"
-	"euphoria.io/heim/proto"
+	"euphoria.leet.nu/heim/backend"
+	"euphoria.leet.nu/heim/proto"
 	"euphoria.io/scope"
 )
 

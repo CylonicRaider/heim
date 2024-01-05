@@ -3,10 +3,10 @@ package etcd_test
 import (
 	"testing"
 
-	"euphoria.io/heim/backend"
-	"euphoria.io/heim/backend/mock"
-	"euphoria.io/heim/cluster/etcd/clustertest"
-	"euphoria.io/heim/proto"
+	"euphoria.leet.nu/heim/backend"
+	"euphoria.leet.nu/heim/backend/mock"
+	"euphoria.leet.nu/heim/cluster/etcd/clustertest"
+	"euphoria.leet.nu/heim/proto"
 )
 
 func TestIntegration(t *testing.T) {
@@ -15,7 +15,7 @@ func TestIntegration(t *testing.T) {
 		t.Fatal(err)
 	}
 	if etcd == nil {
-		t.Fatal("can't test euphoria.io/heim/cluster/etcd: etcd not available in PATH")
+		t.Fatal("can't test euphoria.leet.nu/heim/cluster/etcd: etcd not available in PATH")
 	}
 	defer etcd.Shutdown()
 

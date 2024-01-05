@@ -41,7 +41,7 @@ Heim is now running on port 8080. \o/
 
 #### Backend
 
-`docker-compose run backend go test -v euphoria.io/heim/...`
+`docker-compose run backend go test -v euphoria.leet.nu/heim/...`
 
 #### Frontend
 

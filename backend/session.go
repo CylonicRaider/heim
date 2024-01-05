@@ -11,9 +11,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/logging"
-	"euphoria.io/heim/proto/security"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/logging"
+	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.io/scope"
 
 	"github.com/gorilla/websocket"

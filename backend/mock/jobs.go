@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"euphoria.io/heim/proto/jobs"
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/proto/jobs"
+	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.io/scope"
 )
 

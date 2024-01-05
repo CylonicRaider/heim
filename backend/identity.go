@@ -1,6 +1,6 @@
 package backend
 
-import "euphoria.io/heim/proto"
+import "euphoria.leet.nu/heim/proto"
 
 type memIdentity struct {
 	id        proto.UserID

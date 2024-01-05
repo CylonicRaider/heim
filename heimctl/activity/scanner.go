@@ -5,9 +5,9 @@ import (
 
 	"encoding/json"
 
-	"euphoria.io/heim/backend/psql"
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/logging"
+	"euphoria.leet.nu/heim/backend/psql"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.io/scope"
 )
 

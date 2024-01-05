@@ -1,8 +1,8 @@
 package worker
 
 import (
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/jobs"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/jobs"
 	"euphoria.io/scope"
 )
 

@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"euphoria.io/heim/backend/mock"
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/security"
+	"euphoria.leet.nu/heim/backend/mock"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.io/scope"
 
 	. "github.com/smartystreets/goconvey/convey"

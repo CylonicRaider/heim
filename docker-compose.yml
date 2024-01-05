@@ -62,7 +62,7 @@ backend:
   links:
     - psql
   volumes:
-    - .:/go/src/euphoria.io/heim
+    - .:/go/src/euphoria.leet.nu/heim
     - ./_deps/godeps:/godeps
     - ./client/build:/srv/heim/client/src/build
     - ./backend/console/keys:/keys
@@ -73,7 +73,7 @@ backend:
     HEIM_ID: dev1
     HEIM_ETCD: mock
     HEIM_ETCD_HOME: /dev/euphoria.io
-    HEIM_CONFIG: /go/src/euphoria.io/heim/heim.yml
+    HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
   command: run.sh heimctl -static /srv/heim/client/src/build/heim serve -http :80 -console :2222
 
 # The backend_etcd container runs the backend server against the psql container using etcd.
@@ -83,7 +83,7 @@ backend_etcd:
     - etcd
     - psql
   volumes:
-    - .:/go/src/euphoria.io/heim
+    - .:/go/src/euphoria.leet.nu/heim
     - ./_deps/godeps:/godeps
     - ./client/build:/srv/heim/client/src/build
     - ./backend/console/keys:/keys
@@ -94,14 +94,14 @@ backend_etcd:
     HEIM_ID: dev1
     HEIM_ETCD: http://etcd:4001
     HEIM_ETCD_HOME: /dev/euphoria.io
-    HEIM_CONFIG: /go/src/euphoria.io/heim/heim.yml
+    HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
   command: run.sh heimctl -static /srv/heim/client/src/build/heim serve -http :80 -console :2222
 
 # The embed container serves static files for the embed domain.
 embed:
   build: backend
   volumes:
-    - .:/go/src/euphoria.io/heim
+    - .:/go/src/euphoria.leet.nu/heim
     - ./_deps/godeps:/godeps
     - ./client/build:/srv/heim/client/src/build
   ports:
@@ -114,14 +114,14 @@ presence:
     - etcd
     - psql
   volumes:
-    - .:/go/src/euphoria.io/heim
+    - .:/go/src/euphoria.leet.nu/heim
     - ./_deps/godeps:/godeps
   ports:
     - "8082:80"
   environment:
     HEIM_ETCD: http://etcd:4001
     HEIM_ETCD_HOME: /dev/euphoria.io
-    HEIM_CONFIG: /go/src/euphoria.io/heim/heim.yml
+    HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
   command: run.sh heimctl presence-exporter -http :80 -interval 10s
 
 retention:
@@ -130,14 +130,14 @@ retention:
     - etcd
     - psql
   volumes:
-    - .:/go/src/euphoria.io/heim
+    - .:/go/src/euphoria.leet.nu/heim
     - ./_deps/godeps:/godeps
   ports:
     - "8082:80"
   environment:
     HEIM_ETCD: http://etcd:4001
     HEIM_ETCD_HOME: /dev/euphoria.io
-    HEIM_CONFIG: /go/src/euphoria.io/heim/heim.yml
+    HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
   command: run.sh heimctl log-retention -http :80 -interval 10s
 
 activity:
@@ -146,14 +146,14 @@ activity:
     - etcd
     - psql
   volumes:
-    - .:/go/src/euphoria.io/heim
+    - .:/go/src/euphoria.leet.nu/heim
     - ./_deps/godeps:/godeps
   ports:
     - "8082:80"
   environment:
     HEIM_ETCD: http://etcd:4001
     HEIM_ETCD_HOME: /dev/euphoria.io
-    HEIM_CONFIG: /go/src/euphoria.io/heim/heim.yml
+    HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
   command: run.sh heimctl activity-exporter -http :80
 
 haproxy:

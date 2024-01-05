@@ -3,9 +3,9 @@ package proto
 import (
 	"time"
 
-	"euphoria.io/heim/cluster"
-	"euphoria.io/heim/proto/jobs"
-	"euphoria.io/heim/proto/security"
+	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/proto/jobs"
+	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.io/scope"
 )
 

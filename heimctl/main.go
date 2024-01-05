@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"euphoria.io/heim/heimctl/cmd"
+	"euphoria.leet.nu/heim/heimctl/cmd"
 )
 
 var version string

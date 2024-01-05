@@ -6,10 +6,10 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/jobs"
-	"euphoria.io/heim/proto/logging"
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/jobs"
+	"euphoria.leet.nu/heim/proto/logging"
+	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.io/scope"
 )
 

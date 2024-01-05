@@ -5,7 +5,7 @@ import (
 
 	"encoding/json"
 
-	"euphoria.io/heim/proto/security"
+	"euphoria.leet.nu/heim/proto/security"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"

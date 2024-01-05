@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/logging"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.io/scope"
 )
 

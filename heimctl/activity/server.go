@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"sync"
 
-	"euphoria.io/heim/proto/logging"
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.io/scope"
 	"github.com/prometheus/client_golang/prometheus"
 )

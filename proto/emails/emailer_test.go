@@ -11,7 +11,7 @@ import (
 	"net/textproto"
 	"testing"
 
-	"euphoria.io/heim/templates"
+	"euphoria.leet.nu/heim/templates"
 
 	. "github.com/smartystreets/goconvey/convey"
 )

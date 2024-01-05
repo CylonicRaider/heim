@@ -1,6 +1,6 @@
 package proto
 
-import "euphoria.io/heim/proto/security"
+import "euphoria.leet.nu/heim/proto/security"
 
 type AuthOption string
 

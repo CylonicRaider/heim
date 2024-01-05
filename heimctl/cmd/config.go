@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"os"
 
-	"euphoria.io/heim/backend"
-	"euphoria.io/heim/backend/mock"
-	"euphoria.io/heim/backend/psql"
-	"euphoria.io/heim/cluster"
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/backend"
+	"euphoria.leet.nu/heim/backend/mock"
+	"euphoria.leet.nu/heim/backend/psql"
+	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.io/scope"
 )
 

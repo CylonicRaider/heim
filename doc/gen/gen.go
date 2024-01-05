@@ -16,7 +16,7 @@ import (
 	"strings"
 	"text/template"
 
-	"euphoria.io/heim/proto"
+	"euphoria.leet.nu/heim/proto"
 )
 
 type objects doc.Package
@@ -224,23 +224,23 @@ func joinComments(cg *ast.CommentGroup) string {
 }
 
 func run() error {
-	pkg, err := build.Import("euphoria.io/heim/proto", "", build.FindOnly)
+	pkg, err := build.Import("euphoria.leet.nu/heim/proto", "", build.FindOnly)
 	if err != nil {
 		return fmt.Errorf("import error: %s", err)
 	}
 
 	if pkg.SrcRoot == "" {
-		return fmt.Errorf("error: can't find source for package euphoria.io/heim/proto")
+		return fmt.Errorf("error: can't find source for package euphoria.leet.nu/heim/proto")
 	}
 
 	pkgs, err := parser.ParseDir(
-		token.NewFileSet(), filepath.Join(pkg.SrcRoot, "euphoria.io/heim/proto"), nil,
+		token.NewFileSet(), filepath.Join(pkg.SrcRoot, "euphoria.leet.nu/heim/proto"), nil,
 		parser.ParseComments)
 	if err != nil {
 		return fmt.Errorf("parse error: %s", err)
 	}
 
-	obs := (*objects)(doc.New(pkgs["proto"], "euphoria.io/heim/proto", 0))
+	obs := (*objects)(doc.New(pkgs["proto"], "euphoria.leet.nu/heim/proto", 0))
 	ps := sortObjects(obs)
 	ts := types{}
 	t := template.New("api.md").Funcs(template.FuncMap{
@@ -266,7 +266,7 @@ func run() error {
 	ts.registerType("Time")
 	ts.registerType("UserID")
 
-	gendir := filepath.Join(pkg.SrcRoot, "euphoria.io/heim/doc/gen")
+	gendir := filepath.Join(pkg.SrcRoot, "euphoria.leet.nu/heim/doc/gen")
 	if err := os.Chdir(gendir); err != nil {
 		return fmt.Errorf("chdir error: %s: %s", gendir, err)
 	}

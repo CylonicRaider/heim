@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/proto/snowflake"
 )
 
 type PacketType string

@@ -8,9 +8,9 @@ import (
 	"strings"
 	"sync"
 
-	"euphoria.io/heim/backend"
-	"euphoria.io/heim/backend/console"
-	"euphoria.io/heim/proto"
+	"euphoria.leet.nu/heim/backend"
+	"euphoria.leet.nu/heim/backend/console"
+	"euphoria.leet.nu/heim/proto"
 	"euphoria.io/scope"
 
 	"github.com/prometheus/client_golang/prometheus"

@@ -3,9 +3,9 @@ package backend_test
 import (
 	"testing"
 
-	"euphoria.io/heim/backend"
-	"euphoria.io/heim/backend/mock"
-	"euphoria.io/heim/proto"
+	"euphoria.leet.nu/heim/backend"
+	"euphoria.leet.nu/heim/backend/mock"
+	"euphoria.leet.nu/heim/proto"
 )
 
 func TestBackend(t *testing.T) {

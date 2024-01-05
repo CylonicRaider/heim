@@ -3,7 +3,7 @@ package proto
 import (
 	"encoding/json"
 
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/proto/snowflake"
 )
 
 const (

@@ -4,8 +4,8 @@ import (
 	"sync"
 	"time"
 
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.io/scope"
 )
 

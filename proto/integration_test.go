@@ -3,9 +3,9 @@ package proto_test
 import (
 	"testing"
 
-	"euphoria.io/heim/backend"
-	"euphoria.io/heim/backend/mock"
-	"euphoria.io/heim/proto"
+	"euphoria.leet.nu/heim/backend"
+	"euphoria.leet.nu/heim/backend/mock"
+	"euphoria.leet.nu/heim/proto"
 )
 
 func TestIntegration(t *testing.T) {

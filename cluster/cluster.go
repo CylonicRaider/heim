@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"euphoria.io/heim/proto/security"
+	"euphoria.leet.nu/heim/proto/security"
 )
 
 var (

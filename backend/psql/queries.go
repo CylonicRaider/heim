@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"euphoria.io/heim/proto/logging"
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.io/scope"
 
 	"gopkg.in/gorp.v1"

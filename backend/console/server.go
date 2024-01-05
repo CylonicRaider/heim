@@ -17,9 +17,9 @@ import (
 
 	"encoding/pem"
 
-	"euphoria.io/heim/cluster"
-	"euphoria.io/heim/proto"
-	"euphoria.io/heim/proto/security"
+	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.io/scope"
 
 	"golang.org/x/crypto/ssh"
