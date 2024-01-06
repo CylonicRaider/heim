@@ -72,7 +72,7 @@ backend:
   environment:
     HEIM_ID: dev1
     HEIM_ETCD: mock
-    HEIM_ETCD_HOME: /dev/euphoria.io
+    HEIM_ETCD_HOME: /dev/euphoria
     HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
   command: run.sh heimctl -static /srv/heim/client/src/build/heim serve -http :80 -console :2222
 
@@ -93,7 +93,7 @@ backend_etcd:
   environment:
     HEIM_ID: dev1
     HEIM_ETCD: http://etcd:4001
-    HEIM_ETCD_HOME: /dev/euphoria.io
+    HEIM_ETCD_HOME: /dev/euphoria
     HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
   command: run.sh heimctl -static /srv/heim/client/src/build/heim serve -http :80 -console :2222
 
@@ -120,7 +120,7 @@ presence:
     - "8082:80"
   environment:
     HEIM_ETCD: http://etcd:4001
-    HEIM_ETCD_HOME: /dev/euphoria.io
+    HEIM_ETCD_HOME: /dev/euphoria
     HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
   command: run.sh heimctl presence-exporter -http :80 -interval 10s
 
@@ -136,7 +136,7 @@ retention:
     - "8082:80"
   environment:
     HEIM_ETCD: http://etcd:4001
-    HEIM_ETCD_HOME: /dev/euphoria.io
+    HEIM_ETCD_HOME: /dev/euphoria
     HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
   command: run.sh heimctl log-retention -http :80 -interval 10s
 
@@ -152,7 +152,7 @@ activity:
     - "8082:80"
   environment:
     HEIM_ETCD: http://etcd:4001
-    HEIM_ETCD_HOME: /dev/euphoria.io
+    HEIM_ETCD_HOME: /dev/euphoria
     HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
   command: run.sh heimctl activity-exporter -http :80
 

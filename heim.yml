@@ -1,5 +1,5 @@
 cluster:
-  etcd: /dev/euphoria.io
+  etcd: /dev/euphoria
 database:
   dsn: postgres://postgres:heimlich@psql/heim?sslmode=disable
 email:
