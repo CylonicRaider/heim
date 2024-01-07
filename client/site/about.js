@@ -6,7 +6,7 @@ import heimURL from '../lib/heimURL'
 module.exports = (
   <MainPage title="about euphoria" className="about">
     <div className="primary">
-      <h1>What's euphoria?</h1>
+      <h1>What's Euphoria?</h1>
       <section className="letter">
         <h3>Euphoria is chat for all, in communities that matter.</h3>
         <p>Hello! We're building a platform for chat rooms you care about.</p>
