@@ -8,6 +8,7 @@ import Markdown from './Markdown'
 import Page from './Page'
 import PolicyNav from './PolicyNav'
 import HeimAttachPoint from './HeimAttachPoint'
+import links from './links'
 
 export {
   FancyLogo,
@@ -20,4 +21,5 @@ export {
   Page,
   PolicyNav,
   HeimAttachPoint,
+  links,
 }

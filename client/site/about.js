@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { MainPage, FancyLogo, FauxNick, FauxMessage } from './common'
+import { MainPage, FancyLogo, FauxNick, FauxMessage, links } from './common'
 import heimURL from '../lib/heimURL'
 
 module.exports = (
@@ -42,7 +42,7 @@ module.exports = (
     <section>
       <h2>Euphoria is open</h2>
       <h3>We believe that online community platforms should be open source.</h3>
-      <p>Our chat server, Heim, is <a href="https://github.com/euphoria-io/heim">available on GitHub</a>. Join our development chat in <a href={heimURL('/room/heim')}>&heim</a>.</p>
+      <p>Our chat server, Heim, is <a href={links.heimSourceRepo}>available on GitHub</a>. Join our development chat in <a href={heimURL('/room/heim')}>&heim</a>.</p>
     </section>
     <section className="who">
       <h2>Who we were</h2>

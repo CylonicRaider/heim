@@ -2,6 +2,8 @@ import React from 'react'
 
 import heimURL from '../../lib/heimURL'
 
+import links from './links'
+
 export default function Footer() {
   return (
     <footer>
@@ -13,7 +15,7 @@ export default function Footer() {
         <a href={heimURL('/about/values')}>values</a>
         <a href={heimURL('/about/conduct')}><span className="long">code of </span>conduct</a>
         <span className="spacer" />
-        <a href="https://github.com/CylonicRaider/heim"><span className="long">source </span>code</a>
+        <a href={links.heimSourceRepo}><span className="long">source </span>code</a>
       </div>
     </footer>
   )
