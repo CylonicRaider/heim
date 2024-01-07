@@ -19,11 +19,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func instrumentHttpHandlerFunc(label string, h http.HandlerFunc) http.HandlerFunc {
-	// FIXME: figure out how prometheus wants us to do things now
-	return h
-}
-
 func (s *Server) route() {
 	s.r = mux.NewRouter().StrictSlash(true)
 	s.r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
