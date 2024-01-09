@@ -6,31 +6,22 @@
 Euphoria ("**Euphoria**") respects the intellectual property rights of others
 and expects its users to do the same.
 
-It is Euphoria's policy to terminate in appropriate circumstances and at its
-discretion account holders or subscribers who repeatedly infringe or who are
+It is Euphoria's policy to terminate, in appropriate circumstances and at its
+discretion, account holders or subscribers who repeatedly infringe or who are
 repeatedly charged with infringing the rights of copyright holders
-
-In accordance with the Digital Millennium Copyright Act of 1998, the text of
-which may be found on the U.S. Copyright Office website at
-<http://www.copyright.gov/legislation/dmca.pdf>, Euphoria will respond
-expeditiously to claims of copyright infringement committed using the Services
-offered by Euphoria (as defined in the Euphoria Terms of Service)  that are
-reported to Euphoria's Designated Copyright Agent, identified in the sample
-notice below.
 
 If you are a copyright owner, or are authorized to act on behalf of one, or
 authorized to act under any exclusive right under copyright, please report
 alleged copyright infringements taking place on or through the Services by
-completing the following DMCA Notice of Alleged Infringement and delivering it
-to Euphoria's Designated Copyright Agent.  Upon receipt of the Notice as
-described below, Euphoria will take whatever action, in its sole discretion, it
-deems appropriate, including removal of the challenged material from the
-Services.
+completing the following Notice of Alleged Infringement and delivering it
+to Euphoria. Upon receipt of the Notice as described below, Euphoria will take
+whatever action, in its sole discretion, it deems appropriate, which may
+include removal of the challenged material from the Services.
 
- > ## DMCA Notice of Alleged Infringement ("Notice")
+ > ## Notice of Alleged Copyright Infringement ("Notice")
  >
  > 1. Identify the copyrighted work that you claim has been infringed, or if
- >    multiple copyrighted works are covered by this Notice - you may provide a
+ >    multiple copyrighted works are covered by this Notice — you may provide a
  >    representative list of the copyrighted works that you claim have been
  >    infringed.
  >
@@ -49,11 +40,11 @@ Services.
  >      the copyrighted material is not authorized by the copyright owner, its
  >      agent, or the law (e.g., as a fair use)."
  >
- >    * "I hereby state that the information in this Notice is accurate and, under
- >      penalty of perjury, that I am the owner, or authorized to act on behalf of
- >      the owner, of the copyright or of an exclusive right under the copyright
- >      that is allegedly infringed."
+ >    * "I hereby state that the information in this Notice is accurate and that
+ >      I am the owner, or authorized to act on behalf of the owner, of the
+ >      copyright or of an exclusive right under the copyright that is allegedly
+ >      infringed."
+ >
  > 5. Provide your full legal name and your electronic or physical signature.
  >
- > Deliver this Notice, with all items completed, to Euphoria's Designated
- > Copyright Agent.
+ > Deliver this Notice, with all items completed, to Euphoria.

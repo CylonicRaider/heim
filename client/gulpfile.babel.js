@@ -267,7 +267,7 @@ gulp.task('site-templates', ['heim-git-commit'], () => {
     'about/hosts',
     'about/terms',
     'about/privacy',
-    'about/dmca',
+    'about/copyright',
   ]
 
   return merge(_.map(pages, (name) => {
