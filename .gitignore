@@ -1,3 +1,4 @@
 .*.sw?
-backend/static/
-client/node_modules/
+/backend/static/
+/client/node_modules/
+/_psqldata/
