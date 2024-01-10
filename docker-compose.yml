@@ -13,11 +13,13 @@ psql:
 psqlclient:
   command: psql -h psql -p 5432 -U postgres heim
   build: containers/psql/client
+  environment:
+    PGPASSWORD: heimlich
   links:
     - psql
 
 sentry:
-  image: slafs/sentry:7.4
+  image: slafs/sentry:8.0
   volumes:
     - ./_psqldata/sentry:/data
   ports:
@@ -133,7 +135,7 @@ retention:
     - .:/go/src/euphoria.leet.nu/heim
     - ./_deps/godeps:/godeps
   ports:
-    - "8082:80"
+    - "8083:80"
   environment:
     HEIM_ETCD: http://etcd:4001
     HEIM_ETCD_HOME: /dev/euphoria
@@ -149,7 +151,7 @@ activity:
     - .:/go/src/euphoria.leet.nu/heim
     - ./_deps/godeps:/godeps
   ports:
-    - "8082:80"
+    - "8084:80"
   environment:
     HEIM_ETCD: http://etcd:4001
     HEIM_ETCD_HOME: /dev/euphoria

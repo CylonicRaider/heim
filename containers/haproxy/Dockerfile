@@ -1,3 +1,3 @@
-FROM haproxy:1.5
+FROM haproxy:2.8.5
 
 EXPOSE 80
