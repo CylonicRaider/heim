@@ -1,172 +1,179 @@
-# The etcd container coordinates our single-node cluster.
-etcd:
-  build: containers/etcd
+services:
+  # The etcd container coordinates our single-node cluster.
+  etcd:
+    build: containers/etcd
 
-# The psql container runs the postgres server from the psqldata/data directory.
-psql:
-  build: containers/psql
-  volumes:
-    - ./_psqldata/data:/var/lib/postgresql/data
+  # The psql container runs the postgres server from the psqldata/data directory.
+  psql:
+    build: containers/psql
+    volumes:
+      - ./_psqldata/data:/var/lib/postgresql/data
 
-# The psqlclient container provides a client connection to the psql container.
-# TODO: add volume for persistent readline history, sql dumps, etc.
-psqlclient:
-  command: psql -h psql -p 5432 -U postgres heim
-  build: containers/psql/client
-  environment:
-    PGPASSWORD: heimlich
-  links:
-    - psql
+  # The psqlclient container provides a client connection to the psql container.
+  # TODO: add volume for persistent readline history, sql dumps, etc.
+  psqlclient:
+    command: psql -h psql -p 5432 -U postgres heim
+    build: containers/psql/client
+    environment:
+      PGPASSWORD: heimlich
+    links:
+      - psql
 
-sentry:
-  image: slafs/sentry:8.0
-  volumes:
-    - ./_psqldata/sentry:/data
-  ports:
-    - "9000:9000"
-  environment:
-    SENTRY_URL_PREFIX: http://localhost:9000
-    SENTRY_INITIAL_TEAM: euphoria
-    SENTRY_INITIAL_PROJECT: heim-client
-    SENTRY_INITIAL_PLATFORM: javascript
-    SENTRY_INITIAL_KEY: sentry:sentry
-    SENTRY_INITIAL_DOMAINS: localhost
-    SECRET_KEY: onlyfordevelopment
+  # The sentry container runs an instance of the Sentry error reporting service.
+  sentry:
+    image: slafs/sentry:8.0
+    volumes:
+      - ./_psqldata/sentry:/data
+    ports:
+      - "9000:9000"
+    environment:
+      SENTRY_URL_PREFIX: http://localhost:9000
+      SENTRY_INITIAL_TEAM: euphoria
+      SENTRY_INITIAL_PROJECT: heim-client
+      SENTRY_INITIAL_PLATFORM: javascript
+      SENTRY_INITIAL_KEY: sentry:sentry
+      SENTRY_INITIAL_DOMAINS: localhost
+      SECRET_KEY: onlyfordevelopment
 
-# The frontend container runs an ongoing gulp build.
-frontend:
-  command: gulp build
-  build: client
-  volumes:
-    - .:/srv/heim/
-    - ./_deps/node_modules:/srv/heim/client/node_modules
-    - ./client/build:/srv/heim/client/build
-  ports:
-    - "8080:8080"
-    - "8081:8081"
-  environment:
-    NODE_ENV: development
-    SENTRY_ENDPOINT: http://sentry@localhost:9000/2
-    HEIM_ORIGIN: http://localhost:8080
-    EMBED_ORIGIN: http://localhost:8081
+  # The frontend container runs an ongoing gulp build.
+  frontend:
+    command: gulp build
+    build: client
+    volumes:
+      - .:/srv/heim/
+      - ./_deps/node_modules:/srv/heim/client/node_modules
+      - ./client/build:/srv/heim/client/build
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      NODE_ENV: development
+      SENTRY_ENDPOINT: http://sentry@localhost:9000/2
+      HEIM_ORIGIN: http://localhost:8080
+      EMBED_ORIGIN: http://localhost:8081
 
-# The upgradedb container runs the upgradedb command against the psql container.
-upgradedb:
-  build: backend/psql/migrations
-  links:
-    - psql
-  volumes:
-    - ./backend/psql/migrations:/migrations
+  # The upgradedb container runs the upgradedb command against the psql container.
+  upgradedb:
+    build: backend/psql/migrations
+    links:
+      - psql
+    volumes:
+      - ./backend/psql/migrations:/migrations
 
-# The backend container runs the backend server against the psql container with etcd mocked out.
-backend:
-  build: backend
-  links:
-    - psql
-  volumes:
-    - .:/go/src/euphoria.leet.nu/heim
-    - ./_deps/godeps:/godeps
-    - ./client/build:/srv/heim/client/src/build
-    - ./backend/console/keys:/keys
-  ports:
-    - "8080:80"
-    - "2222:2222"
-  environment:
-    HEIM_ID: dev1
-    HEIM_ETCD: mock
-    HEIM_ETCD_HOME: /dev/euphoria
-    HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
-  command: run.sh heimctl serve -http :80 -console :2222
+  # The backend container runs the backend server against the psql container with etcd mocked out.
+  # TODO: add volume for common go build cache
+  backend:
+    build: backend
+    links:
+      - psql
+    volumes:
+      - .:/go/src/euphoria.leet.nu/heim
+      - ./_deps/godeps:/godeps
+      - ./client/build:/srv/heim/client/src/build
+      - ./backend/console/keys:/keys
+    ports:
+      - "8080:80"
+      - "2222:2222"
+    environment:
+      HEIM_ID: dev1
+      HEIM_ETCD: mock
+      HEIM_ETCD_HOME: /dev/euphoria
+      HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
+    command: run.sh heimctl serve -http :80 -console :2222
 
-# The backend_etcd container runs the backend server against the psql container using etcd.
-backend_etcd:
-  build: backend
-  links:
-    - etcd
-    - psql
-  volumes:
-    - .:/go/src/euphoria.leet.nu/heim
-    - ./_deps/godeps:/godeps
-    - ./client/build:/srv/heim/client/src/build
-    - ./backend/console/keys:/keys
-  ports:
-    - "8080:80"
-    - "2222:2222"
-  environment:
-    HEIM_ID: dev1
-    HEIM_ETCD: http://etcd:4001
-    HEIM_ETCD_HOME: /dev/euphoria
-    HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
-  command: run.sh heimctl serve -http :80 -console :2222
+  # The backend_etcd container runs the backend server against the psql container using etcd.
+  backend_etcd:
+    build: backend
+    links:
+      - etcd
+      - psql
+    volumes:
+      - .:/go/src/euphoria.leet.nu/heim
+      - ./_deps/godeps:/godeps
+      - ./client/build:/srv/heim/client/src/build
+      - ./backend/console/keys:/keys
+    ports:
+      - "8080:80"
+      - "2222:2222"
+    environment:
+      HEIM_ID: dev1
+      HEIM_ETCD: http://etcd:4001
+      HEIM_ETCD_HOME: /dev/euphoria
+      HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
+    command: run.sh heimctl serve -http :80 -console :2222
 
-# The embed container serves static files for the embed domain.
-embed:
-  build: backend
-  volumes:
-    - .:/go/src/euphoria.leet.nu/heim
-    - ./_deps/godeps:/godeps
-    - ./client/build:/srv/heim/client/src/build
-  ports:
-    - "8081:80"
-  command: run.sh heimctl serve-embed -http :80 -static /srv/heim/client/src/build/embed
+  # The embed container serves static files for the embed domain.
+  embed:
+    build: backend
+    volumes:
+      - .:/go/src/euphoria.leet.nu/heim
+      - ./_deps/godeps:/godeps
+      - ./client/build:/srv/heim/client/src/build
+    ports:
+      - "8081:80"
+    command: run.sh heimctl serve-embed -http :80 -static /srv/heim/client/src/build/embed
 
-presence:
-  build: backend
-  links:
-    - etcd
-    - psql
-  volumes:
-    - .:/go/src/euphoria.leet.nu/heim
-    - ./_deps/godeps:/godeps
-    - ./client/build:/srv/heim/client/src/build
-    - ./backend/console/keys:/keys
-  ports:
-    - "8082:80"
-  environment:
-    HEIM_ETCD: http://etcd:4001
-    HEIM_ETCD_HOME: /dev/euphoria
-    HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
-  command: run.sh heimctl presence-exporter -http :80 -interval 10s
+  # The presence container collects and exposes metrics about currently-present users.
+  presence:
+    build: backend
+    links:
+      - etcd
+      - psql
+    volumes:
+      - .:/go/src/euphoria.leet.nu/heim
+      - ./_deps/godeps:/godeps
+      - ./client/build:/srv/heim/client/src/build
+      - ./backend/console/keys:/keys
+    ports:
+      - "8082:80"
+    environment:
+      HEIM_ETCD: http://etcd:4001
+      HEIM_ETCD_HOME: /dev/euphoria
+      HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
+    command: run.sh heimctl presence-exporter -http :80 -interval 10s
 
-retention:
-  build: backend
-  links:
-    - etcd
-    - psql
-  volumes:
-    - .:/go/src/euphoria.leet.nu/heim
-    - ./_deps/godeps:/godeps
-    - ./client/build:/srv/heim/client/src/build
-    - ./backend/console/keys:/keys
-  ports:
-    - "8083:80"
-  environment:
-    HEIM_ETCD: http://etcd:4001
-    HEIM_ETCD_HOME: /dev/euphoria
-    HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
-  command: run.sh heimctl log-retention -http :80 -interval 10s
+  # The retention container deletes expired messages from rooms with limited message retention.
+  retention:
+    build: backend
+    links:
+      - etcd
+      - psql
+    volumes:
+      - .:/go/src/euphoria.leet.nu/heim
+      - ./_deps/godeps:/godeps
+      - ./client/build:/srv/heim/client/src/build
+      - ./backend/console/keys:/keys
+    ports:
+      - "8083:80"
+    environment:
+      HEIM_ETCD: http://etcd:4001
+      HEIM_ETCD_HOME: /dev/euphoria
+      HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
+    command: run.sh heimctl log-retention -http :80 -interval 10s
 
-activity:
-  build: backend
-  links:
-    - etcd
-    - psql
-  volumes:
-    - .:/go/src/euphoria.leet.nu/heim
-    - ./_deps/godeps:/godeps
-  ports:
-    - "8084:80"
-  environment:
-    HEIM_ETCD: http://etcd:4001
-    HEIM_ETCD_HOME: /dev/euphoria
-    HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
-  command: run.sh heimctl activity-exporter -http :80
+  # The activity container collects and exposes metrics about overall chat activity.
+  activity:
+    build: backend
+    links:
+      - etcd
+      - psql
+    volumes:
+      - .:/go/src/euphoria.leet.nu/heim
+      - ./_deps/godeps:/godeps
+    ports:
+      - "8084:80"
+    environment:
+      HEIM_ETCD: http://etcd:4001
+      HEIM_ETCD_HOME: /dev/euphoria
+      HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
+    command: run.sh heimctl activity-exporter -http :80
 
-haproxy:
-  build: containers/haproxy
-  links:
-    - backend_etcd
-  volumes:
-    - ./containers/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
-  ports:
-    - "8888:80"
+  # The haproxy container runs the HAProxy reverse proxy.
+  haproxy:
+    build: containers/haproxy
+    links:
+      - backend_etcd
+    volumes:
+      - ./containers/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - "8888:80"
