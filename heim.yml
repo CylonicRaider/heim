@@ -7,4 +7,5 @@ email:
 kms:
   aes256:
     key-file: /keys/masterkey
+static_path: /srv/heim/client/src/build/heim
 set_insecure_cookies: true
