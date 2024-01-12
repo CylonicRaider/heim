@@ -5,12 +5,6 @@ real-time community platform. The backend is a Go server that speaks JSON over
 WebSockets, persisting data to PostgreSQL. Our web client is built in
 React/Reflux.
 
-**Currently, heim is released in a pre-alpha state**. Please be advised that
-new development is currently being prioritized over stability. We're releasing
-in this form because we want to open up our codebase and development progress.
-We will make breaking changes to the protocol, and will be slow to merge
-complex pull requests while we get our core building blocks in place.
-
 ## Getting started
 
 1. Install `git`, [`docker`](https://docs.docker.com/installation/), and
