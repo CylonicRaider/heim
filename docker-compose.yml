@@ -12,12 +12,12 @@ services:
   # The psqlclient container provides a client connection to the psql container.
   # TODO: add volume for persistent readline history, sql dumps, etc.
   psqlclient:
-    command: psql -h psql -p 5432 -U postgres heim
     build: containers/psql/client
-    environment:
-      PGPASSWORD: heimlich
     links:
       - psql
+    environment:
+      PGPASSWORD: heimlich
+    command: psql -h psql -p 5432 -U postgres heim
 
   # The sentry container runs an instance of the Sentry error reporting service.
   sentry:
@@ -37,12 +37,10 @@ services:
 
   # The frontend container runs an ongoing gulp build.
   frontend:
-    command: gulp build
     build: client
     volumes:
-      - .:/srv/heim/
+      - .:/srv/heim
       - ./_deps/node_modules:/srv/heim/client/node_modules
-      - ./client/build:/srv/heim/client/build
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -51,26 +49,27 @@ services:
       SENTRY_ENDPOINT: http://sentry@localhost:9000/2
       HEIM_ORIGIN: http://localhost:8080
       EMBED_ORIGIN: http://localhost:8081
+    command: gulp build
 
   # The upgradedb container runs the upgradedb command against the psql container.
   upgradedb:
-    build: backend/psql/migrations
+    build: server/backend/psql/migrations
     links:
       - psql
     volumes:
-      - ./backend/psql/migrations:/migrations
+      - ./server/backend/psql/migrations:/migrations
 
   # The backend container runs the backend server against the psql container with etcd mocked out.
   # TODO: add volume for common go build cache
   backend:
-    build: backend
+    build: server/backend
     links:
       - psql
     volumes:
-      - .:/go/src/euphoria.leet.nu/heim
+      - .:/srv/heim
+      - ./server:/go/src/euphoria.leet.nu/heim
+      - ./server/backend/console/keys:/keys
       - ./_deps/godeps:/godeps
-      - ./client/build:/srv/heim/client/src/build
-      - ./backend/console/keys:/keys
     ports:
       - "8080:80"
       - "2222:2222"
@@ -83,15 +82,15 @@ services:
 
   # The backend_etcd container runs the backend server against the psql container using etcd.
   backend_etcd:
-    build: backend
+    build: server/backend
     links:
       - etcd
       - psql
     volumes:
-      - .:/go/src/euphoria.leet.nu/heim
+      - .:/srv/heim
+      - ./server:/go/src/euphoria.leet.nu/heim
+      - ./server/backend/console/keys:/keys
       - ./_deps/godeps:/godeps
-      - ./client/build:/srv/heim/client/src/build
-      - ./backend/console/keys:/keys
     ports:
       - "8080:80"
       - "2222:2222"
@@ -104,26 +103,26 @@ services:
 
   # The embed container serves static files for the embed domain.
   embed:
-    build: backend
+    build: server/backend
     volumes:
-      - .:/go/src/euphoria.leet.nu/heim
+      - .:/srv/heim
+      - ./server:/go/src/euphoria.leet.nu/heim
       - ./_deps/godeps:/godeps
-      - ./client/build:/srv/heim/client/src/build
     ports:
       - "8081:80"
-    command: run.sh heimctl serve-embed -http :80 -static /srv/heim/client/src/build/embed
+    command: run.sh heimctl serve-embed -http :80 -static /srv/heim/client/build/embed
 
   # The presence container collects and exposes metrics about currently-present users.
   presence:
-    build: backend
+    build: server/backend
     links:
       - etcd
       - psql
     volumes:
-      - .:/go/src/euphoria.leet.nu/heim
+      - .:/srv/heim
+      - ./server:/go/src/euphoria.leet.nu/heim
+      - ./server/backend/console/keys:/keys
       - ./_deps/godeps:/godeps
-      - ./client/build:/srv/heim/client/src/build
-      - ./backend/console/keys:/keys
     ports:
       - "8082:80"
     environment:
@@ -134,15 +133,15 @@ services:
 
   # The retention container deletes expired messages from rooms with limited message retention.
   retention:
-    build: backend
+    build: server/backend
     links:
       - etcd
       - psql
     volumes:
-      - .:/go/src/euphoria.leet.nu/heim
+      - .:/srv/heim
+      - ./server:/go/src/euphoria.leet.nu/heim
+      - ./server/backend/console/keys:/keys
       - ./_deps/godeps:/godeps
-      - ./client/build:/srv/heim/client/src/build
-      - ./backend/console/keys:/keys
     ports:
       - "8083:80"
     environment:
@@ -153,12 +152,14 @@ services:
 
   # The activity container collects and exposes metrics about overall chat activity.
   activity:
-    build: backend
+    build: server/backend
     links:
       - etcd
       - psql
     volumes:
-      - .:/go/src/euphoria.leet.nu/heim
+      - .:/srv/heim
+      - ./server:/go/src/euphoria.leet.nu/heim
+      - ./server/backend/console/keys:/keys
       - ./_deps/godeps:/godeps
     ports:
       - "8084:80"
