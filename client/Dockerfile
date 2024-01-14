@@ -21,9 +21,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
 RUN adduser --system --group --shell /bin/sh heim
 USER heim
 
-# copy source code to /srv/heim/client/src
 WORKDIR /srv/heim/client/
 
 ENV PATH $PATH:node_modules/.bin
-
-VOLUME /srv/heim/client/build
