@@ -75,7 +75,7 @@ var httpMetrics *httpMetricsStruct
 
 // not thread-safe (why are you trying to create multiple HTTP servers in parallel?)
 func instrumentHttpHandlerFunc(label string, h http.HandlerFunc) http.HandlerFunc {
-	if (httpMetrics == nil) {
+	if httpMetrics == nil {
 		httpMetrics = newHttpMetricsStruct()
 	}
 	m := httpMetrics

@@ -102,7 +102,9 @@ type usager interface {
 	usage() string
 }
 
-func usageError(format string, args ...interface{}) error { return uerror(fmt.Sprintf(format, args...)) }
+func usageError(format string, args ...interface{}) error {
+	return uerror(fmt.Sprintf(format, args...))
+}
 
 type uerror string
 

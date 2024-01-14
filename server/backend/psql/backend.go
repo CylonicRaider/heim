@@ -129,7 +129,7 @@ func NewBackend(heim *proto.Heim, config *backend.DatabaseConfig) (*Backend, err
 	if err != nil {
 		return nil, fmt.Errorf("sql.Open: %s", err)
 	}
-	db.SetMaxOpenConns(config.MaxConnCount);
+	db.SetMaxOpenConns(config.MaxConnCount)
 
 	b := &Backend{
 		DB:        db,
@@ -341,10 +341,10 @@ func (b *Backend) CreateRoom(
 
 	logging.Logger(ctx).Printf("creating room: %s", name)
 	room := &Room{
-		Name:  name,
-		IV:    sec.KeyPair.IV,
-		MAC:   sec.MAC,
-		Nonce: sec.Nonce,
+		Name:                   name,
+		IV:                     sec.KeyPair.IV,
+		MAC:                    sec.MAC,
+		Nonce:                  sec.Nonce,
 		EncryptedManagementKey: sec.KeyEncryptingKey.Ciphertext,
 		EncryptedPrivateKey:    sec.KeyPair.EncryptedPrivateKey,
 		PublicKey:              sec.KeyPair.PublicKey,

@@ -9,8 +9,8 @@ import (
 	"net/smtp"
 	"os"
 	"path/filepath"
-	"strings"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/savaki/geoip2"

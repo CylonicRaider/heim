@@ -15,7 +15,9 @@ type helpCmd struct{}
 
 func (helpCmd) flags() *flag.FlagSet { return flag.NewFlagSet("help", flag.ExitOnError) }
 
-func (helpCmd) desc() string  { return "list all commands, or show detailed help for a specific command" }
+func (helpCmd) desc() string {
+	return "list all commands, or show detailed help for a specific command"
+}
 func (helpCmd) usage() string { return "help [command]" }
 
 func (helpCmd) longdesc() string {

@@ -36,7 +36,9 @@ type RoomManagerCapabilityBinding struct {
 	RoomManagerCapability
 }
 
-func (rmcb *RoomManagerCapabilityBinding) CapabilityID() string { return rmcb.Capability.CapabilityID() }
+func (rmcb *RoomManagerCapabilityBinding) CapabilityID() string {
+	return rmcb.Capability.CapabilityID()
+}
 
 type RoomManagerCapabilities struct {
 	Room     *Room
