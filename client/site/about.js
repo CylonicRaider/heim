@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { MainPage, FancyLogo, FauxNick, FauxMessage, links } from './common'
+import { MainPage, FancyLogo, FauxMessage, links } from './common'
 import heimURL from '../lib/heimURL'
 
 module.exports = (

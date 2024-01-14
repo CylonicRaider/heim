@@ -79,7 +79,7 @@
     "email": "c@chromakode.com"
   },
   "scripts": {
-    "test": "eslint . && mochify"
+    "test": "eslint . && mochify --allow-chrome-as-root"
   },
   "browserify": {
     "transform": [

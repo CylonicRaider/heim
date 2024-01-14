@@ -1,4 +1,3 @@
-
 export default {
-  heimSourceRepo: 'https://github.com/CylonicRaider/heim'
+  heimSourceRepo: 'https://github.com/CylonicRaider/heim',
 }

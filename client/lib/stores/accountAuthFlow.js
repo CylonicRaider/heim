@@ -5,8 +5,8 @@ import Immutable from 'immutable'
 import chat from './chat'
 import ImmutableMixin from './ImmutableMixin'
 
-module.exports.registerUnavailableNote = process.env.ACCOUNTS_DISABLED_NOTE || null;
-module.exports.registerAvailable = !module.exports.registerUnavailableNote;
+module.exports.registerUnavailableNote = process.env.ACCOUNTS_DISABLED_NOTE || null
+module.exports.registerAvailable = !module.exports.registerUnavailableNote
 
 const storeActions = Reflux.createActions([
   'reset',

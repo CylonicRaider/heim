@@ -1,5 +1,7 @@
 import React from 'react'
 import Reflux from 'reflux'
+import createReactClass from 'create-react-class'
+import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 
 import actions from '../actions'
@@ -8,15 +10,15 @@ import Tree from '../Tree'
 import FastButton from './FastButton'
 import MessageText from './MessageText'
 
-export default React.createClass({
+export default createReactClass({
   displayName: 'InlineVoting',
 
   propTypes: {
-    message: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    tree: React.PropTypes.instanceOf(Tree).isRequired,
-    className: React.PropTypes.string,
-    title: React.PropTypes.string,
-    style: React.PropTypes.string,
+    message: PropTypes.instanceOf(Immutable.Map).isRequired,
+    tree: PropTypes.instanceOf(Tree).isRequired,
+    className: PropTypes.string,
+    title: PropTypes.string,
+    style: PropTypes.string,
   },
 
   mixins: [
@@ -43,7 +45,7 @@ export default React.createClass({
     let upvotes = 0
     let downvotes = 0
 
-    this.props.message.get('children').map(id => {
+    this.props.message.get('children').forEach((id) => {
       const content = this.props.tree.get(id).get('content')
 
       if (/^\s*\+1\s*$/.test(content)) upvotes++
@@ -56,16 +58,18 @@ export default React.createClass({
     const majorityPercent = Math.max(upvotes, downvotes) * 100 / (upvotes + downvotes)
     const percentText = ' (' + Math.round(majorityPercent) + '% ' + ((result > 0) ? '+' : '-') + ')'
 
-    return (<span className="inline-voting">
-      <FastButton onClick={this.upvote} className="approve">
-        <MessageText content=":thumbsup:" onlyEmoji /> {upvotes}
-      </FastButton>
-      <FastButton onClick={this.downvote} className="disapprove">
-        <MessageText content=":thumbsdown:" onlyEmoji /> {downvotes}
-      </FastButton>
-      <span className={resultClass}> {result}</span>
-      {result !== 0 && <small>{percentText}</small>}
-    </span>)
+    return (
+      <span className="inline-voting">
+        <FastButton onClick={this.upvote} className="approve">
+          <MessageText content=":thumbsup:" onlyEmoji /> {upvotes}
+        </FastButton>
+        <FastButton onClick={this.downvote} className="disapprove">
+          <MessageText content=":thumbsdown:" onlyEmoji /> {downvotes}
+        </FastButton>
+        <span className={resultClass}> {result}</span>
+        {result !== 0 && <small>{percentText}</small>}
+      </span>
+    )
   },
 
 })
