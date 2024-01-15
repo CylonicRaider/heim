@@ -75,7 +75,10 @@ func (tc *TestCluster) GetDir(key string) (map[string]string, error) {
 	result := map[string]string{}
 	for k, v := range tc.data {
 		if strings.HasPrefix(k, key) {
-			result[k[len(key):]] = v
+			rk := k[len(key):]
+			if !strings.Contains(rk, "/") {
+				result[rk] = v
+			}
 		}
 	}
 	return result, nil

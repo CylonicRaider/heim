@@ -125,17 +125,6 @@ func (e *etcdCluster) init() (uint64, error) {
 	return latestIndex + 1, nil
 }
 
-type tree map[string]string
-
-func (t tree) visit(n *etcd.Node, prefix string) {
-	if len(n.Key) > len(prefix) {
-		t[n.Key[len(prefix):]] = n.Value
-	}
-	for _, child := range n.Nodes {
-		t.visit(child, prefix)
-	}
-}
-
 func (e *etcdCluster) GetDir(key string) (map[string]string, error) {
 	prefix := e.key("%s", key) + "/"
 	resp, err := e.c.Get(prefix, false, false)
@@ -146,9 +135,11 @@ func (e *etcdCluster) GetDir(key string) (map[string]string, error) {
 		return nil, err
 	}
 
-	result := tree{}
-	result.visit(resp.Node, prefix)
-	return map[string]string(result), nil
+	result := map[string]string{}
+	for _, child := range resp.Node.Nodes {
+		result[child.Key[len(prefix):]] = child.Value
+	}
+	return result, nil
 }
 
 func (e *etcdCluster) GetValue(key string) (string, error) {
