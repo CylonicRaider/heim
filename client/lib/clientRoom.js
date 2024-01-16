@@ -1,6 +1,7 @@
 function writeEnv(doc, hash) {
   const prefix = process.env.HEIM_PREFIX
   const query = hash ? '?v=' + hash : ''
+  doc.write('<!DOCTYPE html>')
   doc.write('<link rel="stylesheet" type="text/css" id="css" href="' + prefix + '/static/main.css' + query + '">')
   doc.write('<link rel="stylesheet" type="text/css" id="emoji-css" href="' + prefix + '/static/emoji.css' + query + '">')
   doc.write('<script src="' + prefix + '/static/raven.js' + query + '"></script>')
