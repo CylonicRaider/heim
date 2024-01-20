@@ -9,3 +9,4 @@ kms:
     key-file: /keys/masterkey
 static_path: /srv/heim/client/build/heim
 set_insecure_cookies: true
+allow_account_creation: true
