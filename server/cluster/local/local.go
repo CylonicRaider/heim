@@ -2,6 +2,7 @@ package local
 
 import (
 	"encoding/hex"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -20,6 +21,7 @@ type localCluster struct {
 }
 
 func LocalCluster(rootDir string) cluster.Cluster {
+	fmt.Printf("using local cluster at %#v\n", rootDir)
 	return &localCluster{
 		rootDir: strings.TrimRight(rootDir, "/") + "/",
 		c:       make(chan cluster.PeerEvent, 16),
@@ -138,7 +140,12 @@ func (lc *localCluster) GetSecret(kms security.KMS, name string, bytes int) ([]b
 	if err != nil {
 		return nil, err
 	}
-	return hex.DecodeString(resultText)
+
+	resultBytes, err := hex.DecodeString(resultText)
+	if len(resultBytes) != bytes {
+		return nil, fmt.Errorf("secret inconsistent: expected %d bytes, got %d", bytes, len(resultBytes))
+	}
+	return resultBytes, nil
 }
 
 func (lc *localCluster) update(desc *cluster.PeerDesc) cluster.PeerEvent {
