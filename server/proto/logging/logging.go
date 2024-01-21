@@ -10,18 +10,36 @@ import (
 
 type logCtxKey int
 
-const logCtx logCtxKey = 0
+const ctxLogger logCtxKey = 0
+const ctxWriter logCtxKey = 1
+
 const logFlags = log.LstdFlags
 
 func Logger(ctx scope.Context) *log.Logger {
-	if logger, ok := ctx.Get(logCtx).(*log.Logger); ok {
+	if logger, ok := ctx.Get(ctxLogger).(*log.Logger); ok {
 		return logger
 	}
 	return log.New(os.Stdout, "[???] ", logFlags)
 }
 
+func SetDefaultWriter(ctx scope.Context, w io.Writer) scope.Context {
+	ctx.Set(ctxWriter, w)
+	return ctx
+}
+
 func LoggingContext(ctx scope.Context, w io.Writer, prefix string) scope.Context {
+	if cw, ok := ctx.Get(ctxWriter).(io.Writer); ok {
+		w = cw
+	}
 	logger := log.New(w, prefix, logFlags)
-	ctx.Set(logCtx, logger)
+	ctx.Set(ctxLogger, logger)
+	ctx.Set(ctxWriter, w)
+	return ctx
+}
+
+func LoggingContextOverride(ctx scope.Context, w io.Writer, prefix string) scope.Context {
+	logger := log.New(w, prefix, logFlags)
+	ctx.Set(ctxLogger, logger)
+	ctx.Set(ctxWriter, w)
 	return ctx
 }

@@ -36,6 +36,16 @@ import (
 	"github.com/smartystreets/goconvey/convey/reporting"
 )
 
+const debugStackTraces = false
+const debugLogs = false
+const debugSendReceive = false
+
+func init() {
+	if debugStackTraces {
+		SetDefaultStackMode(StackFail)
+	}
+}
+
 var (
 	agentIDCounter int
 	loginCounter   int
@@ -43,6 +53,14 @@ var (
 
 type factoryTestSuite func(factory proto.BackendFactory)
 type testSuite func(*serverUnderTest)
+
+func newTestScope() scope.Context {
+	ctx := scope.New()
+	if !debugLogs {
+		logging.SetDefaultWriter(ctx, ioutil.Discard)
+	}
+	return ctx
+}
 
 func newServerUnderTest(
 	backend proto.Backend, app *Server, server *httptest.Server, kms security.MockKMS) *serverUnderTest {
@@ -108,7 +126,7 @@ func (s *serverUnderTest) openWebsocket(roomName string, cookies []*http.Cookie,
 		}
 		r.Header.Add("Cookie", clientCookie.String())
 	}
-	ctx := scope.New()
+	ctx := newTestScope()
 	agent, _, agentKey, err := getAgent(ctx, s.app, r)
 	So(err, ShouldBeNil)
 	client := &proto.Client{
@@ -128,7 +146,7 @@ func (s *serverUnderTest) openWebsocket(roomName string, cookies []*http.Cookie,
 		prefix = "pm:"
 		roomName = roomName[3:]
 	}
-	room, err := s.app.resolveRoom(scope.New(), prefix, roomName, client)
+	room, err := s.app.resolveRoom(newTestScope(), prefix, roomName, client)
 	if err == proto.ErrRoomNotFound {
 		err = fmt.Errorf("roomName: %s%s", prefix, roomName)
 	}
@@ -139,7 +157,7 @@ func (s *serverUnderTest) openWebsocket(roomName string, cookies []*http.Cookie,
 func (s *serverUnderTest) Connect(roomName string) *testConn {
 	room, conn, resp := s.openWebsocket(roomName, nil, nil)
 	tc := &testConn{Conn: conn, cookies: resp.Cookies(), roomName: roomName, room: room}
-	tc.debug(true)
+	tc.debug(debugSendReceive)
 	tc.expectHello()
 	return tc
 }
@@ -149,7 +167,7 @@ func (s *serverUnderTest) ConnectAsHuman(roomName string) *testConn {
 	vs.Add("h", "1")
 	room, conn, resp := s.openWebsocket(roomName, nil, vs)
 	tc := &testConn{Conn: conn, cookies: resp.Cookies(), roomName: roomName, room: room}
-	tc.debug(true)
+	tc.debug(debugSendReceive)
 	tc.expectHello()
 	return tc
 }
@@ -330,7 +348,7 @@ func (tc *testConn) readPacket() (proto.PacketType, interface{}) {
 	return packet.Type, payload
 }
 
-func (tc *testConn) expect(id, cmdType, data string, args ...interface{}) map[string]interface{} {
+func (tc *testConn) expect(id string, cmdType proto.PacketType, data string, args ...interface{}) map[string]interface{} {
 	if len(args) > 0 {
 		data = fmt.Sprintf(data, args...)
 	}
@@ -350,6 +368,8 @@ func (tc *testConn) expect(id, cmdType, data string, args ...interface{}) map[st
 	var packet proto.Packet
 	So(json.Unmarshal(packetData, &packet), ShouldBeNil)
 	So(packet.Error, ShouldEqual, "")
+
+	So(packet.Type, ShouldEqual, cmdType)
 
 	// Inspect events and replies to track some state automatically.
 	switch packet.Type {
@@ -447,7 +467,7 @@ func matchPayload(
 	return ""
 }
 
-func (tc *testConn) expectError(id, cmdType, errFormat string, errArgs ...interface{}) {
+func (tc *testConn) expectError(id string, cmdType proto.PacketType, errFormat string, errArgs ...interface{}) {
 	errMsg := errFormat
 	if len(errArgs) > 0 {
 		errMsg = fmt.Sprintf(errFormat, errArgs...)
@@ -477,7 +497,7 @@ func (tc *testConn) expectHello() {
 		}
 		account += "},"
 	}
-	_, ok, err := tc.room.MessageKeyID(scope.New())
+	_, ok, err := tc.room.MessageKeyID(newTestScope())
 	So(err, ShouldBeNil)
 	if ok {
 		isParts += `,"room_is_private":true`
@@ -502,7 +522,7 @@ func (tc *testConn) expectPing() *proto.PingEvent {
 		fmt.Printf("reading packet, expecting ping-event\n")
 	}
 	packetType, payload := tc.readPacket()
-	So(packetType, ShouldEqual, "ping-event")
+	So(packetType, ShouldEqual, proto.PingEventType)
 	return payload.(*proto.PingEvent)
 }
 
@@ -549,7 +569,7 @@ func IntegrationTest(t *testing.T, factory proto.BackendFactory) {
 		// Set up and start backend.
 		heim := &proto.Heim{
 			Cluster:        &cluster.TestCluster{},
-			Context:        scope.New(),
+			Context:        newTestScope(),
 			KMS:            security.LocalKMS(),
 			EmailDeliverer: &emails.TestDeliverer{},
 			SiteName:       "test",
@@ -570,6 +590,7 @@ func IntegrationTest(t *testing.T, factory proto.BackendFactory) {
 		}
 
 		app.AllowRoomCreation(true)
+		app.AllowAccountCreation(true)
 		app.agentIDGenerator = func() ([]byte, error) {
 			agentIDCounter++
 			return []byte(fmt.Sprintf("%d", agentIDCounter)), nil
@@ -756,7 +777,7 @@ func testBroadcast(s *serverUnderTest) {
 
 func testThreading(s *serverUnderTest) {
 	Convey("Send with parent", func() {
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 
 		owner, ownerKey, err := s.Account(ctx, kms, "email", "threading-owner", "passcode")
@@ -807,7 +828,7 @@ func testThreading(s *serverUnderTest) {
 func testPresence(factory proto.BackendFactory) {
 	heim := &proto.Heim{
 		Cluster: &cluster.TestCluster{},
-		Context: scope.New(),
+		Context: newTestScope(),
 		KMS:     security.LocalKMS(),
 	}
 	heim.KMS.(security.MockKMS).SetMasterKey(make([]byte, security.AES256.KeySize()))
@@ -907,7 +928,7 @@ func testPresence(factory proto.BackendFactory) {
 
 		backend2 := factory()
 		kms := security.LocalKMS()
-		app2, err := NewServer(scope.New(), backend2, &cluster.TestCluster{}, kms, "test2", "")
+		app2, err := NewServer(newTestScope(), backend2, &cluster.TestCluster{}, kms, "test2", "")
 		So(err, ShouldBeNil)
 		app2.AllowRoomCreation(true)
 		server2 := httptest.NewServer(app2)
@@ -936,7 +957,7 @@ func testPresence(factory proto.BackendFactory) {
 }
 
 func testAuthentication(s *serverUnderTest) {
-	ctx := scope.New()
+	ctx := newTestScope()
 	kms := security.LocalKMS()
 	kms.SetMasterKey(make([]byte, security.AES256.KeySize()))
 
@@ -1031,7 +1052,7 @@ func testAuthentication(s *serverUnderTest) {
 func testDeletion(s *serverUnderTest) {
 	Convey("Deletion", func() {
 		b := s.backend
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 
 		// Create manager account and room.
@@ -1096,7 +1117,7 @@ func testAccountsLowLevel(s *serverUnderTest) {
 	b := s.backend
 	kms := s.app.kms
 
-	ctx := scope.New()
+	ctx := newTestScope()
 	at := b.AgentTracker()
 	agentKey := &security.ManagedKey{
 		KeyType:   proto.AgentKeyType,
@@ -1174,7 +1195,7 @@ func testAccountsLowLevel(s *serverUnderTest) {
 func testStaffLowLevel(s *serverUnderTest) {
 	Convey("Setting and checking staff capability", func() {
 		b := s.backend
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 
 		// Create test account.
@@ -1213,7 +1234,7 @@ func testStaffLowLevel(s *serverUnderTest) {
 
 func testManagersLowLevel(s *serverUnderTest) {
 	b := s.backend
-	ctx := scope.New()
+	ctx := newTestScope()
 	kms := s.app.kms
 
 	// Create test accounts.
@@ -1305,7 +1326,7 @@ func testManagersLowLevel(s *serverUnderTest) {
 }
 
 func testAccountChangePassword(s *serverUnderTest) {
-	ctx := scope.New()
+	ctx := newTestScope()
 	kms := s.app.kms
 	nonce := fmt.Sprintf("%s", time.Now())
 	logan, _, err := s.Account(ctx, kms, "email", "logan"+nonce, "oldpass")
@@ -1372,7 +1393,7 @@ func testAccountChangePassword(s *serverUnderTest) {
 }
 
 func testAccountResetPassword(s *serverUnderTest) {
-	ctx := scope.New()
+	ctx := newTestScope()
 	kms := s.app.kms
 	nonce := fmt.Sprintf("%s", time.Now())
 	logan, _, err := s.Account(ctx, kms, "email", "logan"+nonce, "oldpass")
@@ -1439,7 +1460,7 @@ func testAccountResetPassword(s *serverUnderTest) {
 }
 
 func testAccountChangeName(s *serverUnderTest) {
-	ctx := scope.New()
+	ctx := newTestScope()
 	kms := s.app.kms
 	nonce := fmt.Sprintf("%s", time.Now())
 	logan, _, err := s.Account(ctx, kms, "email", "logan"+nonce, "loganpass")
@@ -1471,7 +1492,7 @@ func testAccountChangeName(s *serverUnderTest) {
 }
 
 func testAccountChangeEmail(s *serverUnderTest) {
-	ctx := scope.New()
+	ctx := newTestScope()
 	kms := s.app.kms
 	nonce := fmt.Sprintf("%s", time.Now())
 	logan, _, err := s.Account(ctx, kms, "email", "logan"+nonce, "loganpass")
@@ -1653,7 +1674,7 @@ func testAccountChangeEmail(s *serverUnderTest) {
 }
 
 func testAccountLogin(s *serverUnderTest) {
-	ctx := scope.New()
+	ctx := newTestScope()
 	kms := s.app.kms
 	nonce := fmt.Sprintf("%s", time.Now())
 	logan, _, err := s.Account(ctx, kms, "email", "logan"+nonce, "loganpass")
@@ -1814,7 +1835,7 @@ func testAccountRegistration(s *serverUnderTest) {
 		So(resp.StatusCode, ShouldEqual, 200)
 
 		// Personal identity should now be verified.
-		ctx := scope.New()
+		ctx := newTestScope()
 		account, err := s.backend.AccountManager().Resolve(ctx, "email", "registration@euphoria.example")
 		So(err, ShouldBeNil)
 		verified := false
@@ -1842,7 +1863,7 @@ func testAccountRegistration(s *serverUnderTest) {
 func testRoomCreation(s *serverUnderTest) {
 	Convey("Unlock staff capability and create room", func() {
 		b := s.backend
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 
 		// Create staff account.
@@ -1896,7 +1917,7 @@ func testRoomCreation(s *serverUnderTest) {
 func testRoomGrants(s *serverUnderTest) {
 	Convey("Grant access to passcode", func() {
 		b := s.backend
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 
 		// Create manager account and room.
@@ -1950,7 +1971,7 @@ func testRoomGrants(s *serverUnderTest) {
 
 	Convey("Grant access to account", func() {
 		b := s.backend
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 
 		// Create manager account and room.
@@ -2028,7 +2049,7 @@ func testRoomGrants(s *serverUnderTest) {
 
 	Convey("Grant manager and revoke access by staff", func() {
 		b := s.backend
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 
 		// Create staff account and room.
@@ -2094,7 +2115,7 @@ func testRoomGrants(s *serverUnderTest) {
 
 	Convey("Grant manager to account", func() {
 		b := s.backend
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 
 		// Create manager account and room.
@@ -2169,7 +2190,7 @@ func testKeepAlive(s *serverUnderTest) {
 
 func testBans(s *serverUnderTest) {
 	Convey("Ban by agent", func() {
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 
 		// Create manager and log in (via staging room).
@@ -2233,7 +2254,7 @@ func testBans(s *serverUnderTest) {
 	})
 
 	Convey("Ban by account", func() {
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 
 		// Create manager and log in (via staging room).
@@ -2364,7 +2385,7 @@ func testMessageTruncation(s *serverUnderTest) {
 	})
 
 	Convey("get-message in private room", func() {
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 		owner, ownerKey, err := s.Account(ctx, kms, "email", "getmessage-owner", "passcode")
 		So(err, ShouldBeNil)
@@ -2398,7 +2419,7 @@ func testMessageTruncation(s *serverUnderTest) {
 	})
 
 	Convey("Large message can be deleted", func() {
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 		owner, _, err := s.Account(ctx, kms, "email", "bigspam-owner", "passcode")
 		So(err, ShouldBeNil)
@@ -2491,7 +2512,7 @@ func testJobsLowLevel(s *serverUnderTest) {
 	defer func() { jobs.BackoffDuration = save }()
 
 	js := s.backend.Jobs()
-	ctx := scope.New()
+	ctx := newTestScope()
 
 	makeJob := func() (jobs.JobType, interface{}) {
 		token, err := snowflake.New()
@@ -2848,7 +2869,7 @@ func testEmailsLowLevel(s *serverUnderTest) {
 	jobs.BackoffDuration = 10 * time.Millisecond
 	defer func() { jobs.BackoffDuration = save }()
 
-	ctx := scope.New()
+	ctx := newTestScope()
 	js := s.backend.Jobs()
 	jq, err := js.GetQueue(ctx, jobs.EmailQueue)
 	So(err, ShouldBeNil)
@@ -2977,7 +2998,7 @@ func oneTimePassword(uri string) string {
 func testStaffOTP(s *serverUnderTest) {
 	makeStaff := func(name, password string) proto.Account {
 		b := s.backend
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 		user, _, err := s.Account(ctx, kms, "email", name, password)
 		So(err, ShouldBeNil)
@@ -3019,7 +3040,7 @@ func testStaffOTP(s *serverUnderTest) {
 func testStaffInvasion(s *serverUnderTest) {
 	Convey("Staff can use OTP to invade room", func() {
 		b := s.backend
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 		nonce := fmt.Sprintf("%s", time.Now())
 
@@ -3078,7 +3099,7 @@ func testStaffInvasion(s *serverUnderTest) {
 
 func testNotifyUser(s *serverUnderTest) {
 	Convey("Successful login disconnects all sessions associated with user", func() {
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 
 		// Create account
@@ -3166,7 +3187,7 @@ func testNotifyUser(s *serverUnderTest) {
 func testPMs(s *serverUnderTest) {
 	Convey("Initiate with agent and interact", func() {
 		// Create initiator
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 		nonce := fmt.Sprintf("%s", time.Now())
 		logan, _, err := s.Account(ctx, kms, "email", "logan"+nonce, "hunter2")
@@ -3252,7 +3273,7 @@ func testPMs(s *serverUnderTest) {
 
 	Convey("Initiate with account and interact", func() {
 		// Create initiator
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 		nonce := fmt.Sprintf("%s", time.Now())
 		alice, _, err := s.Account(ctx, kms, "email", "alice"+nonce, "hunter2")
@@ -3326,7 +3347,7 @@ func testPMs(s *serverUnderTest) {
 
 	Convey("Initiate with agent, interact, log in, then interact", func() {
 		// Create initiator
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 		nonce := fmt.Sprintf("%s", time.Now())
 		alice, _, err := s.Account(ctx, kms, "email", "alice"+nonce, "hunter2")
@@ -3401,7 +3422,7 @@ func testPMs(s *serverUnderTest) {
 
 	Convey("Initiate with agent, who logs in before interacting", func() {
 		// Create initiator
-		ctx := scope.New()
+		ctx := newTestScope()
 		kms := s.app.kms
 		nonce := fmt.Sprintf("%s", time.Now())
 		alice, _, err := s.Account(ctx, kms, "email", "alice"+nonce, "hunter2")
