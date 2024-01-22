@@ -106,7 +106,7 @@ func (r *RoomBase) Part(ctx scope.Context, session proto.Session) error {
 	}
 	delete(r.clients, session.ID())
 	event := proto.PresenceEvent(session.View(proto.Staff))
-	return r.broadcast(ctx, proto.PartEventType, &event, session)
+	return r.broadcast(ctx, proto.PartType, &event, session)
 }
 
 func (r *RoomBase) Send(ctx scope.Context, session proto.Session, message proto.Message) (
