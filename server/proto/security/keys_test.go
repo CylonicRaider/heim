@@ -101,9 +101,9 @@ func TestManagedKey(t *testing.T) {
 		x.ContextValue = "context value"
 		y = x.Clone()
 		So(x, ShouldResemble, y)
-		So(x.IV, ShouldNotEqual, y.IV)
-		So(x.Plaintext, ShouldNotEqual, y.Plaintext)
-		So(x.Ciphertext, ShouldNotEqual, y.Ciphertext)
+		So(x.IV, ShouldBeDistinctByteSlice, y.IV)
+		So(x.Plaintext, ShouldBeDistinctByteSlice, y.Plaintext)
+		So(x.Ciphertext, ShouldBeDistinctByteSlice, y.Ciphertext)
 	})
 
 	Convey("Crypto", t, func() {

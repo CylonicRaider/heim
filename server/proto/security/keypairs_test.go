@@ -86,10 +86,10 @@ func TestManagedKeyPair(t *testing.T) {
 		x.PublicKey = []byte("public key")
 		y = x.Clone()
 		So(x, ShouldResemble, y)
-		So(x.IV, ShouldNotEqual, y.IV)
-		So(x.PrivateKey, ShouldNotEqual, y.PrivateKey)
-		So(x.EncryptedPrivateKey, ShouldNotEqual, y.EncryptedPrivateKey)
-		So(x.PublicKey, ShouldNotEqual, y.PublicKey)
+		So(x.IV, ShouldBeDistinctByteSlice, y.IV)
+		So(x.PrivateKey, ShouldBeDistinctByteSlice, y.PrivateKey)
+		So(x.EncryptedPrivateKey, ShouldBeDistinctByteSlice, y.EncryptedPrivateKey)
+		So(x.PublicKey, ShouldBeDistinctByteSlice, y.PublicKey)
 	})
 
 	Convey("Crypto", t, func() {
