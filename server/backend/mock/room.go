@@ -185,7 +185,7 @@ func (r *RoomBase) broadcast(
 		}
 	}
 
-	if cmdType == proto.PartEventType {
+	if cmdType == proto.PartType {
 		if presence, ok := payload.(*proto.PresenceEvent); ok {
 			if waiter, ok := r.partWaiters[presence.SessionID]; ok {
 				r.m.Unlock()
