@@ -22,17 +22,19 @@ func Logger(ctx scope.Context) *log.Logger {
 	return log.New(os.Stdout, "[???] ", logFlags)
 }
 
-func SetDefaultWriter(ctx scope.Context, w io.Writer) scope.Context {
-	ctx.Set(ctxWriter, w)
-	return ctx
+func GetDefaultWriter(ctx scope.Context) io.Writer {
+	w, _ := ctx.Get(ctxWriter).(io.Writer)
+	return w
 }
 
-func LoggingContext(ctx scope.Context, w io.Writer, prefix string) scope.Context {
+func GetDefaultWriterOrFallback(ctx scope.Context, w io.Writer) io.Writer {
 	if cw, ok := ctx.Get(ctxWriter).(io.Writer); ok {
 		w = cw
 	}
-	logger := log.New(w, prefix, logFlags)
-	ctx.Set(ctxLogger, logger)
+	return w
+}
+
+func SetDefaultWriter(ctx scope.Context, w io.Writer) scope.Context {
 	ctx.Set(ctxWriter, w)
 	return ctx
 }
@@ -42,4 +44,8 @@ func LoggingContextOverride(ctx scope.Context, w io.Writer, prefix string) scope
 	ctx.Set(ctxLogger, logger)
 	ctx.Set(ctxWriter, w)
 	return ctx
+}
+
+func LoggingContext(ctx scope.Context, w io.Writer, prefix string) scope.Context {
+	return LoggingContextOverride(ctx, GetDefaultWriterOrFallback(ctx, w), prefix)
 }

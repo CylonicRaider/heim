@@ -181,10 +181,10 @@ func (j *Job) Exec(ctx scope.Context, f func(scope.Context) error) error {
 		return ErrJobNotClaimed
 	}
 
-	w := io.MultiWriter(os.Stdout, j)
+	w := io.MultiWriter(logging.GetDefaultWriterOrFallback(ctx, os.Stdout), j)
 	prefix := fmt.Sprintf("[%s-%s] ", j.Queue.Name(), j.HandlerID)
 	deadline := time.Now().Add(j.MaxWorkDuration)
-	child := logging.LoggingContext(ctx.ForkWithTimeout(j.MaxWorkDuration), w, prefix)
+	child := logging.LoggingContextOverride(ctx.ForkWithTimeout(j.MaxWorkDuration), w, prefix)
 	if err := f(child); err != nil {
 		logging.Logger(child).Printf("error: %s", err)
 		if err != scope.TimedOut {
