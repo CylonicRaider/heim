@@ -7,7 +7,7 @@ services:
   psql:
     build: containers/psql
     volumes:
-      - ./_psqldata/data:/var/lib/postgresql/data
+      - ./_data/psql:/var/lib/postgresql/data
 
   # The psqlclient container provides a client connection to the psql container.
   # TODO: add volume for persistent readline history, sql dumps, etc.
@@ -23,7 +23,7 @@ services:
   sentry:
     image: slafs/sentry:8.0
     volumes:
-      - ./_psqldata/sentry:/data
+      - ./_data/psql-sentry:/data
     ports:
       - "9000:9000"
     environment:
@@ -58,9 +58,11 @@ services:
       - psql
     volumes:
       - ./server/backend/psql/migrations:/migrations
+      - ./_data/gocache:/gocache
+    environment:
+      GOCACHE: /gocache
 
   # The backend container runs the backend server against the psql container with etcd mocked out.
-  # TODO: add volume for common go build cache
   backend:
     build: server/backend
     links:
@@ -70,10 +72,12 @@ services:
       - ./server:/go/src/euphoria.leet.nu/heim
       - ./server/backend/console/keys:/keys
       - ./_deps/godeps:/godeps
+      - ./_data/gocache:/gocache
     ports:
       - "8080:80"
       - "2222:2222"
     environment:
+      GOCACHE: /gocache
       HEIM_ID: dev1
       HEIM_ETCD: mock
       HEIM_ETCD_HOME: /dev/euphoria
@@ -91,10 +95,12 @@ services:
       - ./server:/go/src/euphoria.leet.nu/heim
       - ./server/backend/console/keys:/keys
       - ./_deps/godeps:/godeps
+      - ./_data/gocache:/gocache
     ports:
       - "8080:80"
       - "2222:2222"
     environment:
+      GOCACHE: /gocache
       HEIM_ID: dev1
       HEIM_ETCD: http://etcd:4001
       HEIM_ETCD_HOME: /dev/euphoria
@@ -110,6 +116,8 @@ services:
       - ./_deps/godeps:/godeps
     ports:
       - "8081:80"
+    environment:
+      GOCACHE: /gocache
     command: run.sh heimctl serve-embed -http :80 -static /srv/heim/client/build/embed
 
   # The presence container collects and exposes metrics about currently-present users.
@@ -126,6 +134,7 @@ services:
     ports:
       - "8082:80"
     environment:
+      GOCACHE: /gocache
       HEIM_ETCD: http://etcd:4001
       HEIM_ETCD_HOME: /dev/euphoria
       HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
@@ -145,6 +154,7 @@ services:
     ports:
       - "8083:80"
     environment:
+      GOCACHE: /gocache
       HEIM_ETCD: http://etcd:4001
       HEIM_ETCD_HOME: /dev/euphoria
       HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
@@ -164,6 +174,7 @@ services:
     ports:
       - "8084:80"
     environment:
+      GOCACHE: /gocache
       HEIM_ETCD: http://etcd:4001
       HEIM_ETCD_HOME: /dev/euphoria
       HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
