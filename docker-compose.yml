@@ -9,6 +9,12 @@ services:
     volumes:
       - ./_data/psql:/var/lib/postgresql/data
 
+  # The psql_test container runs an in-memory database for testing.
+  psql_test:
+    build: containers/psql
+    tmpfs:
+      - /var/lib/postgresql/data
+
   # The psqlclient container provides a client connection to the psql container.
   # TODO: add volume for persistent readline history, sql dumps, etc.
   psqlclient:
@@ -61,6 +67,7 @@ services:
       - ./_data/gocache:/gocache
     environment:
       GOCACHE: /gocache
+    command: sql-migrate up
 
   # The backend container runs the backend server against the psql container with etcd mocked out.
   backend:
@@ -106,6 +113,22 @@ services:
       HEIM_ETCD_HOME: /dev/euphoria
       HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
     command: run.sh heimctl serve -http :80 -console :2222
+
+  # The backend_tests container is dedicated to running backend tests.
+  backend_tests:
+    build: server/backend
+    links:
+      - psql_test
+    volumes:
+      - .:/srv/heim
+      - ./server:/go/src/euphoria.leet.nu/heim
+      - ./server/backend/console/keys:/keys
+      - ./_deps/godeps:/godeps
+      - ./_data/gocache:/gocache
+    environment:
+      GOCACHE: /gocache
+      DSN: postgres://postgres:heimlich@psql_test/heim?sslmode=disable
+    command: go test euphoria.leet.nu/heim/...
 
   # The embed container serves static files for the embed domain.
   embed:

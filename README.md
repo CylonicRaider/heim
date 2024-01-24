@@ -10,7 +10,7 @@ React/Reflux.
 1. Install `git`, [`docker`](https://docs.docker.com/installation/), and
    [`docker-compose`](https://docs.docker.com/compose/install/).
 
-2. Ensure dependencies are fetched: run `git submodule update --init` in this repo directory.
+2. Ensure dependencies are fetched: Run `git submodule update --init` in this repo directory.
 
 ### Running a server
 
@@ -35,7 +35,9 @@ Heim is now running on port 8080. \o/
 
 #### Backend
 
-`docker-compose run backend go test -v euphoria.leet.nu/heim/...`
+`docker-compose run backend_tests`
+
+(You may adjust the default command from `docker-compose.yml` to taste.)
 
 #### Frontend
 
