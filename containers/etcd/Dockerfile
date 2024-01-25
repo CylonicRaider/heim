@@ -1,8 +1,6 @@
-FROM alpine
+FROM ubuntu:22.04
 
-ADD https://github.com/coreos/etcd/releases/download/v0.4.6/etcd-v0.4.6-linux-amd64.tar.gz etcd-v0.4.6-linux-amd64.tar.gz
-RUN tar xzvf etcd-v0.4.6-linux-amd64.tar.gz
-RUN mv etcd-v0.4.6-linux-amd64/etcd /bin && mv etcd-v0.4.6-linux-amd64/etcdctl /bin && rm -Rf /etcd-v0.4.6-linux-amd64*
+RUN apt-get update && apt-get install -y etcd-server etcd-client
 
 ADD run.sh /bin/run.sh
 
