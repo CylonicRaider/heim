@@ -58,6 +58,8 @@ func StartEtcd() (*EtcdServer, error) {
 		"--listen-client-urls", url,
 		"--listen-peer-urls", "http://localhost:0",
 		"--advertise-client-urls", url,
+		// TODO: migrate to newer etcd client library...
+		"--enable-v2",
 	)
 
 	stderr, err := cmd.StderrPipe()
@@ -117,13 +119,12 @@ func (s *EtcdServer) consumeStderr(stderr io.ReadCloser, ch chan<- string) {
 		}
 		if atStart {
 			lineStr := string(line)
-			fmt.Printf("%s\n", lineStr)
 			if idx := strings.Index(lineStr, marker); idx >= 0 {
 				idx += len(marker)
-				if space := strings.IndexRune(lineStr[idx:], ' '); space >= 0 {
+				if sep := strings.IndexAny(lineStr[idx:], " ]"); sep >= 0 {
 					// Found a client URL, send it back over the channel
 					// and go into blind consumption mode.
-					ch <- lineStr[idx : idx+space]
+					ch <- lineStr[idx : idx+sep]
 					close(ch)
 					break
 				}
