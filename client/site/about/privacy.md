@@ -1,4 +1,4 @@
-# Privacy Policy
+# Privacy Policy  *updated Jan 9, 2024*
 
 
 Protecting your privacy is really important to Euphoria ("**Euphoria**",

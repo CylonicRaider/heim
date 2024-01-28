@@ -1,4 +1,4 @@
-# Euphorian Code of Conduct
+# Euphorian Code of Conduct  *updated Jan 9, 2024*
 
 
 ## Purpose

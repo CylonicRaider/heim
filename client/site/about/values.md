@@ -1,4 +1,4 @@
-# Statement of Values  *updated Sep 30, 2015*
+# Statement of Values  *updated Jan 9, 2024*
 
 
 ## Hospitality: *Safety, comfort, welcoming of newcomers.*

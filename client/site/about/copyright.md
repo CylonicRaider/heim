@@ -1,4 +1,4 @@
-# Copyright Policy
+# Copyright Policy  *updated Jan 9, 2024*
 
 
 ## Notification of Copyright Infringement:

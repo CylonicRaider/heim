@@ -1,4 +1,4 @@
-# Terms of Service
+# Terms of Service  *updated Jan 9, 2024*
 
 
 Welcome to our online chat service ("**Euphoria**"), located at

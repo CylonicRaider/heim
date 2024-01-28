@@ -1,4 +1,4 @@
-# Room Host Policy
+# Room Host Policy  *updated Jan 9, 2024*
 
 
 Staff are available to help you. If you have any questions or need any
