@@ -1,3 +1,3 @@
 {{with (packet .)}}{{.Doc}}
-{{template "fields.md" .}}
-{{end}}
+{{template "fields.md" . -}}
+{{end -}}

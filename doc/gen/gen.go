@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -224,6 +225,12 @@ func joinComments(cg *ast.CommentGroup) string {
 }
 
 func run() error {
+	_, genfile, _, ok := runtime.Caller(0)
+	if !ok {
+		return fmt.Errorf("cannot locate generator source file")
+	}
+	gendir := filepath.Dir(genfile)
+
 	pkg, err := build.Import("euphoria.leet.nu/heim/proto", "", build.FindOnly)
 	if err != nil {
 		return fmt.Errorf("import error: %s", err)
@@ -266,7 +273,6 @@ func run() error {
 	ts.registerType("Time")
 	ts.registerType("UserID")
 
-	gendir := filepath.Join(pkg.SrcRoot, "euphoria.leet.nu/heim/doc/gen")
 	if err := os.Chdir(gendir); err != nil {
 		return fmt.Errorf("chdir error: %s: %s", gendir, err)
 	}

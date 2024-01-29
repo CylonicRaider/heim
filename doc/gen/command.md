@@ -1,2 +1,3 @@
 {{template "packet.md" .}}
-{{template "packet.md" (printf "%s-reply" .)}}
+
+{{template "packet.md" (printf "%s-reply" .) -}}

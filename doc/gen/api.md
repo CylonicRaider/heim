@@ -1,6 +1,10 @@
-# Table of Contents
+# Euphoria API
+
+## Table of Contents
 
 * [Overview](#overview)
+  * [Packets](#packets)
+  * [Initial handshake](#initial-handshake)
 * [Field Types](#field-types)
   * [Basic Types](#basic-types)
   * [AccountView](#accountview)
@@ -65,12 +69,12 @@
   * [staff-validate-otp](#staff-validate-otp)
   * [unlock-staff-capability](#unlock-staff-capability)
 
-# Overview
+## Overview
 
 Clients interact with Euphoria over a WebSocket-based API. The connection is to a specific
 *room*. We call each instance of such a connection a *session*.
 
-## Packets
+### Packets
 
 Messages are sent back and forth between the client and server as packets, in the form of JSON objects.
 Each packet has the following structure:
@@ -148,7 +152,7 @@ to the same room:
 }
 ```
 
-## Initial Handshake
+### Initial Handshake
 
 When a client connects to the websocket for a room, the server will begin the session
 with a [ping-event](#ping-event):
@@ -200,11 +204,11 @@ If the room is private and the client does not have access, the server will send
 proper authentication credentials from the user and present them with the [auth](#auth)
 or [login](#login) command.
 
-# Field Types
+## Field Types
 
 This section describes all the field types one can expect to see in packets.
 
-## Basic Types
+### Basic Types
 
 #### bool
 
@@ -222,12 +226,12 @@ Strings are UTF-8 encoded text. Unless otherwise specified, a string may be of a
 
 An arbitrary JSON object.
 
-## AccountView
+### AccountView
 
 {{(object "AccountView").Doc}}
 {{template "fields.md" (object "AccountView")}}
 
-## AuthOption
+### AuthOption
 
 `AuthOption` is a string indicating a mode of authentication. It must be one of the
 following values:
@@ -236,36 +240,36 @@ following values:
 | :-- | :--------- |
 | `passcode` | Authentication with a passcode, where a key is derived from the passcode to unlock an access grant. |
 
-## Message
+### Message
 
 {{(object "Message").Doc}}
 {{template "fields.md" (object "Message")}}
 
-## PacketType
+### PacketType
 
 `PacketType` is a string describing the type of the packet. For example, "[ping](#ping)",
 "[ping-reply](#ping-reply)", and "[ping-event](#ping-event)" are packet types.
 
-## PersonalAccountView
+### PersonalAccountView
 
 {{(object "PersonalAccountView").Doc}}
 {{template "fields.md" (object "PersonalAccountView")}}
 
-## SessionView
+### SessionView
 
 {{(object "SessionView").Doc}}
 {{template "fields.md" (object "SessionView")}}
 
-## Snowflake
+### Snowflake
 
 A snowflake is a 13-character string, usually used as a unique identifier for some type
 of object. It is the base-36 encoding of an unsigned, 64-bit integer.
 
-## Time
+### Time
 
 Time is specified as a signed 64-bit integer, giving the number of seconds since the Unix Epoch.
 
-## UserID
+### UserID
 
 A UserID identifies a user. The prefix of this value (up to the colon) indicates a type of session,
 while the suffix is a unique value for that type of session.
@@ -275,231 +279,230 @@ while the suffix is a unique value for that type of session.
 | `agent:` | *agent identifier* | A user, not signed into any account, but tracked via cookie under this identifier. |
 | `account:` | *account identifier* | The id ([Snowflake](#snowflake)) of the account the user is logged into. |
 
-# Asynchronous Events
+## Asynchronous Events
 
 The following events may be sent from the server to the client at any time.
 
-## bounce-event
+### bounce-event
 
 {{(packet "bounce-event").Doc}}
 {{template "fields.md" (packet "bounce-event")}}
 
-## disconnect-event
+### disconnect-event
 
 {{(packet "disconnect-event").Doc}}
 {{template "fields.md" (packet "disconnect-event")}}
 
-## hello-event
+### hello-event
 
 {{(packet "hello-event").Doc}}
 {{template "fields.md" (object "HelloEvent")}}
 
-## join-event
+### join-event
 
 A `join-event` indicates a session just joined the room.
 
 {{template "fields.md" (object "PresenceEvent")}}
 
-## login-event
+### login-event
 
 {{(packet "login-event").Doc}}
 {{template "fields.md" (object "LoginEvent")}}
 
-## logout-event
+### logout-event
 
 {{(packet "logout-event").Doc}}
 {{template "fields.md" (object "LogoutEvent")}}
 
-## network-event
+### network-event
 
 {{(packet "network-event").Doc}}
 {{template "fields.md" (packet "network-event")}}
 
-## nick-event
+### nick-event
 
 {{(packet "nick-event").Doc}}
 {{template "fields.md" (packet "nick-event")}}
 
-## edit-message-event
+### edit-message-event
 
 {{(packet "edit-message-event").Doc}}
 {{template "fields.md" (packet "edit-message-event")}}
 
-## part-event
+### part-event
 
 A `part-event` indicates a session just disconnected from the room.
 
 {{template "fields.md" (object "PresenceEvent")}}
 
-## ping-event
+### ping-event
 
 {{(packet "ping-event").Doc}}
 {{template "fields.md" (packet "ping-event")}}
 
-## pm-initiate-event
+### pm-initiate-event
 
 {{(packet "pm-initiate-event").Doc}}
 {{template "fields.md" (packet "pm-initiate-event")}}
 
-## send-event
+### send-event
 
 {{(packet "send-event").Doc}}
 {{template "fields.md" (packet "send-event")}}
 
-## snapshot-event
+### snapshot-event
 
 {{(packet "snapshot-event").Doc}}
 {{template "fields.md" (packet "snapshot-event")}}
 
-# Session Commands
+## Session Commands
 
 Session management commands are involved in the initial handshake and maintenance of a session.
 
-## auth
+### auth
 
 {{template "command.md" "auth"}}
 
-## ping
+### ping
 
 {{template "command.md" "ping"}}
 
-# Chat Room Commands
+## Chat Room Commands
 
 These commands are available to the client once a session successfully joins a room.
 
-## get-message
+### get-message
 
 {{template "command.md" "get-message"}}
 
-## log
+### log
 
 {{template "command.md" "log"}}
 
-## nick
+### nick
 
 {{template "command.md" "nick"}}
 
-## pm-initiate
+### pm-initiate
 
 {{template "command.md" "pm-initiate"}}
 
-## send
+### send
 
 {{template "command.md" "send"}}
 
-## who
+### who
 
 {{template "command.md" "who"}}
 
-# Account Commands
+## Account Commands
 
 These commands enable a client to register, associate, and dissociate with an account.
 An account allows an identity to be shared across browsers and devices, and is a
 prerequisite for room management.
 
-## change-email
+### change-email
 
 {{template "command.md" "change-email"}}
 
-## change-name
+### change-name
 
 {{template "command.md" "change-name"}}
 
-## change-password
+### change-password
 
 {{template "command.md" "change-password"}}
 
-## login
+### login
 
 {{template "command.md" "login"}}
 
-## logout
+### logout
 
 {{template "command.md" "logout"}}
 
-## register-account
+### register-account
 
 {{template "command.md" "register-account"}}
 
-## resend-verification-email
+### resend-verification-email
 
 {{template "command.md" "resend-verification-email"}}
 
-## reset-password
+### reset-password
 
 {{template "command.md" "reset-password"}}
 
-# Room Host Commands
+## Room Host Commands
 
 These commands are available if the client is logged into an account that has a host grant
 on the room.
 
-## ban
+### ban
 
 {{template "command.md" "ban"}}
 
-## edit-message
+### edit-message
 
 {{template "command.md" "edit-message"}}
 
-## grant-access
+### grant-access
 
 {{template "command.md" "grant-access"}}
 
-## grant-manager
+### grant-manager
 
 {{template "command.md" "grant-manager"}}
 
-## revoke-access
+### revoke-access
 
 {{template "command.md" "revoke-access"}}
 
-## revoke-manager
+### revoke-manager
 
 {{template "command.md" "revoke-manager"}}
 
-## unban
+### unban
 
 {{template "command.md" "unban"}}
 
-# Staff Commands
+## Staff Commands
 
 Staff commands are only available to site operators. This section is not relevant to
 most client implementations.
 
-## staff-create-room
+### staff-create-room
 
 {{template "command.md" "staff-create-room"}}
 
-## staff-enroll-otp
+### staff-enroll-otp
 
 {{template "command.md" "staff-enroll-otp"}}
 
-## staff-grant-manager
+### staff-grant-manager
 
 {{template "command.md" "staff-grant-manager"}}
 
-## staff-invade
+### staff-invade
 
 {{template "command.md" "staff-invade"}}
 
-## staff-lock-room
+### staff-lock-room
 
 {{template "command.md" "staff-lock-room"}}
 
-## staff-revoke-access
+### staff-revoke-access
 
 {{template "command.md" "staff-revoke-access"}}
 
-## staff-revoke-manager
+### staff-revoke-manager
 
 {{template "command.md" "staff-revoke-manager"}}
 
-## staff-validate-otp
+### staff-validate-otp
 
 {{template "command.md" "staff-validate-otp"}}
 
-## unlock-staff-capability
+### unlock-staff-capability
 
 {{template "command.md" "unlock-staff-capability"}}
-
