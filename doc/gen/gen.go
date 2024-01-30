@@ -83,7 +83,7 @@ func (t types) linkType(name string) string {
 	case name == "snowflake.Snowflake":
 		return t.linkType("Snowflake")
 	case name == "json.RawMessage":
-		return "object"
+		return t.linkType("object")
 	default:
 		if link, ok := t[name]; ok {
 			return fmt.Sprintf("[%s](#%s)", name, link)

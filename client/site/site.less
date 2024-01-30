@@ -252,7 +252,7 @@ body.page {
   }
 }
 
-.policy {
+.text-page {
   font-size: 15px;
   max-width: 50em;
   margin: 0 auto;
@@ -294,6 +294,12 @@ body.page {
     margin-top: 1.5em;
     margin-bottom: 0;
     font-size: 1em;
+  }
+
+  h4 {
+    margin-top: 1.5em;
+    margin-bottom: 0;
+    font-size: 1em;
     font-weight: normal;
     text-decoration: underline;
   }
@@ -302,7 +308,11 @@ body.page {
     margin-top: 1em;
   }
 
-  h1, h2, h3 {
+  h3 + h4 {
+    margin-top: .75em;
+  }
+
+  h1, h2, h3, h4 {
     position: relative;
 
     .header-anchor {
@@ -343,6 +353,20 @@ body.page {
     border: none;
     border-bottom: 1px solid fade(black, 15%);
     margin: 2em 0;
+  }
+
+  table {
+    border-collapse: collapse;
+
+    th {
+      font-weight: normal;
+      background: fade(black, 10%);
+    }
+
+    th, td {
+      border: 1px solid #d2d2d2;
+      padding: 0.1em .333em;
+    }
   }
 
   section.summary {

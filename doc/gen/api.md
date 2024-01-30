@@ -1,5 +1,6 @@
 # Euphoria API
 
+::: section toc
 ## Table of Contents
 
 * [Overview](#overview)
@@ -68,6 +69,7 @@
   * [staff-revoke-manager](#staff-revoke-manager)
   * [staff-validate-otp](#staff-validate-otp)
   * [unlock-staff-capability](#unlock-staff-capability)
+:::
 
 ## Overview
 

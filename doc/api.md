@@ -1,5 +1,6 @@
 # Euphoria API
 
+::: section toc
 ## Table of Contents
 
 * [Overview](#overview)
@@ -68,6 +69,7 @@
   * [staff-revoke-manager](#staff-revoke-manager)
   * [staff-validate-otp](#staff-validate-otp)
   * [unlock-staff-capability](#unlock-staff-capability)
+:::
 
 ## Overview
 
@@ -83,7 +85,7 @@ Each packet has the following structure:
 | :---- | :--- | :-------- | :---------- |
 | `id` | [string](#string) | *optional* |  client-generated id for associating replies with commands |
 | `type` | [PacketType](#packettype) | required |  the name of the command, reply, or event |
-| `data` | object | *optional* |  the payload of the command, reply, or event |
+| `data` | [object](#object) | *optional* |  the payload of the command, reply, or event |
 | `error` | [string](#string) | *optional* |  this field appears in replies if a command fails |
 | `throttled` | [bool](#bool) | *optional* |  this field appears in replies to warn the client that it may be flooding; the client should slow down its command rate |
 | `throttled_reason` | [string](#string) | *optional* |  if throttled is true, this field describes why |
