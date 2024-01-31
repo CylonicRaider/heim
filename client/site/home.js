@@ -5,7 +5,7 @@ import heimURL from '../lib/heimURL'
 
 module.exports = (
   /* eslint-disable react/jsx-no-target-blank */
-  <MainPage title="euphoria!" className="welcome">
+  <MainPage title="Euphoria!" className="welcome">
     <div className="splash">
       <FancyLogo />
       <div className="info-box">

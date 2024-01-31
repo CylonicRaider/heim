@@ -4,7 +4,7 @@ import { MainPage, FancyLogo, FauxMessage, links } from './common'
 import heimURL from '../lib/heimURL'
 
 module.exports = (
-  <MainPage title="about euphoria" className="about">
+  <MainPage title="About Euphoria" className="about">
     <div className="primary">
       <h1>What's Euphoria?</h1>
       <section className="letter">
