@@ -6,6 +6,8 @@ import chat from './chat'
 import ImmutableMixin from './ImmutableMixin'
 
 const storeActions = Reflux.createActions([
+  'setBanGlobally',
+  'setShowRealIPs',
   'chooseCommand',
   'apply',
 ])
@@ -15,6 +17,8 @@ const StateRecord = Immutable.Record({
   items: Immutable.Set(),
   selectedCommand: 'delete',
   activeItemSummary: 'nothing',
+  banGlobally: false,
+  showRealIPs: false,
 })
 
 const commands = {
@@ -94,6 +98,11 @@ module.exports.store = Reflux.createStore({
         const sender = message.get('sender')
         const senderId = sender.get('id')
         const addr = sender.get('client_address')
+
+        // The backend omits real addresses from messages; get them from the user list where possible
+        const userInfo = chatState.who.get(sender.get('session_id'))
+        const realAddr = sender.get('real_client_address') || (userInfo ? userInfo.get('real_client_address') : null)
+
         return Immutable.fromJS([
           {
             kind: 'message',
@@ -105,6 +114,7 @@ module.exports.store = Reflux.createStore({
             id: senderId,
             name: sender.get('name'),
             addr: sender.get('client_address'),
+            realAddr,
             removed: chatState.bannedIds.has(senderId) || chatState.bannedIPs.has(addr),
           },
         ])
@@ -168,6 +178,14 @@ module.exports.store = Reflux.createStore({
     }
 
     return state
+  },
+
+  setBanGlobally(v) {
+    this.triggerUpdate(this.state.set('banGlobally', v))
+  },
+
+  setShowRealIPs(v) {
+    this.triggerUpdate(this.state.set('showRealIPs', v))
   },
 
   chooseCommand(command) {

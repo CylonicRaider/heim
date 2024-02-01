@@ -19,6 +19,14 @@ export default createReactClass({
     toolbox.chooseCommand(ev.target.value)
   },
 
+  updateGlobalBan(ev) {
+    toolbox.setBanGlobally(ev.target.checked)
+  },
+
+  updateShowRealIPs(ev) {
+    toolbox.setShowRealIPs(ev.target.checked)
+  },
+
   apply() {
     let commandParams
     const selectedCommand = this.state.toolbox.selectedCommand
@@ -44,6 +52,14 @@ export default createReactClass({
   },
 
   render() {
+    function renderAddr(item) {
+      if (toolboxData.get('showRealIPs') && item.get('realAddr')) {
+        return item.get('realAddr')
+      } else {
+        return item.get('addr')
+      }
+    }
+
     /* eslint-disable jsx-a11y/label-has-associated-control */
     const toolboxData = this.state.toolbox
     const isEmpty = !toolboxData.items.size
@@ -54,10 +70,11 @@ export default createReactClass({
         <div className={classNames('items', {'empty': isEmpty})} onCopy={this.onCopy}>
           {isEmpty && 'nothing selected'}
           {toolboxData.items.toSeq().map((item) => (
+            // TODO: deduplicate multiple sessions by the same user more gracefully
             <span key={item.get('kind') + '-' + item.get('id') + '-' + item.get('name', '')} className={classNames('item', item.get('kind'), {'active': item.get('active'), 'removed': item.get('removed')})}>
               {item.has('name') && <div className="name">{item.get('name')}</div>}
               <div className="id">{item.get('id')}</div>
-              {item.has('addr') && <div className="addr">{item.get('realAddr') || item.get('addr')}</div>}
+              {item.has('addr') && <div className="addr">{renderAddr(item)}</div>}
             </span>
           ))}
         </div>
@@ -81,7 +98,12 @@ export default createReactClass({
               <option value="f">forever</option>
             </select>
           )}
-          {!isEmpty && selectedCommand === 'banIP' && this.state.chat.isStaff && <label className="toggle-global"><input type="checkbox" ref="banGlobally" /> everywhere</label>}
+          {!isEmpty && selectedCommand === 'banIP' && this.state.chat.isStaff &&
+            <label className="toggle-global"><input type="checkbox" ref="banGlobally" checked={toolboxData.get('banGlobally')} onChange={this.updateGlobalBan}/> everywhere</label>
+          }
+          {this.state.chat.isStaff &&
+            <label className="toggle-realips"><input type="checkbox" checked={toolboxData.get('showRealIPs')} onChange={this.updateShowRealIPs}/> show real IPs</label>
+          }
           <div className="spacer" />
           <FastButton className="apply" onClick={this.apply}>
             <div className="emoji emoji-26a1" /> apply
