@@ -6,6 +6,7 @@ import activity from './activity'
 import ImmutableMixin from './ImmutableMixin'
 
 const storeActions = Reflux.createActions([
+  'forcePrepare',
   'prepare',
   'setReady',
   'perform',
@@ -67,6 +68,18 @@ module.exports.store = Reflux.createStore({
 
   onInactive() {
     this._active = false
+  },
+
+  // for debugging
+  forcePrepare() {
+    if (this.state.get('newVersion') !== null) {
+      return
+    }
+
+    this._active = true
+    // the '*' is arbitrarily chosen to avoid collisions with any likely version string
+    this.triggerUpdate(this.state.set('newVersion', '*'))
+    storeActions.prepare('*')
   },
 
   prepare(version) {
