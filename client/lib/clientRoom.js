@@ -1,3 +1,18 @@
+function newLocal() {
+  return {
+    pluginList: [],
+
+    _onAdd: null,
+
+    addPlugin(constructor) {
+      this.pluginList.push(constructor)
+      if (this._onAdd) {
+        this._onAdd(constructor)
+      }
+    },
+  }
+}
+
 function writeEnv(doc, hash) {
   const prefix = process.env.HEIM_PREFIX
   const query = hash ? '?v=' + hash : ''
@@ -22,6 +37,7 @@ function setupCrashHandler(evs) {
 
 export default function clientRoom() {
   if (!window.frameElement) {
+    window.Heim = {Local: newLocal()}
     writeEnv(document.getElementById('env').contentWindow.document, process.env.HEIM_GIT_COMMIT)
   } else {
     const queryString = require('querystring')
@@ -94,6 +110,7 @@ export default function clientRoom() {
     const BatchTransition = require('./BatchTransition').default
 
     window.Heim = {
+      require: require,
       addEventListener: evs.addEventListener.bind(evs),
       removeEventListener: evs.removeEventListener.bind(evs),
 
@@ -117,6 +134,12 @@ export default function clientRoom() {
           Heim.chat.store.socket.send(packet, true)
         },
       },
+    }
+
+    if (window.top.Heim && window.top.Heim.Local) {
+      Heim.Local = window.top.Heim.Local
+    } else {
+      Heim.Local = newLocal()
     }
 
     _.extend(Heim, {
@@ -324,9 +347,13 @@ export default function clientRoom() {
             context.Heim.attachUI(hash)
             frame.id = 'env'
 
+            // reactivate plugins
+            context.setImmediate(context.Heim.afterUpdate)
+
             // goodbye, world!
             window.frameElement.parentNode.removeChild(window.frameElement)
           } else if (chatState.canJoin) {
+            Heim.plugins.unlinkLocal(Heim.Local)
             Heim.update.setReady(true, context.Heim.actions.joinRoom)
           } else {
             Heim.update.setReady(false)
@@ -335,6 +362,10 @@ export default function clientRoom() {
         context.Heim.actions.connect()
       }
       writeEnv(context.document, hash)
+    }
+
+    Heim.afterUpdate = function afterUpdate() {
+      Heim.plugins.linkLocal(Heim.Local)
     }
 
     Heim.plugins.load(roomName)
@@ -347,6 +378,7 @@ export default function clientRoom() {
         Heim.attachUI()
         Heim.actions.joinRoom()
         Heim.actions.connect()
+        Heim.plugins.linkLocal(Heim.Local)
       }
     })
   }
