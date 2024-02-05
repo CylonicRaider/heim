@@ -158,15 +158,22 @@ export default function clientRoom() {
 
     Heim.hook = Heim.plugins.hook
 
-    Heim.loadCSS = function loadCSS(id) {
+    Heim.loadCSS = function loadCSS(id, url) {
       const cssEl = uidocument.getElementById(id)
-      const cssURL = document.getElementById(id).getAttribute('href')
-      if (!cssEl || cssEl.parentNode !== uidocument.head || cssEl.getAttribute('href') !== cssURL) {
+      if (!url) {
+        url = document.getElementById(id).getAttribute('href')
+      }
+      if (!url) {
+        // eslint-disable-next-line no-console
+        console.error('Cannot load stylesheet ' + id + ': Cannot determine its URL')
+        return
+      }
+      if (!cssEl || cssEl.parentNode !== uidocument.head || cssEl.getAttribute('href') !== url) {
         const newCSSEl = uidocument.createElement('link')
         newCSSEl.id = id
         newCSSEl.rel = 'stylesheet'
         newCSSEl.type = 'text/css'
-        newCSSEl.href = cssURL
+        newCSSEl.href = url
         uidocument.head.appendChild(newCSSEl)
 
         if (cssEl) {
