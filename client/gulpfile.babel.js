@@ -163,7 +163,7 @@ gulp.task('embed-js', () => {
 })
 
 gulp.task('raven-js', ['heim-git-commit', 'heim-js'], (done) => {
-  shell('md5sum build/heim/static/main.js | cut -d " " -f 1', (releaseHash) => {
+  shell('sha256sum build/heim/static/main.js | cut -d " " -f 1', (releaseHash) => {
     if (releaseHash) {
       log('Release hash:', doColor(colors.bold, releaseHash))
     } else {
