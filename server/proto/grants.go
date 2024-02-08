@@ -97,6 +97,9 @@ func (gs *GrantManager) Authority(
 	if err != nil {
 		return nil, nil, nil, err
 	}
+	if sourceCapability == nil {
+		return nil, nil, nil, ErrCapabilityNotFound
+	}
 
 	public = new(json.RawMessage)
 	if publicBytes := sourceCapability.PublicPayload(); publicBytes != nil {
