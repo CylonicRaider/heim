@@ -569,7 +569,13 @@ func (s *session) handleChangeNameCommand(msg *proto.ChangeNameCommand) *respons
 	if s.client.Account == nil {
 		return &response{err: proto.ErrNotLoggedIn}
 	}
-	if err := s.backend.AccountManager().ChangeName(s.ctx, s.client.Account.ID(), msg.Name); err != nil {
+
+	name, err := proto.NormalizeNick(msg.Name)
+	if err != nil {
+		return &response{err: err}
+	}
+
+	if err := s.backend.AccountManager().ChangeName(s.ctx, s.client.Account.ID(), name); err != nil {
 		return &response{err: err}
 	}
 	return &response{packet: &proto.ChangeNameReply{Name: msg.Name}}
