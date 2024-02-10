@@ -838,6 +838,8 @@ func (b *AccountManagerBinding) ChangeName(ctx scope.Context, accountID snowflak
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return proto.ErrAccountNotFound
+		} else if strings.HasPrefix(err.Error(), "pq: duplicate key value") {
+			return proto.ErrAccountNameInUse
 		}
 		return err
 	}
