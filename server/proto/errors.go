@@ -5,6 +5,7 @@ import "fmt"
 var (
 	ErrAccessDenied                    = fmt.Errorf("access denied")
 	ErrAccountIdentityInUse            = fmt.Errorf("account identity already in use")
+	ErrAccountNameInUse                = fmt.Errorf("account name already in use")
 	ErrAccountNotFound                 = fmt.Errorf("account not found")
 	ErrAgentAlreadyExists              = fmt.Errorf("agent already exists")
 	ErrAgentNotFound                   = fmt.Errorf("agent not found")

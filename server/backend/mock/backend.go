@@ -17,6 +17,7 @@ type TestBackend struct {
 	accountManager *accountManager
 	accounts       map[snowflake.Snowflake]proto.Account
 	accountIDs     map[string]*personalIdentity
+	accountNames   map[string]bool
 	agents         map[string]*proto.Agent
 	agentBans      map[proto.UserID]time.Time
 	et             EmailTracker

@@ -2,6 +2,7 @@ package mock
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"encoding/json"
@@ -12,6 +13,10 @@ import (
 	"euphoria.leet.nu/heim/proto/snowflake"
 	"github.com/euphoria-io/scope"
 )
+
+func normalizeAccountName(name string) string {
+	return strings.ToLower(strings.ReplaceAll(name, " ", ""))
+}
 
 func NewAccount(kms security.KMS, password string) (proto.Account, *security.ManagedKey, error) {
 	id, err := snowflake.New()
@@ -408,6 +413,22 @@ func (m *accountManager) ChangeName(ctx scope.Context, accountID snowflake.Snowf
 	if !ok {
 		return proto.ErrAccountNotFound
 	}
+
+	normNewName := normalizeAccountName(name)
+	normOldName := normalizeAccountName(account.(*memAccount).name)
+	if m.b.accountNames == nil {
+		m.b.accountNames = map[string]bool{normNewName: true}
+	} else if m.b.accountNames[normNewName] {
+		if normNewName != normOldName {
+			return proto.ErrAccountNameInUse
+		}
+	} else {
+		if normOldName != "" {
+			delete(m.b.accountNames, normOldName)
+		}
+		m.b.accountNames[normNewName] = true
+	}
+
 	account.(*memAccount).name = name
 	return nil
 }
