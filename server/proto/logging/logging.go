@@ -19,7 +19,7 @@ func Logger(ctx scope.Context) *log.Logger {
 	if logger, ok := ctx.Get(ctxLogger).(*log.Logger); ok {
 		return logger
 	}
-	return log.New(os.Stdout, "[???] ", logFlags)
+	return log.New(GetDefaultWriterOrFallback(ctx, os.Stdout), "[???] ", logFlags)
 }
 
 func GetDefaultWriter(ctx scope.Context) io.Writer {

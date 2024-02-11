@@ -140,9 +140,9 @@ func NewBackend(heim *proto.Heim, config *backend.DatabaseConfig) (*Backend, err
 		cluster:   heim.Cluster,
 		peers:     map[string]string{},
 		listeners: map[string]ListenerMap{},
-		ctx:       heim.Context,
+		ctx:       logging.LoggingContext(heim.Context, os.Stdout, "[backend] "),
 	}
-	b.logger = log.New(os.Stdout, fmt.Sprintf("[backend %p] ", b), log.LstdFlags)
+	b.logger = log.New(logging.GetDefaultWriter(b.ctx), fmt.Sprintf("[backend %p] ", b), log.LstdFlags)
 
 	if heim.PeerDesc != nil {
 		b.peers[heim.PeerDesc.ID] = heim.PeerDesc.Era
