@@ -36,9 +36,11 @@ import (
 	"github.com/smartystreets/goconvey/convey/reporting"
 )
 
-const debugStackTraces = false
-const debugLogs = false
-const debugSendReceive = false
+const (
+	debugStackTraces = false
+	debugLogs        = false
+	debugSendReceive = false
+)
 
 func init() {
 	if debugStackTraces {
@@ -1462,8 +1464,10 @@ func testAccountResetPassword(s *serverUnderTest) {
 func testAccountChangeName(s *serverUnderTest) {
 	ctx := newTestScope()
 	kms := s.app.kms
-	nonce := fmt.Sprintf("%s", time.Now())
+	nonce := time.Now().Format("20060102150405")
 	logan, _, err := s.Account(ctx, kms, "email", "logan"+nonce, "loganpass")
+	So(err, ShouldBeNil)
+	max, _, err := s.Account(ctx, kms, "email", "max"+nonce, "maxpass")
 	So(err, ShouldBeNil)
 
 	Convey("Change name", func() {
@@ -1479,15 +1483,62 @@ func testAccountChangeName(s *serverUnderTest) {
 		s.Reconnect(conn)
 		conn.expectPing()
 		conn.expectSnapshot(s.backend.Version(), nil, nil)
-		conn.send("1", "change-name", `{"name":"logan"}`)
-		conn.expect("1", "change-name-reply", `{"name":"logan"}`)
+		conn.send("1", "change-name", `{"name":"logan%s"}`, nonce)
+		conn.expect("1", "change-name-reply", `{"name":"logan%s"}`, nonce)
 		conn.Close()
+		conn.accountName = "logan" + nonce
 
-		conn.accountName = "logan"
 		s.Reconnect(conn)
 		conn.expectPing()
 		conn.expectSnapshot(s.backend.Version(), nil, nil)
 		conn.Close()
+
+		// Uniqueness constraint: max cannot have the same name as logan
+		connM := s.Connect("changename")
+		connM.expectPing()
+		connM.expectSnapshot(s.backend.Version(), nil, nil)
+		connM.send("1", "login", `{"namespace":"email","id":"max%s","password":"maxpass"}`, nonce)
+		connM.expect("1", "login-reply", `{"success":true,"account_id":"%s"}`, max.ID())
+		connM.Close()
+
+		s.Reconnect(connM)
+		connM.expectPing()
+		connM.expectSnapshot(s.backend.Version(), nil, nil)
+		connM.send("1", "change-name", `{"name":"logan%s"}`, nonce)
+		connM.expectError("1", "change-name-reply", "account name already in use")
+		connM.send("2", "change-name", `{"name":"max%s"}`, nonce)
+		connM.expect("2", "change-name-reply", `{"name":"max%s"}`, nonce)
+		connM.Close()
+		connM.accountName = "max" + nonce
+
+		s.Reconnect(connM)
+		connM.expectPing()
+		connM.expectSnapshot(s.backend.Version(), nil, nil)
+		connM.Close()
+
+		// Uniqueness constraint: After logan changes name, max can be logan
+		s.Reconnect(conn)
+		conn.expectPing()
+		conn.expectSnapshot(s.backend.Version(), nil, nil)
+		conn.send("1", "change-name", `{"name":"reallogan%s"}`, nonce)
+		conn.expect("1", "change-name-reply", `{"name":"reallogan%s"}`, nonce)
+		conn.Close()
+		conn.accountName = "reallogan" + nonce
+
+		s.Reconnect(connM)
+		connM.expectPing()
+		connM.expectSnapshot(s.backend.Version(), nil, nil)
+		connM.send("1", "login", `{"namespace":"email","id":"max%s","password":"maxpass"}`, nonce)
+		connM.expect("1", "login-reply", `{"success":true,"account_id":"%s"}`, max.ID())
+		connM.send("2", "change-name", `{"name":"logan%s"}`, nonce)
+		connM.expect("2", "change-name-reply", `{"name":"logan%s"}`, nonce)
+		connM.Close()
+		connM.accountName = "logan" + nonce
+
+		s.Reconnect(connM)
+		connM.expectPing()
+		connM.expectSnapshot(s.backend.Version(), nil, nil)
+		connM.Close()
 	})
 }
 
