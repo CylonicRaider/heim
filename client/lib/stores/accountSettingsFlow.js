@@ -68,10 +68,15 @@ module.exports.store = Reflux.createStore({
     this.triggerUpdate(this.state.withMutations((state) => {
       const step = state.get('step')
       if (step === 'change-name') {
-        const error = new Error('failed to change name: ' + data.reason)
-        error.action = 'change-name'
-        error.response = data
-        Raven.captureException(error)
+        state.set('working', false)
+        if (data.error == 'account name already in use') {
+          state.set('errors', Immutable.Map({name: 'already taken'}))
+        } else {
+          const error = new Error('failed to change name: ' + data.reason)
+          error.action = 'change-name'
+          error.response = data
+          Raven.captureException(error)
+        }
       }
     }))
   },
