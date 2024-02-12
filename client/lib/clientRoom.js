@@ -112,7 +112,11 @@ export default function clientRoom() {
     const BatchTransition = require('./BatchTransition').default
 
     window.Heim = {
+      window: window,
+      document: document,
+      uidocument: uidocument,
       require: require,
+
       addEventListener: evs.addEventListener.bind(evs),
       removeEventListener: evs.removeEventListener.bind(evs),
 
