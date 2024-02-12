@@ -13,12 +13,14 @@ function newLocal() {
   }
 }
 
-function writeEnv(doc, hash) {
+function writeEnv(doc, hash, initial) {
   const prefix = process.env.HEIM_PREFIX
   const query = hash ? '?v=' + hash : ''
   doc.write('<!DOCTYPE html>')
   doc.write('<link rel="stylesheet" type="text/css" id="css" href="' + prefix + '/static/main.css' + query + '">')
-  doc.write('<link rel="stylesheet" type="text/css" id="emoji-css" href="' + prefix + '/static/emoji.css' + query + '">')
+  // emoji.css is huge and not critical for initial page loads
+  doc.write('<link rel="stylesheet" type="text/css" id="emoji-css" href="' + prefix + '/static/emoji.css' + query + '"' +
+            (initial ? ' media="none" onload="this.media = \'all\'"' : '') + '>')
   doc.write('<script src="' + prefix + '/static/raven.js' + query + '"></script>')
   doc.write('<script id="heim-js" src="' + prefix + '/static/main.js' + query + '"></script>')
   doc.close()
@@ -38,7 +40,7 @@ function setupCrashHandler(evs) {
 export default function clientRoom() {
   if (!window.frameElement) {
     window.Heim = {Local: newLocal()}
-    writeEnv(document.getElementById('env').contentWindow.document, process.env.HEIM_GIT_COMMIT)
+    writeEnv(document.getElementById('env').contentWindow.document, process.env.HEIM_GIT_COMMIT, true)
   } else {
     const queryString = require('querystring')
     const _ = require('lodash')
@@ -368,7 +370,7 @@ export default function clientRoom() {
         })
         context.Heim.actions.connect()
       }
-      writeEnv(context.document, hash)
+      writeEnv(context.document, hash, false)
     }
 
     Heim.afterUpdate = function afterUpdate() {
