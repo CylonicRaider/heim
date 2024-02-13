@@ -73,8 +73,8 @@ var (
 	PingReplyType = PingType.Reply()
 
 	PMInitiateType      = PacketType("pm-initiate")
-	PMInitiateEventType = PacketType("pm-initiate-event")
-	PMInitiateReplyType = PacketType("pm-initiate-reply")
+	PMInitiateEventType = PMInitiateType.Event()
+	PMInitiateReplyType = PMInitiateType.Reply()
 
 	RegisterAccountType      = PacketType("register-account")
 	RegisterAccountReplyType = RegisterAccountType.Reply()
@@ -293,8 +293,8 @@ type SendReply SendEvent
 // If the `announce` field is set to true, then an edit-message-event will be
 // broadcast to the room.
 //
-// TODO: support content editing
-// TODO: support reparenting
+// TODO: Support content editing.
+// TODO: Support reparenting.
 type EditMessageCommand struct {
 	ID             snowflake.Snowflake `json:"id"`                // the id of the message to edit
 	PreviousEditID snowflake.Snowflake `json:"previous_edit_id"`  // the `previous_edit_id` of the message; if this does not match, the edit will fail (basic conflict resolution)
@@ -677,8 +677,8 @@ type ResetPasswordReply struct{}
 // The `revoke-access` command disables an access grant to a private room.
 // The grant may be to an account or to a passcode.
 //
-// TODO: all live sessions using the revoked grant should be disconnected
-// TODO: support revocation by capability_id, in case a manager doesn't know the passcode
+// TODO: All live sessions using the revoked grant should be disconnected.
+// TODO: Support revocation by capability_id, in case a manager doesn't know the passcode.
 type RevokeAccessCommand struct {
 	AccountID snowflake.Snowflake `json:"account_id,omitempty"` // the id of the account to revoke access from
 	Passcode  string              `json:"passcode",omitempty`   // the passcode to revoke access from

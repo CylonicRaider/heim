@@ -873,8 +873,8 @@ cannot be restored by this or any command).
 If the `announce` field is set to true, then an edit-message-event will be
 broadcast to the room.
 
-TODO: support content editing
-TODO: support reparenting
+TODO: Support content editing.
+TODO: Support reparenting.
 
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
@@ -939,8 +939,8 @@ This packet has no fields.
 The `revoke-access` command disables an access grant to a private room.
 The grant may be to an account or to a passcode.
 
-TODO: all live sessions using the revoked grant should be disconnected
-TODO: support revocation by capability_id, in case a manager doesn't know the passcode
+TODO: All live sessions using the revoked grant should be disconnected.
+TODO: Support revocation by capability_id, in case a manager doesn't know the passcode.
 
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
