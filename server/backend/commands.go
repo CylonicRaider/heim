@@ -369,21 +369,21 @@ func (s *session) handleStaffGrantManagerCommand(cmd *proto.StaffGrantManagerCom
 
 	mkey, err := s.managedRoom.ManagerKey(s.ctx)
 	if err != nil {
-		return &response{err: err}
+		return &response{err: fmt.Errorf("get manager key: %s", err)}
 	}
 
 	msgkey, err := s.managedRoom.MessageKey(s.ctx)
 	if err != nil {
-		return &response{err: err}
+		return &response{err: fmt.Errorf("get message key: %s", err)}
 	}
 
 	if err := mkey.StaffGrantToAccount(s.ctx, s.staffKMS, account); err != nil {
-		return &response{err: err}
+		return &response{err: fmt.Errorf("grant manager key: %s", err)}
 	}
 
 	if msgkey != nil {
 		if err := msgkey.StaffGrantToAccount(s.ctx, s.staffKMS, account); err != nil {
-			return &response{err: err}
+			return &response{err: fmt.Errorf("grant message key: %s", err)}
 		}
 	}
 
