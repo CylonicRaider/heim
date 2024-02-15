@@ -28,7 +28,7 @@ func (log *memLog) GetMessage(ctx scope.Context, id snowflake.Snowflake) (*proto
 	defer log.Unlock()
 
 	for _, msg := range log.msgs {
-		if msg.ID == id {
+		if msg.ID == id && time.Time(msg.Deleted).IsZero() {
 			return msg, nil
 		}
 	}
