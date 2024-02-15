@@ -15,6 +15,7 @@ func panicIfFailed(err error) {
 }
 
 type Console interface {
+	io.Writer
 	io.Closer
 
 	Print(text string)
@@ -41,6 +42,16 @@ func NewDefaultConsole() Console {
 	}
 }
 
+func (c *DefaultConsole) Write(data []byte) (n int, err error) {
+	written, err := c.term.Write(data)
+	panicIfFailed(err)
+	if written != len(data) {
+		panic(fmt.Errorf("Incomplete write to console?! passed %d, wrote %d",
+			len(data), written))
+	}
+	return len(data), nil
+}
+
 func (c *DefaultConsole) Close() error {
 	err := term.Restore(c.fd, c.state)
 	panicIfFailed(err)
@@ -48,12 +59,7 @@ func (c *DefaultConsole) Close() error {
 }
 
 func (c *DefaultConsole) Print(text string) {
-	written, err := c.term.Write([]byte(text))
-	panicIfFailed(err)
-	if written != len(text) {
-		panic(fmt.Errorf("Incomplete write to console?! passed %d, wrote %d",
-			len(text), written))
-	}
+	c.Write([]byte(text))
 }
 
 func (c *DefaultConsole) Println(text string) {
