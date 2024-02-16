@@ -2,8 +2,16 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"reflect"
+	"regexp"
+	"strings"
 	"unicode"
+)
+
+var (
+	spaceRe = regexp.MustCompile("^\\s+")
+	wordRe  = regexp.MustCompile("^([^\"\\s]+|\"([^\"\\\\]+|\\\\.)*\")")
 )
 
 type CommandParams interface {
@@ -136,4 +144,79 @@ func (cs CommandSet) Run(con Console, argv []string) {
 		return
 	}
 	cmd.Run(con, argv[1:])
+}
+
+func parseWord(word string) string {
+	if word[0] != '"' {
+		return word
+	}
+
+	result := []byte{}
+	for offset := 1; offset < len(word)-1; {
+		shift := strings.IndexByte(word[offset:], '\\')
+		if shift == -1 {
+			result = append(result, word[offset:len(word)-1]...)
+			break
+		}
+		result = append(result, word[offset:offset+shift]...)
+		offset += shift
+
+		nextOffset := offset + 2
+		if word[offset+1] == '\\' || word[offset+1] == '"' {
+			offset++
+		}
+		result = append(result, word[offset:nextOffset]...)
+		offset = nextOffset
+	}
+	return string(result)
+}
+
+func SplitLine(line string) ([]string, error) {
+	offset := 0
+	fail := func(msg string) ([]string, error) {
+		return nil, fmt.Errorf("offset %d: %s", offset, msg)
+	}
+	result := []string{}
+	for first := true; offset != len(line); first = false {
+		if !first {
+			m := spaceRe.FindStringIndex(line[offset:])
+			if m == nil || m[0] != 0 {
+				return fail("unexpected characters")
+			}
+			offset += m[1]
+		}
+		m := wordRe.FindStringIndex(line[offset:])
+		if m == nil {
+			return fail("syntax error")
+		} else if m[0] != 0 {
+			return fail("unexpected characters")
+		}
+		result = append(result, parseWord(line[offset:offset+m[1]]))
+		offset += m[1]
+	}
+	return result, nil
+}
+
+type CLI struct {
+	Prompt   string
+	Commands CommandSet
+}
+
+func NewCLI(prompt string) *CLI {
+	return &CLI{Prompt: prompt, Commands: CommandSet{}}
+}
+
+func (c *CLI) Run(con Console) {
+	for {
+		line := con.ReadLine(c.Prompt)
+		if line == nil {
+			break
+		}
+		words, err := SplitLine(*line)
+		if err != nil {
+			con.Println("ERROR: " + err.Error())
+			continue
+		}
+		c.Commands.Run(con, words)
+	}
 }

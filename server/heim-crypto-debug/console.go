@@ -21,8 +21,8 @@ type Console interface {
 	Print(text string)
 	Println(text string)
 
-	ReadLine(prompt string) string
-	ReadPass(prompt string) string
+	ReadLine(prompt string) *string
+	ReadPass(prompt string) *string
 }
 
 type DefaultConsole struct {
@@ -66,15 +66,21 @@ func (c *DefaultConsole) Println(text string) {
 	c.Print(text + "\n")
 }
 
-func (c *DefaultConsole) ReadLine(prompt string) string {
+func (c *DefaultConsole) ReadLine(prompt string) *string {
 	c.term.SetPrompt(prompt)
 	res, err := c.term.ReadLine()
+	if err == io.EOF {
+		return nil
+	}
 	panicIfFailed(err)
-	return res
+	return &res
 }
 
-func (c *DefaultConsole) ReadPass(prompt string) string {
+func (c *DefaultConsole) ReadPass(prompt string) *string {
 	res, err := c.term.ReadPassword(prompt)
+	if err == io.EOF {
+		return nil
+	}
 	panicIfFailed(err)
-	return res
+	return &res
 }

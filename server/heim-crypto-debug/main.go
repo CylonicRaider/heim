@@ -1,7 +1,5 @@
 package main
 
-import "os"
-
 type params struct {
 	Name     string `usage:"user name"`
 	Password string `usage:"password (as plain text)"`
@@ -10,10 +8,10 @@ type params struct {
 
 func (p *params) Run(con Console, argv []string) {
 	if p.Name == "" {
-		p.Name = con.ReadLine("Username: ")
+		p.Name = *con.ReadLine("Username: ")
 	}
 	if p.Password == "" {
-		p.Password = con.ReadPass("Password: ")
+		p.Password = *con.ReadPass("Password: ")
 	}
 
 	if p.Password == "hunter2" {
@@ -29,9 +27,7 @@ func main() {
 	con := NewDefaultConsole()
 	defer con.Close()
 
-	cmd := &Command{
-		Name:     os.Args[0],
-		Defaults: &params{Count: 1},
-	}
-	cmd.Run(con, os.Args[1:])
+	cli := NewCLI("> ")
+	cli.Commands.AddNew("test", &params{Count: 1})
+	cli.Run(con)
 }
