@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
+	"sort"
 	"strings"
 	"unicode"
 )
@@ -124,6 +125,13 @@ func (c *Command) Run(con Console, argv []string) {
 	params.Run(con, restArgv)
 }
 
+func (c *Command) Help(con Console) {
+	con.Println("Usage of " + c.Name + ":")
+	flags, _ := c.Flags()
+	flags.SetOutput(con)
+	flags.PrintDefaults()
+}
+
 type CommandSet map[string]*Command
 
 func NewCommandSet() CommandSet { return CommandSet{} }
@@ -134,13 +142,21 @@ func (cs CommandSet) AddNew(name string, defaults CommandParams) {
 	cs.Add(&Command{name, defaults})
 }
 
+func (cs CommandSet) GetCommand(con Console, name string) *Command {
+	cmd, ok := cs[name]
+	if !ok {
+		con.Println("ERROR: unknown command " + name)
+		return nil
+	}
+	return cmd
+}
+
 func (cs CommandSet) Run(con Console, argv []string) {
 	if len(argv) == 0 {
 		return
 	}
-	cmd, ok := cs[argv[0]]
-	if !ok {
-		con.Println("ERROR: unknown command " + argv[0])
+	cmd := cs.GetCommand(con, argv[0])
+	if cmd == nil {
 		return
 	}
 	cmd.Run(con, argv[1:])
@@ -206,6 +222,37 @@ func NewCLI(prompt string) *CLI {
 	return &CLI{Prompt: prompt, Commands: CommandSet{}}
 }
 
+func (c *CLI) Help(con Console, cmdName *string) {
+	if cmdName == nil {
+		allNames := []string{"help", "quit"}
+		for name, _ := range c.Commands {
+			allNames = append(allNames, name)
+		}
+		sort.Strings(allNames)
+		msg := []byte("Known commands: ")
+		for i, name := range allNames {
+			if i != 0 {
+				msg = append(msg, ", "...)
+			}
+			msg = append(msg, name...)
+		}
+		con.Println(string(msg))
+		return
+	} else if *cmdName == "help" {
+		con.Println("Print a list of commands or the help of a particular command")
+		return
+	} else if *cmdName == "quit" {
+		con.Println("Exit")
+		return
+	}
+
+	cmd := c.Commands.GetCommand(con, *cmdName)
+	if cmd == nil {
+		return
+	}
+	cmd.Help(con)
+}
+
 func (c *CLI) Run(con Console) {
 	for {
 		line := con.ReadLine(c.Prompt)
@@ -216,7 +263,16 @@ func (c *CLI) Run(con Console) {
 		if err != nil {
 			con.Println("ERROR: " + err.Error())
 			continue
+		} else if words[0] == "quit" {
+			break
+		} else if words[0] == "help" {
+			if len(words) == 1 {
+				c.Help(con, nil)
+			} else {
+				c.Help(con, &words[1])
+			}
+		} else {
+			c.Commands.Run(con, words)
 		}
-		c.Commands.Run(con, words)
 	}
 }
