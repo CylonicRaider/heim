@@ -2,7 +2,6 @@ package console
 
 import (
 	"testing"
-	"time"
 
 	"euphoria.leet.nu/heim/backend/mock"
 	"euphoria.leet.nu/heim/proto"
@@ -62,8 +61,8 @@ func TestDeleteMessage(t *testing.T) {
 		runCommand(ctx, ctrl, "delete-message", term, []string{"public:" + sent.ID.String()})
 
 		deleted, err := public.GetMessage(ctx, sent.ID)
-		So(err, ShouldBeNil)
-		So(time.Time(deleted.Deleted).IsZero(), ShouldBeFalse)
+		So(deleted, ShouldBeNil)
+		So(err, ShouldEqual, proto.ErrMessageNotFound)
 	})
 
 	Convey("Delete message in private room", t, func() {
@@ -83,7 +82,7 @@ func TestDeleteMessage(t *testing.T) {
 		runCommand(ctx, ctrl, "delete-message", term, []string{"private:" + sent.ID.String()})
 
 		deleted, err := private.GetMessage(ctx, sent.ID)
-		So(err, ShouldBeNil)
-		So(time.Time(deleted.Deleted).IsZero(), ShouldBeFalse)
+		So(deleted, ShouldBeNil)
+		So(err, ShouldEqual, proto.ErrMessageNotFound)
 	})
 }

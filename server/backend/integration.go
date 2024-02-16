@@ -1112,6 +1112,10 @@ func testDeletion(s *serverUnderTest) {
 			[]string{
 				fmt.Sprintf(`{"session_id":"%s","id":"%s",%s}`, conn.sessionID, conn.userID, server)},
 			nil)
+		conn2.send("1", "get-message", `{"id":"%s"}`, capture["id"])
+		conn2.expectError("1", "get-message-reply", "message not found")
+		conn2.send("2", "log", `{"n":10}`)
+		conn2.expect("2", "log-reply", `{"log":[]}`)
 	})
 }
 
