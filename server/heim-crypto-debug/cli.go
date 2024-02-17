@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"reflect"
@@ -14,15 +15,6 @@ var (
 	spaceRe = regexp.MustCompile("^\\s+")
 	wordRe  = regexp.MustCompile("^([^\"\\s]+|\"([^\"\\\\]+|\\\\.)*\")")
 )
-
-type CommandParams interface {
-	Run(con Console, argv []string)
-}
-
-type Command struct {
-	Name     string
-	Defaults CommandParams
-}
 
 type fieldDesc struct {
 	name  string
@@ -50,7 +42,48 @@ func newFieldDesc(field reflect.StructField) *fieldDesc {
 	}
 }
 
+type BinaryValue []byte
+
+func (bv *BinaryValue) String() string {
+	if bv == nil || len(*bv) == 0 {
+		return "\"\""
+	}
+	return "\\x" + strings.ToUpper(hex.EncodeToString(*bv))
+}
+
+func (bv *BinaryValue) Get() interface{} {
+	return *bv
+}
+
+func (bv *BinaryValue) Set(value string) error {
+	if value == "" || value[0] != '\\' {
+		*bv = []byte(value)
+		return nil
+	} else if value[1] != 'x' {
+		return fmt.Errorf("invalid byte string literal: expected \\x")
+	}
+	decoded, err := hex.DecodeString(value[2:])
+	if err != nil {
+		return err
+	}
+	*bv = decoded
+	return nil
+}
+
+type CommandParams interface {
+	Run(con Console, argv []string)
+}
+
+type Command struct {
+	Name     string
+	Defaults CommandParams
+}
+
 func (c *Command) Flags() (*flag.FlagSet, CommandParams) {
+	unknownType := func(field reflect.StructField) {
+		panic("Unsupported command parameter type: " + field.Type.Kind().String())
+	}
+
 	flags := flag.NewFlagSet(c.Name, flag.ContinueOnError)
 
 	defaults := reflect.ValueOf(c.Defaults)
@@ -96,8 +129,15 @@ func (c *Command) Flags() (*flag.FlagSet, CommandParams) {
 			flags.Float64Var(vp.(*float64), fd.name, ov.(float64), fd.usage)
 		case reflect.String:
 			flags.StringVar(vp.(*string), fd.name, ov.(string), fd.usage)
+		case reflect.Slice:
+			switch field.Type.Elem().Kind() {
+			case reflect.Uint8:
+				flags.Var((*BinaryValue)(vp.(*[]byte)), fd.name, fd.usage)
+			default:
+				unknownType(field)
+			}
 		default:
-			panic("Unsupported command parameter type: " + field.Type.Kind().String())
+			unknownType(field)
 		}
 	}
 
