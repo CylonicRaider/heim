@@ -80,8 +80,9 @@ type Command struct {
 }
 
 func (c *Command) Flags() (*flag.FlagSet, CommandParams) {
+	flagGetterType := reflect.TypeOf((*flag.Getter)(nil)).Elem()
 	unknownType := func(field reflect.StructField) {
-		panic("Unsupported command parameter type: " + field.Type.Kind().String())
+		panic("Unsupported command parameter type: " + field.Type.String())
 	}
 
 	flags := flag.NewFlagSet(c.Name, flag.ContinueOnError)
@@ -136,6 +137,12 @@ func (c *Command) Flags() (*flag.FlagSet, CommandParams) {
 			default:
 				unknownType(field)
 			}
+		case reflect.Struct:
+			if reflect.PointerTo(field.Type).Implements(flagGetterType) {
+				flags.Var(vp.(flag.Getter), fd.name, fd.usage)
+			} else {
+				unknownType(field)
+			}
 		default:
 			unknownType(field)
 		}
@@ -148,10 +155,8 @@ func (c *Command) Parse(con Console, argv []string) (CommandParams, []string) {
 	flags, params := c.Flags()
 	flags.SetOutput(con)
 	err := flags.Parse(argv)
-	if err == flag.ErrHelp {
-		return nil, nil
-	} else if err != nil {
-		con.Println("ERROR: " + err.Error())
+	if err != nil {
+		// flags has already written an error message
 		return nil, nil
 	}
 	return params, flags.Args()
