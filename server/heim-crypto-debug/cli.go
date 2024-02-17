@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"encoding/hex"
 	"flag"
 	"fmt"
+	"io"
 	"reflect"
 	"regexp"
 	"sort"
@@ -17,8 +19,10 @@ var (
 )
 
 type fieldDesc struct {
-	name  string
-	usage string
+	name       string
+	usage      string
+	positional bool
+	required   bool
 }
 
 func newFieldDesc(field reflect.StructField) *fieldDesc {
@@ -27,8 +31,10 @@ func newFieldDesc(field reflect.StructField) *fieldDesc {
 	if !ok {
 		return nil
 	}
-	name, ok := tags.Lookup("cli")
-	if !ok {
+	info, _ := tags.Lookup("cli")
+	infoParts := strings.Split(info, ",")
+	name := infoParts[0]
+	if name == "" {
 		for i, c := range field.Name {
 			if unicode.IsUpper(c) && i != 0 {
 				name += "-"
@@ -36,10 +42,21 @@ func newFieldDesc(field reflect.StructField) *fieldDesc {
 			name += string(unicode.ToLower(c))
 		}
 	}
-	return &fieldDesc{
+	result := &fieldDesc{
 		name:  name,
 		usage: usage,
 	}
+	for _, tag := range infoParts[1:] {
+		switch tag {
+		case "arg":
+			result.positional = true
+		case "required":
+			result.required = true
+		default:
+			panic(fmt.Sprintf("unrecognized CLI tag: %s", tag))
+		}
+	}
+	return result
 }
 
 type BinaryValue []byte
@@ -70,8 +87,106 @@ func (bv *BinaryValue) Set(value string) error {
 	return nil
 }
 
+type flags struct {
+	flags       *flag.FlagSet
+	args        *flag.FlagSet
+	argsOrder   []string
+	firstOptArg int
+}
+
+func newFlags(name string) *flags {
+	result := &flags{
+		flags:       flag.NewFlagSet(name, flag.ContinueOnError),
+		args:        flag.NewFlagSet(name, flag.PanicOnError),
+		argsOrder:   []string{},
+		firstOptArg: 0,
+	}
+	result.flags.Usage = result.Usage
+	result.args.Usage = result.Usage
+	return result
+}
+
+func (f *flags) Usage() {
+	fmt.Fprintf(f.flags.Output(), "See help %s for usage.\n", f.flags.Name())
+}
+
+func (f *flags) SetOutput(w io.Writer) {
+	f.flags.SetOutput(w)
+	f.args.SetOutput(w)
+}
+
+func (f *flags) failf(format string, values ...interface{}) error {
+	err := fmt.Errorf(format, values...)
+	fmt.Fprintln(f.flags.Output(), err)
+	f.Usage()
+	return err
+}
+
+func (f *flags) Parse(argv []string) error {
+	if err := f.flags.Parse(argv); err != nil {
+		return err
+	}
+	argv = f.flags.Args()
+
+	argIndex := 0
+	for _, arg := range argv {
+		if argIndex >= len(f.argsOrder) {
+			return f.failf("too many positional arguments")
+		}
+		argName := f.argsOrder[argIndex]
+		if err := f.args.Set(argName, arg); err != nil {
+			return f.failf("invalid value %q or argument %s: %v",
+				arg, argName, err)
+		}
+		argIndex++
+	}
+	if argIndex < f.firstOptArg {
+		return f.failf("missing value for required argument %s",
+			f.argsOrder[argIndex])
+	}
+	return nil
+}
+
+func defaultValueString(f *flag.Flag) (string, bool) {
+	zv := reflect.New(reflect.TypeOf(f.Value).Elem())
+	zvs := zv.Interface().(flag.Value).String()
+	if f.DefValue == zvs {
+		return "", false
+	}
+
+	if zv.Kind() == reflect.String {
+		return fmt.Sprintf("%q", f.DefValue), true
+	} else {
+		return f.DefValue, true
+	}
+}
+
+// Yes, that name is stupid. No, I did not invent it.
+func (f *flags) PrintDefaults() {
+	f.flags.PrintDefaults()
+
+	buf := &bytes.Buffer{}
+	for i, name := range f.argsOrder {
+		argFlag := f.args.Lookup(name)
+		valName, usage := flag.UnquoteUsage(argFlag)
+		fmt.Fprintf(buf, "  %s", name)
+		if valName != "" && valName != name {
+			fmt.Fprintf(buf, ": %s", valName)
+		}
+		fmt.Fprintf(buf, "\n    \t%s",
+			strings.ReplaceAll(usage, "\n", "\n    \t"))
+		if i < f.firstOptArg {
+			fmt.Fprintf(buf, " (required)")
+		} else if text, show := defaultValueString(argFlag); show {
+			fmt.Fprintf(buf, " (default %s)", text)
+		}
+		fmt.Fprintln(buf)
+	}
+	fmt.Fprint(f.args.Output(), buf.String())
+}
+
 type CommandParams interface {
-	Run(con Console, argv []string)
+	Run(con Console)
 }
 
 type Command struct {
@@ -79,40 +194,57 @@ type Command struct {
 	Defaults CommandParams
 }
 
-func (c *Command) Flags() (*flag.FlagSet, CommandParams) {
+func (c *Command) flags() (*flags, CommandParams) {
 	flagGetterType := reflect.TypeOf((*flag.Getter)(nil)).Elem()
 	unknownType := func(field reflect.StructField) {
-		panic("Unsupported command parameter type: " + field.Type.String())
+		panic("unsupported command parameter type: " + field.Type.String())
 	}
 
-	flags := flag.NewFlagSet(c.Name, flag.ContinueOnError)
+	result := newFlags(c.Name)
 
 	defaults := reflect.ValueOf(c.Defaults)
 	tp := defaults.Type()
 	if tp.Kind() != reflect.Pointer {
-		panic("Command parameters must be pointer to struct, got " +
+		panic("command parameters must be pointer to struct, got " +
 			tp.Kind().String())
 	}
 	defaults = defaults.Elem()
 	tp = defaults.Type()
 	if tp.Kind() != reflect.Struct {
-		panic("Command parameters must be pointer to struct, got pointer to " +
+		panic("command parameters must be pointer to struct, got pointer to " +
 			tp.Kind().String())
 	}
 
 	params := reflect.New(tp).Elem()
 	params.Set(defaults)
 
+	positionalRequired := true
 	for _, field := range reflect.VisibleFields(tp) {
 		if field.Anonymous || field.PkgPath != "" {
 			continue
 		}
 
-		ov := defaults.FieldByIndex(field.Index).Interface()
-		vp := params.FieldByIndex(field.Index).Addr().Interface()
 		fd := newFieldDesc(field)
 		if fd == nil {
 			continue
+		}
+
+		ov := defaults.FieldByIndex(field.Index).Interface()
+		vp := params.FieldByIndex(field.Index).Addr().Interface()
+		flags := result.flags
+		if fd.positional {
+			result.argsOrder = append(result.argsOrder, fd.name)
+			if fd.required {
+				if !positionalRequired {
+					panic("required positional argument cannot follow optional one")
+				}
+				result.firstOptArg = len(result.argsOrder)
+			} else {
+				positionalRequired = false
+			}
+			flags = result.args
+		} else if fd.required {
+			panic("only positional arguments can be required")
 		}
 
 		switch field.Type.Kind() {
@@ -148,31 +280,31 @@ func (c *Command) Flags() (*flag.FlagSet, CommandParams) {
 		}
 	}
 
-	return flags, params.Addr().Interface().(CommandParams)
+	return result, params.Addr().Interface().(CommandParams)
 }
 
-func (c *Command) Parse(con Console, argv []string) (CommandParams, []string) {
-	flags, params := c.Flags()
+func (c *Command) Parse(con Console, argv []string) CommandParams {
+	flags, params := c.flags()
 	flags.SetOutput(con)
 	err := flags.Parse(argv)
 	if err != nil {
 		// flags has already written an error message
-		return nil, nil
+		return nil
 	}
-	return params, flags.Args()
+	return params
 }
 
 func (c *Command) Run(con Console, argv []string) {
-	params, restArgv := c.Parse(con, argv)
+	params := c.Parse(con, argv)
 	if params == nil {
 		return
 	}
-	params.Run(con, restArgv)
+	params.Run(con)
 }
 
 func (c *Command) Help(con Console) {
 	con.Println("Usage of " + c.Name + ":")
-	flags, _ := c.Flags()
+	flags, _ := c.flags()
 	flags.SetOutput(con)
 	flags.PrintDefaults()
 }
@@ -308,9 +440,9 @@ func (c *CLI) Run(con Console) {
 		if err != nil {
 			con.Println("ERROR: " + err.Error())
 			continue
-		} else if words[0] == "quit" {
+		} else if len(words) > 0 && words[0] == "quit" {
 			break
-		} else if words[0] == "help" {
+		} else if len(words) > 0 && words[0] == "help" {
 			if len(words) == 1 {
 				c.Help(con, nil)
 			} else {

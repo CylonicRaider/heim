@@ -3,11 +3,11 @@ package main
 type params struct {
 	Name     string `usage:"user name"`
 	Password string `usage:"password (as plain text)"`
-	Count    int    `usage:"repetition count"`
-	Payload  []byte `usage:"binary payload"`
+	Payload  []byte `usage:"binary payload" cli:",arg,required"`
+	Count    int    `usage:"repetition count" cli:",arg"`
 }
 
-func (p *params) Run(con Console, argv []string) {
+func (p *params) Run(con Console) {
 	if p.Name == "" {
 		p.Name = *con.ReadLine("Username: ")
 	}
