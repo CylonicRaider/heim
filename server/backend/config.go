@@ -417,4 +417,9 @@ type GeoIPConfig struct {
 	LicenseKey string `yaml:"license-key"`
 }
 
-func (c *GeoIPConfig) Api() *geoip2.Api { return geoip2.New(c.UserID, c.LicenseKey) }
+func (c *GeoIPConfig) Api() *geoip2.Api {
+	if c.UserID == "" {
+		return nil
+	}
+	return geoip2.New(c.UserID, c.LicenseKey)
+}
