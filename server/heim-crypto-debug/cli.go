@@ -63,13 +63,13 @@ type BinaryValue []byte
 
 func (bv *BinaryValue) String() string {
 	if bv == nil || len(*bv) == 0 {
-		return "\"\""
+		return ""
 	}
 	return "\\x" + strings.ToUpper(hex.EncodeToString(*bv))
 }
 
 func (bv *BinaryValue) Get() interface{} {
-	return *bv
+	return []byte(*bv)
 }
 
 func (bv *BinaryValue) Set(value string) error {
@@ -87,27 +87,89 @@ func (bv *BinaryValue) Set(value string) error {
 	return nil
 }
 
+type StringSliceValue []string
+
+func (ssv *StringSliceValue) String() string {
+	if ssv == nil || len(*ssv) == 0 {
+		return ""
+	}
+	return strings.Join(*ssv, ", ")
+}
+
+func (ssv *StringSliceValue) Get() interface{} {
+	return []string(*ssv)
+}
+
+func (ssv *StringSliceValue) Set(value string) error {
+	*ssv = append(*ssv, value)
+	return nil
+}
+
 type flags struct {
-	flags       *flag.FlagSet
-	args        *flag.FlagSet
-	argsOrder   []string
-	firstOptArg int
+	name         string
+	flags        *flag.FlagSet
+	args         *flag.FlagSet
+	reqFlags     map[string]bool
+	argsOrder    []string
+	firstOptArg  int
+	restArgIndex int
 }
 
 func newFlags(name string) *flags {
 	result := &flags{
-		flags:       flag.NewFlagSet(name, flag.ContinueOnError),
-		args:        flag.NewFlagSet(name, flag.PanicOnError),
-		argsOrder:   []string{},
-		firstOptArg: 0,
+		name:         name,
+		flags:        flag.NewFlagSet(name, flag.ContinueOnError),
+		args:         flag.NewFlagSet(name, flag.PanicOnError),
+		reqFlags:     nil,
+		argsOrder:    []string{},
+		firstOptArg:  0,
+		restArgIndex: -1,
 	}
 	result.flags.Usage = result.Usage
 	result.args.Usage = result.Usage
 	return result
 }
 
+func (f *flags) VisitAll(cb func(*flag.Flag, bool, bool, bool)) {
+	f.flags.VisitAll(func(fl *flag.Flag) { cb(fl, false, f.reqFlags[fl.Name], false) })
+	for i, name := range f.argsOrder {
+		cb(f.args.Lookup(name), true, (i < f.firstOptArg), (i == f.restArgIndex))
+	}
+}
+
 func (f *flags) Usage() {
-	fmt.Fprintf(f.flags.Output(), "See help %s for usage.\n", f.flags.Name())
+	buf := &bytes.Buffer{}
+	name := f.name
+	if name == "" {
+		name = "..."
+	}
+	fmt.Fprintf(buf, "USAGE: %s", name)
+
+	f.VisitAll(func(fl *flag.Flag, positional, required, rest bool) {
+		buf.WriteByte(' ')
+		if !required {
+			buf.WriteByte('[')
+		}
+		if positional {
+			buf.WriteString(fl.Name)
+			if rest {
+				buf.WriteString(" ...")
+			}
+		} else {
+			valName, _ := flag.UnquoteUsage(fl)
+			buf.WriteByte('-')
+			buf.WriteString(fl.Name)
+			if valName != "" {
+				buf.WriteByte(' ')
+				buf.WriteString(valName)
+			}
+		}
+		if !required {
+			buf.WriteByte(']')
+		}
+	})
+
+	fmt.Fprintln(f.flags.Output(), buf.String())
 }
 
 func (f *flags) SetOutput(w io.Writer) {
@@ -138,12 +200,24 @@ func (f *flags) Parse(argv []string) error {
 			return f.failf("invalid value %q or argument %s: %v",
 				arg, argName, err)
 		}
-		argIndex++
+		if argIndex != f.restArgIndex {
+			argIndex++
+		}
+	}
+
+	seenFlags := map[string]bool{}
+	f.flags.Visit(func(fl *flag.Flag) { seenFlags[fl.Name] = true })
+	for name, required := range f.reqFlags {
+		if required && !seenFlags[name] {
+			return f.failf("missing value for required flag -%s",
+				name)
+		}
 	}
 	if argIndex < f.firstOptArg {
 		return f.failf("missing value for required argument %s",
 			f.argsOrder[argIndex])
 	}
+
 	return nil
 }
 
@@ -176,7 +250,7 @@ func (f *flags) PrintDefaults() {
 		fmt.Fprintf(buf, "\n    \t%s",
 			strings.ReplaceAll(usage, "\n", "\n    \t"))
 		if i < f.firstOptArg {
-			fmt.Fprintf(buf, " (required)")
+			// Required arguments' defaults are of little use.
 		} else if text, show := defaultValueString(argFlag); show {
 			fmt.Fprintf(buf, " (default %s)", text)
 		}
@@ -233,6 +307,9 @@ func (c *Command) flags() (*flags, CommandParams) {
 		vp := params.FieldByIndex(field.Index).Addr().Interface()
 		flags := result.flags
 		if fd.positional {
+			if result.restArgIndex != -1 {
+				panic("cannot have positional argument after rest argument")
+			}
 			result.argsOrder = append(result.argsOrder, fd.name)
 			if fd.required {
 				if !positionalRequired {
@@ -244,9 +321,14 @@ func (c *Command) flags() (*flags, CommandParams) {
 			}
 			flags = result.args
 		} else if fd.required {
-			panic("only positional arguments can be required")
+			if result.reqFlags == nil {
+				result.reqFlags = map[string]bool{fd.name: true}
+			} else {
+				result.reqFlags[fd.name] = true
+			}
 		}
 
+		isRest := false
 		switch field.Type.Kind() {
 		case reflect.Bool:
 			flags.BoolVar(vp.(*bool), fd.name, ov.(bool), fd.usage)
@@ -266,6 +348,9 @@ func (c *Command) flags() (*flags, CommandParams) {
 			switch field.Type.Elem().Kind() {
 			case reflect.Uint8:
 				flags.Var((*BinaryValue)(vp.(*[]byte)), fd.name, fd.usage)
+			case reflect.String:
+				flags.Var((*StringSliceValue)(vp.(*[]string)), fd.name, fd.usage)
+				isRest = true
 			default:
 				unknownType(field)
 			}
@@ -278,6 +363,10 @@ func (c *Command) flags() (*flags, CommandParams) {
 		default:
 			unknownType(field)
 		}
+
+		if fd.positional && isRest {
+			result.restArgIndex = len(result.argsOrder) - 1
+		}
 	}
 
 	return result, params.Addr().Interface().(CommandParams)
@@ -287,7 +376,11 @@ func (c *Command) Parse(con Console, argv []string) CommandParams {
 	flags, params := c.flags()
 	flags.SetOutput(con)
 	err := flags.Parse(argv)
-	if err != nil {
+	if err == flag.ErrHelp {
+		// flags has already written the usage, append the help
+		flags.PrintDefaults()
+		return nil
+	} else if err != nil {
 		// flags has already written an error message
 		return nil
 	}
@@ -303,9 +396,9 @@ func (c *Command) Run(con Console, argv []string) {
 }
 
 func (c *Command) Help(con Console) {
-	con.Println("Usage of " + c.Name + ":")
 	flags, _ := c.flags()
 	flags.SetOutput(con)
+	flags.Usage()
 	flags.PrintDefaults()
 }
 
@@ -322,7 +415,7 @@ func (cs CommandSet) AddNew(name string, defaults CommandParams) {
 func (cs CommandSet) GetCommand(con Console, name string) *Command {
 	cmd, ok := cs[name]
 	if !ok {
-		con.Println("ERROR: unknown command " + name)
+		con.Println("unknown command " + name)
 		return nil
 	}
 	return cmd
@@ -438,7 +531,7 @@ func (c *CLI) Run(con Console) {
 		}
 		words, err := SplitLine(*line)
 		if err != nil {
-			con.Println("ERROR: " + err.Error())
+			con.Println(err.Error())
 			continue
 		} else if len(words) > 0 && words[0] == "quit" {
 			break
