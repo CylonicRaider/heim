@@ -19,6 +19,19 @@ import (
 
 const authDelay = 2 * time.Second
 
+type nestedError struct {
+	Error string `json:"error"`
+}
+
+func errToRawJSON(e error) json.RawMessage {
+	result, err := json.Marshal(nestedError{e.Error()})
+	if err != nil {
+		// if such a simple structure cannot be serialized, I give up
+		panic(err)
+	}
+	return json.RawMessage(result)
+}
+
 func (s *session) ignoreState(cmd *proto.Packet) *response {
 	switch cmd.Type {
 	case proto.PingType, proto.PingReplyType:
@@ -795,31 +808,33 @@ func (s *session) handleStaffInspectIPCommand(cmd *proto.StaffInspectIPCommand) 
 		return &response{err: proto.ErrAccessDenied}
 	}
 
-	if s.heim.GeoIP == nil {
-		return &response{err: fmt.Errorf("geoip support not configured")}
-	}
-
 	addr, err := s.room.ResolveClientAddress(s.ctx, cmd.IP)
 	if err != nil {
 		return &response{err: err}
 	}
 
+	reply := &proto.StaffInspectIPReply{
+		IP: addr.String(),
+	}
+
+	if !cmd.Details || s.heim.GeoIP == nil {
+		return &response{packet: reply}
+	}
+
 	// geoip uses google's context package
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	resp, err := s.heim.GeoIP.Insights(ctx, addr.String())
-	if err != nil {
-		return &response{err: err}
+	if err == nil {
+		serialized, err := json.Marshal(resp)
+		if err == nil {
+			reply.Details = serialized
+		} else {
+			reply.Details = errToRawJSON(err)
+		}
+	} else {
+		reply.Details = errToRawJSON(err)
 	}
 
-	serialized, err := json.Marshal(resp)
-	if err != nil {
-		return &response{err: err}
-	}
-
-	reply := &proto.StaffInspectIPReply{
-		IP:      addr.String(),
-		Details: json.RawMessage(serialized),
-	}
 	return &response{packet: reply}
 }
 

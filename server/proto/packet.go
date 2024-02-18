@@ -392,13 +392,14 @@ type StaffGrantManagerReply GrantManagerReply
 // The `staff-inspect-ip` command looks up details about a given IP address or
 // virtual client address.
 type StaffInspectIPCommand struct {
-	IP string `json:"ip"` // the IP or virtual client address to inspect
+	IP      string `json:"ip"`                // the IP or virtual client address to inspect
+	Details bool   `json:"details,omitempty"` // whether to include details
 }
 
 // `staff-inspect-ip-reply` returns details about the requested address.
 type StaffInspectIPReply struct {
-	IP      string          `json:"ip"`      // the IP address resolved from the virtual address
-	Details json.RawMessage `json:"details"` // details looked up about the IP address
+	IP      string          `json:"ip"`                // the IP address resolved from the virtual address
+	Details json.RawMessage `json:"details,omitempty"` // details looked up about the IP address
 }
 
 // The `staff-invade` command can be used by staff to acquire temporary host and/or access
