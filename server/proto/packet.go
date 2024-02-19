@@ -682,7 +682,7 @@ type ResetPasswordReply struct{}
 // TODO: Support revocation by capability_id, in case a manager doesn't know the passcode.
 type RevokeAccessCommand struct {
 	AccountID snowflake.Snowflake `json:"account_id,omitempty"` // the id of the account to revoke access from
-	Passcode  string              `json:"passcode",omitempty`   // the passcode to revoke access from
+	Passcode  string              `json:"passcode,omitempty"`   // the passcode to revoke access from
 }
 
 // `revoke-access-reply` confirms that the access grant was revoked.
