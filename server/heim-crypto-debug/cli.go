@@ -274,6 +274,7 @@ type CommandParams interface {
 
 type Command struct {
 	Name     string
+	Desc     string
 	Defaults CommandParams
 }
 
@@ -387,7 +388,7 @@ func (c *Command) Parse(con Console, argv []string) CommandParams {
 	err := flags.Parse(argv)
 	if err == flag.ErrHelp {
 		// flags has already written the usage, append the help
-		flags.PrintDefaults()
+		c.helpDetail(con, flags)
 		return nil
 	} else if err != nil {
 		// flags has already written an error message
@@ -404,11 +405,25 @@ func (c *Command) Run(env CLIEnv, argv []string) {
 	params.Run(env)
 }
 
+func (c *Command) helpDetail(con Console, flags *flags) {
+	if flags == nil {
+		flags, _ := c.flags()
+		flags.SetOutput(con)
+	}
+	if c.Desc != "" {
+		con.Println(c.Desc)
+	}
+	flags.PrintDefaults()
+	if env, ok := c.Defaults.(CLIEnv); ok {
+		(&HelpCmd{}).helpList(con, env, true)
+	}
+}
+
 func (c *Command) Help(con Console) {
 	flags, _ := c.flags()
 	flags.SetOutput(con)
 	flags.Usage()
-	flags.PrintDefaults()
+	c.helpDetail(con, flags)
 }
 
 type CommandSet map[string]*Command
@@ -436,31 +451,50 @@ func (cs CommandSet) Run(env CLIEnv, argv []string) {
 }
 
 type HelpCmd struct {
-	Command string `usage:"command to get help of" cli:",arg"`
+	Command string `usage:"Command to get help of." cli:",arg"`
 }
 
 func (c *HelpCmd) Run(env CLIEnv) {
 	if c.Command == "" {
-		allNames := []string{}
-		for name, _ := range env.Commands() {
-			allNames = append(allNames, name)
-		}
-		sort.Strings(allNames)
-		msg := []byte("Known commands: ")
-		for i, name := range allNames {
-			if i != 0 {
-				msg = append(msg, ", "...)
-			}
-			msg = append(msg, name...)
-		}
-		env.Println(string(msg))
+		c.helpList(env, env, false)
 	} else {
-		cmd := env.Commands().GetCommand(env, c.Command)
-		if cmd == nil {
-			return
-		}
-		cmd.Help(env)
+		c.helpCommand(env, env, c.Command)
 	}
+}
+
+func (c *HelpCmd) helpCommand(con Console, env CLIEnv, cmdName string) {
+	cmd := env.Commands().GetCommand(con, cmdName)
+	if cmd == nil {
+		return
+	}
+	cmd.Help(con)
+}
+
+func (c *HelpCmd) helpList(con Console, env CLIEnv, saySub bool) {
+	allCommands := []*Command{}
+	for _, cmd := range env.Commands() {
+		allCommands = append(allCommands, cmd)
+	}
+	sort.Slice(allCommands, func(i, j int) bool {
+		return allCommands[i].Name < allCommands[j].Name
+	})
+
+	buf := &bytes.Buffer{}
+	if saySub {
+		buf.WriteString("Known subcommands:\n")
+	} else {
+		buf.WriteString("Known commands:\n")
+	}
+	for _, cmd := range allCommands {
+		fmt.Fprintf(buf, "  %s", cmd.Name)
+		if len(cmd.Name) <= 5 {
+			buf.WriteString(strings.Repeat(" ", 5 - len(cmd.Name)))
+		} else {
+			buf.WriteString("\n")
+		}
+		fmt.Fprintln(buf, strings.ReplaceAll(cmd.Desc, "\n", "\n        "))
+	}
+	con.Print(buf.String())
 }
 
 type QuitCmd struct {}
@@ -523,7 +557,7 @@ func SplitLine(line string) ([]string, error) {
 type CLI struct {
 	Console
 	Prompt   string
-	Argv     []string `usage:"single command to run" cli:",arg"`
+	Argv     []string `usage:"Single command to run." cli:"cmd,arg"`
 	parent   CLIEnv
 	commands CommandSet
 	stop     bool
@@ -553,16 +587,16 @@ func (c *CLI) Stop() {
 }
 
 func (c *CLI) AddStandardCommands() {
-	c.AddNewCommand("help", &HelpCmd{})
-	c.AddNewCommand("quit", &QuitCmd{})
+	c.AddNewCommand("help", "Print the usage details of commands.", &HelpCmd{})
+	c.AddNewCommand("quit", "Exit the command line.", &QuitCmd{})
 }
 
 func (c *CLI) AddCommand(cmd *Command) {
 	c.commands.Add(cmd)
 }
 
-func (c *CLI) AddNewCommand(name string, defaults CommandParams) {
-	c.AddCommand(&Command{Name: name, Defaults: defaults})
+func (c *CLI) AddNewCommand(name, desc string, defaults CommandParams) {
+	c.AddCommand(&Command{Name: name, Desc: desc, Defaults: defaults})
 }
 
 func (c *CLI) runOne(argv []string) {
@@ -613,22 +647,22 @@ func (l launcher) Commands() CommandSet {
 
 func (l launcher) Stop() {}
 
-func Launch(cli *CLI, con Console, argv []string) {
+func LaunchCLI(con Console, cli *CLI, argv []string) {
 	cli.Argv = argv
 	cli.Run(launcher{con})
 }
 
-func LaunchAsCommand(cli *CLI, con Console, name string, argv []string) {
-	(&Command{name, cli}).Run(launcher{con}, argv)
+func LaunchCommand(con Console, cmd *Command, argv []string) {
+	cmd.Run(launcher{con}, argv)
 }
 
 func NormalizeProgName(argv0 string) string {
 	return filepath.Base(argv0)
 }
 
-func LaunchOS(cli *CLI) {
+func LaunchOS(desc string, cli *CLI) {
 	con := NewDefaultConsole()
 	defer con.Close()
 
-	LaunchAsCommand(cli, con, NormalizeProgName(os.Args[0]), os.Args[1:])
+	LaunchCommand(con, &Command{NormalizeProgName(os.Args[0]), desc, cli}, os.Args[1:])
 }

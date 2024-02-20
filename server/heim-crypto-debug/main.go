@@ -6,10 +6,10 @@ import (
 )
 
 type params struct {
-	Name     string `usage:"user name"`
-	Password string `usage:"password (as plain text)"`
-	Payload  []byte `usage:"binary payload" cli:",arg,required"`
-	Count    int    `usage:"repetition count" cli:",arg"`
+	Name     string `usage:"User name."`
+	Password string `usage:"Password (as plain text)."`
+	Payload  []byte `usage:"Binary payload." cli:",arg,required"`
+	Count    int    `usage:"Repetition count." cli:",arg"`
 }
 
 func (p *params) Run(env CLIEnv) {
@@ -56,7 +56,7 @@ func (p *listParams) Run(env CLIEnv) {
 
 type addParams struct {
 	tags tagSet
-	Name string `usage:"tag name to add" cli:",arg"`
+	Name string `usage:"Tag name to add." cli:",arg"`
 }
 
 func (p *addParams) Run(env CLIEnv) {
@@ -65,7 +65,7 @@ func (p *addParams) Run(env CLIEnv) {
 
 type dropParams struct {
 	tags tagSet
-	Name string `usage:"tag name to drop" cli:",arg"`
+	Name string `usage:"Tag name to drop." cli:",arg"`
 }
 
 func (p *dropParams) Run(env CLIEnv) {
@@ -75,12 +75,12 @@ func (p *dropParams) Run(env CLIEnv) {
 func main() {
 	tags := tagSet{}
 
-	LaunchOS(NewCLI("> ", true,
-		&Command{"test", &params{Count: 1}},
-		&Command{"tag", NewCLI("tag> ", true,
-			&Command{"list", &listParams{tags: tags}},
-			&Command{"add",  &addParams{tags: tags}},
-			&Command{"drop", &dropParams{tags: tags}},
+	LaunchOS("Testing the CLI mini-framework.", NewCLI("> ", true,
+		&Command{"test", "Test argument parsing.", &params{Count: 1}},
+		&Command{"tag", "Manage a set of tags.", NewCLI("tag> ", true,
+			&Command{"list", "View all tags.", &listParams{tags: tags}},
+			&Command{"add",  "Add a tag.",     &addParams{tags: tags}},
+			&Command{"drop", "Remove a tag.",  &dropParams{tags: tags}},
 		)},
 	))
 }
