@@ -272,10 +272,30 @@ type CommandParams interface {
 	Run(env CLIEnv)
 }
 
+type Commander interface {
+	GetName()     string
+	GetDesc()     string
+	GetDefaults() CommandParams
+	Run(env CLIEnv, args []string)
+	Help(con Console)
+}
+
 type Command struct {
 	Name     string
 	Desc     string
 	Defaults CommandParams
+}
+
+func (c *Command) GetName() string {
+	return c.Name
+}
+
+func (c *Command) GetDesc() string {
+	return c.Desc
+}
+
+func (c *Command) GetDefaults() CommandParams {
+	return c.Defaults
 }
 
 func (c *Command) flags() (*flags, CommandParams) {
@@ -426,11 +446,15 @@ func (c *Command) Help(con Console) {
 	c.helpDetail(con, flags)
 }
 
-type CommandSet map[string]*Command
+type HiddenCommand struct {
+	Command
+}
 
-func (cs CommandSet) Add(cmd *Command) { cs[cmd.Name] = cmd }
+type CommandSet map[string]Commander
 
-func (cs CommandSet) GetCommand(con Console, name string) *Command {
+func (cs CommandSet) Add(cmd Commander) { cs[cmd.GetName()] = cmd }
+
+func (cs CommandSet) GetCommand(con Console, name string) Commander {
 	cmd, ok := cs[name]
 	if !ok {
 		con.Println("unknown command " + name)
@@ -451,6 +475,7 @@ func (cs CommandSet) Run(env CLIEnv, argv []string) {
 }
 
 type HelpCmd struct {
+	Full    bool   `usage:"Also list hidden commands."`
 	Command string `usage:"Command to get help of." cli:",arg"`
 }
 
@@ -471,12 +496,15 @@ func (c *HelpCmd) helpCommand(con Console, env CLIEnv, cmdName string) {
 }
 
 func (c *HelpCmd) helpList(con Console, env CLIEnv, saySub bool) {
-	allCommands := []*Command{}
+	allCommands := []Commander{}
 	for _, cmd := range env.Commands() {
+		if _, ok := cmd.(*HiddenCommand); ok && !c.Full {
+			continue
+		}
 		allCommands = append(allCommands, cmd)
 	}
 	sort.Slice(allCommands, func(i, j int) bool {
-		return allCommands[i].Name < allCommands[j].Name
+		return allCommands[i].GetName() < allCommands[j].GetName()
 	})
 
 	buf := &bytes.Buffer{}
@@ -486,13 +514,14 @@ func (c *HelpCmd) helpList(con Console, env CLIEnv, saySub bool) {
 		buf.WriteString("Known commands:\n")
 	}
 	for _, cmd := range allCommands {
-		fmt.Fprintf(buf, "  %s", cmd.Name)
-		if len(cmd.Name) <= 5 {
-			buf.WriteString(strings.Repeat(" ", 5 - len(cmd.Name)))
+		name, desc := cmd.GetName(), cmd.GetDesc()
+		fmt.Fprintf(buf, "  %s", name)
+		if len(name) <= 5 {
+			buf.WriteString(strings.Repeat(" ", 5 - len(name)))
 		} else {
 			buf.WriteString("\n")
 		}
-		fmt.Fprintln(buf, strings.ReplaceAll(cmd.Desc, "\n", "\n        "))
+		fmt.Fprintln(buf, strings.ReplaceAll(desc, "\n", "\n        "))
 	}
 	con.Print(buf.String())
 }
@@ -587,16 +616,21 @@ func (c *CLI) Stop() {
 }
 
 func (c *CLI) AddStandardCommands() {
-	c.AddNewCommand("help", "Print the usage details of commands.", &HelpCmd{})
-	c.AddNewCommand("quit", "Exit the command line.", &QuitCmd{})
+	c.addNewHiddenCommand("help", "Print the usage details of commands.", &HelpCmd{})
+	c.addNewHiddenCommand("quit", "Exit the command line.", &QuitCmd{})
+	c.addNewHiddenCommand("exit", "Exit the command line.", &QuitCmd{})
 }
 
-func (c *CLI) AddCommand(cmd *Command) {
+func (c *CLI) AddCommand(cmd Commander) {
 	c.commands.Add(cmd)
 }
 
 func (c *CLI) AddNewCommand(name, desc string, defaults CommandParams) {
 	c.AddCommand(&Command{Name: name, Desc: desc, Defaults: defaults})
+}
+
+func (c *CLI) addNewHiddenCommand(name, desc string, defaults CommandParams) {
+	c.AddCommand(&HiddenCommand{Command{Name: name, Desc: desc, Defaults: defaults}})
 }
 
 func (c *CLI) runOne(argv []string) {
