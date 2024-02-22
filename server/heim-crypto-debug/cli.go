@@ -280,6 +280,10 @@ type Commander interface {
 	Help(con Console)
 }
 
+type HiddenCommander interface {
+	IsHidden() bool
+}
+
 type Command struct {
 	Name     string
 	Desc     string
@@ -450,6 +454,10 @@ type HiddenCommand struct {
 	Command
 }
 
+func (c *HiddenCommand) IsHidden() bool {
+	return true
+}
+
 type CommandSet map[string]Commander
 
 func (cs CommandSet) Add(cmd Commander) { cs[cmd.GetName()] = cmd }
@@ -498,8 +506,10 @@ func (c *HelpCmd) helpCommand(con Console, env CLIEnv, cmdName string) {
 func (c *HelpCmd) helpList(con Console, env CLIEnv, saySub bool) {
 	allCommands := []Commander{}
 	for _, cmd := range env.Commands() {
-		if _, ok := cmd.(*HiddenCommand); ok && !c.Full {
-			continue
+		if !c.Full {
+			if hc, ok := cmd.(HiddenCommander); ok && hc.IsHidden() {
+				continue
+			}
 		}
 		allCommands = append(allCommands, cmd)
 	}
