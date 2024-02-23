@@ -13,6 +13,7 @@ import (
 	"sort"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 var (
@@ -263,24 +264,27 @@ func (f *flags) PrintDefaults() {
 
 type CLIEnv interface {
 	Console
-	Parent() CLIEnv
-	Commands() CommandSet
-	Stop()
 }
 
 type CommandParams interface {
-	Run(env CLIEnv)
+	Run(env CLIEnv) error
+}
+
+type NestedCommandParams interface {
+	CommandParams
+	Commands() CommandSet
 }
 
 type Commander interface {
-	GetName()     string
-	GetDesc()     string
+	GetName() string
+	GetDesc() string
 	GetDefaults() CommandParams
-	Run(env CLIEnv, args []string)
+	Run(env CLIEnv, args []string) error
 	Help(con Console)
 }
 
 type HiddenCommander interface {
+	Commander
 	IsHidden() bool
 }
 
@@ -412,7 +416,7 @@ func (c *Command) Parse(con Console, argv []string) CommandParams {
 	err := flags.Parse(argv)
 	if err == flag.ErrHelp {
 		// flags has already written the usage, append the help
-		c.helpDetail(con, flags)
+		c.helpDetail(con, flags, params)
 		return nil
 	} else if err != nil {
 		// flags has already written an error message
@@ -421,15 +425,15 @@ func (c *Command) Parse(con Console, argv []string) CommandParams {
 	return params
 }
 
-func (c *Command) Run(env CLIEnv, argv []string) {
+func (c *Command) Run(env CLIEnv, argv []string) error {
 	params := c.Parse(env, argv)
 	if params == nil {
-		return
+		return nil
 	}
-	params.Run(env)
+	return params.Run(env)
 }
 
-func (c *Command) helpDetail(con Console, flags *flags) {
+func (c *Command) helpDetail(con Console, flags *flags, params CommandParams) {
 	if flags == nil {
 		flags, _ := c.flags()
 		flags.SetOutput(con)
@@ -438,16 +442,16 @@ func (c *Command) helpDetail(con Console, flags *flags) {
 		con.Println(c.Desc)
 	}
 	flags.PrintDefaults()
-	if env, ok := c.Defaults.(CLIEnv); ok {
-		(&HelpCmd{}).helpList(con, env, true)
+	if np, ok := params.(NestedCommandParams); ok {
+		np.Commands().help(con, false, true)
 	}
 }
 
 func (c *Command) Help(con Console) {
-	flags, _ := c.flags()
+	flags, params := c.flags()
 	flags.SetOutput(con)
 	flags.Usage()
-	c.helpDetail(con, flags)
+	c.helpDetail(con, flags, params)
 }
 
 type HiddenCommand struct {
@@ -471,42 +475,21 @@ func (cs CommandSet) GetCommand(con Console, name string) Commander {
 	return cmd
 }
 
-func (cs CommandSet) Run(env CLIEnv, argv []string) {
+func (cs CommandSet) Run(env CLIEnv, argv []string) error {
 	if len(argv) == 0 {
-		return
+		return nil
 	}
 	cmd := cs.GetCommand(env, argv[0])
 	if cmd == nil {
-		return
+		return nil
 	}
-	cmd.Run(env, argv[1:])
+	return cmd.Run(env, argv[1:])
 }
 
-type HelpCmd struct {
-	Full    bool   `usage:"Also list hidden commands."`
-	Command string `usage:"Command to get help of." cli:",arg"`
-}
-
-func (c *HelpCmd) Run(env CLIEnv) {
-	if c.Command == "" {
-		c.helpList(env, env, false)
-	} else {
-		c.helpCommand(env, env, c.Command)
-	}
-}
-
-func (c *HelpCmd) helpCommand(con Console, env CLIEnv, cmdName string) {
-	cmd := env.Commands().GetCommand(con, cmdName)
-	if cmd == nil {
-		return
-	}
-	cmd.Help(con)
-}
-
-func (c *HelpCmd) helpList(con Console, env CLIEnv, saySub bool) {
+func (cs CommandSet) help(con Console, full bool, saySub bool) {
 	allCommands := []Commander{}
-	for _, cmd := range env.Commands() {
-		if !c.Full {
+	for _, cmd := range cs {
+		if !full {
 			if hc, ok := cmd.(HiddenCommander); ok && hc.IsHidden() {
 				continue
 			}
@@ -525,9 +508,10 @@ func (c *HelpCmd) helpList(con Console, env CLIEnv, saySub bool) {
 	}
 	for _, cmd := range allCommands {
 		name, desc := cmd.GetName(), cmd.GetDesc()
+		nameLen := utf8.RuneCountInString(name)
 		fmt.Fprintf(buf, "  %s", name)
-		if len(name) <= 5 {
-			buf.WriteString(strings.Repeat(" ", 5 - len(name)))
+		if nameLen < 6 {
+			buf.WriteString(strings.Repeat(" ", 6-nameLen))
 		} else {
 			buf.WriteString("\n")
 		}
@@ -536,10 +520,41 @@ func (c *HelpCmd) helpList(con Console, env CLIEnv, saySub bool) {
 	con.Print(buf.String())
 }
 
+func (cs CommandSet) Help(con Console) {
+	cs.help(con, false, false)
+}
+
+type HelpCmd struct {
+	Full    bool   `usage:"Also list hidden commands."`
+	Command string `usage:"Command to get help of." cli:",arg"`
+}
+
+func (c *HelpCmd) Run(env CLIEnv) error {
+	return HelpError(*c)
+}
+
+type HelpError HelpCmd
+
+func (he HelpError) Error() string {
+	if he.Command != "" {
+		return "user requested help of " + he.Command
+	} else if he.Full {
+		return "user requested full command list"
+	} else {
+		return "user requested command list"
+	}
+}
+
 type QuitCmd struct {}
 
-func (c *QuitCmd) Run(env CLIEnv) {
-	env.Stop()
+func (c *QuitCmd) Run(env CLIEnv) error {
+	return QuitError(*c)
+}
+
+type QuitError QuitCmd
+
+func (ee QuitError) Error() string {
+	return "user requested exit"
 }
 
 func parseWord(word string) string {
@@ -597,12 +612,10 @@ type CLI struct {
 	Console
 	Prompt   string
 	Argv     []string `usage:"Single command to run." cli:"cmd,arg"`
-	parent   CLIEnv
 	commands CommandSet
-	stop     bool
 }
 
-func NewCLI(prompt string, standardCommands bool, commands... *Command) *CLI {
+func NewCLI(prompt string, standardCommands bool, commands ...*Command) *CLI {
 	result := &CLI{Prompt: prompt, commands: CommandSet{}}
 	if standardCommands {
 		result.AddStandardCommands()
@@ -613,16 +626,8 @@ func NewCLI(prompt string, standardCommands bool, commands... *Command) *CLI {
 	return result
 }
 
-func (c *CLI) Parent() CLIEnv {
-	return c.parent
-}
-
 func (c *CLI) Commands() CommandSet {
 	return c.commands
-}
-
-func (c *CLI) Stop() {
-	c.stop = true
 }
 
 func (c *CLI) AddStandardCommands() {
@@ -643,53 +648,70 @@ func (c *CLI) addNewHiddenCommand(name, desc string, defaults CommandParams) {
 	c.AddCommand(&HiddenCommand{Command{Name: name, Desc: desc, Defaults: defaults}})
 }
 
-func (c *CLI) runOne(argv []string) {
-	c.commands.Run(c, argv)
+func (c *CLI) runOne(argv []string) error {
+	err := c.commands.Run(c, argv)
+	if help, ok := err.(HelpError); ok {
+		c.runHelp(help)
+		err = nil
+	}
+	return err
 }
 
-func (c *CLI) runLoop() {
-	for !c.stop {
-		line := c.ReadLine(c.Prompt)
-		if line == nil {
+func (c *CLI) runLoop() error {
+	for {
+		line, err := c.ReadLine(c.Prompt)
+		if err != nil {
+			if err != io.EOF {
+				c.Println(err.Error())
+			}
 			break
 		}
-		argv, err := SplitLine(*line)
+
+		argv, err := SplitLine(line)
 		if err != nil {
 			c.Println(err.Error())
 			continue
 		}
-		c.runOne(argv)
+
+		err = c.runOne(argv)
+		if _, ok := err.(QuitError); ok {
+			break
+		} else if err != nil && err != io.EOF {
+			c.Println(err.Error())
+		}
 	}
+	return nil
 }
 
-func (c *CLI) Run(parent CLIEnv) {
-	if c.parent != nil {
-		panic("trying to run CLI already bound to parent")
+func (c *CLI) runHelp(help HelpError) {
+	if help.Command == "" {
+		c.commands.help(c, help.Full, false)
+		return
+	}
+	cmd := c.commands.GetCommand(c, help.Command)
+	if cmd == nil {
+		return
+	}
+	cmd.Help(c)
+}
+
+func (c *CLI) Run(parent CLIEnv) error {
+	if c.Console != nil {
+		panic("trying to run CLI already bound to console")
 	}
 
 	c.Console = parent
-	c.parent = parent
 
 	if len(c.Argv) == 0 {
-		c.runLoop()
+		return c.runLoop()
 	} else {
-		c.runOne(c.Argv)
+		return c.runOne(c.Argv)
 	}
 }
 
 type launcher struct {
 	Console
 }
-
-func (l launcher) Parent() CLIEnv {
-	return nil
-}
-
-func (l launcher) Commands() CommandSet {
-	return nil
-}
-
-func (l launcher) Stop() {}
 
 func LaunchCLI(con Console, cli *CLI, argv []string) {
 	cli.Argv = argv

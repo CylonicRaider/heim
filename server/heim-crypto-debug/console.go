@@ -8,21 +8,16 @@ import (
 	"golang.org/x/term"
 )
 
-func panicIfFailed(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 type Console interface {
 	io.Writer
 	io.Closer
 
-	Print(text string)
-	Println(text string)
+	Print(text string) error
+	Println(text string) error
+	Printf(format string, args ...interface{}) error
 
-	ReadLine(prompt string) *string
-	ReadPass(prompt string) *string
+	ReadLine(prompt string) (string, error)
+	ReadPass(prompt string) (string, error)
 }
 
 type DefaultConsole struct {
@@ -44,12 +39,11 @@ func NewDefaultConsole() Console {
 
 func (c *DefaultConsole) Write(data []byte) (n int, err error) {
 	written, err := c.term.Write(data)
-	panicIfFailed(err)
 	if written != len(data) {
-		panic(fmt.Errorf("Incomplete write to console?! passed %d, wrote %d",
+		panic(fmt.Errorf("Incomplete write to console?! Passed %d, wrote %d",
 			len(data), written))
 	}
-	return len(data), nil
+	return written, err
 }
 
 func (c *DefaultConsole) Close() error {
@@ -58,29 +52,25 @@ func (c *DefaultConsole) Close() error {
 	return nil
 }
 
-func (c *DefaultConsole) Print(text string) {
-	c.Write([]byte(text))
+func (c *DefaultConsole) Print(text string) error {
+	_, err := c.Write([]byte(text))
+	return err
 }
 
-func (c *DefaultConsole) Println(text string) {
-	c.Print(text + "\n")
+func (c *DefaultConsole) Println(text string) error {
+	return c.Print(text + "\n")
 }
 
-func (c *DefaultConsole) ReadLine(prompt string) *string {
+func (c *DefaultConsole) Printf(format string, args ...interface{}) error {
+	_, err := fmt.Fprintf(c, format, args...)
+	return err
+}
+
+func (c *DefaultConsole) ReadLine(prompt string) (string, error) {
 	c.term.SetPrompt(prompt)
-	res, err := c.term.ReadLine()
-	if err == io.EOF {
-		return nil
-	}
-	panicIfFailed(err)
-	return &res
+	return c.term.ReadLine()
 }
 
-func (c *DefaultConsole) ReadPass(prompt string) *string {
-	res, err := c.term.ReadPassword(prompt)
-	if err == io.EOF {
-		return nil
-	}
-	panicIfFailed(err)
-	return &res
+func (c *DefaultConsole) ReadPass(prompt string) (string, error) {
+	return c.term.ReadPassword(prompt)
 }

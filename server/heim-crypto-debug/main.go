@@ -12,12 +12,19 @@ type params struct {
 	Count    int    `usage:"Repetition count." cli:",arg"`
 }
 
-func (p *params) Run(env CLIEnv) {
+func (p *params) Run(env CLIEnv) error {
+	var err error
 	if p.Name == "" {
-		p.Name = *env.ReadLine("Username: ")
+		p.Name, err = env.ReadLine("Username: ")
+		if err != nil {
+			return err
+		}
 	}
 	if p.Password == "" {
-		p.Password = *env.ReadPass("Password: ")
+		p.Password, err = env.ReadPass("Password: ")
+		if err != nil {
+			return err
+		}
 	}
 
 	if p.Password == "hunter2" {
@@ -32,6 +39,7 @@ func (p *params) Run(env CLIEnv) {
 	} else {
 		env.Println("Authorization denied")
 	}
+	return nil
 }
 
 type tagSet map[string]struct{}
@@ -40,10 +48,10 @@ type listParams struct {
 	tags tagSet
 }
 
-func (p *listParams) Run(env CLIEnv) {
+func (p *listParams) Run(env CLIEnv) error {
 	if len(p.tags) == 0 {
 		env.Println("(none)")
-		return
+		return nil
 	}
 
 	list := []string{}
@@ -52,6 +60,7 @@ func (p *listParams) Run(env CLIEnv) {
 	}
 	sort.Strings(list)
 	env.Println(strings.Join(list, ", "))
+	return nil
 }
 
 type addParams struct {
@@ -59,8 +68,9 @@ type addParams struct {
 	Name string `usage:"Tag name to add." cli:",arg"`
 }
 
-func (p *addParams) Run(env CLIEnv) {
+func (p *addParams) Run(env CLIEnv) error {
 	p.tags[p.Name] = struct{}{}
+	return nil
 }
 
 type dropParams struct {
@@ -68,8 +78,9 @@ type dropParams struct {
 	Name string `usage:"Tag name to drop." cli:",arg"`
 }
 
-func (p *dropParams) Run(env CLIEnv) {
+func (p *dropParams) Run(env CLIEnv) error {
 	delete(p.tags, p.Name)
+	return nil
 }
 
 func main() {
