@@ -1,4 +1,4 @@
-package main
+package console
 
 import (
 	"bytes"
@@ -545,7 +545,7 @@ func (he HelpError) Error() string {
 	}
 }
 
-type QuitCmd struct {}
+type QuitCmd struct{}
 
 func (c *QuitCmd) Run(env CLIEnv) error {
 	return QuitError(*c)
