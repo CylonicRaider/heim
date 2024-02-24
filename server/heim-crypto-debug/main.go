@@ -86,7 +86,7 @@ func (p *dropParams) Run(env CLIEnv) error {
 func main() {
 	tags := tagSet{}
 
-	LaunchOS("Testing the CLI mini-framework.", NewCLI("> ", true,
+	LaunchCLIOS("Testing the CLI mini-framework.", NewCLI("> ", true,
 		&Command{"test", "Test argument parsing.", &params{Count: 1}},
 		&Command{"tag", "Manage a set of tags.", NewCLI("tag> ", true,
 			&Command{"list", "View all tags.", &listParams{tags: tags}},
