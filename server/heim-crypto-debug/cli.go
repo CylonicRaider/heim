@@ -727,7 +727,7 @@ func NormalizeProgName(argv0 string) string {
 }
 
 func LaunchOS(desc string, cli *CLI) {
-	con := NewDefaultConsole()
+	con := NewStdioConsole()
 	defer con.Close()
 
 	LaunchCommand(con, &Command{NormalizeProgName(os.Args[0]), desc, cli}, os.Args[1:])

@@ -8,6 +8,11 @@ import (
 	"golang.org/x/term"
 )
 
+type ReadWriteFDer interface {
+	io.ReadWriter
+	Fd() uintptr
+}
+
 type Console interface {
 	io.Writer
 	io.Closer
@@ -26,15 +31,33 @@ type DefaultConsole struct {
 	state *term.State
 }
 
-func NewDefaultConsole() Console {
-	fd := int(os.Stdin.Fd())
-	oldState, err := term.MakeRaw(fd)
-	panicIfFailed(err)
+func NewDefaultConsole(s io.ReadWriter) *DefaultConsole {
 	return &DefaultConsole{
-		term:  term.NewTerminal(os.Stdin, ""),
+		term: term.NewTerminal(s, ""),
+		fd:   -1,
+	}
+}
+
+func NewRawDefaultConsole(s ReadWriteFDer) (*DefaultConsole, error) {
+	fd := int(s.Fd())
+	oldState, err := term.MakeRaw(fd)
+	if err != nil {
+		return nil, err
+	}
+
+	return &DefaultConsole{
+		term:  term.NewTerminal(s, ""),
 		fd:    fd,
 		state: oldState,
+	}, nil
+}
+
+func NewStdioConsole() *DefaultConsole {
+	result, err := NewRawDefaultConsole(os.Stdin)
+	if err != nil {
+		panic(err)
 	}
+	return result
 }
 
 func (c *DefaultConsole) Write(data []byte) (n int, err error) {
@@ -47,9 +70,10 @@ func (c *DefaultConsole) Write(data []byte) (n int, err error) {
 }
 
 func (c *DefaultConsole) Close() error {
-	err := term.Restore(c.fd, c.state)
-	panicIfFailed(err)
-	return nil
+	if c.fd == -1 {
+		return nil
+	}
+	return term.Restore(c.fd, c.state)
 }
 
 func (c *DefaultConsole) Print(text string) error {
