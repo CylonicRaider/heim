@@ -17,12 +17,12 @@ type Console interface {
 	io.Writer
 	io.Closer
 
-	Print(text string) error
-	Println(text string) error
+	Print(args ...interface{}) error
+	Println(args ...interface{}) error
 	Printf(format string, args ...interface{}) error
 
 	ReadLine(prompt string) (string, error)
-	ReadPass(prompt string) (string, error)
+	ReadPassword(prompt string) (string, error)
 }
 
 type DefaultConsole struct {
@@ -76,13 +76,14 @@ func (c *DefaultConsole) Close() error {
 	return term.Restore(c.fd, c.state)
 }
 
-func (c *DefaultConsole) Print(text string) error {
-	_, err := c.Write([]byte(text))
+func (c *DefaultConsole) Print(args ...interface{}) error {
+	_, err := fmt.Fprint(c, args...)
 	return err
 }
 
-func (c *DefaultConsole) Println(text string) error {
-	return c.Print(text + "\n")
+func (c *DefaultConsole) Println(args ...interface{}) error {
+	_, err := fmt.Fprintln(c, args...)
+	return err
 }
 
 func (c *DefaultConsole) Printf(format string, args ...interface{}) error {
@@ -95,6 +96,6 @@ func (c *DefaultConsole) ReadLine(prompt string) (string, error) {
 	return c.term.ReadLine()
 }
 
-func (c *DefaultConsole) ReadPass(prompt string) (string, error) {
+func (c *DefaultConsole) ReadPassword(prompt string) (string, error) {
 	return c.term.ReadPassword(prompt)
 }

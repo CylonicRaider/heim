@@ -433,6 +433,13 @@ func (c *Command) Run(env CLIEnv, argv []string) error {
 	return params.Run(env)
 }
 
+func (c *Command) Help(con Console) {
+	flags, params := c.flags()
+	flags.SetOutput(con)
+	flags.Usage()
+	c.helpDetail(con, flags, params)
+}
+
 func (c *Command) helpDetail(con Console, flags *flags, params CommandParams) {
 	if flags == nil {
 		flags, _ := c.flags()
@@ -445,13 +452,6 @@ func (c *Command) helpDetail(con Console, flags *flags, params CommandParams) {
 	if np, ok := params.(NestedCommandParams); ok {
 		np.Commands().help(con, false, true)
 	}
-}
-
-func (c *Command) Help(con Console) {
-	flags, params := c.flags()
-	flags.SetOutput(con)
-	flags.Usage()
-	c.helpDetail(con, flags, params)
 }
 
 type HiddenCommand struct {
@@ -545,15 +545,15 @@ func (he HelpError) Error() string {
 	}
 }
 
-type QuitCmd struct{}
+type ExitCmd struct{}
 
-func (c *QuitCmd) Run(env CLIEnv) error {
-	return QuitError(*c)
+func (c *ExitCmd) Run(env CLIEnv) error {
+	return ExitError(*c)
 }
 
-type QuitError QuitCmd
+type ExitError ExitCmd
 
-func (ee QuitError) Error() string {
+func (ee ExitError) Error() string {
 	return "user requested exit"
 }
 
@@ -632,8 +632,8 @@ func (c *CLI) Commands() CommandSet {
 
 func (c *CLI) AddStandardCommands() {
 	c.addNewHiddenCommand("help", "Print the usage details of commands.", &HelpCmd{})
-	c.addNewHiddenCommand("quit", "Exit the command line.", &QuitCmd{})
-	c.addNewHiddenCommand("exit", "Exit the command line.", &QuitCmd{})
+	c.addNewHiddenCommand("exit", "Exit the command line.", &ExitCmd{})
+	c.addNewHiddenCommand("quit", "Exit the command line.", &ExitCmd{})
 }
 
 func (c *CLI) AddCommand(cmd Commander) {
@@ -657,6 +657,18 @@ func (c *CLI) runOne(argv []string) error {
 	return err
 }
 
+func (c *CLI) runHelp(help HelpError) {
+	if help.Command == "" {
+		c.commands.help(c, help.Full, false)
+		return
+	}
+	cmd := c.commands.GetCommand(c, help.Command)
+	if cmd == nil {
+		return
+	}
+	cmd.Help(c)
+}
+
 func (c *CLI) runLoop() error {
 	for {
 		line, err := c.ReadLine(c.Prompt)
@@ -674,25 +686,13 @@ func (c *CLI) runLoop() error {
 		}
 
 		err = c.runOne(argv)
-		if _, ok := err.(QuitError); ok {
+		if _, ok := err.(ExitError); ok {
 			break
 		} else if err != nil && err != io.EOF {
 			c.Println(err.Error())
 		}
 	}
 	return nil
-}
-
-func (c *CLI) runHelp(help HelpError) {
-	if help.Command == "" {
-		c.commands.help(c, help.Full, false)
-		return
-	}
-	cmd := c.commands.GetCommand(c, help.Command)
-	if cmd == nil {
-		return
-	}
-	cmd.Help(c)
 }
 
 func (c *CLI) Run(parent CLIEnv) error {
