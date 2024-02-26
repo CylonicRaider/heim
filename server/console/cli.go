@@ -589,14 +589,18 @@ func SplitLine(line string) ([]string, error) {
 	}
 	result := []string{}
 	for first := true; offset != len(line); first = false {
-		if !first {
-			m := spaceRe.FindStringIndex(line[offset:])
-			if m == nil || m[0] != 0 {
+		m := spaceRe.FindStringIndex(line[offset:])
+		if m == nil || m[0] != 0 {
+			if !first {
 				return fail("unexpected characters")
 			}
+		} else {
 			offset += m[1]
 		}
-		m := wordRe.FindStringIndex(line[offset:])
+		if offset == len(line) {
+			break
+		}
+		m = wordRe.FindStringIndex(line[offset:])
 		if m == nil {
 			return fail("syntax error")
 		} else if m[0] != 0 {
