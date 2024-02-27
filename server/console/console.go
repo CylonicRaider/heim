@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"golang.org/x/term"
+
+	"github.com/euphoria-io/scope"
 )
 
 type ReadWriteFDer interface {
@@ -98,4 +100,82 @@ func (c *DefaultConsole) ReadLine(prompt string) (string, error) {
 
 func (c *DefaultConsole) ReadPassword(prompt string) (string, error) {
 	return c.term.ReadPassword(prompt)
+}
+
+type ConsoleWithContext interface {
+	Console
+	Context() scope.Context
+}
+
+type readRequest struct {
+	prompt string
+	hidden bool
+	result chan<- readResponse
+}
+
+type readResponse struct {
+	text string
+	err  error
+}
+
+type DefaultConsoleWithContext struct {
+	*DefaultConsole
+	ctx      scope.Context
+	requests chan readRequest
+}
+
+func (c *DefaultConsole) WithContext(ctx scope.Context) *DefaultConsoleWithContext {
+	result := &DefaultConsoleWithContext{
+		DefaultConsole: c,
+		ctx:            ctx,
+		requests:       make(chan readRequest, 16),
+	}
+	go result.background()
+	return result
+}
+
+func (c *DefaultConsoleWithContext) Context() scope.Context {
+	return c.ctx
+}
+
+func (c *DefaultConsoleWithContext) background() {
+	for {
+		select {
+		case <-c.ctx.Done():
+			return
+		case req := <-c.requests:
+			var text string
+			var err error
+			if req.hidden {
+				text, err = c.DefaultConsole.ReadPassword(req.prompt)
+			} else {
+				text, err = c.DefaultConsole.ReadLine(req.prompt)
+			}
+			req.result <- readResponse{text, err}
+		}
+	}
+}
+
+func (c *DefaultConsoleWithContext) read(prompt string, hidden bool) (string, error) {
+	back := make(chan readResponse, 1)
+	req := readRequest{prompt, hidden, back}
+	select {
+	case <-c.ctx.Done():
+		return "", c.ctx.Err()
+	case c.requests <- req:
+	}
+	select {
+	case <-c.ctx.Done():
+		return "", c.ctx.Err()
+	case resp := <-back:
+		return resp.text, resp.err
+	}
+}
+
+func (c *DefaultConsoleWithContext) ReadLine(prompt string) (string, error) {
+	return c.read(prompt, false)
+}
+
+func (c *DefaultConsoleWithContext) ReadPassword(prompt string) (string, error) {
+	return c.read(prompt, true)
 }
