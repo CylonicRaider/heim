@@ -513,7 +513,7 @@ func (cs CommandSet) help(con Console, full bool, saySub bool) {
 		if nameLen < 6 {
 			buf.WriteString(strings.Repeat(" ", 6-nameLen))
 		} else {
-			buf.WriteString("\n")
+			buf.WriteString("\n        ")
 		}
 		fmt.Fprintln(buf, strings.ReplaceAll(desc, "\n", "\n        "))
 	}
