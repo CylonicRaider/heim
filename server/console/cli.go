@@ -690,14 +690,14 @@ func (c *CLI) runLoop() error {
 		line, err := c.ReadLine(c.Prompt)
 		if err != nil {
 			if err != io.EOF {
-				c.Println(err.Error())
+				c.Println("ERROR:", err)
 			}
 			break
 		}
 
 		argv, err := SplitLine(line)
 		if err != nil {
-			c.Println(err.Error())
+			c.Println(err)
 			continue
 		}
 
@@ -705,7 +705,7 @@ func (c *CLI) runLoop() error {
 		if _, ok := err.(ExitError); ok {
 			break
 		} else if err != nil && err != io.EOF {
-			c.Println(err.Error())
+			c.Println("ERROR:", err)
 		}
 	}
 	return nil
