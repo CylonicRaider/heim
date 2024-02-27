@@ -270,6 +270,31 @@ type CommandParams interface {
 	Run(env CLIEnv) error
 }
 
+func cloneParams(template CommandParams) (reflect.Type, reflect.Value, reflect.Value) {
+	defaults := reflect.ValueOf(template)
+	tp := defaults.Type()
+	if tp.Kind() != reflect.Pointer {
+		panic("command parameters must be pointer to struct, got " +
+			tp.Kind().String())
+	}
+	defaults = defaults.Elem()
+	tp = defaults.Type()
+	if tp.Kind() != reflect.Struct {
+		panic("command parameters must be pointer to struct, got pointer to " +
+			tp.Kind().String())
+	}
+
+	params := reflect.New(tp).Elem()
+	params.Set(defaults)
+
+	return tp, defaults, params
+}
+
+func CloneParams(p CommandParams) CommandParams {
+	_, _, result := cloneParams(p)
+	return result.Interface().(CommandParams)
+}
+
 type NestedCommandParams interface {
 	CommandParams
 	Commands() CommandSet
@@ -313,22 +338,7 @@ func (c *Command) flags() (*flags, CommandParams) {
 	}
 
 	result := newFlags(c.Name)
-
-	defaults := reflect.ValueOf(c.Defaults)
-	tp := defaults.Type()
-	if tp.Kind() != reflect.Pointer {
-		panic("command parameters must be pointer to struct, got " +
-			tp.Kind().String())
-	}
-	defaults = defaults.Elem()
-	tp = defaults.Type()
-	if tp.Kind() != reflect.Struct {
-		panic("command parameters must be pointer to struct, got pointer to " +
-			tp.Kind().String())
-	}
-
-	params := reflect.New(tp).Elem()
-	params.Set(defaults)
+	tp, defaults, params := cloneParams(c.Defaults)
 
 	positionalRequired := true
 	for _, field := range reflect.VisibleFields(tp) {
