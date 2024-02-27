@@ -612,10 +612,13 @@ func SplitLine(line string) ([]string, error) {
 	return result, nil
 }
 
+type CLICallback func(cli *CLI, done bool, argv []string, err error) error
+
 type CLI struct {
 	Console
 	Prompt   string
 	Argv     []string `usage:"Single command to run." cli:"cmd,arg"`
+	Callback CLICallback
 	commands CommandSet
 }
 
@@ -653,7 +656,16 @@ func (c *CLI) addNewHiddenCommand(name, desc string, defaults CommandParams) {
 }
 
 func (c *CLI) runOne(argv []string) error {
-	err := c.commands.Run(c, argv)
+	var err error
+	if c.Callback != nil {
+		err = c.Callback(c, false, argv, nil)
+	}
+	if err == nil {
+		err = c.commands.Run(c, argv)
+		if c.Callback != nil {
+			err = c.Callback(c, true, argv, err)
+		}
+	}
 	if help, ok := err.(HelpError); ok {
 		c.runHelp(help)
 		err = nil
