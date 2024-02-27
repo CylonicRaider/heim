@@ -12,6 +12,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 	"unicode"
 	"unicode/utf8"
 )
@@ -105,6 +106,27 @@ func (ssv *StringSliceValue) Get() interface{} {
 
 func (ssv *StringSliceValue) Set(value string) error {
 	*ssv = append(*ssv, value)
+	return nil
+}
+
+type DurationValue struct {
+	time.Duration
+}
+
+func (dv *DurationValue) String() string {
+	return dv.Duration.String()
+}
+
+func (dv *DurationValue) Get() interface{} {
+	return dv.Duration
+}
+
+func (dv *DurationValue) Set(value string) error {
+	d, err := time.ParseDuration(value)
+	if err != nil {
+		return err
+	}
+	dv.Duration = d
 	return nil
 }
 
