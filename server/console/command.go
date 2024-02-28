@@ -304,7 +304,7 @@ func cloneParams(template CommandParams) (reflect.Type, reflect.Value, reflect.V
 
 func CloneParams(p CommandParams) CommandParams {
 	_, _, result := cloneParams(p)
-	return result.Interface().(CommandParams)
+	return result.Addr().Interface().(CommandParams)
 }
 
 type Commander interface {
