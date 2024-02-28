@@ -1,8 +1,8 @@
 package console
 
 import (
-	"path/filepath"
 	"os"
+	"path/filepath"
 )
 
 type launcher struct {
