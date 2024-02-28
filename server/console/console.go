@@ -157,6 +157,9 @@ func (c *DefaultConsoleWithContext) background() {
 }
 
 func (c *DefaultConsoleWithContext) read(prompt string, hidden bool) (string, error) {
+	if !c.ctx.Alive() {
+		return "", c.ctx.Err()
+	}
 	back := make(chan readResponse, 1)
 	req := readRequest{prompt, hidden, back}
 	select {
@@ -166,6 +169,9 @@ func (c *DefaultConsoleWithContext) read(prompt string, hidden bool) (string, er
 	}
 	select {
 	case <-c.ctx.Done():
+		// Try to suppress at least a little visual noise from a still-ongoing read.
+		// Any unconsumed input may still get reprinted.
+		c.term.SetPrompt("")
 		return "", c.ctx.Err()
 	case resp := <-back:
 		return resp.text, resp.err
