@@ -206,6 +206,7 @@ func (f *flags) Parse(argv []string) error {
 	argv = f.flags.Args()
 
 	argIndex := 0
+	seenRest := false
 	for _, arg := range argv {
 		if argIndex >= len(f.argsOrder) {
 			return f.failf("too many positional arguments")
@@ -215,7 +216,9 @@ func (f *flags) Parse(argv []string) error {
 			return f.failf("invalid value %q or argument %s: %v",
 				arg, argName, err)
 		}
-		if argIndex != f.restArgIndex {
+		if argIndex == f.restArgIndex {
+			seenRest = true
+		} else {
 			argIndex++
 		}
 	}
@@ -227,6 +230,13 @@ func (f *flags) Parse(argv []string) error {
 			return f.failf("missing value for required flag -%s",
 				name)
 		}
+	}
+	if seenRest {
+		// With a required rest argument, argIndex will be the index
+		// of the rest argument, and firstOptArg will be one past the
+		// rest argument's index. Avoid tripping the below check if
+		// at least one value has been provided.
+		argIndex++
 	}
 	if argIndex < f.firstOptArg {
 		return f.failf("missing value for required argument %s",
