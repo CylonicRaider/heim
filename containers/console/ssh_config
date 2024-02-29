@@ -1,0 +1,9 @@
+UserKnownHostsFile /keys/known_hosts
+# Ubuntu believes this is a good idea. I believe the host name's plain text is
+# right there below.
+HashKnownHosts no
+
+Host backend
+    User heim
+    Port 2222
+    IdentityFile /keys/.copy/console_client

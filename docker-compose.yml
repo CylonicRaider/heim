@@ -2,6 +2,8 @@ services:
   # The etcd container coordinates our single-node cluster.
   etcd:
     build: containers/etcd
+    volumes:
+      - ./_data/etcd:/data
 
   # The psql container runs the postgres server from the psqldata/data directory.
   psql:
@@ -114,6 +116,17 @@ services:
       HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
     command: run.sh heimctl serve -http :80 -console :2222
 
+  # The backend_console container connects to the backend console.
+  backend_console:
+    build: containers/console
+    links:
+      - backend
+    volumes:
+      - ./server/backend/console/keys:/keys
+    tmpfs:
+      - /keys/.copy
+    command: run.sh
+
   # The backend_tests container is dedicated to running backend tests.
   backend_tests:
     build: server/backend
@@ -207,7 +220,7 @@ services:
   haproxy:
     build: containers/haproxy
     links:
-      - backend_etcd
+      - backend
     volumes:
       - ./containers/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     ports:
