@@ -1,16 +1,18 @@
 package console
 
-import "github.com/euphoria-io/scope"
+import "euphoria.leet.nu/heim/console"
 
 func init() {
-	register("peers", peers{})
+	register("peers", "List the current cluster peers.", &peers{})
 }
 
-type peers struct{}
+type peers struct {
+	handlerBase
+}
 
-func (peers) run(ctx scope.Context, c *console, args []string) error {
-	for i, peer := range c.backend.Peers() {
-		c.Printf("%d. %s: version=%s, era=%s\n", i+1, peer.ID, peer.Version, peer.Era)
+func (p *peers) Run(env console.CLIEnv) error {
+	for i, peer := range p.cli.backend.Peers() {
+		env.Printf("%d. %s: version=%s, era=%s\n", i+1, peer.ID, peer.Version, peer.Era)
 	}
 	return nil
 }

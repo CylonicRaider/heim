@@ -1,71 +1,76 @@
 package console
 
 import (
+	"fmt"
+
+	"euphoria.leet.nu/heim/console"
 	"euphoria.leet.nu/heim/proto/security"
-	"github.com/euphoria-io/scope"
 )
 
 func init() {
-	register("grant-staff", grantStaff{})
-	register("revoke-staff", revokeStaff{})
+	register("grant-staff", "Grant staff privileges to an account.", &grantStaff{})
+	register("revoke-staff", "Remove staff privileges from an account.", &revokeStaff{})
 }
 
-type grantStaff struct{}
+type grantStaff struct {
+	handlerBase
+	Account     string `usage:"Account to modify." cli:",arg,required"`
+	KMSType     string `usage:"KMS to use for privileged actions." cli:"kms-type,arg,required"`
+	Credentials string `usage:"Credentials for the KMS." cli:",arg"`
+}
 
-func (grantStaff) usage() string { return "usage: grant-staff ACCOUNT KMSTYPE [CREDENTIALS]" }
+func (g *grantStaff) Run(env console.CLIEnv) error {
+	ctx := env.Context()
 
-func (grantStaff) run(ctx scope.Context, c *console, args []string) error {
-	if len(args) < 2 {
-		return usageError("account and kms type must be given")
+	account, err := g.cli.resolveAccount(ctx, g.Account)
+	if err != nil {
+		return err
 	}
 
-	kmsType := security.KMSType(args[1])
+	kmsType := security.KMSType(g.KMSType)
 	kmsCred, err := kmsType.KMSCredential()
 	if err != nil {
 		return err
 	}
 
-	if len(args) < 3 {
-		if kmsType != security.LocalKMSType {
-			return usageError("kms type %s requires credentials to be provided", kmsType)
-		}
-		mockKMS, ok := c.kms.(security.MockKMS)
+	if g.Credentials == "" && kmsType == security.LocalKMSType {
+		mockKMS, ok := g.cli.kms.(security.MockKMS)
 		if !ok {
-			return usageError("this backend does not support kms type %s", kmsType)
+			return fmt.Errorf("this backend does not support KMS type %s", kmsType)
 		}
 		kmsCred = mockKMS.KMSCredential()
 	} else {
-		if err := kmsCred.UnmarshalJSON([]byte(args[2])); err != nil {
+		if g.Credentials == "" {
+			g.Credentials, err = env.ReadPassword("KMS credentials: ")
+			if err != nil {
+				return err
+			}
+		}
+		if err := kmsCred.UnmarshalJSON([]byte(g.Credentials)); err != nil {
 			return err
 		}
 	}
 
-	account, err := c.resolveAccount(ctx, args[0])
-	if err != nil {
-		return err
-	}
-
-	c.Printf("Granting staff capability to account %s\n", account.ID())
-	return c.backend.AccountManager().GrantStaff(ctx, account.ID(), kmsCred)
+	env.Printf("Granting staff capability to account %s\n", account.ID())
+	return g.cli.backend.AccountManager().GrantStaff(ctx, account.ID(), kmsCred)
 }
 
-type revokeStaff struct{}
+type revokeStaff struct {
+	handlerBase
+	Account string `usage:"Account to modify." cli:",arg,required"`
+}
 
-func (revokeStaff) usage() string { return "usage: revoke-staff ACCOUNT" }
+func (r *revokeStaff) Run(env console.CLIEnv) error {
+	ctx := env.Context()
 
-func (revokeStaff) run(ctx scope.Context, c *console, args []string) error {
-	if len(args) < 1 {
-		return usageError("account must be given")
-	}
-
-	account, err := c.resolveAccount(ctx, args[0])
+	account, err := r.cli.resolveAccount(ctx, r.Account)
 	if err != nil {
 		return err
 	}
 
+	env.Printf("Revoking staff capability from %s\n", account.ID())
 	if !account.IsStaff() {
-		c.Printf("NOTE: this account isn't currently holding a staff capability\n")
+		env.Printf("NOTE: This account isn't currently holding a staff capability\n")
 	}
-	c.Printf("revoking staff capability from %s\n", account.ID())
-	return c.backend.AccountManager().RevokeStaff(ctx, account.ID())
+	return r.cli.backend.AccountManager().RevokeStaff(ctx, account.ID())
 }

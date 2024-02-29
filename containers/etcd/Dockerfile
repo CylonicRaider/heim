@@ -4,6 +4,5 @@ RUN apt-get update && apt-get install -y etcd-server etcd-client
 
 ADD run.sh /bin/run.sh
 
-VOLUME /data
 EXPOSE 4001 7001
 ENTRYPOINT /bin/run.sh

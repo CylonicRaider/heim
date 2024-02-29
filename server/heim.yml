@@ -7,6 +7,10 @@ email:
 kms:
   aes256:
     key-file: /keys/masterkey
+console:
+  host-key-file: /keys/console_host
+  auth-key-files:
+    - /keys/console_client.pub
 static_path: /srv/heim/client/build/heim
 set_insecure_cookies: true
 allow_account_creation: true
