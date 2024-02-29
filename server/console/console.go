@@ -19,6 +19,8 @@ type Console interface {
 	io.Writer
 	io.Closer
 
+	Context() scope.Context
+
 	Print(args ...interface{}) error
 	Println(args ...interface{}) error
 	Printf(format string, args ...interface{}) error
@@ -76,6 +78,10 @@ func (c *DefaultConsole) Close() error {
 		return nil
 	}
 	return term.Restore(c.fd, c.state)
+}
+
+func (c *DefaultConsole) Context() scope.Context {
+	return nil
 }
 
 func (c *DefaultConsole) Print(args ...interface{}) error {
