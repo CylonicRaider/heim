@@ -12,18 +12,18 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
-	"strings"
 	"sync"
 
 	"encoding/pem"
 
 	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/console"
 	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"github.com/euphoria-io/scope"
 
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 type Controller struct {
@@ -264,48 +264,11 @@ func (ctrl *Controller) filterClientRequests(reqs <-chan *ssh.Request) {
 func (ctrl *Controller) terminal(ctx scope.Context, ch ssh.Channel) {
 	defer ch.Close()
 
-	lines := make(chan string)
-	term := terminal.NewTerminal(ch, "> ")
+	subctx := logging.LoggingContext(ctx.Fork(), os.Stdout,
+		fmt.Sprintf("[console %p] ", ch))
 
-	go func() {
-		for ctx.Err() == nil {
-			line, err := term.ReadLine()
-			if err != nil {
-				ctx.Terminate(err)
-				return
-			}
-			lines <- line
-		}
-	}()
-
-	for {
-		var line string
-		select {
-		case <-ctx.Done():
-			return
-		case line = <-lines:
-		}
-
-		cmd := parse(line)
-		fmt.Printf("[control] > %v\n", cmd)
-		switch cmd[0] {
-		case "":
-			continue
-		case "quit":
-			return
-		case "shutdown":
-			ctrl.ctx.Terminate(fmt.Errorf("shutdown initiated from console"))
-		default:
-			runCommand(ctx.Fork(), ctrl, cmd[0], term, cmd[1:])
-		}
-	}
-}
-
-func parse(line string) []string {
-	parts := strings.Split(strings.TrimSpace(line), " ")
-	if len(parts) == 0 {
-		parts[0] = ""
-	}
-	parts[0] = strings.ToLower(parts[0])
-	return parts
+	cli := newCLI(ctrl)
+	con := console.NewDefaultConsole(ch).WithContext(subctx)
+	defer con.Close()
+	console.LaunchCLI(con, cli.CLI, nil)
 }

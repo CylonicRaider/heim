@@ -4,114 +4,100 @@ import (
 	"fmt"
 	"time"
 
+	"euphoria.leet.nu/heim/console"
 	"euphoria.leet.nu/heim/proto"
-	"github.com/euphoria-io/scope"
 )
 
 func init() {
-	register("ban", ban{})
-	register("unban", unban{})
+	register("ban", "Ban an agent or IP.", &ban{})
+	register("unban", "Unban an agent or IP.", &unban{})
 }
 
-type ban struct{}
-
-func (ban) usage() string {
-	return ("ban [-room <room>] [-duration <duration>] -agent <agent-id>\n" +
-		"ban [-room <room>] [-duration <duration>] -ip <ip>")
+type ban struct {
+	handlerBase
+	Room     string                `usage:"Ban only in the given room."`
+	Duration console.DurationValue `usage:"Duration of ban. (default: forever)"`
+	Agent    string                `usage:"Agent ID to ban."`
+	IP       string                `usage:"IP to ban." cli:"ip"`
 }
 
-func (ban) run(ctx scope.Context, c *console, args []string) error {
-	roomName := c.String("room", "", "ban only in the given room")
-	agent := c.String("agent", "", "agent ID to ban")
-	ip := c.String("ip", "", "IP to ban")
-	duration := c.Duration("duration", 0, "duration of ban (defaults to forever)")
-
-	if err := c.Parse(args); err != nil {
-		return err
-	}
+func (b *ban) Run(env console.CLIEnv) error {
+	ctx := env.Context()
 
 	var until time.Time
 	var untilStr string
-	switch *duration {
+	switch b.Duration.Duration {
 	case 0:
 		until = time.Time{}
 		untilStr = "forever"
 	default:
-		until = time.Now().Add(*duration)
+		until = time.Now().Add(b.Duration.Duration)
 		untilStr = fmt.Sprintf("until %s", until)
 	}
 
 	ban := proto.Ban{}
-
 	switch {
-	case *agent != "":
-		ban.ID = proto.UserID(*agent)
-	case *ip != "":
-		ban.IP = *ip
+	case b.Agent != "":
+		ban.ID = proto.UserID(b.Agent)
+	case b.IP != "":
+		ban.IP = b.IP
 	default:
 		return fmt.Errorf("-agent <agent-id> or -ip <ip> is required")
 	}
 
-	if *roomName == "" {
-		if err := c.backend.Ban(ctx, ban, until); err != nil {
+	if b.Room == "" {
+		if err := b.cli.backend.Ban(ctx, ban, until); err != nil {
 			return err
 		}
-		c.Printf("banned globally for %s: %#v\n", untilStr, ban)
+		env.Printf("banned globally for %s: %#v\n", untilStr, ban)
 	} else {
-		room, err := c.backend.GetRoom(ctx, *roomName)
+		room, err := b.cli.backend.GetRoom(ctx, b.Room)
 		if err != nil {
 			return err
 		}
 		if err := room.Ban(ctx, ban, until); err != nil {
 			return err
 		}
-		c.Printf("banned in room %s for %s: %#v\n", *roomName, untilStr, ban)
+		env.Printf("banned in room %s for %s: %#v\n", b.Room, untilStr, ban)
 	}
 
 	return nil
 }
 
-type unban struct{}
-
-func (unban) usage() string {
-	return ("unban [-room <room>] -agent <agent-id>\n" +
-		"unban [-room <room>] -ip <ip>")
+type unban struct {
+	handlerBase
+	Room  string `usage:"Unban only in the given room."`
+	Agent string `usage:"Agent ID to unban."`
+	IP    string `usage:"IP to unban." cli:"ip"`
 }
 
-func (unban) run(ctx scope.Context, c *console, args []string) error {
-	roomName := c.String("room", "", "unban only in the given room")
-	agent := c.String("agent", "", "agent ID to unban")
-	ip := c.String("ip", "", "IP to unban")
-
-	if err := c.Parse(args); err != nil {
-		return err
-	}
+func (u *unban) Run(env console.CLIEnv) error {
+	ctx := env.Context()
 
 	ban := proto.Ban{}
-
 	switch {
-	case *agent != "":
-		ban.ID = proto.UserID(*agent)
-	case *ip != "":
-		ban.IP = *ip
+	case u.Agent != "":
+		ban.ID = proto.UserID(u.Agent)
+	case u.IP != "":
+		ban.IP = u.IP
 	default:
 		return fmt.Errorf("-agent <agent-id> or -ip <ip> is required")
 	}
 
-	if *roomName == "" {
-		if err := c.backend.Unban(ctx, ban); err != nil {
+	if u.Room == "" {
+		if err := u.cli.backend.Unban(ctx, ban); err != nil {
 			return err
 		}
-		c.Printf("global unban: %#v\n", ban)
+		env.Printf("global unban: %#v\n", ban)
 	} else {
-		room, err := c.backend.GetRoom(ctx, *roomName)
+		room, err := u.cli.backend.GetRoom(ctx, u.Room)
 		if err != nil {
 			return err
 		}
 		if err := room.Unban(ctx, ban); err != nil {
 			return err
 		}
-		c.Printf("unban in room %s: %#v\n", *roomName, ban)
+		env.Printf("unban in room %s: %#v\n", u.Room, ban)
 	}
 
 	return nil
