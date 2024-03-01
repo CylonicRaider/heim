@@ -83,7 +83,7 @@ export default createReactClass({
           </select>
           <div className="preview">{toolboxData.activeItemSummary}</div>
           {!isEmpty && inputDuration && (
-            <select ref="banDuration" defaultValue="h">
+            <select className="ban-duration-picker" ref="banDuration" defaultValue="h">
               <option value="M">for 5 minutes</option>
               <option value="h">for 1 hour</option>
               <option value="d">for 1 day</option>
