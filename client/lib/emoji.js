@@ -23,6 +23,8 @@ const index = _.extend({}, unicodeIndex, {
   'poop': 'poop',
   'sad': unicodeIndex.cry,
   'sun': unicodeIndex.sunny,
+  'cowboy': unicodeIndex.cowboy_hat_face,
+  'cowgirl': unicodeIndex.cowboy_hat_face,
   'tumbleweed': 'tumbleweed',
   'tumbleweed2': 'tumbleweed2',
   'tumbleweed!': 'tumbleweed2',
