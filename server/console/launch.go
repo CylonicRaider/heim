@@ -11,7 +11,7 @@ type launcher struct {
 
 func handleLaunchError(con Console, err error) {
 	if err != nil {
-		con.Printf("FATAL: %s", err)
+		con.Println("FATAL:", err)
 	}
 }
 
