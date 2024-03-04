@@ -7,18 +7,19 @@ React/Reflux.
 
 ## Getting started
 
-1. Install `git`, [`docker`](https://docs.docker.com/installation/), and
+1. Install `git`, [`docker`](https://docs.docker.com/engine/install/), and
    [`docker-compose`](https://docs.docker.com/compose/install/).
 
-2. Ensure dependencies are fetched: Run `git submodule update --init` in this repo directory.
+2. Ensure dependencies are fetched: Run `git submodule update --init` in this
+   repo directory.
 
 ### Running a server
 
-1. Build the client static files: `docker-compose run frontend`.
+1. Build the client static files: `docker-compose run --rm frontend`
 
-2. Init your db: `docker-compose run upgradedb sql-migrate up`.
+2. Init your db: `docker-compose run --rm upgradedb sql-migrate up`
 
-3. Start the server: `docker-compose up backend`.
+3. Start the server: `docker-compose up backend`
 
 Heim is now running on port 8080. \o/
 
@@ -28,20 +29,34 @@ Heim is now running on port 8080. \o/
    `docker-compose run --service-ports frontend gulp develop`
 
 2. To connect to [&test](https://euphoria.leet.nu/room/test) on euphoria.leet.nu
-   using your local client, open:
+   using your local client, open:  
    <http://localhost:8080/room/test/#connect=https://euphoria.leet.nu>
 
 ### Running tests
 
 #### Backend
 
-`docker-compose run backend_tests`
-
-(You may adjust the default command from `docker-compose.yml` to taste.)
+`docker-compose run --rm backend_tests`
 
 #### Frontend
 
-`docker-compose run frontend npm test`
+`docker-compose run --rm frontend npm test`
+
+## Self-hosting
+
+The container set defined in `docker-compose.yml` may serve as a starting
+point, but it is **not suitable for production use**. It includes and
+references clear-text hard-coded passwords and cryptographic keys.
+
+In order to run an Internet-facing Heim instance, you need at least:
+- A PostgreSQL database. (This is *technically* optional, but you will
+  regularly lose all data without a database.)
+- A backend (`heimctl serve`). This needs to talk to the database using a
+  strong random password.
+- An embed server (`heimctl server-embed`). This does not require database
+  access.
+- Likely, the backend console (offered by instances of the backend). This
+  requires strong SSH host and client keys.
 
 ## Discussion
 
