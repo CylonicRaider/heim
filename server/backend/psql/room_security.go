@@ -290,27 +290,17 @@ func (rmkb *RoomManagerKeyBinding) Unlock(
 
 	sec := &proto.RoomSecurity{
 		MAC: rmkb.Room.MAC,
-		KeyEncryptingKey: security.ManagedKey{
-			KeyType:      proto.RoomManagerKeyType,
-			Ciphertext:   rmkb.Room.EncryptedManagementKey,
-			ContextKey:   "room",
-			ContextValue: rmkb.Room.Name,
-		},
 		KeyPair: rmkb.KeyPair(),
 	}
 	return sec.Unlock(managerKey)
 }
 
 func (rmkb *RoomManagerKeyBinding) StaffUnlock(kms security.KMS) (*security.ManagedKeyPair, error) {
-	kek := security.ManagedKey{
-		KeyType:      proto.RoomManagerKeyType,
-		Ciphertext:   rmkb.Room.EncryptedManagementKey,
-		ContextKey:   "room",
-		ContextValue: rmkb.Room.Name,
-	}
+	kek := rmkb.KeyEncryptingKey.Clone()
 	if err := kms.DecryptKey(&kek); err != nil {
 		return nil, err
 	}
+
 	kp := rmkb.KeyPair()
 	if err := kp.Decrypt(&kek); err != nil {
 		return nil, err
