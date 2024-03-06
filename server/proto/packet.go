@@ -292,9 +292,6 @@ type SendReply SendEvent
 //
 // If the `announce` field is set to true, then an edit-message-event will be
 // broadcast to the room.
-//
-// TODO: Support content editing.
-// TODO: Support reparenting.
 type EditMessageCommand struct {
 	ID             snowflake.Snowflake `json:"id"`                // the id of the message to edit
 	PreviousEditID snowflake.Snowflake `json:"previous_edit_id"`  // the `previous_edit_id` of the message; if this does not match, the edit will fail (basic conflict resolution)
@@ -599,7 +596,7 @@ type LoginReply struct {
 // The `login-event` packet is sent to all sessions of an agent when that
 // agent is logged in (except for the session that issued the login command).
 type LoginEvent struct {
-	AccountID snowflake.Snowflake `json:"account_id"`
+	AccountID snowflake.Snowflake `json:"account_id"` // the account id logged in to
 }
 
 // The `logout` command logs a session out of an account. It will return an error
@@ -668,8 +665,8 @@ type ResendVerificationEmailReply struct{}
 // will be sent to the owner of the given personal identifier, with
 // instructions and a confirmation code for resetting the password.
 type ResetPasswordCommand struct {
-	Namespace string `json:"namespace"`
-	ID        string `json:"id"`
+	Namespace string `json:"namespace"` // the namespace of a personal identifier
+	ID        string `json:"id"`        // the id of a personal identifier
 }
 
 // `reset-password-reply` confirms that the password reset is in progress.
@@ -741,7 +738,7 @@ type StaffRevokeAccessCommand RevokeAccessCommand
 // `staff-revoke-access-reply` confirms that requested access capability was revoked.
 type StaffRevokeAccessReply RevokeAccessReply
 
-// The `staff-revoke-manager` command is a version of the [revoke-manager](#revoke-access)
+// The `staff-revoke-manager` command is a version of the [revoke-manager](#revoke-manager)
 // command that is available to staff. The staff account does not need to be a manager
 // of the room to use this command.
 type StaffRevokeManagerCommand RevokeManagerCommand

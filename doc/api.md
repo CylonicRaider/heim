@@ -250,7 +250,7 @@ AccountView describes an account and its preferred names.
 following values:
 
 | Value | Description |
-| :-- | :--------- |
+| :---- | :---------- |
 | `passcode` | Authentication with a passcode, where a key is derived from the passcode to unlock an access grant. |
 
 ### Message
@@ -317,8 +317,9 @@ A UserID identifies a user. The prefix of this value (up to the colon) indicates
 while the suffix is a unique value for that type of session.
 
 | Prefix | Suffix | Description |
-| :-- | :-- | :----- |
+| :----- | :----- | :---------- |
 | `agent:` | *agent identifier* | A user, not signed into any account, but tracked via cookie under this identifier. |
+| `bot:` | *agent identifier* | Same as `agent:`, but for bots. |
 | `account:` | *account identifier* | The id ([Snowflake](#snowflake)) of the account the user is logged into. |
 
 ## Asynchronous Events
@@ -386,7 +387,7 @@ agent is logged in (except for the session that issued the login command).
 
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
-| `account_id` | [Snowflake](#snowflake) | required |  |
+| `account_id` | [Snowflake](#snowflake) | required |  the account id logged in to |
 
 ### logout-event
 
@@ -824,8 +825,8 @@ instructions and a confirmation code for resetting the password.
 
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
-| `namespace` | [string](#string) | required |  |
-| `id` | [string](#string) | required |  |
+| `namespace` | [string](#string) | required |  the namespace of a personal identifier |
+| `id` | [string](#string) | required |  the id of a personal identifier |
 
 `reset-password-reply` confirms that the password reset is in progress.
 
@@ -872,9 +873,6 @@ cannot be restored by this or any command).
 
 If the `announce` field is set to true, then an edit-message-event will be
 broadcast to the room.
-
-TODO: Support content editing.
-TODO: Support reparenting.
 
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
@@ -945,7 +943,7 @@ TODO: Support revocation by capability_id, in case a manager doesn't know the pa
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
 | `account_id` | [Snowflake](#snowflake) | *optional* |  the id of the account to revoke access from |
-| `passcode` | [string](#string) | required |  the passcode to revoke access from |
+| `passcode` | [string](#string) | *optional* |  the passcode to revoke access from |
 
 `revoke-access-reply` confirms that the access grant was revoked.
 
@@ -1035,6 +1033,23 @@ of the room to use this command.
 
 This packet has no fields.
 
+### staff-inspect-ip
+
+The `staff-inspect-ip` command looks up details about a given IP address or
+virtual client address.
+
+| Field | Type | Required? | Description |
+| :---- | :--- | :-------- | :---------- |
+| `ip` | [string](#string) | required |  the IP or virtual client address to inspect |
+| `details` | [bool](#bool) | *optional* |  whether to include details |
+
+`staff-inspect-ip-reply` returns details about the requested address.
+
+| Field | Type | Required? | Description |
+| :---- | :--- | :-------- | :---------- |
+| `ip` | [string](#string) | required |  the IP address resolved from the virtual address |
+| `details` | [object](#object) | *optional* |  details looked up about the IP address |
+
 ### staff-invade
 
 The `staff-invade` command can be used by staff to acquire temporary host and/or access
@@ -1069,7 +1084,7 @@ of the room to use this command.
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
 | `account_id` | [Snowflake](#snowflake) | *optional* |  the id of the account to revoke access from |
-| `passcode` | [string](#string) | required |  the passcode to revoke access from |
+| `passcode` | [string](#string) | *optional* |  the passcode to revoke access from |
 
 `staff-revoke-access-reply` confirms that requested access capability was revoked.
 
@@ -1077,7 +1092,7 @@ This packet has no fields.
 
 ### staff-revoke-manager
 
-The `staff-revoke-manager` command is a version of the [revoke-manager](#revoke-access)
+The `staff-revoke-manager` command is a version of the [revoke-manager](#revoke-manager)
 command that is available to staff. The staff account does not need to be a manager
 of the room to use this command.
 
