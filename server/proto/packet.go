@@ -726,7 +726,7 @@ type StaffEnrollOTPReply struct {
 // The `staff-validate-otp` command validates a one-time password against the
 // latest OTP key generated for the user by the `staff-enroll-otp` command.
 type StaffValidateOTPCommand struct {
-	Password string `json:"password"`
+	OTP string `json:"otp"` // the one-time password to validate
 }
 
 // `staff-validate-otp-reply` indicates successful authentication with the

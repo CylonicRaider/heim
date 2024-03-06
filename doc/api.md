@@ -1096,7 +1096,7 @@ latest OTP key generated for the user by the `staff-enroll-otp` command.
 
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
-| `password` | [string](#string) | required |  |
+| `otp` | [string](#string) | required |  the one-time password to validate |
 
 `staff-validate-otp-reply` indicates successful authentication with the
 given one-time password.

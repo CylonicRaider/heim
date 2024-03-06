@@ -796,7 +796,7 @@ func (s *session) handleStaffValidateOTPCommand(cmd *proto.StaffValidateOTPComma
 	}
 
 	// TODO: use staff's kms
-	if err := s.backend.AccountManager().ValidateOTP(s.ctx, s.kms, s.client.Account.ID(), cmd.Password); err != nil {
+	if err := s.backend.AccountManager().ValidateOTP(s.ctx, s.kms, s.client.Account.ID(), cmd.OTP); err != nil {
 		return failure(err)
 	}
 
