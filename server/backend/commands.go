@@ -377,7 +377,7 @@ func (s *session) handleStaffGrantManagerCommand(cmd *proto.StaffGrantManagerCom
 
 	account, err := s.backend.AccountManager().Get(s.ctx, cmd.AccountID)
 	if err != nil {
-		return &response{err: err}
+		return &response{err: fmt.Errorf("lookup account: %s", err)}
 	}
 
 	mkey, err := s.managedRoom.ManagerKey(s.ctx)
@@ -414,16 +414,16 @@ func (s *session) handleStaffRevokeManagerCommand(cmd *proto.StaffRevokeManagerC
 
 	account, err := s.backend.AccountManager().Get(s.ctx, cmd.AccountID)
 	if err != nil {
-		return &response{err: err}
+		return &response{err: fmt.Errorf("lookup account: %s", err)}
 	}
 
 	mkey, err := s.managedRoom.ManagerKey(s.ctx)
 	if err != nil {
-		return &response{err: err}
+		return &response{err: fmt.Errorf("get manager key: %s", err)}
 	}
 
 	if err := mkey.RevokeFromAccount(s.ctx, account); err != nil {
-		return &response{err: err}
+		return &response{err: fmt.Errorf("revoke manager key: %s", err)}
 	}
 
 	return &response{packet: &proto.StaffRevokeManagerReply{}}
@@ -440,21 +440,21 @@ func (s *session) handleStaffRevokeAccessCommand(cmd *proto.StaffRevokeAccessCom
 
 	mkey, err := s.managedRoom.MessageKey(s.ctx)
 	if err != nil {
-		return &response{err: err}
+		return &response{err: fmt.Errorf("lookup message key: %s", err)}
 	}
 
 	switch {
 	case cmd.AccountID != 0:
 		account, err := s.backend.AccountManager().Get(s.ctx, cmd.AccountID)
 		if err != nil {
-			return &response{err: err}
+			return &response{err: fmt.Errorf("lookup account: %s", err)}
 		}
 		if err := mkey.RevokeFromAccount(s.ctx, account); err != nil {
-			return &response{err: err}
+			return &response{err: fmt.Errorf("revoke message key: %s", err)}
 		}
 	case cmd.Passcode != "":
 		if err := mkey.RevokeFromPasscode(s.ctx, cmd.Passcode); err != nil {
-			return &response{err: err}
+			return &response{err: fmt.Errorf("revoke message key: %s", err)}
 		}
 	}
 
@@ -853,23 +853,23 @@ func (s *session) handleStaffInvadeCommand(cmd *proto.StaffInvadeCommand) *respo
 	// Everything checks out. Acquire the host key.
 	managerKey, err := s.managedRoom.ManagerKey(s.ctx)
 	if err != nil {
-		return failure(err)
+		return failure(fmt.Errorf("get manager key: %s", err))
 	}
 	managerKeyPair, err := managerKey.StaffUnlock(s.kms)
 	if err != nil {
-		return failure(err)
+		return failure(fmt.Errorf("unlock manager key: %s", err))
 	}
 	s.client.Authorization.ManagerKeyPair = managerKeyPair
 
 	// Now acquire the message key and join the room, if necessary.
 	mkey, err := s.managedRoom.MessageKey(s.ctx)
 	if err != nil {
-		return failure(err)
+		return failure(fmt.Errorf("get message key: %s", err))
 	}
 	if mkey != nil && !s.joined {
 		k := mkey.ManagedKey()
 		if err := s.kms.DecryptKey(&k); err != nil {
-			return failure(err)
+			return failure(fmt.Errorf("decrypt message key: %s", err))
 		}
 		s.client.Authorization.AddMessageKey(mkey.KeyID(), &k)
 		s.keyID = s.client.Authorization.CurrentMessageKeyID
@@ -877,7 +877,7 @@ func (s *session) handleStaffInvadeCommand(cmd *proto.StaffInvadeCommand) *respo
 		if err := s.join(); err != nil {
 			s.keyID = ""
 			s.state = s.unauthedState
-			return &response{err: err}
+			return &response{err: fmt.Errorf("join room: %s", err)}
 		}
 	}
 
@@ -892,7 +892,7 @@ func (s *session) handleUnlockStaffCapabilityCommand(cmd *proto.UnlockStaffCapab
 	failure := func(err error) *response { return &response{err: err} }
 
 	if s.client.Account == nil || !s.client.Account.IsStaff() {
-		return rejection("access denied")
+		return rejection(proto.ErrAccessDenied.Error())
 	}
 
 	kms, err := s.client.Account.UnlockStaffKMS(s.client.Account.KeyFromPassword(cmd.Password))
@@ -913,7 +913,7 @@ func (s *session) handleStaffCreateRoomCommand(cmd *proto.StaffCreateRoomCommand
 	failure := func(err error) *response { return &response{err: err} }
 
 	if s.client.Account == nil || !s.client.Account.IsStaff() {
-		return rejection("access denied")
+		return rejection(proto.ErrAccessDenied.Error())
 	}
 
 	if s.staffKMS == nil {
