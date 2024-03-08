@@ -6,9 +6,10 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/euphoria-io/scope"
+
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/templates"
-	"github.com/euphoria-io/scope"
 )
 
 func init() {

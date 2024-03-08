@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"gopkg.in/gorp.v1"
-
 	"github.com/euphoria-io/scope"
+	"gopkg.in/gorp.v1"
 )
 
 func init() {

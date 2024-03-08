@@ -3,9 +3,10 @@ package mock
 import (
 	"sync"
 
+	"github.com/euphoria-io/scope"
+
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/security"
-	"github.com/euphoria-io/scope"
 )
 
 type capabilities struct {

@@ -13,9 +13,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/euphoria-io/scope"
+
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/cluster/etcd"
-	"github.com/euphoria-io/scope"
 )
 
 func pickPort() (int, error) {

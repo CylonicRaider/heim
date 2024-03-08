@@ -3,18 +3,17 @@ package proto
 import (
 	"crypto/hmac"
 	"crypto/sha1"
+	"encoding/hex"
 	"fmt"
 
+	"github.com/euphoria-io/scope"
 	"github.com/pquerna/otp/totp"
 	"github.com/savaki/geoip2"
-
-	"encoding/hex"
 
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto/emails"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/templates"
-	"github.com/euphoria-io/scope"
 )
 
 type Heim struct {

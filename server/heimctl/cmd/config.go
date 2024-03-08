@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/euphoria-io/scope"
+
 	"euphoria.leet.nu/heim/backend"
 	"euphoria.leet.nu/heim/backend/mock"
 	"euphoria.leet.nu/heim/backend/psql"
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
 )
 
 var (

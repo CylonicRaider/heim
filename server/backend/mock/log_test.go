@@ -3,8 +3,9 @@ package mock
 import (
 	"testing"
 
-	"euphoria.leet.nu/heim/proto"
 	"github.com/euphoria-io/scope"
+
+	"euphoria.leet.nu/heim/proto"
 
 	. "github.com/smartystreets/goconvey/convey"
 )

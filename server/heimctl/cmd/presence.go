@@ -4,8 +4,9 @@ import (
 	"flag"
 	"time"
 
-	"euphoria.leet.nu/heim/heimctl/presence"
 	"github.com/euphoria-io/scope"
+
+	"euphoria.leet.nu/heim/heimctl/presence"
 )
 
 func init() {

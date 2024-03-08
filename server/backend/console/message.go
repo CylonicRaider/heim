@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/euphoria-io/scope"
+
 	"euphoria.leet.nu/heim/console"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
 )
 
 func init() {

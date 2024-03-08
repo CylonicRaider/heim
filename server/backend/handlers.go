@@ -1,22 +1,22 @@
 package backend
 
 import (
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"net"
 	"net/http"
 	"path"
 	"strings"
 
-	"encoding/hex"
-	"encoding/json"
+	"github.com/euphoria-io/scope"
+	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
-	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func (s *Server) route() {

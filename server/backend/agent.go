@@ -7,11 +7,12 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/euphoria-io/scope"
+	"github.com/gorilla/securecookie"
+
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
-	"github.com/gorilla/securecookie"
 )
 
 const (

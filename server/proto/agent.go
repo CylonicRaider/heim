@@ -2,15 +2,14 @@ package proto
 
 import (
 	"crypto/rand"
+	"encoding/base64"
 	"time"
 
+	"github.com/euphoria-io/scope"
 	"golang.org/x/crypto/poly1305"
-
-	"encoding/base64"
 
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
 )
 
 const (

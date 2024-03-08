@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/euphoria-io/scope"
 	"github.com/prometheus/client_golang/prometheus"
 
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/jobs"
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
 )
 
 const (

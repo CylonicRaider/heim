@@ -5,9 +5,8 @@ import (
 	"io"
 	"os"
 
-	"golang.org/x/term"
-
 	"github.com/euphoria-io/scope"
+	"golang.org/x/term"
 )
 
 type ReadWriteFDer interface {

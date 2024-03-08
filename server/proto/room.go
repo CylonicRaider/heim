@@ -7,11 +7,11 @@ import (
 	"net"
 	"time"
 
+	"github.com/euphoria-io/scope"
 	"golang.org/x/crypto/poly1305"
 
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
 )
 
 const (

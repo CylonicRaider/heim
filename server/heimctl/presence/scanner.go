@@ -5,12 +5,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/euphoria-io/scope"
 	"github.com/prometheus/client_golang/prometheus"
 
 	"euphoria.leet.nu/heim/backend/psql"
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto"
-	"github.com/euphoria-io/scope"
 )
 
 const (

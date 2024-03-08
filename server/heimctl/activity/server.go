@@ -6,9 +6,10 @@ import (
 	"net/http"
 	"sync"
 
-	"euphoria.leet.nu/heim/proto/logging"
 	"github.com/euphoria-io/scope"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	"euphoria.leet.nu/heim/proto/logging"
 )
 
 func Serve(ctx scope.Context, addr string) {

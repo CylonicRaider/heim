@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"time"
 
+	"github.com/euphoria-io/scope"
+
 	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.leet.nu/heim/templates"
-	"github.com/euphoria-io/scope"
 )
 
 type EmailRef struct {

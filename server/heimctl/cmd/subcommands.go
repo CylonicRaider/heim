@@ -11,8 +11,9 @@ import (
 	"text/template"
 	"time"
 
-	"euphoria.leet.nu/heim/proto/logging"
 	"github.com/euphoria-io/scope"
+
+	"euphoria.leet.nu/heim/proto/logging"
 )
 
 var (

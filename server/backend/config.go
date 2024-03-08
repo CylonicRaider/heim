@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/euphoria-io/scope"
 	"github.com/savaki/geoip2"
-
 	"gopkg.in/yaml.v2"
 
 	"euphoria.leet.nu/heim/aws/kms"
@@ -25,7 +25,6 @@ import (
 	"euphoria.leet.nu/heim/proto/emails"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/templates"
-	"github.com/euphoria-io/scope"
 )
 
 var (

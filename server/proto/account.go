@@ -12,14 +12,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/euphoria-io/scope"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
-
 	"golang.org/x/crypto/poly1305"
 
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
 )
 
 const (

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/euphoria-io/scope"
 	"github.com/go-gorp/gorp"
 	"github.com/prometheus/client_golang/prometheus"
 
 	"euphoria.leet.nu/heim/backend/psql"
 	"euphoria.leet.nu/heim/cluster"
-	"github.com/euphoria-io/scope"
 )
 
 const (

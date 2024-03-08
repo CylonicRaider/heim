@@ -3,10 +3,11 @@ package proto
 import (
 	"time"
 
+	"github.com/euphoria-io/scope"
+
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto/jobs"
 	"euphoria.leet.nu/heim/proto/security"
-	"github.com/euphoria-io/scope"
 )
 
 // A Backend provides Rooms and an implementation version.

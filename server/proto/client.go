@@ -1,17 +1,17 @@
 package proto
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"net/http"
 	"strings"
 	"time"
 
-	"encoding/json"
+	"github.com/euphoria-io/scope"
 
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
 )
 
 type clientKey int

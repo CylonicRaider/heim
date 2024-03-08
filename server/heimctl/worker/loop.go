@@ -3,8 +3,9 @@ package worker
 import (
 	"fmt"
 
-	"euphoria.leet.nu/heim/proto"
 	"github.com/euphoria-io/scope"
+
+	"euphoria.leet.nu/heim/proto"
 )
 
 func Loop(ctx scope.Context, heim *proto.Heim, workerName, queueName string) error {

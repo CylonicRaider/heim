@@ -1,14 +1,14 @@
 package activity
 
 import (
-	"github.com/lib/pq"
-
 	"encoding/json"
+
+	"github.com/euphoria-io/scope"
+	"github.com/lib/pq"
 
 	"euphoria.leet.nu/heim/backend/psql"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/logging"
-	"github.com/euphoria-io/scope"
 )
 
 func ScanLoop(ctx scope.Context, listener *pq.Listener) {

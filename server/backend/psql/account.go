@@ -8,13 +8,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/euphoria-io/scope"
 	"gopkg.in/gorp.v1"
 
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
 )
 
 const OTPKeyType = security.AES128

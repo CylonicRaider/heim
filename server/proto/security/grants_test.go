@@ -9,11 +9,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/euphoria-io/scope"
+
 	"euphoria.leet.nu/heim/backend/mock"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
 
 	. "github.com/smartystreets/goconvey/convey"
 )

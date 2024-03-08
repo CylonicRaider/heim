@@ -9,15 +9,16 @@ import (
 	"sync"
 	"time"
 
-	"euphoria.leet.nu/heim/proto"
-	"euphoria.leet.nu/heim/proto/security"
-	"euphoria.leet.nu/heim/templates"
 	"github.com/euphoria-io/scope"
-
-	gorillactx "github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/websocket"
+
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/security"
+	"euphoria.leet.nu/heim/templates"
+
+	gorillactx "github.com/gorilla/context"
 )
 
 const cookieKeySize = 32

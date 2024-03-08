@@ -5,10 +5,10 @@ import (
 	"reflect"
 	"strings"
 
-	"euphoria.leet.nu/heim/proto/logging"
 	"github.com/euphoria-io/scope"
-
 	"gopkg.in/gorp.v1"
+
+	"euphoria.leet.nu/heim/proto/logging"
 )
 
 func rollback(ctx scope.Context, t *gorp.Transaction) {

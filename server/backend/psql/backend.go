@@ -13,6 +13,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/euphoria-io/scope"
+	"github.com/lib/pq"
+	"github.com/prometheus/client_golang/prometheus"
+	"gopkg.in/gorp.v1"
+
 	"euphoria.leet.nu/heim/backend"
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto"
@@ -20,11 +25,6 @@ import (
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
-
-	"github.com/lib/pq"
-	"github.com/prometheus/client_golang/prometheus"
-	"gopkg.in/gorp.v1"
 )
 
 var ErrPsqlConnectionLost = errors.New("postgres connection lost")

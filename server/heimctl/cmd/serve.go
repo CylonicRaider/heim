@@ -8,12 +8,12 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/euphoria-io/scope"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"euphoria.leet.nu/heim/backend"
 	"euphoria.leet.nu/heim/backend/console"
 	"euphoria.leet.nu/heim/proto"
-	"github.com/euphoria-io/scope"
-
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {

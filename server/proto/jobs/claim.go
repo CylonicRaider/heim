@@ -5,8 +5,9 @@ import (
 	"math/rand"
 	"time"
 
-	"euphoria.leet.nu/heim/proto/snowflake"
 	"github.com/euphoria-io/scope"
+
+	"euphoria.leet.nu/heim/proto/snowflake"
 )
 
 type JobClaim struct {

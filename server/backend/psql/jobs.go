@@ -9,12 +9,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/euphoria-io/scope"
 	"github.com/lib/pq"
+	"gopkg.in/gorp.v1"
 
 	"euphoria.leet.nu/heim/proto/jobs"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
-	"gopkg.in/gorp.v1"
 )
 
 type JobQueue struct {

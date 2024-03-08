@@ -11,14 +11,14 @@ import (
 	"sync/atomic"
 	"time"
 
-	"euphoria.leet.nu/heim/proto"
-	"euphoria.leet.nu/heim/proto/logging"
-	"euphoria.leet.nu/heim/proto/security"
 	"github.com/euphoria-io/scope"
-
 	"github.com/gorilla/websocket"
 	"github.com/juju/ratelimit"
 	"github.com/prometheus/client_golang/prometheus"
+
+	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/logging"
+	"euphoria.leet.nu/heim/proto/security"
 )
 
 const (

@@ -6,11 +6,12 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/euphoria-io/scope"
+
 	"euphoria.leet.nu/heim/proto/emails"
 	"euphoria.leet.nu/heim/proto/jobs"
 	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.leet.nu/heim/templates"
-	"github.com/euphoria-io/scope"
 )
 
 const (

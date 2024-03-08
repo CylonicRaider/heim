@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"euphoria.leet.nu/heim/proto/security"
 	"github.com/euphoria-io/scope"
+
+	"euphoria.leet.nu/heim/proto/security"
 )
 
 type CapabilityTable interface {

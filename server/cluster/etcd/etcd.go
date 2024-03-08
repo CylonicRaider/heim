@@ -9,12 +9,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/coreos/go-etcd/etcd"
+	"github.com/euphoria-io/scope"
+	"github.com/prometheus/client_golang/prometheus"
+
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto/security"
-	"github.com/euphoria-io/scope"
-
-	"github.com/coreos/go-etcd/etcd"
-	"github.com/prometheus/client_golang/prometheus"
 )
 
 var (

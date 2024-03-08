@@ -2,19 +2,18 @@ package psql
 
 import (
 	"database/sql"
+	"encoding/base64"
 	"fmt"
 	"strings"
 	"time"
 
-	"encoding/base64"
+	"github.com/euphoria-io/scope"
+	"gopkg.in/gorp.v1"
 
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
-
-	"gopkg.in/gorp.v1"
 )
 
 type Agent struct {

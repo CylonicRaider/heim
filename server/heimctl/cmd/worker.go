@@ -4,8 +4,9 @@ import (
 	"flag"
 	"fmt"
 
-	"euphoria.leet.nu/heim/heimctl/worker"
 	"github.com/euphoria-io/scope"
+
+	"euphoria.leet.nu/heim/heimctl/worker"
 )
 
 func init() {

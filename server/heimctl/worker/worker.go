@@ -1,9 +1,10 @@
 package worker
 
 import (
+	"github.com/euphoria-io/scope"
+
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/jobs"
-	"github.com/euphoria-io/scope"
 )
 
 type Worker interface {

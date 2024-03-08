@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/euphoria-io/scope"
+	"gopkg.in/gorp.v1"
+
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/emails"
 	"euphoria.leet.nu/heim/proto/jobs"
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/snowflake"
 	"euphoria.leet.nu/heim/templates"
-	"github.com/euphoria-io/scope"
-
-	"gopkg.in/gorp.v1"
 )
 
 type Email struct {

@@ -20,6 +20,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/euphoria-io/scope"
+	"github.com/gorilla/websocket"
+	"github.com/pquerna/otp"
+
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/emails"
@@ -27,10 +31,6 @@ import (
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
-
-	"github.com/gorilla/websocket"
-	"github.com/pquerna/otp"
 
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/smartystreets/goconvey/convey/reporting"

@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/euphoria-io/scope"
+	"gopkg.in/gorp.v1"
+
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
-	"github.com/euphoria-io/scope"
-
-	"gopkg.in/gorp.v1"
 )
 
 type RoomCapability struct {
@@ -289,7 +289,7 @@ func (rmkb *RoomManagerKeyBinding) Unlock(
 	managerKey *security.ManagedKey) (*security.ManagedKeyPair, error) {
 
 	sec := &proto.RoomSecurity{
-		MAC: rmkb.Room.MAC,
+		MAC:     rmkb.Room.MAC,
 		KeyPair: rmkb.KeyPair(),
 	}
 	return sec.Unlock(managerKey)

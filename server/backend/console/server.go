@@ -7,6 +7,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/x509"
+	"encoding/pem"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -14,16 +15,14 @@ import (
 	"os"
 	"sync"
 
-	"encoding/pem"
+	"github.com/euphoria-io/scope"
+	"golang.org/x/crypto/ssh"
 
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/console"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
-	"github.com/euphoria-io/scope"
-
-	"golang.org/x/crypto/ssh"
 )
 
 type Controller struct {
