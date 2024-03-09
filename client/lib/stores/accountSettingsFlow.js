@@ -69,7 +69,7 @@ module.exports.store = Reflux.createStore({
       const step = state.get('step')
       if (step === 'change-name') {
         state.set('working', false)
-        if (data.error == 'account name already in use') {
+        if (data.error === 'account name already in use') {
           state.set('errors', Immutable.Map({name: 'already taken'}))
         } else {
           const error = new Error('failed to change name: ' + data.reason)

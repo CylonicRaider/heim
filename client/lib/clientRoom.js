@@ -19,8 +19,8 @@ function writeEnv(doc, hash, initial) {
   doc.write('<!DOCTYPE html>')
   doc.write('<link rel="stylesheet" type="text/css" id="css" href="' + prefix + '/static/main.css' + query + '">')
   // emoji.css is huge and not critical for initial page loads
-  doc.write('<link rel="stylesheet" type="text/css" id="emoji-css" href="' + prefix + '/static/emoji.css' + query + '"' +
-            (initial ? ' media="none" onload="this.media = \'all\'"' : '') + '>')
+  doc.write('<link rel="stylesheet" type="text/css" id="emoji-css" href="' + prefix + '/static/emoji.css' + query + '"'
+            + (initial ? ' media="none" onload="this.media = \'all\'"' : '') + '>')
   doc.write('<script src="' + prefix + '/static/raven.js' + query + '"></script>')
   doc.write('<script id="heim-js" src="' + prefix + '/static/main.js' + query + '"></script>')
   doc.close()
