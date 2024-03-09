@@ -696,7 +696,7 @@ module.exports.store = Reflux.createStore({
     const previousEditID = msg && msg.get('previous_edit_id')
     this.socket.send({
       type: 'edit-message',
-      data: _.merge(data, {id, previousEditID}),
+      data: _.merge({id: id, previous_edit_id: previousEditID}, data),
     })
   },
 
@@ -713,6 +713,7 @@ module.exports.store = Reflux.createStore({
       data: _.merge(data, {ip: addr}),
     })
   },
+
   pmInitiate(id) {
     this.socket.send({
       type: 'pm-initiate',
