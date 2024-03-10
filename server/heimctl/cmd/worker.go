@@ -3,10 +3,12 @@ package cmd
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/euphoria-io/scope"
 
 	"euphoria.leet.nu/heim/heimctl/worker"
+	"euphoria.leet.nu/heim/proto/logging"
 )
 
 func init() {
@@ -42,21 +44,21 @@ func (cmd *workerCmd) flags() *flag.FlagSet {
 
 func (cmd *workerCmd) run(ctx scope.Context, args []string) error {
 	if len(args) < 1 {
-		fmt.Printf("Usage: %s\r\n", cmd.usage())
+		fmt.Fprintf(os.Stderr, "Usage: %s\r\n", cmd.usage())
 		// TODO: list queues
 		return nil
 	}
 
-	fmt.Printf("getting config\n")
+	logging.Logger(ctx).Printf("getting config\n")
 	cfg, err := getConfig(ctx)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("getting heim\n")
+	logging.Logger(ctx).Printf("getting heim\n")
 	heim, err := cfg.Heim(ctx)
 	if err != nil {
-		fmt.Printf("heim error: %s\n", err)
+		logging.Logger(ctx).Printf("heim error: %s\n", err)
 		return err
 	}
 
@@ -66,7 +68,7 @@ func (cmd *workerCmd) run(ctx scope.Context, args []string) error {
 	}()
 
 	// Start metrics server.
-	fmt.Printf("starting server\n")
+	logging.Logger(ctx).Printf("starting server\n")
 	ctx.WaitGroup().Add(1)
 	go worker.Serve(ctx, cmd.addr)
 

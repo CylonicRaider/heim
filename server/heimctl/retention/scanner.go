@@ -11,6 +11,7 @@ import (
 
 	"euphoria.leet.nu/heim/backend/psql"
 	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/proto/logging"
 )
 
 const (
@@ -32,7 +33,7 @@ func scanForExpired(ctx scope.Context, c cluster.Cluster, pb *psql.Backend) erro
 	for _, row := range rows {
 		room, ok := row.(*psql.Room)
 		if !ok {
-			fmt.Printf("error: expected row of type *psql.Room, got %T\n", row)
+			logging.Logger(ctx).Printf("error: expected row of type *psql.Room, got %T\n", row)
 			continue
 		}
 		var oldestRow struct {
@@ -42,7 +43,7 @@ func scanForExpired(ctx scope.Context, c cluster.Cluster, pb *psql.Backend) erro
 			"SELECT Min(posted) AS oldest FROM message WHERE room = $1",
 			room.Name)
 		if err != nil {
-			fmt.Printf("error selecting oldest message: %s\n", err)
+			logging.Logger(ctx).Printf("error selecting oldest message: %s\n", err)
 			continue
 		}
 		if !oldestRow.Oldest.Valid {
@@ -72,9 +73,9 @@ func ExpiredScanLoop(ctx scope.Context, c cluster.Cluster, pb *psql.Backend, int
 		case <-t:
 			if err := scanForExpired(ctx, c, pb); err != nil {
 				errCount++
-				fmt.Printf("scan error [%d/%d]: %s", errCount, maxErrors, err)
+				logging.Logger(ctx).Printf("scan error [%d/%d]: %s", errCount, maxErrors, err)
 				if errCount > maxErrors {
-					fmt.Println("maximum scan errors exceeded, terminating")
+					logging.Logger(ctx).Println("maximum scan errors exceeded, terminating")
 					ctx.Terminate(fmt.Errorf("maximum scan errors exceeded"))
 					return
 				}
@@ -99,7 +100,7 @@ func scanToDelete(ctx scope.Context, c cluster.Cluster, pb *psql.Backend) error 
 	for _, row := range rows {
 		room, ok := row.(*psql.Room)
 		if !ok {
-			fmt.Printf("error: expected row of type *psql.Room, got %T\n", row)
+			logging.Logger(ctx).Printf("error: expected row of type *psql.Room, got %T\n", row)
 			continue
 		}
 		// don't use grace period here- delete as soon as they expire
@@ -110,7 +111,7 @@ func scanToDelete(ctx scope.Context, c cluster.Cluster, pb *psql.Backend) error 
 			threshold,
 		)
 		if err != nil && err != sql.ErrNoRows {
-			fmt.Printf("error deleting rows: %s\n", err)
+			logging.Logger(ctx).Printf("error deleting rows: %s\n", err)
 		}
 		lastDeleteScan.Set(float64(time.Now().Unix()))
 	}
@@ -129,9 +130,9 @@ func DeleteScanLoop(ctx scope.Context, c cluster.Cluster, pb *psql.Backend, inte
 		case <-t:
 			if err := scanToDelete(ctx, c, pb); err != nil {
 				errCount++
-				fmt.Printf("delete scan error [%d/%d]: %s", errCount, maxErrors, err)
+				logging.Logger(ctx).Printf("delete scan error [%d/%d]: %s", errCount, maxErrors, err)
 				if errCount > maxErrors {
-					fmt.Println("maximum delete scan errors exceeded, terminating")
+					logging.Logger(ctx).Println("maximum delete scan errors exceeded, terminating")
 					ctx.Terminate(fmt.Errorf("maximum delete scan errors exceeded"))
 					return
 				}

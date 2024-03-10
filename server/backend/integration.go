@@ -297,6 +297,12 @@ func (tc *testConn) clone() *testConn {
 func (tc *testConn) debug(on bool) { tc.debugOn = on }
 func (tc *testConn) id() string    { return tc.userID }
 
+func (tc *testConn) trace(format string, args ...interface{}) {
+	if tc.debugOn {
+		fmt.Printf(format, args...)
+	}
+}
+
 func (tc *testConn) send(id, cmdType, data string, args ...interface{}) {
 	if len(args) > 0 {
 		data = fmt.Sprintf(data, args...)
@@ -307,9 +313,7 @@ func (tc *testConn) send(id, cmdType, data string, args ...interface{}) {
 	} else {
 		msg = fmt.Sprintf(`{"id":"%s","type":"%s","data":%s}`, id, cmdType, data)
 	}
-	if tc.debugOn {
-		fmt.Printf("sent %s\n", msg)
-	}
+	tc.trace("sent %s\n", msg)
 	if cmdType == "login" || cmdType == "register-account" {
 		// parse msg and extract email address
 		var parsed map[string]interface{}
@@ -335,9 +339,7 @@ func (tc *testConn) readPacket() (proto.PacketType, interface{}) {
 	So(err, ShouldBeNil)
 	So(msgType, ShouldEqual, websocket.TextMessage)
 
-	if tc.debugOn {
-		fmt.Printf("%s received %s\n", tc.LocalAddr(), string(data))
-	}
+	tc.trace("%s received %s\n", tc.LocalAddr(), string(data))
 	var packet proto.Packet
 	So(json.Unmarshal(data, &packet), ShouldBeNil)
 
@@ -364,9 +366,7 @@ func (tc *testConn) expect(id string, cmdType proto.PacketType, data string, arg
 	So(err, ShouldBeNil)
 	So(msgType, ShouldEqual, websocket.TextMessage)
 
-	if tc.debugOn {
-		fmt.Printf("%s received %s\n", tc.LocalAddr(), string(packetData))
-	}
+	tc.trace("%s received %s\n", tc.LocalAddr(), string(packetData))
 	var packet proto.Packet
 	So(json.Unmarshal(packetData, &packet), ShouldBeNil)
 	So(packet.Error, ShouldEqual, "")
@@ -475,9 +475,7 @@ func (tc *testConn) expectError(id string, cmdType proto.PacketType, errFormat s
 		errMsg = fmt.Sprintf(errFormat, errArgs...)
 	}
 
-	if tc.debugOn {
-		fmt.Printf("reading packet, expecting %s error\n", cmdType)
-	}
+	tc.trace("reading packet, expecting %s error\n", cmdType)
 	packetType, payload := tc.readPacket()
 	So(packetType, ShouldEqual, cmdType)
 	err, ok := payload.(error)
@@ -520,9 +518,7 @@ func (tc *testConn) expectHello() {
 }
 
 func (tc *testConn) expectPing() *proto.PingEvent {
-	if tc.debugOn {
-		fmt.Printf("reading packet, expecting ping-event\n")
-	}
+	tc.trace("reading packet, expecting ping-event\n")
 	packetType, payload := tc.readPacket()
 	So(packetType, ShouldEqual, proto.PingEventType)
 	return payload.(*proto.PingEvent)
@@ -947,12 +943,11 @@ func testPresence(factory proto.BackendFactory) {
 			defer self2.Close()
 			self2.expectSnapshot(s.backend.Version(),
 				[]string{fmt.Sprintf(`{"id":"%s"}`, id1)}, nil)
-			fmt.Printf("ok!\n")
 			//id2 := self2.id()
 		})
 
 		// TODO:
-		SkipSkipConvey("Loses presence on shutdown", func() {
+		SkipConvey("Loses presence on shutdown", func() {
 		})
 	*/
 
@@ -2581,13 +2576,13 @@ func testJobsLowLevel(s *serverUnderTest) {
 		go func() {
 			jq, err := js.GetQueue(ctx, queueName)
 			if err != nil {
-				fmt.Printf("get queue failed: %s", err)
+				logging.Logger(ctx).Printf("get queue failed: %s", err)
 				ch <- nil
 				return
 			}
 			job, err := jobs.Claim(ctx, jq, "test", 10*time.Millisecond, 0)
 			if err != nil {
-				fmt.Printf("claim job failed: %s", err)
+				logging.Logger(ctx).Printf("claim job failed: %s", err)
 				ch <- nil
 				return
 			}

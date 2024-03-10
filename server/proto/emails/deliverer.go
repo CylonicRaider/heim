@@ -1,11 +1,12 @@
 package emails
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
 	"github.com/euphoria-io/scope"
+
+	"euphoria.leet.nu/heim/proto/logging"
 )
 
 type Deliverer interface {
@@ -43,7 +44,7 @@ func (td *TestDeliverer) Deliver(ctx scope.Context, ref *EmailRef) error {
 			Data:     ref.data,
 		}
 	} else {
-		fmt.Printf("delivered:\n%s\n", string(ref.Message))
+		logging.Logger(ctx).Printf("delivered:\n%s\n", string(ref.Message))
 	}
 
 	return nil

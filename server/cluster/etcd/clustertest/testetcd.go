@@ -114,7 +114,7 @@ func (s *EtcdServer) consumeStderr(stderr io.ReadCloser, ch chan<- string) {
 	for {
 		line, isPrefix, err := r.ReadLine()
 		if err != nil {
-			fmt.Printf("read error: %s\n", err)
+			fmt.Fprintf(os.Stderr, "read error: %s\n", err)
 			close(ch)
 			return
 		}

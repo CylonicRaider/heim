@@ -69,13 +69,13 @@ func Run(args []string) {
 		close(completed)
 	}()
 
-	fmt.Println("waiting for graceful shutdown...")
+	fmt.Fprintln(os.Stderr, "Waiting for graceful shutdown...")
 	select {
 	case <-timeout:
-		fmt.Println("timed out")
+		fmt.Fprintln(os.Stderr, "Timed out")
 		os.Exit(1)
 	case <-completed:
-		fmt.Println("ok")
+		fmt.Fprintln(os.Stderr, "OK")
 		os.Exit(0)
 	}
 }

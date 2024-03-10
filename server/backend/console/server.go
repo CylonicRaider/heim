@@ -91,7 +91,7 @@ func (ctrl *Controller) authorizeKey(conn ssh.ConnMetadata, key ssh.PublicKey) (
 	for path, value := range nodes {
 		key, _, _, _, err := ssh.ParseAuthorizedKey([]byte(value))
 		if err != nil {
-			fmt.Printf("bad authorized key from etcd: %s: %s\n", path, err)
+			logging.Logger(ctrl.ctx).Printf("bad authorized key from etcd: %s: %s\n", path, err)
 		}
 		if bytes.Compare(key.Marshal(), marshaledKey) == 0 {
 			return &ssh.Permissions{}, nil
@@ -183,7 +183,7 @@ func (ctrl *Controller) AddAuthorizedKeys(path string) error {
 			if err == io.EOF {
 				return nil
 			}
-			fmt.Printf("%s:%d: not a public key: %s\n", path, startLine, err)
+			logging.Logger(ctrl.ctx).Printf("%s:%d: not a public key: %s\n", path, startLine, err)
 			continue
 		}
 

@@ -11,6 +11,7 @@ import (
 	"euphoria.leet.nu/heim/backend/psql"
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/logging"
 )
 
 const (
@@ -30,9 +31,9 @@ func ScanLoop(ctx scope.Context, c cluster.Cluster, pb *psql.Backend, interval t
 		case <-t:
 			if err := scan(ctx.Fork(), c, pb); err != nil {
 				errCount++
-				fmt.Printf("scan error [%d/%d]: %s", errCount, maxErrors, err)
+				logging.Logger(ctx).Printf("scan error [%d/%d]: %s", errCount, maxErrors, err)
 				if errCount > maxErrors {
-					fmt.Printf("maximum scan errors exceeded, terminating\n")
+					logging.Logger(ctx).Printf("maximum scan errors exceeded, terminating\n")
 					ctx.Terminate(fmt.Errorf("maximum scan errors exceeded"))
 					return
 				}
@@ -74,7 +75,7 @@ func scan(ctx scope.Context, c cluster.Cluster, pb *psql.Backend) error {
 	for _, row := range rows {
 		presence, ok := row.(*PresenceWithUserAgent)
 		if !ok {
-			fmt.Printf("error: expected row of type *PresenceWithUserAgent, got %T\n", row)
+			logging.Logger(ctx).Printf("error: expected row of type *PresenceWithUserAgent, got %T\n", row)
 			continue
 		}
 
@@ -94,7 +95,7 @@ func scan(ctx scope.Context, c cluster.Cluster, pb *psql.Backend) error {
 			// Check lurker status. Currently this is indicated by a blank name on the session.
 			session, err := presence.SessionView(proto.General)
 			if err != nil {
-				fmt.Printf("error: failed to extract session from presence row: %s\n", err)
+				logging.Logger(ctx).Printf("error: failed to extract session from presence row: %s\n", err)
 				continue
 			}
 			if session.Name == "" {

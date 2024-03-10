@@ -1,7 +1,6 @@
 package worker
 
 import (
-	"fmt"
 	"net"
 	"net/http"
 	"sync"
@@ -17,7 +16,7 @@ func Serve(ctx scope.Context, addr string) {
 
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-		fmt.Printf("http[%s]: listen error: %s\n", addr, err)
+		logging.Logger(ctx).Printf("http[%s]: listen error: %s\n", addr, err)
 		ctx.Terminate(err)
 		return
 	}
@@ -41,7 +40,7 @@ func Serve(ctx scope.Context, addr string) {
 
 	logging.Logger(ctx).Printf("serving /metrics on %s", addr)
 	if err := http.Serve(listener, nil); err != nil {
-		fmt.Printf("http[%s]: %s\n", addr, err)
+		logging.Logger(ctx).Printf("http[%s]: %s\n", addr, err)
 		ctx.Terminate(err)
 	}
 

@@ -14,6 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 
 	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 )
 
@@ -56,7 +57,7 @@ func init() {
 }
 
 func EtcdCluster(ctx scope.Context, root, addr string, desc *cluster.PeerDesc) (cluster.Cluster, error) {
-	fmt.Printf("connecting to %#v\n", addr)
+	logging.Logger(ctx).Printf("connecting to %#v\n", addr)
 	e := &etcdCluster{
 		root:  strings.TrimRight(root, "/") + "/",
 		c:     etcd.NewClient([]string{addr}),
@@ -184,7 +185,7 @@ func (e *etcdCluster) update(desc *cluster.PeerDesc) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	fmt.Printf("writing %s to %s\n", string(valueBytes), desc.ID)
+	logging.Logger(e.ctx).Printf("writing %s to %s\n", string(valueBytes), desc.ID)
 	e.me = e.key("/peers/%s", desc.ID)
 	resp, err := e.c.Set(e.me, string(valueBytes), uint64(cluster.TTL/time.Second))
 	if err != nil {
@@ -218,7 +219,7 @@ func (e *etcdCluster) watch(waitIndex uint64) {
 		if resp == nil {
 			// If this happens the etcd cluster is unhealthy. Retry (with
 			// backoff), and terminate the server if we fail too many times.
-			fmt.Printf("cluster error: watch: nil response\n")
+			logging.Logger(e.ctx).Printf("cluster error: watch: nil response\n")
 
 			numFailures++
 			if numFailures >= maxConsecutiveWatchFailures {
@@ -243,7 +244,7 @@ func (e *etcdCluster) watch(waitIndex uint64) {
 		case "set":
 			var desc cluster.PeerDesc
 			if err := json.Unmarshal([]byte(resp.Node.Value), &desc); err != nil {
-				fmt.Printf("cluster error: set: %s\n", err)
+				logging.Logger(e.ctx).Printf("cluster error: set: %s\n", err)
 				peerWatchErrors.Inc()
 				continue
 			}
@@ -253,23 +254,23 @@ func (e *etcdCluster) watch(waitIndex uint64) {
 			e.m.Unlock()
 			if updated {
 				if prev.Era != desc.Era {
-					fmt.Printf("peer watch: update %s\n", desc.ID)
+					logging.Logger(e.ctx).Printf("peer watch: update %s\n", desc.ID)
 				}
 				e.ch <- &cluster.PeerAliveEvent{desc}
 			} else {
-				fmt.Printf("peer watch: set %s\n", desc.ID)
+				logging.Logger(e.ctx).Printf("peer watch: set %s\n", desc.ID)
 				e.ch <- &cluster.PeerJoinedEvent{desc}
 			}
 			peerEvents.Inc()
 		case "expire", "delete":
-			fmt.Printf("peer watch: %s %s\n", resp.Action, peerID)
+			logging.Logger(e.ctx).Printf("peer watch: %s %s\n", resp.Action, peerID)
 			e.m.Lock()
 			delete(e.peers, peerID)
 			e.m.Unlock()
 			e.ch <- &cluster.PeerLostEvent{cluster.PeerDesc{ID: peerID}}
 			peerEvents.Inc()
 		default:
-			fmt.Printf("peer watch: ignoring watch event: %v\n", resp)
+			logging.Logger(e.ctx).Printf("peer watch: ignoring watch event: %v\n", resp)
 		}
 
 		peerLiveCount.Set(float64(len(e.peers)))

@@ -23,6 +23,7 @@ import (
 	"euphoria.leet.nu/heim/cluster/local"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/emails"
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/templates"
 )
@@ -152,7 +153,6 @@ func (cfg *ServerConfig) LoadFromFile(path string) error {
 		return fmt.Errorf("load from file: %s: %s", path, err)
 	}
 
-	fmt.Printf("parsing config:\n%s\n", string(data))
 	if err := yaml.Unmarshal(data, cfg); err != nil {
 		return fmt.Errorf("load from file: %s: %s", path, err)
 	}
@@ -161,7 +161,7 @@ func (cfg *ServerConfig) LoadFromFile(path string) error {
 }
 
 func (cfg *ServerConfig) Heim(ctx scope.Context) (*proto.Heim, error) {
-	pageTemplater, err := LoadPageTemplates(filepath.Join(cfg.StaticPath, "pages"))
+	pageTemplater, err := LoadPageTemplates(ctx, filepath.Join(cfg.StaticPath, "pages"))
 	if err != nil {
 		return nil, fmt.Errorf("page templates: %s", err)
 	}
@@ -177,7 +177,7 @@ func (cfg *ServerConfig) Heim(ctx scope.Context) (*proto.Heim, error) {
 		return nil, err
 	}
 
-	emailTemplater, emailDeliverer, err := cfg.Email.Get(cfg)
+	emailTemplater, emailDeliverer, err := cfg.Email.Get(ctx, cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func (cfg *ServerConfig) Heim(ctx scope.Context) (*proto.Heim, error) {
 
 	emojiPath := filepath.Join(cfg.StaticPath, "emoji.json")
 	if err = proto.LoadEmoji(emojiPath); err != nil {
-		fmt.Printf("error loading %s: %s\n", emojiPath, err)
+		logging.Logger(ctx).Printf("error loading %s: %s\n", emojiPath, err)
 	}
 
 	heim.Backend = backend
@@ -241,7 +241,7 @@ func (c *ClusterConfig) EtcdCluster(ctx scope.Context) (cluster.Cluster, error) 
 	case "mock":
 		return cluster.NewMockCluster(), nil
 	case "local":
-		return local.LocalCluster(c.EtcdHome), nil
+		return local.LocalCluster(ctx, c.EtcdHome), nil
 	default:
 		return etcd.EtcdCluster(ctx, c.EtcdHome, c.EtcdHost, c.DescribeSelf())
 	}
@@ -344,7 +344,7 @@ type EmailConfig struct {
 	Templates  string `yaml:"templates"`
 }
 
-func (ec *EmailConfig) Get(cfg *ServerConfig) (*templates.Templater, emails.Deliverer, error) {
+func (ec *EmailConfig) Get(ctx scope.Context, cfg *ServerConfig) (*templates.Templater, emails.Deliverer, error) {
 	proto.DefaultCommonEmailParams = *cfg.CommonEmailParams
 	localDomain := cfg.CommonEmailParams.EmailDomain
 	cfg.CommonEmailParams.CommonData.LocalDomain = localDomain
@@ -359,13 +359,13 @@ func (ec *EmailConfig) Get(cfg *ServerConfig) (*templates.Templater, emails.Deli
 	// Verify templates.
 	if errs := proto.ValidateEmailTemplates(templater); errs != nil {
 		for _, err := range errs {
-			fmt.Printf("error: %s\n", err)
+			logging.Logger(ctx).Printf("email template validation error: %s\n", err)
 		}
-		return nil, nil, fmt.Errorf("template validation failed: %s...", errs[0].Error())
+		return nil, nil, fmt.Errorf("email template validation failed: %s...", errs[0].Error())
 	}
 
 	// Set up deliverer.
-	fmt.Printf("setting up deliverer for %#v\n", ec)
+	logging.Logger(ctx).Printf("setting up email deliverer for %#v\n", ec)
 	switch ec.Server {
 	case "":
 		return templater, nil, nil

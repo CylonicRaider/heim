@@ -562,7 +562,7 @@ func (s *session) handleResendVerificationEmail(msg *proto.ResendVerificationEma
 	}
 	sent := false
 	for _, pid := range account.PersonalIdentities() {
-		fmt.Printf("considering pid %s/%s/%t\n", pid.Namespace(), pid.ID(), pid.Verified())
+		logging.Logger(s.ctx).Printf("considering pid %s/%s/%t\n", pid.Namespace(), pid.ID(), pid.Verified())
 		if pid.Namespace() == "email" && !pid.Verified() {
 			err := s.heim.OnAccountEmailChanged(
 				s.ctx, s.backend, account, s.client.Authorization.ClientKey, pid.ID(), false)

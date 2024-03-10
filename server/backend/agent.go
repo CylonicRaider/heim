@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/securecookie"
 
 	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
 )
@@ -162,7 +163,7 @@ func getClient(ctx scope.Context, s *Server, r *http.Request) (*proto.Client, *h
 	var accountID snowflake.Snowflake
 	if err := accountID.FromString(agent.AccountID); agent.AccountID != "" && err == nil {
 		if err := client.AuthenticateWithAgent(ctx, s.b, agent, agentKey); err != nil {
-			fmt.Printf("agent auth failed: %s\n", err)
+			logging.Logger(ctx).Printf("agent auth failed: %s\n", err)
 			switch err {
 			case proto.ErrAccessDenied:
 				// allow session to proceed, but agent will not be logged into account

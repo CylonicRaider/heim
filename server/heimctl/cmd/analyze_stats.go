@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"flag"
-	"fmt"
 	"time"
 
 	"github.com/euphoria-io/scope"
 	"gopkg.in/gorp.v1"
+
+	"euphoria.leet.nu/heim/proto/logging"
 )
 
 func init() {
@@ -53,10 +54,10 @@ func (cmd *analyzeStatsCmd) run(ctx scope.Context, args []string) error {
 			return err
 		}
 		if !row.Last.Valid {
-			fmt.Printf("stored procedure returned NULL, finished?\n")
+			logging.Logger(ctx).Printf("stored procedure returned NULL, finished?\n")
 			break
 		}
-		fmt.Printf("analyzed up to %s\n", row.Last.Time)
+		logging.Logger(ctx).Printf("analyzed up to %s\n", row.Last.Time)
 		if !cmd.backfill || row.Last.Time.After(time.Now().Add(-time.Hour-time.Minute)) {
 			break
 		}

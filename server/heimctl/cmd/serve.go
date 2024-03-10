@@ -14,6 +14,7 @@ import (
 	"euphoria.leet.nu/heim/backend"
 	"euphoria.leet.nu/heim/backend/console"
 	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/logging"
 )
 
 func init() {
@@ -104,7 +105,7 @@ func (cmd *serveCmd) run(ctx scope.Context, args []string) error {
 		closeListener()
 	}()
 
-	fmt.Printf("serving era %s on %s\n", serverDesc.Era, cmd.addr)
+	logging.Logger(ctx).Printf("serving era %s on %s\n", serverDesc.Era, cmd.addr)
 	if err := http.Serve(listener, newVersioningHandler(server)); err != nil {
 		if strings.HasSuffix(err.Error(), "use of closed network connection") {
 			return nil
@@ -215,7 +216,7 @@ func (cmd *serveEmbedCmd) run(ctx scope.Context, args []string) error {
 	}()
 
 	if err := http.Serve(listener, cmd); err != nil {
-		fmt.Printf("http[%s]: %s\n", cmd.addr, err)
+		logging.Logger(ctx).Printf("http[%s]: %s\n", cmd.addr, err)
 		return err
 	}
 

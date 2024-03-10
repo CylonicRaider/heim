@@ -9,7 +9,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/euphoria-io/scope"
+
 	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 )
 
@@ -20,8 +23,8 @@ type localCluster struct {
 	c       chan cluster.PeerEvent
 }
 
-func LocalCluster(rootDir string) cluster.Cluster {
-	fmt.Printf("using local cluster at %#v\n", rootDir)
+func LocalCluster(ctx scope.Context, rootDir string) cluster.Cluster {
+	logging.Logger(ctx).Printf("using local cluster at %#v\n", rootDir)
 	return &localCluster{
 		rootDir: strings.TrimRight(rootDir, "/") + "/",
 		c:       make(chan cluster.PeerEvent, 16),

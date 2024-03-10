@@ -1,13 +1,14 @@
 package retention
 
 import (
-	"fmt"
 	"net"
 	"net/http"
 	"sync"
 
 	"github.com/euphoria-io/scope"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	"euphoria.leet.nu/heim/proto/logging"
 )
 
 func Serve(ctx scope.Context, addr string) {
@@ -36,7 +37,7 @@ func Serve(ctx scope.Context, addr string) {
 	}()
 
 	if err := http.Serve(listener, nil); err != nil {
-		fmt.Printf("http[%s]: %s\n", addr, err)
+		logging.Logger(ctx).Printf("http[%s]: %s\n", addr, err)
 		ctx.Terminate(err)
 	}
 

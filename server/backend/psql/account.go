@@ -728,7 +728,9 @@ func (b *AccountManagerBinding) RequestPasswordReset(
 }
 
 func (b *AccountManagerBinding) resolvePasswordReset(
-	db gorp.SqlExecutor, confirmation string) (*proto.PasswordResetRequest, *AccountBinding, error) {
+	ctx scope.Context, db gorp.SqlExecutor, confirmation string) (
+	*proto.PasswordResetRequest, *AccountBinding, error) {
+
 	id, mac, err := proto.ParsePasswordResetConfirmation(confirmation)
 	if err != nil {
 		return nil, nil, err
@@ -767,7 +769,7 @@ func (b *AccountManagerBinding) resolvePasswordReset(
 	}
 
 	if !req.VerifyMAC(mac) || account == nil {
-		fmt.Printf("invalid mac or no account (%#v)\n", account)
+		logging.Logger(ctx).Printf("invalid mac or no account (%#v)\n", account)
 		return nil, nil, proto.ErrInvalidConfirmationCode
 	}
 
@@ -775,7 +777,7 @@ func (b *AccountManagerBinding) resolvePasswordReset(
 }
 
 func (b *AccountManagerBinding) GetPasswordResetAccount(ctx scope.Context, confirmation string) (proto.Account, error) {
-	_, account, err := b.resolvePasswordReset(b.DbMap, confirmation)
+	_, account, err := b.resolvePasswordReset(ctx, b.DbMap, confirmation)
 	return account, err
 }
 
@@ -787,7 +789,7 @@ func (b *AccountManagerBinding) ConfirmPasswordReset(
 		return err
 	}
 
-	req, account, err := b.resolvePasswordReset(t, confirmation)
+	req, account, err := b.resolvePasswordReset(ctx, t, confirmation)
 	if err != nil {
 		rollback(ctx, t)
 		return err
@@ -796,7 +798,7 @@ func (b *AccountManagerBinding) ConfirmPasswordReset(
 	sec, err := account.accountSecurity().ResetPassword(kms, password)
 	if err != nil {
 		rollback(ctx, t)
-		fmt.Printf("reset password failed: %s\n", err)
+		logging.Logger(ctx).Printf("reset password failed: %s\n", err)
 		return err
 	}
 
@@ -805,14 +807,14 @@ func (b *AccountManagerBinding) ConfirmPasswordReset(
 		account.ID().String(), sec.MAC, sec.UserKey.Ciphertext)
 	if err != nil {
 		rollback(ctx, t)
-		fmt.Printf("update 1 failed: %s\n", err)
+		logging.Logger(ctx).Printf("reset password update 1 failed: %s\n", err)
 		return err
 	}
 
 	_, err = t.Exec("UPDATE password_reset_request SET consumed = NOW() where id = $1", req.ID.String())
 	if err != nil {
 		rollback(ctx, t)
-		fmt.Printf("update 2 failed: %s\n", err)
+		logging.Logger(ctx).Printf("reset password update 2 failed: %s\n", err)
 		return err
 	}
 
@@ -821,12 +823,12 @@ func (b *AccountManagerBinding) ConfirmPasswordReset(
 		account.ID().String(), req.ID.String())
 	if err != nil {
 		rollback(ctx, t)
-		fmt.Printf("update 3 failed: %s\n", err)
+		logging.Logger(ctx).Printf("reset password update 3 failed: %s\n", err)
 		return err
 	}
 
 	if err := t.Commit(); err != nil {
-		fmt.Printf("commit failed: %s\n", err)
+		logging.Logger(ctx).Printf("reset password commit failed: %s\n", err)
 		return err
 	}
 

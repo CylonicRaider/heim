@@ -3,6 +3,7 @@ package cmd
 import (
 	"flag"
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 
@@ -82,11 +83,11 @@ func (cmd *testmailCmd) flags() *flag.FlagSet { return flag.NewFlagSet("testemai
 
 func (cmd *testmailCmd) run(ctx scope.Context, args []string) error {
 	if len(args) < 2 {
-		fmt.Printf("Usage: %s\n\n", cmd.usage())
+		fmt.Fprintf(os.Stderr, "Usage: %s\n\n", cmd.usage())
 
-		fmt.Printf("Available scenarios:\n\n")
-		fmt.Println(cmd.listScenarios())
-		fmt.Println()
+		fmt.Fprintf(os.Stderr, "Available scenarios:\n\n")
+		fmt.Fprintln(os.Stderr, cmd.listScenarios())
+		fmt.Fprintln(os.Stderr)
 		return nil
 	}
 
@@ -115,6 +116,7 @@ func (cmd *testmailCmd) run(ctx scope.Context, args []string) error {
 		return fmt.Errorf("send failed: %s", err)
 	}
 
-	fmt.Printf("Sent email successfully.\nMessage ID: %s\n", ref.ID)
+	fmt.Fprintln(os.Stderr, "Sent email successfully.")
+	fmt.Printf("Message ID: %s\n", ref.ID)
 	return nil
 }

@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/euphoria-io/scope"
+
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/templates"
 )
 
@@ -58,14 +61,14 @@ func ValidatePageTemplates(templater *templates.Templater) []error {
 	return errors
 }
 
-func LoadPageTemplates(path string) (*templates.Templater, error) {
+func LoadPageTemplates(ctx scope.Context, path string) (*templates.Templater, error) {
 	pageTemplater := &templates.Templater{}
 	if errs := pageTemplater.Load(path); errs != nil {
 		return nil, errs[0]
 	}
 	if errs := ValidatePageTemplates(pageTemplater); errs != nil {
 		for _, err := range errs {
-			fmt.Printf("error: %s\n", err)
+			logging.Logger(ctx).Printf("error: %s\n", err)
 		}
 		return nil, fmt.Errorf("template validation failed: %s...", errs[0].Error())
 	}

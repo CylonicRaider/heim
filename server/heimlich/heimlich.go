@@ -37,6 +37,10 @@ func closeUntilError(cos ...*closeOnce) error {
 	return nil
 }
 
+func log(format string, args ...interface{}) {
+	fmt.Fprintf(os.Stderr, format, args...)
+}
+
 func swallow(self string, binary string, paths []string) error {
 	sf, err := os.Open(self)
 	if err != nil {
@@ -75,7 +79,7 @@ func swallow(self string, binary string, paths []string) error {
 }
 
 func swallowFile(zw *zip.Writer, path string) error {
-	fmt.Printf("  archiving %s ...\n", path)
+	log("  archiving %s ...\n", path)
 	f, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("open %s: %s", path, err)
@@ -131,7 +135,7 @@ func extract(hzp string) (string, error) {
 }
 
 func extractFile(root string, file *zip.File) error {
-	fmt.Printf("  extracting %s ...\n", file.Name)
+	log("  extracting %s ...\n", file.Name)
 
 	path := filepath.Join(root, file.Name)
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
@@ -166,19 +170,19 @@ func extractAndRun(hzp string, args []string, env []string) error {
 		return err
 	}
 
-	fmt.Printf("executing: %s %s\n", exePath, strings.Join(args, " "))
+	log("executing: %s %s\n", exePath, strings.Join(args, " "))
 	return syscall.Exec(exePath, args, env)
 }
 
 func usage() {
-	fmt.Printf("heimlich BINARY [PATH...]\n")
+	fmt.Fprintf(os.Stderr, "heimlich BINARY [PATH...]\n")
 	os.Exit(2)
 }
 
 func main() {
 	if strings.HasSuffix(os.Args[0], ".hzp") {
 		if err := extractAndRun(os.Args[0], os.Args, os.Environ()); err != nil {
-			fmt.Printf("extract error: %s\n", err)
+			fmt.Fprintf(os.Stderr, "extract error: %s\n", err)
 			os.Exit(1)
 		}
 		return
@@ -190,11 +194,11 @@ func main() {
 
 	self, err := exec.LookPath(os.Args[0])
 	if err != nil {
-		fmt.Printf("where is %s: %s\n", os.Args[0], err)
+		fmt.Fprintf(os.Stderr, "where is %s: %s\n", os.Args[0], err)
 		os.Exit(1)
 	}
 	if err := swallow(self, os.Args[1], os.Args[2:]); err != nil {
-		fmt.Printf("%s\n", err)
+		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
 }
