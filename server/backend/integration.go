@@ -3076,13 +3076,13 @@ func testStaffOTP(s *serverUnderTest) {
 		defer c1.Close()
 		c1.expectPing()
 		c1.expectSnapshot(s.backend.Version(), nil, nil)
-		c1.send("1", "staff-validate-otp", `{"password":"000000"}`)
+		c1.send("1", "staff-validate-otp", `{"otp":"000000"}`)
 		c1.expectError("1", "staff-validate-otp-reply", proto.ErrOTPNotEnrolled.Error())
 		c1.send("2", "staff-enroll-otp", ``)
 		capture := c1.expect("2", "staff-enroll-otp-reply", `{"uri":"*","qr_uri":"*"}`)
 
 		// validate
-		c1.send("3", "staff-validate-otp", `{"password":"%s"}`, oneTimePassword(capture["uri"].(string)))
+		c1.send("3", "staff-validate-otp", `{"otp":"%s"}`, oneTimePassword(capture["uri"].(string)))
 		c1.expect("3", "staff-validate-otp-reply", `{}`)
 
 		// attempt to enroll should fail
