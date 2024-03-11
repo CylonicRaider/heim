@@ -45,7 +45,9 @@ func init() {
 		return val
 	}
 
-	flag.StringVar(&Config.StaticPath, "static", "", "path to static files")
+	flag.StringVar(&Config.Settings.StaticPath, "static", "", "path to static files")
+	flag.BoolVar(&Config.Settings.ShowAllRooms, "show-all-rooms", false, "display UI even for nonexistent rooms")
+	flag.BoolVar(&Config.Settings.SetInsecureCookies, "set-insecure-cookies", false, "allow non-HTTPS cookies")
 
 	flag.StringVar(&Config.Cluster.ServerID, "id", env("HEIM_ID", ""), "")
 	flag.StringVar(&Config.Cluster.EtcdHome, "etcd", env("HEIM_ETCD_HOME", ""),
@@ -70,10 +72,13 @@ func init() {
 	flag.StringVar(&Config.KMS.AES256.KeyFile, "kms-local-key-file", env("HEIM_KMS_LOCAL_KEY", ""),
 		"path to file containing a 256-bit key for using local key-management instead of AWS")
 
-	flag.BoolVar(&Config.AllowRoomCreation, "allow-room-creation", true, "allow rooms to be created")
-	flag.BoolVar(&Config.AllowAPI, "allow-api", true, "enable API access")
-	flag.BoolVar(&Config.ShowAllRooms, "show-all-rooms", false, "display UI even for nonexistent rooms")
-	flag.BoolVar(&Config.SetInsecureCookies, "set-insecure-cookies", false, "allow non-https cookies")
+	flag.BoolVar(&Config.Policy.AllowRoomCreation, "allow-room-creation", true, "allow rooms to be created")
+	flag.BoolVar(&Config.Policy.AllowAccountCreation, "allow-account-creation", true, "allow accounts to be created")
+	flag.BoolVar(&Config.Policy.AllowAPI, "allow-api", true, "enable API access")
+	flag.DurationVar(&Config.Policy.NewAccountMinAgentAge, "new-account-min-agent-age", 0,
+		"time before a new user can create an account")
+	flag.DurationVar(&Config.Policy.RoomEntryMinAgentAge, "room-entry-min-agent-age", 0,
+		"time before a new user can enter any room")
 
 	flag.StringVar(&Config.Email.Server, "smtp-server", "", "address of SMTP server to send mail through")
 	flag.StringVar(&Config.Email.AuthMethod, "smtp-auth-method", "",
@@ -102,15 +107,8 @@ func (k *CSV) Set(flags string) error {
 type ServerConfig struct {
 	*proto.CommonEmailParams `yaml:"site"`
 
-	AllowRoomCreation     bool          `yaml:"allow_room_creation"`
-	AllowAccountCreation  bool          `yaml:"allow_account_creation"`
-	AllowAPI              bool          `yaml:"allow_api"`
-	ShowAllRooms          bool          `yaml:"show_all_rooms"`
-	NewAccountMinAgentAge time.Duration `yaml:"new_account_min_agent_age"`
-	RoomEntryMinAgentAge  time.Duration `yaml:"room_entry_min_agent_age"`
-	SetInsecureCookies    bool          `yaml:"set_insecure_cookies"`
-
-	StaticPath string `yaml:"static_path"`
+	Settings ServerSettings `yaml:"settings"`
+	Policy   ServerPolicy   `yaml:"policy"`
 
 	Cluster ClusterConfig  `yaml:"cluster,omitempty"`
 	Console ConsoleConfig  `yaml:"console,omitempty"`
@@ -161,7 +159,7 @@ func (cfg *ServerConfig) LoadFromFile(path string) error {
 }
 
 func (cfg *ServerConfig) Heim(ctx scope.Context) (*proto.Heim, error) {
-	pageTemplater, err := LoadPageTemplates(ctx, filepath.Join(cfg.StaticPath, "pages"))
+	pageTemplater, err := LoadPageTemplates(ctx, filepath.Join(cfg.Settings.StaticPath, "pages"))
 	if err != nil {
 		return nil, fmt.Errorf("page templates: %s", err)
 	}
@@ -192,7 +190,7 @@ func (cfg *ServerConfig) Heim(ctx scope.Context) (*proto.Heim, error) {
 		GeoIP:          cfg.GeoIP.Api(),
 		PageTemplater:  pageTemplater,
 		SiteName:       cfg.SiteName,
-		StaticPath:     cfg.StaticPath,
+		StaticPath:     cfg.Settings.StaticPath,
 	}
 
 	backend, err := cfg.GetBackend(heim)
@@ -200,7 +198,7 @@ func (cfg *ServerConfig) Heim(ctx scope.Context) (*proto.Heim, error) {
 		return nil, err
 	}
 
-	emojiPath := filepath.Join(cfg.StaticPath, "emoji.json")
+	emojiPath := filepath.Join(cfg.Settings.StaticPath, "emoji.json")
 	if err = proto.LoadEmoji(emojiPath); err != nil {
 		logging.Logger(ctx).Printf("error loading %s: %s\n", emojiPath, err)
 	}
@@ -224,6 +222,20 @@ func (cfg *ServerConfig) GetBackend(heim *proto.Heim) (proto.Backend, error) {
 		return nil, fmt.Errorf("no backend factory registered: %s", name)
 	}
 	return factory(heim)
+}
+
+type ServerSettings struct {
+	StaticPath         string `yaml:"static_path"`
+	ShowAllRooms       bool   `yaml:"show_all_rooms"`
+	SetInsecureCookies bool   `yaml:"set_insecure_cookies"`
+}
+
+type ServerPolicy struct {
+	AllowRoomCreation     bool          `yaml:"allow_room_creation"`
+	AllowAccountCreation  bool          `yaml:"allow_account_creation"`
+	AllowAPI              bool          `yaml:"allow_api"`
+	NewAccountMinAgentAge time.Duration `yaml:"new_account_min_agent_age"`
+	RoomEntryMinAgentAge  time.Duration `yaml:"room_entry_min_agent_age"`
 }
 
 type ClusterConfig struct {
@@ -352,7 +364,7 @@ func (ec *EmailConfig) Get(ctx scope.Context, cfg *ServerConfig) (*templates.Tem
 	// Load templates and configure email sender.
 	templater := &templates.Templater{}
 	// TODO: replace -static with a better sense of a static root
-	if errs := templater.Load(filepath.Join(cfg.StaticPath, "..", "email")); errs != nil {
+	if errs := templater.Load(filepath.Join(cfg.Settings.StaticPath, "..", "email")); errs != nil {
 		return nil, nil, errs[0]
 	}
 

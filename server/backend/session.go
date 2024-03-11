@@ -301,7 +301,7 @@ func (s *session) serve() error {
 	if s.managedRoom != nil {
 		minAgentAge = s.managedRoom.MinAgentAge()
 	}
-	if s.client.Account == nil && !s.client.Agent.Blessed && (agentAge < s.server.roomEntryMinAgentAge || agentAge < minAgentAge) {
+	if s.client.Account == nil && !s.client.Agent.Blessed && (agentAge < s.server.policy.RoomEntryMinAgentAge || agentAge < minAgentAge) {
 		allowed = false
 		s.sendBounce("room not open")
 		s.state = s.ignoreState

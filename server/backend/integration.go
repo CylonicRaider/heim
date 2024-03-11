@@ -587,8 +587,9 @@ func IntegrationTest(t *testing.T, factory proto.BackendFactory) {
 			t.Fatal(err)
 		}
 
-		app.AllowRoomCreation(true)
-		app.AllowAccountCreation(true)
+		app.policy.AllowRoomCreation = true
+		app.policy.AllowAccountCreation = true
+		app.policy.AllowAPI = true
 		app.agentIDGenerator = func() ([]byte, error) {
 			agentIDCounter++
 			return []byte(fmt.Sprintf("%d", agentIDCounter)), nil
@@ -838,7 +839,8 @@ func testPresence(factory proto.BackendFactory) {
 
 	app, err := NewServer(heim, "test1", "era1")
 	So(err, ShouldBeNil)
-	app.AllowRoomCreation(true)
+	app.policy.AllowRoomCreation = true
+	app.policy.AllowAPI = true
 	app.agentIDGenerator = func() ([]byte, error) {
 		agentIDCounter++
 		return []byte(fmt.Sprintf("%d", agentIDCounter)), nil
@@ -1899,7 +1901,7 @@ func testAccountRegistration(s *serverUnderTest) {
 	})
 
 	Convey("Min agent age prevents account registration", func() {
-		s.app.NewAccountMinAgentAge(time.Hour)
+		s.app.policy.NewAccountMinAgentAge = time.Hour
 		conn := s.Connect("registration2")
 		conn.expectPing()
 		conn.expectSnapshot(s.backend.Version(), nil, nil)
@@ -2209,7 +2211,7 @@ func testRoomGrants(s *serverUnderTest) {
 }
 
 func testRoomNotFound(s *serverUnderTest) {
-	s.app.AllowRoomCreation(false)
+	s.app.policy.AllowRoomCreation = false
 	url := strings.Replace(s.server.URL, "http:", "ws:", 1) + "/room/roomnotfound/ws"
 	_, resp, err := websocket.DefaultDialer.Dial(url, nil)
 	So(err, ShouldNotBeNil)

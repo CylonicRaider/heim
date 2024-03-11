@@ -644,7 +644,7 @@ func (s *session) handleResetPasswordCommand(msg *proto.ResetPasswordCommand) *r
 
 func (s *session) handleRegisterAccountCommand(cmd *proto.RegisterAccountCommand) *response {
 	// Account creation must be enabled in the first place.
-	if !s.server.allowAccountCreation {
+	if !s.server.policy.AllowAccountCreation {
 		return &response{packet: &proto.RegisterAccountReply{Reason: "globally disabled"}}
 	}
 
@@ -654,7 +654,7 @@ func (s *session) handleRegisterAccountCommand(cmd *proto.RegisterAccountCommand
 	}
 
 	// Agent must be of sufficient age.
-	if time.Now().Sub(s.client.Agent.Created) < s.server.newAccountMinAgentAge {
+	if time.Now().Sub(s.client.Agent.Created) < s.server.policy.NewAccountMinAgentAge {
 		return &response{packet: &proto.RegisterAccountReply{Reason: "not familiar yet, try again later"}}
 	}
 
