@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
 	"path"
 	"strings"
 
@@ -61,14 +62,15 @@ func (s *Server) handleStatic(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleRoomStatic(w http.ResponseWriter, r *http.Request) {
-	ctx := scope.New()
-
 	// Before creating an agent cookie, make this visitor look like a human.
 	if err := r.ParseForm(); err != nil {
 		s.serveErrorPage("bad request", http.StatusBadRequest, w, r)
 		return
 	}
 	r.Form.Set("h", "1")
+
+	ctx := logging.LoggingContext(s.rootCtx.Fork(), os.Stdout,
+		fmt.Sprintf("[room-static %p] ", r))
 
 	// Tag the agent.
 	client, cookie, _, err := getClient(ctx, s, r)
@@ -165,7 +167,8 @@ func (s *Server) handleRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := s.rootCtx.Fork()
+	ctx := logging.LoggingContext(s.rootCtx.Fork(), os.Stdout,
+		fmt.Sprintf("[room %p] ", r))
 
 	client, cookie, agentKey, err := getClient(ctx, s, r)
 	if err != nil {
@@ -289,7 +292,8 @@ func (s *Server) handlePrefsVerifyPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := s.rootCtx.Fork()
+	ctx := logging.LoggingContext(s.rootCtx.Fork(), os.Stdout,
+		fmt.Sprintf("[prefs-verify %p] ", r))
 	account, err := s.b.AccountManager().Resolve(ctx, "email", email)
 	if err != nil {
 		status := http.StatusInternalServerError
@@ -326,7 +330,8 @@ func (s *Server) handlePrefsResetPassword(w http.ResponseWriter, r *http.Request
 	switch r.Method {
 	case "GET":
 		confirmation := r.Form.Get("confirmation")
-		ctx := s.rootCtx.Fork()
+		ctx := logging.LoggingContext(s.rootCtx.Fork(), os.Stdout,
+			fmt.Sprintf("[prefs-reset-password %p] ", r))
 		account, err := s.b.AccountManager().GetPasswordResetAccount(ctx, confirmation)
 		switch err {
 		case nil:
@@ -378,7 +383,8 @@ func (s *Server) handlePrefsResetPasswordPost(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	ctx := s.rootCtx.Fork()
+	ctx := logging.LoggingContext(s.rootCtx.Fork(), os.Stdout,
+		fmt.Sprintf("[prefs-reset-password %p] ", r))
 	if err := s.b.AccountManager().ConfirmPasswordReset(ctx, s.kms, req.Confirmation, req.Password.Text); err != nil {
 		status := http.StatusInternalServerError
 		if err == proto.ErrInvalidConfirmationCode {
