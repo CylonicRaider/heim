@@ -88,7 +88,7 @@ func (s *Server) handleRoomStatic(w http.ResponseWriter, r *http.Request) {
 	room, err := s.resolveRoom(ctx, prefix, roomName, client)
 	if err != nil {
 		if err == proto.ErrRoomNotFound {
-			if (!s.policy.AllowRoomCreation || prefix != "") && !s.settings.ShowAllRooms {
+			if !s.settings.ShowAllRooms && !s.policy.MayAutoCreateRoom(prefix, roomName) {
 				s.serveErrorPage("room not found", http.StatusNotFound, w, r)
 				return
 			}
@@ -146,7 +146,7 @@ func (s *Server) resolveRoom(ctx scope.Context, prefix, roomName string, client 
 		return room, nil
 	case "":
 		room, err = s.b.GetRoom(ctx, roomName)
-		if s.policy.AllowRoomCreation && err == proto.ErrRoomNotFound {
+		if err == proto.ErrRoomNotFound && s.policy.MayAutoCreateRoom(prefix, roomName) {
 			room, err = s.b.CreateRoom(ctx, s.kms, false, roomName)
 		}
 		if err != nil {

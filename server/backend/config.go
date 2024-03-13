@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/euphoria-io/scope"
 	"github.com/savaki/geoip2"
@@ -75,6 +76,8 @@ func init() {
 	flag.BoolVar(&Config.Policy.AllowRoomCreation, "allow-room-creation", true, "allow rooms to be created")
 	flag.BoolVar(&Config.Policy.AllowAccountCreation, "allow-account-creation", true, "allow accounts to be created")
 	flag.BoolVar(&Config.Policy.AllowAPI, "allow-api", true, "enable API access")
+	flag.IntVar(&Config.Policy.MaxNewRoomNameLen, "max-new-room-name-len", 0,
+		"do not create rooms whose names are longer")
 	flag.DurationVar(&Config.Policy.NewAccountMinAgentAge, "new-account-min-agent-age", 0,
 		"time before a new user can create an account")
 	flag.DurationVar(&Config.Policy.RoomEntryMinAgentAge, "room-entry-min-agent-age", 0,
@@ -234,8 +237,17 @@ type ServerPolicy struct {
 	AllowRoomCreation     bool          `yaml:"allow_room_creation"`
 	AllowAccountCreation  bool          `yaml:"allow_account_creation"`
 	AllowAPI              bool          `yaml:"allow_api"`
+	MaxNewRoomNameLen     int           `yaml:"max_new_room_name_len"`
 	NewAccountMinAgentAge time.Duration `yaml:"new_account_min_agent_age"`
 	RoomEntryMinAgentAge  time.Duration `yaml:"room_entry_min_agent_age"`
+}
+
+func (p *ServerPolicy) MayAutoCreateRoom(prefix, roomName string) bool {
+	if p.AllowRoomCreation && prefix == "" {
+		nameLen := utf8.RuneCountInString(roomName)
+		return p.MaxNewRoomNameLen == 0 || nameLen < p.MaxNewRoomNameLen
+	}
+	return false
 }
 
 type ClusterConfig struct {
