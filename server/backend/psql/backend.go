@@ -103,10 +103,13 @@ type Backend struct {
 	partWaiters map[string]chan struct{}
 	ctx         scope.Context
 	logger      *log.Logger
+	verbose     bool
 	jql         *jobQueueListener
 }
 
-func NewBackend(heim *proto.Heim, config *backend.DatabaseConfig) (*Backend, error) {
+func NewBackend(heim *proto.Heim, config *backend.DatabaseConfig,
+	settings *backend.ServerSettings) (*Backend, error) {
+
 	var version string
 
 	if heim.PeerDesc == nil {
@@ -141,6 +144,7 @@ func NewBackend(heim *proto.Heim, config *backend.DatabaseConfig) (*Backend, err
 		peers:     map[string]string{},
 		listeners: map[string]ListenerMap{},
 		ctx:       logging.LoggingContext(heim.Context, os.Stdout, "[backend] "),
+		verbose:   settings.Verbose,
 	}
 	b.logger = log.New(logging.GetDefaultWriter(b.ctx), fmt.Sprintf("[backend %p] ", b), log.LstdFlags)
 
@@ -296,7 +300,9 @@ func (b *Backend) background(wg *sync.WaitGroup) {
 
 			// TODO: if room name is empty, broadcast globally
 			if lm, ok := b.listeners[msg.Room]; ok {
-				logger.Printf("broadcasting %s to %s", msg.Event.Type, msg.Room)
+				if b.verbose {
+					logger.Printf("broadcasting %s to %s", msg.Event.Type, msg.Room)
+				}
 				if err := lm.Broadcast(ctx, msg.Event, msg.Exclude...); err != nil {
 					logger.Printf("error: pq listen: broadcast error on %s: %s", msg.Room, err)
 				}

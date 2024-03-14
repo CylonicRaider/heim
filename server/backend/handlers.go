@@ -229,10 +229,12 @@ func (s *Server) serveRoomWebsocket(
 	}
 
 	// Serve the session.
-	session := newSession(ctx, s, conn, clientAddress, room, client, agentKey)
+	session := newSession(ctx, s, conn, clientAddress, room, client, agentKey, s.settings.Verbose)
 	if err = session.serve(); err != nil {
 		// TODO: error handling
-		logging.Logger(ctx).Printf("session serve error: %s", err)
+		if err != ErrUnresponsive && err != scope.Canceled {
+			logging.Logger(ctx).Printf("session serve error: %s", err)
+		}
 		return
 	}
 }

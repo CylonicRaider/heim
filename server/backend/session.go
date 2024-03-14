@@ -124,11 +124,14 @@ type session struct {
 	outstandingPings    int
 	expectedPingReply   int64
 	fastKeepAliveCancel func()
+
+	verbose bool
 }
 
 func newSession(
 	ctx scope.Context, server *Server, conn *websocket.Conn, clientAddr string,
-	room proto.Room, client *proto.Client, agentKey *security.ManagedKey) *session {
+	room proto.Room, client *proto.Client, agentKey *security.ManagedKey,
+	verbose bool) *session {
 
 	nextID := atomic.AddUint64(&sessionIDCounter, 1)
 	sessionCount.WithLabelValues(room.ID()).Set(float64(nextID))
@@ -156,6 +159,8 @@ func newSession(
 		incoming:     make(chan *proto.Packet),
 		outgoing:     make(chan *proto.Packet, 100),
 		floodLimiter: ratelimit.NewBucketWithQuantum(time.Second, 50, 10),
+
+		verbose: verbose,
 	}
 
 	if managedRoom, ok := room.(proto.ManagedRoom); ok {
@@ -166,8 +171,9 @@ func newSession(
 }
 
 func (s *session) Close() {
-	logger := logging.Logger(s.ctx)
-	logger.Printf("closing session")
+	if s.verbose {
+		logging.Logger(s.ctx).Printf("closing session")
+	}
 	s.ctx.Cancel()
 }
 
@@ -274,7 +280,9 @@ func (s *session) serve() error {
 	}()
 
 	logger := logging.Logger(s.ctx)
-	logger.Printf("client connected")
+	if s.verbose {
+		logger.Printf("client connected")
+	}
 
 	keyID, isPrivate, err := s.room.MessageKeyID(s.ctx)
 	if err != nil {
@@ -352,7 +360,9 @@ func (s *session) serve() error {
 
 		case <-keepalive.C:
 			if s.outstandingPings > MaxKeepAliveMisses {
-				logger.Printf("connection timed out")
+				if s.verbose {
+					logger.Printf("connection timed out")
+				}
 				s.sendDisconnect("timed out")
 				return ErrUnresponsive
 			}
@@ -449,11 +459,13 @@ func (s *session) readMessages() {
 	for s.ctx.Err() == nil {
 		messageType, data, err := s.conn.ReadMessage()
 		if err != nil {
-			if err == io.EOF {
-				logger.Printf("client disconnected")
-				return
+			if err == io.EOF || websocket.IsCloseError(err, 1000, 1001) {
+				if s.verbose {
+					logger.Printf("client disconnected")
+				}
+			} else {
+				logger.Printf("error: read message: %s", err)
 			}
-			logger.Printf("error: read message: %s", err)
 			return
 		}
 

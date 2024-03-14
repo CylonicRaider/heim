@@ -49,6 +49,7 @@ func init() {
 	flag.StringVar(&Config.Settings.StaticPath, "static", "", "path to static files")
 	flag.BoolVar(&Config.Settings.ShowAllRooms, "show-all-rooms", false, "display UI even for nonexistent rooms")
 	flag.BoolVar(&Config.Settings.SetInsecureCookies, "set-insecure-cookies", false, "allow non-HTTPS cookies")
+	flag.BoolVar(&Config.Settings.Verbose, "verbose-log", true, "log routine events")
 
 	flag.StringVar(&Config.Cluster.ServerID, "id", env("HEIM_ID", ""), "")
 	flag.StringVar(&Config.Cluster.EtcdHome, "etcd", env("HEIM_ETCD_HOME", ""),
@@ -231,6 +232,7 @@ type ServerSettings struct {
 	StaticPath         string `yaml:"static_path"`
 	ShowAllRooms       bool   `yaml:"show_all_rooms"`
 	SetInsecureCookies bool   `yaml:"set_insecure_cookies"`
+	Verbose            bool   `yaml:"verbose_log"`
 }
 
 type ServerPolicy struct {
