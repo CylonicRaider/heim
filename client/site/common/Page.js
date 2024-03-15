@@ -12,6 +12,7 @@ export default function Page(props) {
         <link rel="icon" id="favicon" href={heimURL('/static/favicon.png')} sizes="32x32" />
         <link rel="icon" href={heimURL('/static/favicon-192.png')} sizes="192x192" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        {props.meta || null}
         {props.heimPage && <link rel="stylesheet" type="text/css" id="css" href={heimURL('/static/main.css')} />}
         <link rel="stylesheet" type="text/css" id="css" href={heimURL('/static/site.css')} />
         {props.heimPage && <script src={heimURL('/static/raven.js')} />}
@@ -27,6 +28,7 @@ export default function Page(props) {
 
 Page.propTypes = {
   title: PropTypes.string,
+  meta: PropTypes.node,
   heimPage: PropTypes.string,
   className: PropTypes.string,
   children: PropTypes.node,
