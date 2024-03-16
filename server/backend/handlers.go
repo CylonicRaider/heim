@@ -36,6 +36,8 @@ func (s *Server) route() {
 
 	s.r.PathPrefix("/about").Handler(
 		instrumentHttpHandlerFunc("about", http.HandlerFunc(s.handleAboutStatic)))
+	s.r.PathPrefix("/heim").Handler(
+		instrumentHttpHandlerFunc("about", http.HandlerFunc(s.handleAboutStatic)))
 
 	s.r.HandleFunc("/room/{prefix:(?:pm:)?}{room:[a-z0-9]+}/ws", instrumentSocketHandlerFunc("ws", s.handleRoom))
 	s.r.Handle(
