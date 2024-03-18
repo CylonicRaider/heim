@@ -1,10 +1,10 @@
 import fs from 'fs'
 import React from 'react'
 
-import { MainPage, PolicyNav, Markdown } from '../common'
+import { MainPage, HeimNav, Markdown } from '../common'
 
 module.exports = (
-  <MainPage title="Euphoria: API" nav={<PolicyNav selected="api" />}>
+  <MainPage title="Euphoria: API" nav={<HeimNav selected="api" />}>
     <Markdown className="text-page api" content={fs.readFileSync(__dirname + '/../../../doc/api.md', 'utf8')} />
   </MainPage>
 )

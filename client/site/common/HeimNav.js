@@ -5,6 +5,7 @@ import NavBar from './NavBar'
 
 const items = [
   {name: 'opensource', caption: <span><span className="long">Open </span>Source</span>},
+  {name: 'api', caption: <span>API</span>},
 ]
 
 export default function HeimNav(props) {
