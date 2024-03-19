@@ -17,7 +17,7 @@ export default function Footer() {
         <a href={heimURL('/about/hosts')}>Hosting<span className="long"> Policy</span></a>
         <span className="spacer" />
         <a href={heimURL('/heim/api')}>API</a>
-        <a href={links.heimSourceRepo}><span className="long">Source </span>Code</a>
+        <a href={heimURL('/heim')}><span className="long">Source </span>Code</a>
       </div>
     </footer>
   )
