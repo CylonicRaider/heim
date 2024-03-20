@@ -1,7 +1,7 @@
 import fs from 'fs'
 import React from 'react'
 
-import { HeimNav, MainPage, Markdown, links } from './common'
+import { HeimNav, MainPage, Markdown } from './common'
 
 module.exports = (
   <MainPage title="Euphoria: Open Source" nav={<HeimNav selected="opensource" />}>

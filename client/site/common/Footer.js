@@ -2,8 +2,6 @@ import React from 'react'
 
 import heimURL from '../../lib/heimURL'
 
-import links from './links'
-
 export default function Footer() {
   return (
     <footer>
