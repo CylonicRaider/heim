@@ -76,6 +76,10 @@ func (a *memAccount) UnlockStaffKMS(clientKey *security.ManagedKey) (security.KM
 		return nil, proto.ErrAccessDenied
 	}
 
+	if _, err := a.Unlock(clientKey); err != nil {
+		return nil, err
+	}
+
 	key := a.sec.UserKey.Clone()
 	if err := key.Decrypt(clientKey); err != nil {
 		return nil, err

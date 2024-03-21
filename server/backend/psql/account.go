@@ -195,6 +195,10 @@ func (ab *AccountBinding) UnlockStaffKMS(clientKey *security.ManagedKey) (securi
 		return nil, proto.ErrAccessDenied
 	}
 
+	if _, err := ab.Unlock(clientKey); err != nil {
+		return nil, err
+	}
+
 	iv := make([]byte, proto.ClientKeyType.BlockSize())
 	copy(iv, ab.Account.Nonce)
 	key := &security.ManagedKey{
