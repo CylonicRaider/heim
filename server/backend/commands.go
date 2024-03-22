@@ -897,8 +897,12 @@ func (s *session) handleUnlockStaffCapabilityCommand(cmd *proto.UnlockStaffCapab
 
 	kms, err := s.client.Account.UnlockStaffKMS(s.client.Account.KeyFromPassword(cmd.Password))
 	if err != nil {
-		// TODO: return specific failure reason for incorrect password
-		return failure(err)
+		switch err {
+		case proto.ErrAccessDenied:
+			return rejection(err.Error())
+		default:
+			return failure(err)
+		}
 	}
 
 	s.staffKMS = kms
