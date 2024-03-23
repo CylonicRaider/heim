@@ -2,8 +2,8 @@
 
 Heim is the backend and frontend of [euphoria](https://euphoria.leet.nu), a
 real-time community platform. The backend is a Go server that speaks JSON over
-WebSockets, persisting data to PostgreSQL. Our web client is built in
-React/Reflux.
+WebSockets, persisting data to PostgreSQL. Our web client is built with
+React 15.x and Reflux.
 
 ## Getting started
 
