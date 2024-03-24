@@ -459,7 +459,7 @@ func (s *session) readMessages() {
 	for s.ctx.Err() == nil {
 		messageType, data, err := s.conn.ReadMessage()
 		if err != nil {
-			if err == io.EOF || websocket.IsCloseError(err, 1000, 1001) {
+			if err == io.EOF || websocket.IsCloseError(err, 1000, 1001, 1005, 1006) {
 				if s.verbose {
 					logger.Printf("client disconnected")
 				}
