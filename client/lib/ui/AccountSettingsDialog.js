@@ -96,7 +96,11 @@ export default createReactClass({
           <FieldLabelContainer key="new-nick-preview" label="preview">
             <div className="field-action-box nick-preview">
               <div className="inner">
-                {this.state.newAccountName.length > 0 ? <div className="big-nick" style={{background: 'hsl(' + hueHash.hue(this.state.newAccountName) + ', 65%, 85%)'}}>{this.state.newAccountName}</div> : <div className="placeholder">enter a new name</div>}
+                {
+                  this.state.newAccountName.length > 0
+                    ? <div className="big-nick" style={{background: 'hsl(' + hueHash.hue(this.state.newAccountName) + ', 65%, 85%)'}}>{this.state.newAccountName}</div>
+                    : <div className="placeholder">enter a new name</div>
+                }
               </div>
             </div>
           </FieldLabelContainer>
@@ -199,7 +203,11 @@ export default createReactClass({
           <FieldLabelContainer label="account name">
             <div className="field-action-box">
               <div className="inner">
-                <div className="big-nick" style={{background: 'hsl(' + hueHash.hue(account.get('name')) + ', 65%, 85%)'}}>{account.get('name')}</div>
+                {
+                  account.get('name').length > 0
+                    ? <div className="big-nick" style={{background: 'hsl(' + hueHash.hue(account.get('name')) + ', 65%, 85%)'}}>{account.get('name')}</div>
+                    : <div className="placeholder">(none)</div>
+                }
               </div>
               <div className="spacer" />
               <button type="button" tabIndex="1" className="major-secondary-action" onClick={this.openChangeName}>change<span className="long"> name</span></button>
