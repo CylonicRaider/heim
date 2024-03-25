@@ -428,7 +428,7 @@ const Message = createReactClass({
       })
       return ''
     })
-    content = content.replace(/(?:https?:\/\/)?(imgs\.xkcd\.com\/comics\/.*\.(?:png|jpg)|i\.ytimg\.com\/.*\.jpg)/g, (match, imgUrl) => {
+    content = content.replace(/(?:https?:\/\/)?(imgs\.xkcd\.com\/comics\/\S*\.(?:png|jpg)|i\.ytimg\.com\/\S*\.jpg)/g, (match, imgUrl) => {
       embeds.push({
         link: '//' + imgUrl,
         props: {
