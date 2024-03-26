@@ -39,26 +39,27 @@ const codes = _.uniq(_.values(index))
 const emojiNames = _.filter(_.map(index, (code, name) => code && _.escapeRegExp(name)))
 const namesRe = new RegExp(':(' + emojiNames.join('|') + '):', 'g')
 
-function nameToUnicode(name) {
+export function nameToUnicode(name) {
   const code = unicodeIndex[name]
   if (!code) {
     return null
   }
-  return String.fromCodePoint(Number.parseInt(code, 16))
+  return code.split('-').map((cp) => String.fromCodePoint(Number.parseInt(cp, 16))).join('')
 }
 
-export function lookupEmojiCharacter(icon) {
+export function unicodeToIconID(string) {
   // U+FE0E VARIATION SELECTOR-14 signifies text-style display; bail out.
-  if (/\ufe0e/.test(icon)) {
+  if (/\ufe0e/.test(string)) {
     // FIXME: This might appear in the middle of an emoji sequence; I'm not
     //        entirely sure about the semantics in that case.
     return null
   }
   // Algorithm adapted from grabTheRightIcon() from twemoji.
-  if (!/\u200d/.test(icon)) {
-    icon = icon.replace(/\ufe0f/g, '')
+  if (!/\u200d/.test(string)) {
+    string = string.replace(/\ufe0f/g, '')
   }
-  return twemoji.convert.toCodePoint(icon)
+  // Despite its name, the function handles multi-codepoint emoji correctly
+  return twemoji.convert.toCodePoint(string)
 }
 
-export default { index, names, codes, namesRe, nameToUnicode, lookupEmojiCharacter }
+export default { index, names, codes, namesRe, nameToUnicode, unicodeToIconID }
