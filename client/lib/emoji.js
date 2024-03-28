@@ -14,7 +14,7 @@ const index = _.extend({}, unicodeIndex, {
   'pewpewpew': 'pewpewpew',
   'leck': 'leck',
   'dealwithit': 'dealwithit',
-  'spider': 'spider',
+  'spider': '1f577',
   'orange_heart': '1f9e1',
   'bot': 'bot',
   'greenduck': 'greenduck',
