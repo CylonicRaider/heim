@@ -84,7 +84,7 @@ func TestBackend(t *testing.T) {
 			b, err = NewBackend(heim, &backend.DatabaseConfig{
 				DSN:          dsn,
 				MaxConnCount: 0,
-			})
+			}, &backend.ServerSettings{})
 			if err != nil {
 				return nil, err
 			}
