@@ -23,12 +23,12 @@ describe('emoji', () => {
   describe('unicodeToIconID', () => {
     it('translates BMP emoji', () => {
       // U+25B6 BLACK RIGHT-POINTING TRIANGLE (:arrow_forward:)
-      assert.equal(emoji.unicodeToIconID('\u25b6'), '25b6')
+      assert.equal(emoji.unicodeToIconID('\u25b6'), 'u/25b6')
     })
 
     it('translates astral emoji', () => {
       // U+1F514 BELL (:bell:)
-      assert.equal(emoji.unicodeToIconID('\ud83d\udd14'), '1f514')
+      assert.equal(emoji.unicodeToIconID('\ud83d\udd14'), 'u/1f514')
     })
   })
 })

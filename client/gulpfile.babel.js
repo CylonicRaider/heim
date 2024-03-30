@@ -200,7 +200,7 @@ gulp.task('heim-less', () => {
 gulp.task('emoji-static', () => {
   const emoji = require('./lib/emoji').default
   const twemojiPath = 'node_modules/.resources/emoji-svg/'
-  const leadingZeroes = /^0*/
+  const leadingZeros = /^0*/
   const emojiFiles = _.map(fs.readdirSync(twemojiPath), (p) => {
     const m = /^([0-9a-f-]+)\.svg$/.exec(p)
     if (!m) {
@@ -208,9 +208,9 @@ gulp.task('emoji-static', () => {
     }
     return m[1]
   })
-  const emojiCodes = _.uniq(_.concat(emoji.codes, emojiFiles))
+  const emojiCodes = _.uniq(_.concat(_.map(_.values(emoji.index), (n) => n.replace(/^[uc]\//, '')), emojiFiles))
   const lessSource = _.map(_.compact(emojiCodes), (code) => {
-    const twemojiName = code.replace(leadingZeroes, '')
+    const twemojiName = code.replace(leadingZeros, '')
     let emojiPath = './res/emoji/' + twemojiName + '.svg'
     if (!fs.existsSync(emojiPath)) {
       emojiPath = twemojiPath + twemojiName + '.svg'
