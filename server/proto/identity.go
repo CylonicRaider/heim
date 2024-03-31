@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 )
@@ -134,4 +135,39 @@ func normalizeBidi(name string) string {
 		return name + string(pops[:i])
 	}
 	return name
+}
+
+func codePointStringToUnicode(codepoints string) (string, bool) {
+	ret := []rune{}
+	for _, cp := range strings.Split(codepoints, "-") {
+		cpi, err := strconv.ParseUint(cp, 16, 32)
+		if err != nil {
+			return "", false
+		}
+		ret = append(ret, rune(cpi))
+	}
+	return string(ret), true
+}
+
+// normalizeEmoji replaces emoji shortcodes with corresponding Unicode
+// code points
+func normalizeEmoji(nick string) string {
+	indices := possibleEmoji.FindAllStringIndex(nick, 36)
+	for _, item := range indices {
+		s := nick[item[0]+1 : item[1]-1]
+		v := validEmoji[s]
+		if !strings.HasPrefix(v, "u/") {
+			continue
+		}
+		translated, ok := codePointStringToUnicode(v[2:])
+		if !ok {
+			continue
+		}
+		ret := nick[:item[0]] + translated
+		if item[1] < len(nick) {
+			ret += normalizeEmoji(nick[item[1]:])
+		}
+		return ret
+	}
+	return nick
 }
