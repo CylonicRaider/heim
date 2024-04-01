@@ -37,6 +37,7 @@ const index = _.extend({}, unicodeIndex, {
 
   'chromakode': 'c/chromakode',
   'greenduck': 'c/greenduck',
+  'xyzzy': 'c/xyzzy',
 })
 
 const revIndex = _.invert(index)
