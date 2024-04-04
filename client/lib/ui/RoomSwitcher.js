@@ -53,7 +53,7 @@ export default createReactClass({
     const url = this.state.valid ? '/room/' + this.state.text + '/' : '#'
     // Note that valid is a tri-state value, with null being neither valid nor invalid
     return (
-      <form className={classNames('room-switcher', this.state.expanded && 'expanded')} action={url} target="_blank" onSubmit={this.apply}>
+      <form className={classNames('room-switcher', this.state.expanded && 'expanded')} action={url} method="post" target="_blank" onSubmit={this.apply}>
         <FastButton fastTouch type="button" className={this.state.expanded ? 'room-switcher-cancel' : 'room-switcher-expand'} title="go to another room" onClick={this.toggle} />
         {this.state.expanded && <span className="room-switcher-prompt">go to</span>}
         {this.state.expanded && (
