@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/euphoria-io/scope"
 
@@ -106,6 +107,13 @@ func (s *Server) serveErrorPage(message string, code int, w http.ResponseWriter,
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// http.ServeContent() would try to set its own status code, which generates an annoying warning,
+	// and also try to process byte range requests, which cannot work well for error pages
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Content-Length", strconv.Itoa(len(content)))
 	w.WriteHeader(code)
-	http.ServeContent(w, r, "error.html", s.pageModTime, bytes.NewReader(content))
+	if r.Method != "HEAD" {
+		w.Write(content)
+	}
 }
