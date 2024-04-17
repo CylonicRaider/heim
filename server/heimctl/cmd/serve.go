@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -188,6 +190,11 @@ func (cmd *serveEmbedCmd) flags() *flag.FlagSet {
 }
 
 func (cmd *serveEmbedCmd) run(ctx scope.Context, args []string) error {
+	if _, err := os.Stat(filepath.Join(cmd.static, "embed.html")); err != nil {
+		logging.Logger(ctx).Printf("http[%s]: static files not found (%s); aborting!\n", cmd.addr, err)
+		return fmt.Errorf("static files not found: %s", err)
+	}
+
 	listener, err := net.Listen("tcp", cmd.addr)
 	if err != nil {
 		return err
