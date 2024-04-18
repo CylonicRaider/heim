@@ -2,7 +2,7 @@ import React from 'react'
 import moment from 'moment'
 import queryString from 'querystring'
 
-import heimURL from './heimURL'
+import heimURL from '../heim/heimURL'
 
 const roomStylesheets = {
   ezziethedog: 'room-grayscale',
@@ -13,7 +13,7 @@ const roomStylesheets = {
 
 export default function initPlugins(roomName) {
   /* Custom stylesheets */
-  // Add a new .less file in gadgets/ and amend the table above to create a new one.
+  // Add a new .less file and amend the table above to create a new one.
   const stylesheet = roomStylesheets[roomName]
   if (stylesheet) {
     Heim.hook('page-bottom', () => (
@@ -23,7 +23,7 @@ export default function initPlugins(roomName) {
 
   /* Per-room customizations */
   if (roomName === 'music' || roomName === 'youtube') {
-    require('./gadgets/YoutubeTV').install()
+    require('./YoutubeTV').install()
   }
 
   if (roomName === 'adventure' || roomName === 'monospace') {
@@ -38,7 +38,7 @@ export default function initPlugins(roomName) {
 
   /* Alternate themes */
   const hashFlags = queryString.parse(uiwindow.location.hash.substr(1))
-  const ThemeChooser = require('./gadgets/ThemeChooser')
+  const ThemeChooser = require('./ThemeChooser')
   ThemeChooser.install({theme: hashFlags.theme})
 
   /* Anniversary and Halloween gadgets */

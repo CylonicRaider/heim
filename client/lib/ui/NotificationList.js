@@ -5,7 +5,7 @@ import { TransitionGroup } from 'react-transition-group'
 import Immutable from 'immutable'
 
 import NotificationListItem from './NotificationListItem'
-import Tree from '../Tree'
+import Tree from '../util/Tree'
 
 export default createReactClass({
   displayName: 'NotificationList',

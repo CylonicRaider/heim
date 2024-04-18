@@ -8,7 +8,7 @@ import accountAuthFlow from '../stores/accountAuthFlow'
 import Dialog from './Dialog'
 import { Form, CheckField, TextField, PasswordStrengthField, ErrorMessage } from './forms'
 import { validateEmail, validatePassword, minPasswordEntropy } from './formValidators'
-import heimURL from '../heimURL'
+import heimURL from '../heim/heimURL'
 
 export default createReactClass({
   displayName: 'AccountAuthDialog',

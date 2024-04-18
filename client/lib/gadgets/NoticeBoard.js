@@ -3,7 +3,7 @@ import createReactClass from 'create-react-class'
 import Reflux from 'reflux'
 import Immutable from 'immutable'
 
-import forwardProps from '../forwardProps'
+import forwardProps from '../util/forwardProps'
 import chat from '../stores/chat'
 import MessageText from '../ui/MessageText'
 

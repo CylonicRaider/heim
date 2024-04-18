@@ -1,6 +1,6 @@
 import React from 'react'
 
-import heimURL from '../../lib/heimURL'
+import heimURL from '../../lib/heim/heimURL'
 
 export default function FancyLogo() {
   return (

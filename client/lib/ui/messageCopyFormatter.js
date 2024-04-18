@@ -2,9 +2,9 @@ import _ from 'lodash'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 
-import findParent from '../findParent'
-import domWalkForward from '../domWalkForward'
-import emoji from '../emoji'
+import findParent from '../util/findParent'
+import domWalkForward from '../util/domWalkForward'
+import emoji from '../heim/emoji'
 
 export default function handleCopy(ev) {
   const selection = uiwindow.getSelection()

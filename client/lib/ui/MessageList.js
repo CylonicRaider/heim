@@ -3,7 +3,7 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 
 import Message from './Message'
-import Tree from '../Tree'
+import Tree from '../util/Tree'
 import ui from '../stores/ui'
 import TreeNodeMixin from './TreeNodeMixin'
 

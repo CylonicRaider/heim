@@ -5,11 +5,11 @@ import PropTypes from 'prop-types'
 import ReactDOMServer from 'react-dom/server'
 import Autolinker from 'autolinker'
 import twemoji from 'twemoji'
-import emoji from '../emoji'
 
+import emoji from '../heim/emoji'
 import chat from '../stores/chat'
-import hueHash from '../hueHash'
-import heimURL from '../heimURL'
+import hueHash from '../heim/hueHash'
+import heimURL from '../heim/heimURL'
 
 const autolinker = new Autolinker({
   truncate: 40,

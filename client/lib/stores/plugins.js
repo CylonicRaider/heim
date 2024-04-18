@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import Reflux from 'reflux'
 
-import Hooks from '../Hooks'
-import fauxPlugins from '../fauxPlugins'
+import Hooks from '../util/Hooks'
+import gadgets from '../gadgets'
 
 const storeActions = Reflux.createActions([
   'load',
@@ -35,7 +35,7 @@ module.exports.store = Reflux.createStore({
   },
 
   load(roomName) {
-    fauxPlugins(roomName)
+    gadgets(roomName)
   },
 
   _applySingle(Func) {

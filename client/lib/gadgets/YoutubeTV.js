@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 import Immutable from 'immutable'
 
-import heimURL from '../heimURL'
+import heimURL from '../heim/heimURL'
 import Embed from '../ui/Embed'
 import MessageText from '../ui/MessageText'
 import { NoticeBoard } from './NoticeBoard'

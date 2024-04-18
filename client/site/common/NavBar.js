@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
-import heimURL from '../../lib/heimURL'
+import heimURL from '../../lib/heim/heimURL'
 
 export default function NavBar(props) {
   return (

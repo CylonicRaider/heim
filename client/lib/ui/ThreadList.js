@@ -2,9 +2,9 @@ import React from 'react'
 import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 
-import Tree from '../Tree'
+import Tree from '../util/Tree'
 import ThreadListItem from './ThreadListItem'
-import MessageData from '../MessageData'
+import MessageData from '../util/MessageData'
 import TreeNodeMixin from './TreeNodeMixin'
 
 export default createReactClass({

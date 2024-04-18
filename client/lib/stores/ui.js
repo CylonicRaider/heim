@@ -3,15 +3,15 @@ import Reflux from 'reflux'
 import ReactDOM from 'react-dom'
 import Immutable from 'immutable'
 
-import heimURL from '../heimURL'
-import clamp from '../clamp'
-import actions from '../actions'
+import heimURL from '../heim/heimURL'
+import clamp from '../util/clamp'
+import actions from '../heim/actions'
 import storage from './storage'
 import chat from './chat'
 import accountAuthFlow from './accountAuthFlow'
 import accountSettingsFlow from './accountSettingsFlow'
 import notification from './notification'
-import MessageData from '../MessageData'
+import MessageData from '../util/MessageData'
 
 const storeActions = Reflux.createActions([
   'keydownOnPage',

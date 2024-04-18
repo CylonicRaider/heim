@@ -3,7 +3,7 @@ import assert from 'assert'
 import sinon from 'sinon'
 import support from './support/setup'
 
-import ChatTree from '../lib/ChatTree'
+import ChatTree from '../lib/heim/ChatTree'
 import notification from '../lib/stores/notification'
 import storage from '../lib/stores/storage'
 import ui from '../lib/stores/ui'

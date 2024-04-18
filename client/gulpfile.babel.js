@@ -198,7 +198,7 @@ gulp.task('heim-less', () => {
 })
 
 gulp.task('emoji-static', () => {
-  const emoji = require('./lib/emoji').default
+  const emoji = require('./lib/heim/emoji').default
   const twemojiPath = 'node_modules/.resources/emoji-svg/'
   const leadingZeros = /^0*/
   const emojiFiles = _.map(fs.readdirSync(twemojiPath), (p) => {

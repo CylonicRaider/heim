@@ -5,7 +5,7 @@ import Reflux from 'reflux'
 import classNames from 'classnames'
 import moment from 'moment'
 
-import forwardProps from '../forwardProps'
+import forwardProps from '../util/forwardProps'
 
 function checkIsMoment(props, propName) {
   if (!moment.isMoment(props[propName])) {

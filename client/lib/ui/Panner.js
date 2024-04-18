@@ -4,8 +4,8 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 
-import clamp from '../clamp'
-import forwardProps from '../forwardProps'
+import clamp from '../util/clamp'
+import forwardProps from '../util/forwardProps'
 
 export default createReactClass({
   displayName: 'Panner',

@@ -4,9 +4,9 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 
-import actions from '../actions'
+import actions from '../heim/actions'
 import chat from '../stores/chat'
-import Tree from '../Tree'
+import Tree from '../util/Tree'
 import FastButton from './FastButton'
 import MessageText from './MessageText'
 

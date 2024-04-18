@@ -6,7 +6,7 @@ import classNames from 'classnames'
 
 import chat from '../stores/chat'
 import ui from '../stores/ui'
-import forwardProps from '../forwardProps'
+import forwardProps from '../util/forwardProps'
 import MessageText from './MessageText'
 
 export default createReactClass({

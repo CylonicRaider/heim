@@ -3,7 +3,7 @@ import assert from 'assert'
 import sinon from 'sinon'
 import Immutable from 'immutable'
 
-import Tree from '../lib/Tree'
+import Tree from '../lib/util/Tree'
 
 function equalsImmutable(reference) {
   return sinon.match(

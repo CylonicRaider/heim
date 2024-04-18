@@ -9,7 +9,7 @@ import moment from 'moment'
 
 import ui from '../stores/ui'
 import chat from '../stores/chat'
-import Tree from '../Tree'
+import Tree from '../util/Tree'
 import FastButton from './FastButton'
 import Embed from './Embed'
 import MessageText from './MessageText'

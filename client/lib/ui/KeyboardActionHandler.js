@@ -3,7 +3,7 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 
-import forwardProps from '../forwardProps'
+import forwardProps from '../util/forwardProps'
 
 export default createReactClass({
   displayName: 'KeyboardActionHandler',

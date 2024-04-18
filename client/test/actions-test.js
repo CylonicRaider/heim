@@ -1,6 +1,6 @@
 import assert from 'assert'
 
-import actions from '../lib/actions'
+import actions from '../lib/heim/actions'
 
 describe('global actions', () => {
   describe('setup action', () => {

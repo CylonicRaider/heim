@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import chat from '../stores/chat'
 import ui from '../stores/ui'
-import hueHash from '../hueHash'
+import hueHash from '../heim/hueHash'
 import FastButton from './FastButton'
 
 export default function PMNotice(props) {

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Immutable from 'immutable'
 
-import Tree from './Tree'
+import Tree from '../util/Tree'
 
 const initCount = Immutable.Map({
   descendants: 0,

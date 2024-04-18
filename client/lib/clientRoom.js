@@ -44,7 +44,7 @@ export default function clientRoom() {
   } else {
     const queryString = require('querystring')
     const _ = require('lodash')
-    const EventListeners = require('./EventListeners').default
+    const EventListeners = require('./util/EventListeners').default
 
     const evs = new EventListeners()
     if (!window.onReady) {
@@ -108,8 +108,8 @@ export default function clientRoom() {
       },
     })
 
-    const isTextInput = require('./isTextInput').default
-    const BatchTransition = require('./BatchTransition').default
+    const isTextInput = require('./util/isTextInput').default
+    const BatchTransition = require('./util/BatchTransition').default
 
     window.Heim = {
       window: window,
@@ -149,7 +149,7 @@ export default function clientRoom() {
     }
 
     _.extend(Heim, {
-      actions: require('./actions'),
+      actions: require('./heim/actions'),
       chat: require('./stores/chat'),
       ui: require('./stores/ui'),
       notification: require('./stores/notification'),
@@ -295,7 +295,7 @@ export default function clientRoom() {
         Heim.addEventListener(uidocument.body, 'mousedown', () => Heim.activity.touch(roomName), false)
       }
 
-      Heim.setFavicon = _.partial(require('./setFavicon').default, uidocument)
+      Heim.setFavicon = _.partial(require('./util/setFavicon').default, uidocument)
       if (Heim._favicon) {
         Heim.setFavicon(Heim._favicon)
         delete Heim._favicon

@@ -2,7 +2,7 @@ import './support/setup'
 import assert from 'assert'
 import sinon from 'sinon'
 
-import EventListeners from '../lib/EventListeners'
+import EventListeners from '../lib/util/EventListeners'
 
 describe('EventListeners', () => {
   const eventType = 'test'

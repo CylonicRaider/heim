@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import EventEmitter from 'eventemitter3'
 import queryString from 'querystring'
 
-import actions from '../actions'
+import actions from '../heim/actions'
 
 let nextEmbedId = 0
 const embedIndex = new EventEmitter()

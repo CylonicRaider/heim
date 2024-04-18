@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { MainPage, FancyLogo } from './common'
-import heimURL from '../lib/heimURL'
+import heimURL from '../lib/heim/heimURL'
 
 module.exports = (
   /* eslint-disable react/jsx-no-target-blank */

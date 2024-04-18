@@ -4,7 +4,7 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import Reflux from 'reflux'
 
-import actions from '../actions'
+import actions from '../heim/actions'
 import chat from '../stores/chat'
 import ui from '../stores/ui'
 import EntryMixin from './EntryMixin'

@@ -1,9 +1,9 @@
 import './support/setup'
 import assert from 'assert'
 
-describe('emoji', () => {
-  const emoji = require('../lib/emoji')
+import emoji from '../lib/heim/emoji'
 
+describe('emoji', () => {
   describe('nameToUnicode', () => {
     it('translates BMP emoji', () => {
       // U+25C0 BLACK LEFT-POINTING TRIANGLE (:arrow_backward:)

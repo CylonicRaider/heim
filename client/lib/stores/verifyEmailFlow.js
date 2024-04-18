@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import Immutable from 'immutable'
 
-import heimURL from '../heimURL'
+import heimURL from '../heim/heimURL'
 import ImmutableMixin from './ImmutableMixin'
 import PostFlowMixin from './PostFlowMixin'
 

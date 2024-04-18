@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom'
 import Reflux from 'reflux'
 import Immutable from 'immutable'
 
-import actions from '../actions'
-import ChatTree from '../ChatTree'
+import actions from '../heim/actions'
+import ChatTree from '../heim/ChatTree'
 import storage from './storage'
 import activity from './activity'
 import plugins from './plugins'
-import hueHash from '../hueHash'
+import hueHash from '../heim/hueHash'
 
 const mentionDelim = String.raw`^|$|[,.!?;&<'"\s]|&#39;|&quot;|&amp;`
 const mentionFindRe = module.exports.mentionFindRe = new RegExp('(' + mentionDelim + String.raw`)@(\S+?)(?=` + mentionDelim + ')', 'g')

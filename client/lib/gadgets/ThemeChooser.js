@@ -14,7 +14,7 @@ import ui from '../stores/ui'
 import storage from '../stores/storage'
 import FastButton from '../ui/FastButton'
 import Bubble from '../ui/Bubble'
-import heimURL from '../heimURL'
+import heimURL from '../heim/heimURL'
 import { CheckBox, RadioBox } from './formControls'
 
 const themes = ['default', 'dark', 'spooky', 'hackerman']

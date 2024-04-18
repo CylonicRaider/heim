@@ -1,7 +1,7 @@
 import './support/setup'
 import assert from 'assert'
 
-import Hooks from '../lib/Hooks'
+import Hooks from '../lib/util/Hooks'
 
 describe('Hooks', () => {
   it('should create hooks named in the constructor arguments', () => {

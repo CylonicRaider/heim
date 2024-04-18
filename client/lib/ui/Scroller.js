@@ -4,7 +4,7 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 
-import clamp from '../clamp'
+import clamp from '../util/clamp'
 
 function dimensions(el, prop) {
   const rect = el.getBoundingClientRect()

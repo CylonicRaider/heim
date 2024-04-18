@@ -8,7 +8,7 @@ import chat from '../stores/chat'
 import Dialog from './Dialog'
 import { Form, TextField, FieldLabelContainer, PasswordStrengthField } from './forms'
 import { validateEmail, validatePassword, minPasswordEntropy } from './formValidators'
-import hueHash from '../hueHash'
+import hueHash from '../heim/hueHash'
 
 export default createReactClass({
   displayName: 'AccountSettingsDialog',

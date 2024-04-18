@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import heimURL from '../../lib/heimURL'
+import heimURL from '../../lib/heim/heimURL'
 
 export default function Page(props) {
   return (

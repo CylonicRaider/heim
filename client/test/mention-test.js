@@ -1,7 +1,7 @@
 import assert from 'assert'
 import Immutable from 'immutable'
 
-import mention from '../lib/mention'
+import mention from '../lib/heim/mention'
 
 describe('mention', () => {
   describe('findSubseq', () => {

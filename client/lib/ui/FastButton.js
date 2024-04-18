@@ -4,7 +4,7 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 
-import forwardProps from '../forwardProps'
+import forwardProps from '../util/forwardProps'
 
 // A button that triggers on touch start on mobile to increase responsiveness.
 export default createReactClass({
