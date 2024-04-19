@@ -37,7 +37,7 @@ a {
 }
 
 .hatch-shade {
-  background: fade(black, 50%) data-uri('../res/hatching.svg') repeat;
+  background: fade(black, 50%) data-uri('../../res/hatching.svg') repeat;
   opacity: .1;
   z-index: 100;
 }
@@ -169,24 +169,24 @@ iframe.js {
     &.disabled .notification-toggle {
       background: @welcome-color;
       .touchable-bg(@welcome-color);
-      .button-icon('../res/notifications-disabled.svg', 15px);
+      .button-icon('../../res/notifications-disabled.svg', 15px);
     }
 
     &.enabled .notification-toggle {
       .touchable-bg(#fff);
-      .button-icon('../res/notifications-pause.svg', 15px);
+      .button-icon('../../res/notifications-pause.svg', 15px);
     }
 
     &.snoozed .notification-toggle {
       color: #a76d2f;
       .touchable-bg(#fff);
-      .button-icon('../res/notifications-pause-snoozed.svg', 15px);
+      .button-icon('../../res/notifications-pause-snoozed.svg', 15px);
     }
 
     &.paused .notification-toggle {
       color: #930000;
       .touchable-bg(#fff);
-      .button-icon('../res/notifications-pause-active.svg', 15px);
+      .button-icon('../../res/notifications-pause-active.svg', 15px);
     }
 
     .mode-selector {
@@ -211,22 +211,22 @@ iframe.js {
 
       .none {
         .touchable-bg(#fff);
-        .button-icon('../res/notifications-none.svg', 14px, @spacing: 0);
+        .button-icon('../../res/notifications-none.svg', 14px, @spacing: 0);
       }
 
       .mention {
         .touchable-bg(#fff);
-        .button-icon('../res/notifications-mention.svg', 14px, @spacing: 0);
+        .button-icon('../../res/notifications-mention.svg', 14px, @spacing: 0);
       }
 
       .reply {
         .touchable-bg(#fff);
-        .button-icon('../res/notifications-reply.svg', 14px, @spacing: 0);
+        .button-icon('../../res/notifications-reply.svg', 14px, @spacing: 0);
       }
 
       .message {
         .touchable-bg(#fff);
-        .button-icon('../res/notifications-message.svg', 14px, @spacing: 0);
+        .button-icon('../../res/notifications-message.svg', 14px, @spacing: 0);
       }
     }
 
@@ -234,19 +234,19 @@ iframe.js {
       opacity: 1;
 
       .none.selected {
-        .button-icon('../res/notifications-none-active.svg', 14px, @spacing: 0);
+        .button-icon('../../res/notifications-none-active.svg', 14px, @spacing: 0);
       }
 
       .mention.selected {
-        .button-icon('../res/notifications-mention-active.svg', 14px, @spacing: 0);
+        .button-icon('../../res/notifications-mention-active.svg', 14px, @spacing: 0);
       }
 
       .reply.selected {
-        .button-icon('../res/notifications-reply-active.svg', 14px, @spacing: 0);
+        .button-icon('../../res/notifications-reply-active.svg', 14px, @spacing: 0);
       }
 
       .message.selected {
-        .button-icon('../res/notifications-message-active.svg', 14px, @spacing: 0);
+        .button-icon('../../res/notifications-message-active.svg', 14px, @spacing: 0);
       }
     }
   }
@@ -438,7 +438,7 @@ iframe.js {
     }
 
     .notification.new-mention {
-      .button-icon('../res/notifications-mention-active.svg', 14px, 7px, .65);
+      .button-icon('../../res/notifications-mention-active.svg', 14px, 7px, .65);
       background: hsl(46, 65%, 90%);
 
       &:hover {
@@ -447,11 +447,11 @@ iframe.js {
     }
 
     .notification.new-reply {
-      .button-icon('../res/notifications-reply-active.svg', 14px, 7px, .65);
+      .button-icon('../../res/notifications-reply-active.svg', 14px, 7px, .65);
       background: hsl(240, 28%, 90%);
 
       &.seen {
-        .button-icon('../res/notifications-reply.svg', 14px, 7px, .65);
+        .button-icon('../../res/notifications-reply.svg', 14px, 7px, .65);
         background: inherit;
 
         // a transition would fade the hover coloring, making it inconsistent
@@ -473,11 +473,11 @@ iframe.js {
     }
 
     .notification.new-message {
-      .button-icon('../res/notifications-message-active.svg', 14px, 7px, .65);
+      .button-icon('../../res/notifications-message-active.svg', 14px, 7px, .65);
       background: hsl(81, 28%, 90%);
 
       &.seen {
-        .button-icon('../res/notifications-message.svg', 14px, 7px, .65);
+        .button-icon('../../res/notifications-message.svg', 14px, 7px, .65);
         background: inherit;
 
         animation: fade-new-message .5s ease;
@@ -511,7 +511,7 @@ iframe.js {
       overflow: hidden;
 
       &.signed-in {
-        .button-icon('../res/cog.svg', 20px, 5px, .25);
+        .button-icon('../../res/cog.svg', 20px, 5px, .25);
       }
 
       .inner {
@@ -739,11 +739,11 @@ iframe.js {
     }
 
     &.dark .close {
-      .button-icon('../res/close-notification.svg', 11px, 0, 1);
+      .button-icon('../../res/close-notification.svg', 11px, 0, 1);
     }
 
     &.light .close {
-      .button-icon('../res/close-notification-black.svg', 11px, 0, 1);
+      .button-icon('../../res/close-notification-black.svg', 11px, 0, 1);
     }
   }
 }
@@ -841,7 +841,7 @@ iframe.js {
         border-top: 1px solid darken(@passcode-color, 30%);
         border-bottom: 1px solid darken(@passcode-color, 30%);
 
-        .icon('../res/lock.svg', 18px, 10px);
+        .icon('../../res/lock.svg', 18px, 10px);
         &:before {
           vertical-align: top;
         }
@@ -893,7 +893,7 @@ iframe.js {
     padding: 3px;
     border-radius: 3px;
     .touchable-bg(white);
-    .button-icon('../res/close-pane.svg', 14px, 0, 1);
+    .button-icon('../../res/close-pane.svg', 14px, 0, 1);
     .larger-touch-target(10px, 10px);
   }
 }
@@ -909,17 +909,17 @@ iframe.js {
     margin-left: 7px;
 
     .room-switcher-expand {
-      .button-icon('../res/to-room.svg', 18px);
+      .button-icon('../../res/to-room.svg', 18px);
     }
 
     .room-switcher-apply {
       display: inline-block;
       cursor: pointer;
-      .button-icon('../res/to-room.svg', 18px);
+      .button-icon('../../res/to-room.svg', 18px);
     }
 
     .room-switcher-cancel {
-      .button-icon('../res/to-room-cancel.svg', 18px);
+      .button-icon('../../res/to-room-cancel.svg', 18px);
     }
 
     .room-switcher-expand, .room-switcher-apply, .room-switcher-cancel {
@@ -983,7 +983,7 @@ iframe.js {
     .nick;
     line-height: normal;
     margin-left: 10px;
-    .button-icon('../res/euphorian.svg', 14px);
+    .button-icon('../../res/euphorian.svg', 14px);
     .touchable-bg(@neutral-color);
     .larger-touch-target(20px, 10px);
 
@@ -999,7 +999,7 @@ iframe.js {
     padding: 3px 6px;
     margin-left: 10px;
     z-index: 3;
-    .button-icon('../res/update.svg', 14px, 0);
+    .button-icon('../../res/update.svg', 14px, 0);
     .touchable-bg(@welcome-color);
     .larger-touch-target(5px, 10px);
   }
@@ -1022,11 +1022,11 @@ iframe.js {
     opacity: .35;
 
     &.collapse-info-pane {
-      .button-icon('../res/collapse-sidebar.svg', 14px, 0, 1);
+      .button-icon('../../res/collapse-sidebar.svg', 14px, 0, 1);
     }
 
     &.expand-info-pane {
-      .button-icon('../res/expand-sidebar.svg', 14px, 0, 1);
+      .button-icon('../../res/expand-sidebar.svg', 14px, 0, 1);
     }
   }
 
@@ -1065,14 +1065,14 @@ iframe.js {
         background: @passcode-color;
         color: darken(@passcode-color, 60%);
         .touchable-bg(@passcode-color);
-        .button-icon('../res/lock.svg', 10px);
+        .button-icon('../../res/lock.svg', 10px);
       }
 
       &.pm {
         background: @pm-color;
         color: darken(@pm-color, 80%);
         .touchable-bg(@pm-color);
-        .button-icon('../res/lock.svg', 10px);
+        .button-icon('../../res/lock.svg', 10px);
       }
 
       &.reconnecting {
@@ -1267,7 +1267,7 @@ iframe.js {
 
   .replies.collapsed {
     height: 17px;
-    .button-icon('../res/reply.svg', 12px, 3px, 1);
+    .button-icon('../../res/reply.svg', 12px, 3px, 1);
   }
 
   .replies.collapsed, .replies.in-pane {
@@ -1281,7 +1281,7 @@ iframe.js {
     height: 20px;
     padding-bottom: 4px;
     margin-top: 1px;
-    .button-icon('../res/expand-rest.svg', 14px, 3px, 1);
+    .button-icon('../../res/expand-rest.svg', 14px, 3px, 1);
     .inner:before {
       width: 8px;
     }
@@ -1326,7 +1326,7 @@ iframe.js {
       position: relative;
       cursor: pointer;
       margin-top: @message-spacing;
-      background-image: @line-bg, data-uri('../res/expand.svg');
+      background-image: @line-bg, data-uri('../../res/expand.svg');
       background-position: left 12px, left top;
       background-repeat: no-repeat;
 
@@ -1339,15 +1339,15 @@ iframe.js {
     }
 
     &.expanded > .indent-line {
-      background-image: @line-bg, data-uri('../res/collapse.svg');
+      background-image: @line-bg, data-uri('../../res/collapse.svg');
     }
 
     &.focused > .indent-line {
-      background-image: @blue-line-bg, data-uri('../res/expand-focused.svg');
+      background-image: @blue-line-bg, data-uri('../../res/expand-focused.svg');
     }
 
     &.expanded.focused > .indent-line {
-      background-image: @blue-line-bg, data-uri('../res/collapse-focused.svg');
+      background-image: @blue-line-bg, data-uri('../../res/collapse-focused.svg');
     }
   }
 
@@ -1363,11 +1363,11 @@ iframe.js {
       top: 9px;
       width: 8px;
       height: 100%;
-      background: white data-uri('../res/reply-continue-entry.svg') no-repeat 1px top;
+      background: white data-uri('../../res/reply-continue-entry.svg') no-repeat 1px top;
     }
 
     &.empty .entry:before {
-      background-image: data-uri('../res/reply-entry.svg');
+      background-image: data-uri('../../res/reply-entry.svg');
     }
   }
 
@@ -1379,7 +1379,7 @@ iframe.js {
 
   .replies.in-pane {
     display: flex;
-    .button-icon('../res/reply.svg', 14px, 5px);
+    .button-icon('../../res/reply.svg', 14px, 5px);
 
     .inner {
       white-space: nowrap;
@@ -1390,7 +1390,7 @@ iframe.js {
       display: flex;
       margin-left: 4px;
       margin-top: -1px;
-      .icon('../res/to-pane.svg', 14px);
+      .icon('../../res/to-pane.svg', 14px);
     }
   }
 
@@ -1800,7 +1800,7 @@ iframe.js {
       height: 15px;
       padding: 3px;
       box-sizing: content-box;
-      .icon('../res/move-entry.svg', 15px, 0, .6);
+      .icon('../../res/move-entry.svg', 15px, 0, .6);
       .touchable-bg(#fff);
       .larger-touch-target(15px, 30px);
       box-shadow: 0 0 2px fade(black, 50%);
@@ -1817,7 +1817,7 @@ iframe.js {
       background: white;
       border-radius: 100%;
       box-sizing: content-box;
-      .icon('../res/jump-to-bottom.svg', 20px, 0, .3);
+      .icon('../../res/jump-to-bottom.svg', 20px, 0, .3);
       .touchable-custom({
         background: lighten(@topic-color, 47%);
         box-shadow: 0 0 4px 3px fade(@topic-color, 50%);
@@ -1964,7 +1964,7 @@ iframe.js {
   border-radius: 3px;
   padding: 6px 8px;
   font-size: .8em;
-  .button-icon('../res/update.svg', 24px, 8px);
+  .button-icon('../../res/update.svg', 24px, 8px);
   .touchable-bg(@welcome-color);
   box-shadow: 0 0 8px fade(black, 25%);
 
@@ -2013,11 +2013,11 @@ iframe.js {
     }
 
     .to-pane {
-      .button-icon('../res/to-pane.svg', 14px, 5px);
+      .button-icon('../../res/to-pane.svg', 14px, 5px);
     }
 
     .scroll-to {
-      .button-icon('../res/scroll-to.svg', 14px, 5px);
+      .button-icon('../../res/scroll-to.svg', 14px, 5px);
     }
   }
 
@@ -2085,7 +2085,7 @@ iframe.js {
       padding: 6px;
       border-radius: 3px;
       .touchable-bg(white);
-      .button-icon('../res/close-dialog.svg', 14px, 0, .5);
+      .button-icon('../../res/close-dialog.svg', 14px, 0, .5);
       .larger-touch-target(10px, 10px);
     }
   }
@@ -2130,7 +2130,7 @@ iframe.js {
 
 .account-auth-dialog, .account-settings-dialog {
   .email-icon {
-    background: data-uri('../res/email.svg') no-repeat center center;
+    background: data-uri('../../res/email.svg') no-repeat center center;
     background-size: contain;
     width: 300px;
     height: 200px;
@@ -2247,11 +2247,11 @@ iframe.js {
       }
 
       &.message {
-        .icon('../res/message.svg', 12px, 4px, .5);
+        .icon('../../res/message.svg', 12px, 4px, .5);
       }
 
       &.user {
-        .icon('../res/euphorian.svg', 12px, 4px, .5);
+        .icon('../../res/euphorian.svg', 12px, 4px, .5);
       }
 
       .id, .addr {
@@ -2344,7 +2344,7 @@ iframe.js {
   &:before {
     content: '';
     display: block;
-    background: data-uri('../res/spinner.svg') no-repeat center center;
+    background: data-uri('../../res/spinner.svg') no-repeat center center;
     background-size: contain;
     animation: spin .85s linear infinite;
 

@@ -187,7 +187,13 @@ gulp.task('raven-js', ['heim-git-commit', 'heim-js'], (done) => {
 })
 
 gulp.task('heim-less', () => {
-  return gulp.src(['./lib/main.less', './lib/crashed.less', './lib/od.less', './lib/gadgets/*.less', './site/*.less'])
+  return gulp.src([
+    './lib/style/main.less',
+    './lib/style/crashed.less',
+    './lib/style/od.less',
+    './lib/gadgets/*.less',
+    './site/*.less',
+  ])
     .pipe(less({compress: true, math: 'always'}))
     .on('error', handleError('LESS error'))
     .pipe(autoprefixer({cascade: false}))
