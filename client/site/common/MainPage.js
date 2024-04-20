@@ -10,6 +10,9 @@ export default function MainPage(props) {
     <Page className={classNames('page', props.className)} title={props.title} heimPage={props.heimPage}>
       {props.nav || null}
       <div className="container main">
+        {props.sidebar && <div className="sidebar-container">
+          <div className="sidebar" />
+        </div>}
         {props.children}
       </div>
       <Footer />
@@ -22,5 +25,6 @@ MainPage.propTypes = {
   title: PropTypes.string,
   heimPage: PropTypes.string,
   nav: PropTypes.node,
+  sidebar: PropTypes.bool,
   children: PropTypes.node,
 }
