@@ -22,6 +22,26 @@ const md = new MarkdownIt()
       return '</section>\n'
     },
   })
+  .use(function(md) {
+    md.core.ruler.after('block', 'toc_anchor', function(state) {
+      for (let i = 0; i < state.tokens.length; i++) {
+        const token = state.tokens[i]
+        if (token.type != 'container_section_open') continue
+        const m = token.info.trim().match(sectionRe)
+        if (m[1] != 'toc') continue
+
+        const newToken = new state.Token('marker', 'a', 0)
+        newToken.map = [token.map[0], token.map[0]]
+        newToken.info = m[1]
+        state.tokens.splice(i, 0, newToken)
+        i++
+      }
+    })
+
+    md.renderer.rules.marker = function(tokens, idx) {
+      return '<a id="marker-' + tokens[idx].info + '"></a>'
+    }
+  })
 
 export default function Markdown(props) {
   /* eslint-disable react/no-danger */
