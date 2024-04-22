@@ -11,7 +11,7 @@ export default function MainPage(props) {
       {props.nav || null}
       <div className="container main">
         {props.sidebar && <div className="sidebar-container">
-          <div className="sidebar" />
+          <div className="sidebar text-page" />
         </div>}
         {props.children}
       </div>

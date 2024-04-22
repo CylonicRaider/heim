@@ -141,8 +141,8 @@ gulp.task('heim-js', ['heim-git-commit', 'heim-less'], () => {
     .pipe(gulp.dest(heimStaticDest))
 })
 
-gulp.task('fast-touch-js', () => {
-  return gulp.src('./site/lib/fast-touch.js')
+gulp.task('site-js', () => {
+  return gulp.src('./site/lib/*.js')
     .pipe(heimUglify())
     .on('error', handleError('fastTouch browserify error'))
     .pipe(gulp.dest(heimStaticDest))
@@ -338,7 +338,7 @@ watchifyTask('heim-watchify', heimBundler, 'main.js', heimStaticDest)
 watchifyTask('embed-watchify', embedBundler, 'embed.js', embedDest)
 
 gulp.task('build-emails', ['email-templates', 'email-hdrs', 'email-static'])
-gulp.task('build-statics', ['raven-js', 'fast-touch-js', 'heim-less', 'emoji-static', 'heim-static', 'embed-static', 'heim-html', 'embed-html', 'site-templates'])
+gulp.task('build-statics', ['raven-js', 'site-js', 'heim-less', 'emoji-static', 'heim-static', 'embed-static', 'heim-html', 'embed-html', 'site-templates'])
 gulp.task('build-browserify', ['heim-js', 'embed-js'])
 
 gulp.task('watch', () => {

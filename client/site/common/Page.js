@@ -17,6 +17,7 @@ export default function Page(props) {
         <link rel="stylesheet" type="text/css" id="css" href={heimURL('/static/site.css')} />
         {props.heimPage && <script src={heimURL('/static/raven.js')} />}
         <script async src={heimURL('/static/fast-touch.js')} />
+        <script async src={heimURL('/static/dynamic-toc.js')} />
       </head>
       <body className={props.className}>
         {props.children}
