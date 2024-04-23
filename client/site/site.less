@@ -215,6 +215,41 @@ body.page {
     margin: 55px auto;
     flex: 1;
 
+    .sidebar {
+      .header-anchor {
+        display: none;
+      }
+
+      .toc {
+        & > ul {
+          list-style-type: none;
+          padding-left: 0;
+
+          & > li {
+            & > a {
+              margin-top: 1em;
+              font-weight: bold;
+            }
+
+            & > ul {
+              list-style-type: none;
+              padding-left: 0;
+            }
+          }
+        }
+
+        a {
+          display: block;
+          color: inherit;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
     @media (max-width: @thin-breakpoint) {
       margin: 30px auto;
     }
