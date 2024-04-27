@@ -349,6 +349,7 @@ gulp.task('watch', () => {
   gulp.watch('./lib/**/*.html', ['heim-html', 'embed-html'])
   gulp.watch('./static/**/*', ['heim-static', 'embed-static'])
   gulp.watch('./site/**/*', ['site-templates'])
+  gulp.watch('./site/lib/*.js', ['site-js'])
   gulp.watch('./emails/*', ['email-templates'])
   gulp.watch('./emails/static/*', ['email-static'])
 })
