@@ -349,6 +349,29 @@ immediately reconnect.
 | :---- | :--- | :-------- | :---------- |
 | `reason` | [string](#string) | required |  the reason for disconnection |
 
+### edit-message-event
+
+An `edit-message-event` indicates that a message in the room has been
+modified or deleted. If the client offers a user interface and the
+indicated message is currently displayed, it should update its display
+accordingly.
+
+The event packet includes a snapshot of the message post-edit.
+
+| Field | Type | Required? | Description |
+| :---- | :--- | :-------- | :---------- |
+| `edit_id` | [Snowflake](#snowflake) | required |  the id of the edit |
+| `id` | [Snowflake](#snowflake) | required |  the id of the message (unique within a room) |
+| `parent` | [Snowflake](#snowflake) | *optional* |  the id of the message's parent, or null if top-level |
+| `previous_edit_id` | [Snowflake](#snowflake) | *optional* |  the edit id of the most recent edit of this message, or null if it's never been edited |
+| `time` | [Time](#time) | required |  the unix timestamp of when the message was posted |
+| `sender` | [SessionView](#sessionview) | required |  the view of the sender's session |
+| `content` | [string](#string) | required |  the content of the message (client-defined) |
+| `encryption_key_id` | [string](#string) | *optional* |  the id of the key that encrypts the message in storage |
+| `edited` | [Time](#time) | *optional* |  the unix timestamp of when the message was last edited |
+| `deleted` | [Time](#time) | *optional* |  the unix timestamp of when the message was deleted |
+| `truncated` | [bool](#bool) | *optional* |  if true, then the full content of this message is not included (see `get-message` to obtain the message with full content) |
+
 ### hello-event
 
 A `hello-event` is sent by the server to the client when a session is started.
@@ -421,29 +444,6 @@ id/era combo.
 | `id` | [UserID](#userid) | required |  the id of the agent or account logged into the session |
 | `from` | [string](#string) | required |  the previous name associated with the session |
 | `to` | [string](#string) | required |  the name associated with the session henceforth |
-
-### edit-message-event
-
-An `edit-message-event` indicates that a message in the room has been
-modified or deleted. If the client offers a user interface and the
-indicated message is currently displayed, it should update its display
-accordingly.
-
-The event packet includes a snapshot of the message post-edit.
-
-| Field | Type | Required? | Description |
-| :---- | :--- | :-------- | :---------- |
-| `edit_id` | [Snowflake](#snowflake) | required |  the id of the edit |
-| `id` | [Snowflake](#snowflake) | required |  the id of the message (unique within a room) |
-| `parent` | [Snowflake](#snowflake) | *optional* |  the id of the message's parent, or null if top-level |
-| `previous_edit_id` | [Snowflake](#snowflake) | *optional* |  the edit id of the most recent edit of this message, or null if it's never been edited |
-| `time` | [Time](#time) | required |  the unix timestamp of when the message was posted |
-| `sender` | [SessionView](#sessionview) | required |  the view of the sender's session |
-| `content` | [string](#string) | required |  the content of the message (client-defined) |
-| `encryption_key_id` | [string](#string) | *optional* |  the id of the key that encrypts the message in storage |
-| `edited` | [Time](#time) | *optional* |  the unix timestamp of when the message was last edited |
-| `deleted` | [Time](#time) | *optional* |  the unix timestamp of when the message was deleted |
-| `truncated` | [bool](#bool) | *optional* |  if true, then the full content of this message is not included (see `get-message` to obtain the message with full content) |
 
 ### part-event
 

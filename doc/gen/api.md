@@ -296,6 +296,11 @@ The following events may be sent from the server to the client at any time.
 {{(packet "disconnect-event").Doc}}
 {{template "fields.md" (packet "disconnect-event")}}
 
+### edit-message-event
+
+{{(packet "edit-message-event").Doc}}
+{{template "fields.md" (packet "edit-message-event")}}
+
 ### hello-event
 
 {{(packet "hello-event").Doc}}
@@ -326,11 +331,6 @@ A `join-event` indicates a session just joined the room.
 
 {{(packet "nick-event").Doc}}
 {{template "fields.md" (packet "nick-event")}}
-
-### edit-message-event
-
-{{(packet "edit-message-event").Doc}}
-{{template "fields.md" (packet "edit-message-event")}}
 
 ### part-event
 
