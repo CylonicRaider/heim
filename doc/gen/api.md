@@ -288,23 +288,19 @@ The following events may be sent from the server to the client at any time.
 
 ### bounce-event
 
-{{(packet "bounce-event").Doc}}
-{{template "fields.md" (packet "bounce-event")}}
+{{template "packet.md" "bounce-event"}}
 
 ### disconnect-event
 
-{{(packet "disconnect-event").Doc}}
-{{template "fields.md" (packet "disconnect-event")}}
+{{template "packet.md" "disconnect-event"}}
 
 ### edit-message-event
 
-{{(packet "edit-message-event").Doc}}
-{{template "fields.md" (packet "edit-message-event")}}
+{{template "packet.md" "edit-message-event"}}
 
 ### hello-event
 
-{{(packet "hello-event").Doc}}
-{{template "fields.md" (object "HelloEvent")}}
+{{template "packet.md" "hello-event"}}
 
 ### join-event
 
@@ -314,23 +310,19 @@ A `join-event` indicates a session just joined the room.
 
 ### login-event
 
-{{(packet "login-event").Doc}}
-{{template "fields.md" (object "LoginEvent")}}
+{{template "packet.md" "login-event"}}
 
 ### logout-event
 
-{{(packet "logout-event").Doc}}
-{{template "fields.md" (object "LogoutEvent")}}
+{{template "packet.md" "logout-event"}}
 
 ### network-event
 
-{{(packet "network-event").Doc}}
-{{template "fields.md" (packet "network-event")}}
+{{template "packet.md" "network-event"}}
 
 ### nick-event
 
-{{(packet "nick-event").Doc}}
-{{template "fields.md" (packet "nick-event")}}
+{{template "packet.md" "nick-event"}}
 
 ### part-event
 
@@ -340,23 +332,19 @@ A `part-event` indicates a session just disconnected from the room.
 
 ### ping-event
 
-{{(packet "ping-event").Doc}}
-{{template "fields.md" (packet "ping-event")}}
+{{template "packet.md" "ping-event"}}
 
 ### pm-initiate-event
 
-{{(packet "pm-initiate-event").Doc}}
-{{template "fields.md" (packet "pm-initiate-event")}}
+{{template "packet.md" "pm-initiate-event"}}
 
 ### send-event
 
-{{(packet "send-event").Doc}}
-{{template "fields.md" (packet "send-event")}}
+{{template "packet.md" "send-event"}}
 
 ### snapshot-event
 
-{{(packet "snapshot-event").Doc}}
-{{template "fields.md" (packet "snapshot-event")}}
+{{template "packet.md" "snapshot-event"}}
 
 ## Session Commands
 
