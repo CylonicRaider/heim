@@ -199,7 +199,7 @@ been granted access to the room, then the server will send a [snapshot-event](#s
     session_id: "4da8fa7375215589-00000246",
     version: "801ea89a4e410b11410eb61c91971439904e66c0",
     listing: [...],
-    log:[...]
+    log: [...]
   }
 }
 ```
