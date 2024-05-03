@@ -11,7 +11,7 @@ const (
 	MaxMessageTransmissionLength = 4096
 )
 
-// A Message is a node in a Room's Log. It corresponds to a chat message, or
+// A `Message` is a node in a Room's Log. It corresponds to a chat message, or
 // a post, or any broadcasted event in a room that should appear in the log.
 type Message struct {
 	ID              snowflake.Snowflake `json:"id"`                          // the id of the message (unique within a room)

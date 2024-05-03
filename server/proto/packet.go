@@ -288,10 +288,7 @@ type SendReply SendEvent
 // A message deleted by this command is still stored in the database. Deleted
 // messages may be undeleted by this command. (Messages that have expired from
 // the database due to the room's retention policy are no longer available and
-// cannot be restored by this or any command).
-//
-// If the `announce` field is set to true, then an edit-message-event will be
-// broadcast to the room.
+// cannot be restored by this or any command.)
 type EditMessageCommand struct {
 	ID             snowflake.Snowflake `json:"id"`                // the id of the message to edit
 	PreviousEditID snowflake.Snowflake `json:"previous_edit_id"`  // the `previous_edit_id` of the message; if this does not match, the edit will fail (basic conflict resolution)
@@ -653,7 +650,7 @@ type RegisterAccountCommand LoginCommand
 type RegisterAccountReply LoginReply
 
 // The `resend-verification-email` command forces a new email to be sent for
-// verifying an accounts primary email address. An error will be returned if
+// verifying an account's primary email address. An error will be returned if
 // the account has no unverified email addresses associated with it.
 type ResendVerificationEmailCommand struct{}
 
@@ -755,6 +752,8 @@ type StaffLockRoomReply struct{}
 
 // The `unlock-staff-capability` command may be called by a staff account to gain access to
 // staff commands.
+//
+// (Presently, this is already implicitly done upon establishing a session.)
 type UnlockStaffCapabilityCommand struct {
 	Password string `json:"password"` // the account's password
 }

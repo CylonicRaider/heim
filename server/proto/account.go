@@ -150,13 +150,13 @@ type Account interface {
 	View(roomName string) *AccountView
 }
 
-// AccountView describes an account and its preferred names.
+// `AccountView` describes an account and its preferred names.
 type AccountView struct {
 	ID   snowflake.Snowflake `json:"id"`   // the id of the account
 	Name string              `json:"name"` // the name that the holder of the account goes by
 }
 
-// PersonalAccountView describes an account to its owner.
+// `PersonalAccountView` describes an account to its owner.
 type PersonalAccountView struct {
 	AccountView
 	Email string `json:"email"` // the account's email address

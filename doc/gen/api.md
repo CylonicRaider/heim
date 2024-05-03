@@ -265,7 +265,7 @@ following values:
 ### Snowflake
 
 A snowflake is a 13-character string, usually used as a unique identifier for some type
-of object. It is the base-36 encoding of an unsigned, 64-bit integer.
+of object. It is the base-36 encoding of an unsigned 64-bit integer.
 
 ### Time
 
@@ -273,14 +273,14 @@ Time is specified as a signed 64-bit integer, giving the number of seconds since
 
 ### UserID
 
-A UserID identifies a user. The prefix of this value (up to the colon) indicates a type of session,
+A `UserID` identifies a user. The prefix of this value (up to the colon) indicates a type of session,
 while the suffix is a unique value for that type of session.
 
 | Prefix | Suffix | Description |
 | :----- | :----- | :---------- |
-| `agent:` | *agent identifier* | A user, not signed into any account, but tracked via cookie under this identifier. |
-| `bot:` | *agent identifier* | Same as `agent:`, but for bots. |
-| `account:` | *account identifier* | The id ([Snowflake](#snowflake)) of the account the user is logged into. |
+| `agent:` | *agent identifier* | a user, not signed into any account, but tracked via cookie under this identifier |
+| `bot:` | *agent identifier* | same as `agent:`, but for bots |
+| `account:` | *account identifier* | the id ([Snowflake](#snowflake)) of the account the user is logged into |
 
 ## Asynchronous Events
 

@@ -237,7 +237,7 @@ An arbitrary JSON object.
 
 ### AccountView
 
-AccountView describes an account and its preferred names.
+`AccountView` describes an account and its preferred names.
 
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
@@ -255,7 +255,7 @@ following values:
 
 ### Message
 
-A Message is a node in a Room's Log. It corresponds to a chat message, or
+A `Message` is a node in a Room's Log. It corresponds to a chat message, or
 a post, or any broadcasted event in a room that should appear in the log.
 
 | Field | Type | Required? | Description |
@@ -278,7 +278,7 @@ a post, or any broadcasted event in a room that should appear in the log.
 
 ### PersonalAccountView
 
-PersonalAccountView describes an account to its owner.
+`PersonalAccountView` describes an account to its owner.
 
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
@@ -288,7 +288,7 @@ PersonalAccountView describes an account to its owner.
 
 ### SessionView
 
-SessionView describes a session and its identity.
+`SessionView` describes a session and its identity.
 
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
@@ -305,7 +305,7 @@ SessionView describes a session and its identity.
 ### Snowflake
 
 A snowflake is a 13-character string, usually used as a unique identifier for some type
-of object. It is the base-36 encoding of an unsigned, 64-bit integer.
+of object. It is the base-36 encoding of an unsigned 64-bit integer.
 
 ### Time
 
@@ -313,14 +313,14 @@ Time is specified as a signed 64-bit integer, giving the number of seconds since
 
 ### UserID
 
-A UserID identifies a user. The prefix of this value (up to the colon) indicates a type of session,
+A `UserID` identifies a user. The prefix of this value (up to the colon) indicates a type of session,
 while the suffix is a unique value for that type of session.
 
 | Prefix | Suffix | Description |
 | :----- | :----- | :---------- |
-| `agent:` | *agent identifier* | A user, not signed into any account, but tracked via cookie under this identifier. |
-| `bot:` | *agent identifier* | Same as `agent:`, but for bots. |
-| `account:` | *account identifier* | The id ([Snowflake](#snowflake)) of the account the user is logged into. |
+| `agent:` | *agent identifier* | a user, not signed into any account, but tracked via cookie under this identifier |
+| `bot:` | *agent identifier* | same as `agent:`, but for bots |
+| `account:` | *account identifier* | the id ([Snowflake](#snowflake)) of the account the user is logged into |
 
 ## Asynchronous Events
 
@@ -807,7 +807,7 @@ will be a logged in session, using the newly created account.
 ### resend-verification-email
 
 The `resend-verification-email` command forces a new email to be sent for
-verifying an accounts primary email address. An error will be returned if
+verifying an account's primary email address. An error will be returned if
 the account has no unverified email addresses associated with it.
 
 This packet has no fields.
@@ -869,10 +869,7 @@ content or display of a message.
 A message deleted by this command is still stored in the database. Deleted
 messages may be undeleted by this command. (Messages that have expired from
 the database due to the room's retention policy are no longer available and
-cannot be restored by this or any command).
-
-If the `announce` field is set to true, then an edit-message-event will be
-broadcast to the room.
+cannot be restored by this or any command.)
 
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |
@@ -1122,6 +1119,8 @@ This packet has no fields.
 
 The `unlock-staff-capability` command may be called by a staff account to gain access to
 staff commands.
+
+(Presently, this is already implicitly done upon establishing a session.)
 
 | Field | Type | Required? | Description |
 | :---- | :--- | :-------- | :---------- |

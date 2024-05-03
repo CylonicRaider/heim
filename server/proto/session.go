@@ -32,7 +32,7 @@ type Session interface {
 	View(PrivilegeLevel) SessionView
 }
 
-// SessionView describes a session and its identity.
+// `SessionView` describes a session and its identity.
 type SessionView struct {
 	IdentityView
 	SessionID         string `json:"session_id"`                    // id of the session, unique across all sessions globally
