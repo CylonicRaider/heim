@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"runtime"
 	"sort"
 	"strconv"
@@ -18,6 +19,12 @@ import (
 	"text/template"
 
 	"euphoria.leet.nu/heim/proto"
+)
+
+var (
+	tocSectionRe = regexp.MustCompile("(?ms)^::: section toc\n.*?\n:::$")
+	tocMarkerRe  = regexp.MustCompile("(?m)^--INSERT HERE--$")
+	tocHeadingRe = regexp.MustCompile("(?m)^(#+) (.*?)$")
 )
 
 type objects doc.Package
@@ -224,6 +231,50 @@ func joinComments(cg *ast.CommentGroup) string {
 	return b.String()
 }
 
+func insertToc(text string) (string, error) {
+	sectionBounds := tocSectionRe.FindStringIndex(text)
+	if sectionBounds == nil {
+		return "", fmt.Errorf("cannot find ToC section")
+	}
+
+	sectionText := text[sectionBounds[0]:sectionBounds[1]]
+	restText := text[:sectionBounds[0]] + text[sectionBounds[1]:]
+
+	markerBounds := tocMarkerRe.FindStringIndex(sectionText)
+	if markerBounds == nil {
+		return "", fmt.Errorf("cannot find ToC insertion marker")
+	}
+
+	sb := &strings.Builder{}
+	for _, m := range tocHeadingRe.FindAllStringSubmatch(restText, -1) {
+		depth := len(m[1])
+		slug := strings.ToLower(strings.Replace(m[2], " ", "-", -1))
+		title := m[2]
+		if depth < 2 {
+			continue
+		}
+
+		if sb.Len() > 0 {
+			sb.WriteByte('\n')
+		}
+
+		for i := 2; i < depth; i++ {
+			sb.WriteString("  ")
+		}
+		sb.WriteString("* [")
+		sb.WriteString(title)
+		sb.WriteString("](#")
+		sb.WriteString(slug)
+		sb.WriteString(")")
+	}
+
+	result := text[:sectionBounds[0]] + sectionText[:markerBounds[0]]
+	result += sb.String()
+	result += sectionText[markerBounds[1]:] + text[sectionBounds[1]:]
+
+	return result, nil
+}
+
 func run() error {
 	_, genfile, _, ok := runtime.Caller(0)
 	if !ok {
@@ -280,8 +331,19 @@ func run() error {
 	if _, err := t.ParseGlob("*.md"); err != nil {
 		return fmt.Errorf("template parse error: %s", err)
 	}
-	if err := t.Execute(os.Stdout, nil); err != nil {
+
+	buf := &bytes.Buffer{}
+	if err := t.Execute(buf, nil); err != nil {
 		return fmt.Errorf("template render error: %s", err)
+	}
+
+	finalText, err := insertToc(buf.String())
+	if err != nil {
+		return fmt.Errorf("generate ToC error: %s", err)
+	}
+
+	if _, err := os.Stdout.Write([]byte(finalText)); err != nil {
+		return fmt.Errorf("write to stdout error: %s", err)
 	}
 
 	return nil
