@@ -8,18 +8,36 @@
   var selectableEntries = []
   var curSelected = null
 
+  function setSelected(index) {
+    if (index === curSelected) {
+      return
+    }
+    if (curSelected !== null) {
+      selectableEntries[curSelected].link.classList.remove('selected')
+    }
+    curSelected = index
+    if (index !== null) {
+      selectableEntries[index].link.classList.add('selected')
+      if (isInSidebar) {
+        selectableEntries[index].link.scrollIntoView({block: 'nearest', inline: 'nearest'})
+      }
+    }
+  }
+
   function updateTocLocation() {
     if (getComputedStyle(sidebarContainer).display !== 'none') {
       sidebar.appendChild(toc)
       isInSidebar = true
+      updateTocCurrent()
     } else {
       inlineAnchor.parentNode.insertBefore(toc, inlineAnchor.nextSibling)
       isInSidebar = false
+      setSelected(null)
     }
   }
 
   function updateTocCurrent() {
-    if (!selectableEntries.length) return
+    if (!selectableEntries.length || !isInSidebar) return
 
     function testLocation(node) {
       var rect = node.getBoundingClientRect()
@@ -38,16 +56,7 @@
       if (verdict == 1 && testLocation(selectableEntries[s + 1].heading) < 0) break
       s += verdict
     }
-    if (s === curSelected) return
-
-    if (curSelected != null) {
-      selectableEntries[curSelected].link.classList.remove('selected')
-    }
-    curSelected = s
-    selectableEntries[s].link.classList.add('selected')
-    if (isInSidebar) {
-      selectableEntries[s].link.scrollIntoView({block: 'nearest', inline: 'nearest'})
-    }
+    setSelected(s)
   }
 
   if (!toc || !inlineAnchor || !sidebar) return
