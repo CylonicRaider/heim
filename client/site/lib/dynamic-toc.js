@@ -8,6 +8,25 @@
   var selectableEntries = []
   var curSelected = null
 
+  function parseFloatOrZero(text) {
+    return text ? parseFloat(text) : 0
+  }
+
+  function scrollToShow(node) {
+    var parent = node.offsetParent
+    if (parent === null) return
+    var nodeRect = node.getBoundingClientRect()
+    var nodeStyle = getComputedStyle(node)
+    var parentRect = parent.getBoundingClientRect()
+    var nodeTop = nodeRect.top - parseFloatOrZero(nodeStyle.scrollMarginTop)
+    var nodeBottom = nodeRect.bottom + parseFloatOrZero(nodeStyle.scrollMarginBottom)
+    if (nodeTop < parentRect.top) {
+      parent.scrollTop -= parentRect.top - nodeTop
+    } else if (nodeBottom > parentRect.bottom) {
+      parent.scrollTop += nodeBottom - parentRect.bottom
+    }
+  }
+
   function setSelected(index) {
     if (index === curSelected) {
       return
@@ -17,9 +36,10 @@
     }
     curSelected = index
     if (index !== null) {
-      selectableEntries[index].link.classList.add('selected')
+      var newLink = selectableEntries[index].link
+      newLink.classList.add('selected')
       if (isInSidebar) {
-        selectableEntries[index].link.scrollIntoView({block: 'nearest', inline: 'nearest'})
+        scrollToShow(newLink)
       }
     }
   }
@@ -42,8 +62,8 @@
     function testLocation(node) {
       var rect = node.getBoundingClientRect()
       var styles = getComputedStyle(node)
-      var top = rect.top - parseFloat(styles.marginTop)
-      var bottom = rect.bottom + parseFloat(styles.marginBottom)
+      var top = rect.top - parseFloatOrZero(styles.marginTop)
+      var bottom = rect.bottom + parseFloatOrZero(styles.marginBottom)
       return top > 0 ? -1 : bottom < 0 ? 1 : 0
     }
 
