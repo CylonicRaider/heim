@@ -142,9 +142,16 @@ gulp.task('heim-js', ['heim-git-commit', 'heim-less'], () => {
 })
 
 gulp.task('site-js', () => {
-  return gulp.src('./site/lib/*.js')
+  return heimBrowserify('./site/lib/site.js')
+    .bundle()
+    .pipe(source('site.js'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(heimUglify())
-    .on('error', handleError('fastTouch browserify error'))
+    .pipe(sourcemaps.write('./', {includeContent: true}))
+    .on('error', handleError('site-js browserify error'))
+    .pipe(gulp.dest(heimStaticDest))
+    .pipe(gzip())
     .pipe(gulp.dest(heimStaticDest))
 })
 

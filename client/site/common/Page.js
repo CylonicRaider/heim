@@ -16,8 +16,7 @@ export default function Page(props) {
         {props.heimPage && <link rel="stylesheet" type="text/css" id="css" href={heimURL('/static/main.css')} />}
         <link rel="stylesheet" type="text/css" id="css" href={heimURL('/static/site.css')} />
         {props.heimPage && <script src={heimURL('/static/raven.js')} />}
-        <script defer src={heimURL('/static/fast-touch.js')} />
-        <script defer src={heimURL('/static/dynamic-toc.js')} />
+        <script defer src={heimURL('/static/site.js')} />
       </head>
       <body className={props.className}>
         {props.children}
