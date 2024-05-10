@@ -17,10 +17,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
     libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
     fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
 
-# for puppeteer, too
-RUN adduser --system --group --shell /bin/sh heim
-USER heim
-
 WORKDIR /srv/heim/client/
 
-ENV PATH $PATH:node_modules/.bin
+ENV PATH $PATH:/srv/heim/client/node_modules/.bin
