@@ -225,3 +225,10 @@ services:
       - ./containers/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     ports:
       - "8888:80"
+
+  # The update_deps container allows updating backend and frontend
+  # dependencies in a controlled environment.
+  update_deps:
+    build: containers/update-deps
+    volumes:
+      - .:/srv/heim
