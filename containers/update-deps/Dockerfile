@@ -8,4 +8,4 @@ ENV GO111MODULE auto
 
 COPY run.sh /bin/
 
-ENTRYPOINT /bin/run.sh
+ENTRYPOINT ["/bin/run.sh"]

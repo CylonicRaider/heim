@@ -1,21 +1,28 @@
 #!/bin/sh
 
+log () { echo "$*" >&2; }
+
 set -e
+
+[ $# -eq 0 ] && set -- update-go update-js compact
 
 cd /srv/heim/_deps
 
+log "*** Merging split-apart files..."
 node_modules/.bin/frankenstein recombine -v
 
-./deps.sh update-go ..
-./deps.sh update-js ..
-./deps.sh compact ..
+for cmd; do
+    log "*** Performing action $cmd..."
+    ./deps.sh "$cmd" ..
+done
 
+log "*** Splitting large files..."
 node_modules/.bin/frankenstein split -v
 
-echo
+log
 
 ./deps.sh print-info ..
 
-echo
-echo OK
-echo
+log
+log OK
+log
