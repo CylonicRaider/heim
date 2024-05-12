@@ -4,7 +4,7 @@ import createReactClass from 'create-react-class'
 import PropTypes from 'prop-types'
 import ReactDOMServer from 'react-dom/server'
 import Autolinker from 'autolinker'
-import twemoji from 'twemoji'
+import twemoji from '@twemoji/api'
 
 import emoji from '../heim/emoji'
 import chat from '../stores/chat'

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import 'string.fromcodepoint'
 import plainUnicodeIndex from 'emoji-annotation-to-unicode'
-import twemoji from 'twemoji'
+import twemoji from '@twemoji/api'
 
 const unicodeIndex = _.mapValues(plainUnicodeIndex, (n) => 'u/' + n)
 _.extend(unicodeIndex, {
