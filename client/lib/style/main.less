@@ -1452,15 +1452,19 @@ iframe.js {
       .emoji {
         height: 19px;
         width: 19px;
-
+        position: relative;
+        z-index: 0;
         transition: transform linear 0.1s,
                     background linear 0.1s,
-                    z-index linear 0.1s;
+                    z-index step-end 0.1s;
 
         &:hover {
           transform: scale(5);
           background-color: rgba(255, 255, 255, 0.25);
           z-index: 100;
+          transition: transform linear 0.1s,
+                      background linear 0.1s,
+                      z-index step-start 0.1s;
           transition-delay: 1s;
         }
       }
