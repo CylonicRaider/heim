@@ -9,6 +9,10 @@ import ui from '../stores/ui'
 import forwardProps from '../util/forwardProps'
 import MessageText from './MessageText'
 
+function pluralize(count, term, plural = term + 's') {
+  return count + ' ' + (count === 1 ? term : plural)
+}
+
 export default createReactClass({
   displayName: 'UserList',
 
@@ -50,6 +54,14 @@ export default createReactClass({
     const humanLurkerCount = (lurkers.get('human') || {size: 0}).size
     const botLurkerCount = (lurkers.get('bot') || {size: 0}).size
 
+    const formatCounter = (cntU, cntD, cntL, people) => {
+      const tooltipParts = []
+      if (cntU) tooltipParts.push(people ? pluralize(cntU, 'person', 'people') : pluralize(cntU, 'bot'))
+      if (cntD) tooltipParts.push(people ? pluralize(cntD, 'duplicate person', 'duplicate people') : pluralize(cntD, 'duplicate bot'))
+      if (cntL) tooltipParts.push(people ? pluralize(cntL, 'lurker') : pluralize(cntL, 'bot lurker'))
+      if (!tooltipParts) tooltipParts.push('(no-one?!)')
+      return <span className="user-counter" title={tooltipParts.join('; ')}>({cntU}{cntD ? '(+' + cntD + ')' : ''}{cntL ? '+' + cntL : ''})</span>
+    }
     const formatUser = (user) => {
       const sessionId = user.get('session_id')
       const selected = this.props.selected.has(sessionId)
@@ -86,13 +98,13 @@ export default createReactClass({
       <div className="user-list" {...forwardProps(this)}>
         {people && (
           <div className="list">
-            <h1>people <span className="user-counter">({humanUniqueCount}{humanDuplicateCount ? '(+' + humanDuplicateCount + ')' : ''}{humanLurkerCount ? '+' + humanLurkerCount : ''})</span></h1>
+            <h1>people {formatCounter(humanUniqueCount, humanDuplicateCount, humanLurkerCount, true)}</h1>
             {people.map(formatUser).toIndexedSeq()}
           </div>
         )}
         {bots && (
           <div className="list">
-            <h1>bots <span className="user-counter">({botCount}{botLurkerCount ? '+' + botLurkerCount : ''})</span></h1>
+            <h1>bots {formatCounter(botCount, 0, botLurkerCount, false)}</h1>
             {bots.map(formatUser).toIndexedSeq()}
           </div>
         )}
