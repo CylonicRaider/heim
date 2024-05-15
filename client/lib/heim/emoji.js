@@ -19,6 +19,7 @@ delete unicodeIndex.iphone
 
 const index = _.extend({}, unicodeIndex, {
   '+1': 'c/plusone',
+  '-1': 'c/minusone',
   'pewpewpew': 'c/pewpewpew',
   'leck': 'c/leck',
   'dealwithit': 'c/dealwithit',
