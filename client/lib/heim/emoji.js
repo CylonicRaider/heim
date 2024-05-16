@@ -63,7 +63,8 @@ export function iconClass(iconID) {
 }
 
 export function nameToUnicode(name) {
-  const code = unicodeIndex[name]
+  // Deliberately using the "full" index to avoid converting, e.g., :+1: to :thumbsup:.
+  const code = index[name]
   if (!code || !/^u\//.test(code)) {
     return null
   }

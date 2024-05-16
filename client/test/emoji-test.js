@@ -18,6 +18,10 @@ describe('emoji', () => {
     it('does not translate custom emoji', () => {
       assert.equal(emoji.nameToUnicode('euphoria'), null)
     })
+
+    it('respects customized Unicode emoji', () => {
+      assert.equal(emoji.nameToUnicode('+1'), null)
+    })
   })
 
   describe('unicodeToIconID', () => {
