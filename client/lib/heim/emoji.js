@@ -3,42 +3,41 @@ import 'string.fromcodepoint'
 import plainUnicodeIndex from 'emoji-annotation-to-unicode'
 import twemoji from '@twemoji/api'
 
-const unicodeIndex = _.mapValues(plainUnicodeIndex, (n) => 'u/' + n)
-_.extend(unicodeIndex, {
-  'spider': 'u/1f577',
-  'fjafjkldskf7jkfdj': 'u/1f577',
-  'orange_heart': 'u/1f9e1',
-  'mobile': unicodeIndex.iphone,
-  'happy': unicodeIndex.smile,
-  'sad': unicodeIndex.cry,
-  'sun': unicodeIndex.sunny,
-  'cowboy': unicodeIndex.cowboy_hat_face,
-  'cowgirl': unicodeIndex.cowboy_hat_face,
+const unicodeIndex = _.extend({}, plainUnicodeIndex, {
+  'spider': '1f577',
+  'fjafjkldskf7jkfdj': '1f577',
+  'orange_heart': '1f9e1',
+  'mobile': plainUnicodeIndex.iphone,
+  'happy': plainUnicodeIndex.smile,
+  'sad': plainUnicodeIndex.cry,
+  'sun': plainUnicodeIndex.sunny,
+  'cowboy': plainUnicodeIndex.cowboy_hat_face,
+  'cowgirl': plainUnicodeIndex.cowboy_hat_face,
 })
 delete unicodeIndex.iphone
 
 const index = _.extend({}, unicodeIndex, {
-  '+1': 'c/plusone',
-  '-1': 'c/minusone',
-  'pewpewpew': 'c/pewpewpew',
-  'leck': 'c/leck',
-  'dealwithit': 'c/dealwithit',
-  'bot': 'c/bot',
-  'shit': 'c/shit',
+  '+1': '~plusone',
+  '-1': '~minusone',
+  'pewpewpew': '~pewpewpew',
+  'leck': '~leck',
+  'dealwithit': '~dealwithit',
+  'bot': '~bot',
+  'shit': '~shit',
 
-  'bronze': 'c/bronze',
-  'bronze!?': 'c/bronze2',
-  'bronze?!': 'c/bronze2',
-  'euphoria': 'c/euphoria',
-  'euphoria!': 'c/euphoric',
+  'bronze': '~bronze',
+  'bronze!?': '~bronze2',
+  'bronze?!': '~bronze2',
+  'euphoria': '~euphoria',
+  'euphoria!': '~euphoric',
 
-  'tumbleweed': 'c/tumbleweed',
-  'tumbleweed2': 'c/tumbleweed2',
-  'tumbleweed!': 'c/tumbleweed2',
+  'tumbleweed': '~tumbleweed',
+  'tumbleweed2': '~tumbleweed2',
+  'tumbleweed!': '~tumbleweed2',
 
-  'chromakode': 'c/chromakode',
-  'greenduck': 'c/greenduck',
-  'xyzzy': 'c/xyzzy',
+  'chromakode': '~chromakode',
+  'greenduck': '~greenduck',
+  'xyzzy': '~xyzzy',
 })
 
 const revIndex = _.invert(index)
@@ -47,11 +46,7 @@ const emojiNames = _.filter(_.map(index, (code, name) => code && _.escapeRegExp(
 const namesRe = new RegExp(':(' + emojiNames.join('|') + '):', 'g')
 
 export function nameToIconID(name) {
-  const code = index[name]
-  if (!code || !/^[uc]\//.test(code)) {
-    return null
-  }
-  return code
+  return index[name] || null
 }
 
 export function iconIDToName(code) {
@@ -59,16 +54,16 @@ export function iconIDToName(code) {
 }
 
 export function iconClass(iconID) {
-  return 'emoji emoji-' + iconID.replace(/^[uc]\//, '')
+  return 'emoji emoji-' + iconID.replace(/^~/, '')
 }
 
 export function nameToUnicode(name) {
   // Deliberately using the "full" index to avoid converting, e.g., :+1: to :thumbsup:.
   const code = index[name]
-  if (!code || !/^u\//.test(code)) {
+  if (!code || /^~/.test(code)) {
     return null
   }
-  return code.substring(2).split('-').map((cp) => String.fromCodePoint(Number.parseInt(cp, 16))).join('')
+  return code.split('-').map((cp) => String.fromCodePoint(Number.parseInt(cp, 16))).join('')
 }
 
 export function unicodeToIconID(string) {
@@ -83,7 +78,7 @@ export function unicodeToIconID(string) {
     string = string.replace(/\ufe0f/g, '')
   }
   // Despite its name, the function handles multi-codepoint emoji correctly
-  return 'u/' + twemoji.convert.toCodePoint(string)
+  return twemoji.convert.toCodePoint(string)
 }
 
 export default {

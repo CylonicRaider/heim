@@ -155,11 +155,11 @@ func normalizeEmoji(nick string) string {
 	indices := possibleEmoji.FindAllStringIndex(nick, 36)
 	for _, item := range indices {
 		s := nick[item[0]+1 : item[1]-1]
-		v := validEmoji[s]
-		if !strings.HasPrefix(v, "u/") {
+		v, ok := validEmoji[s]
+		if !ok || v[0] == '~' {
 			continue
 		}
-		translated, ok := codePointStringToUnicode(v[2:])
+		translated, ok := codePointStringToUnicode(v)
 		if !ok {
 			continue
 		}
