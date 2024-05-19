@@ -48,8 +48,7 @@ const revIndex = _.invert(index)
 // Additionally, we want our emoji IDs to be mappable to Unicode strings that form correct
 // fully-qualified emoji sequences.
 // Therefore, we:
-// - Clean up code point sequences in emoji-annotation-to-unicode to be fully qualified (coming
-//   soon);
+// - Clean up code point sequences in emoji-annotation-to-unicode to be fully qualified;
 // - Normalize code point sequences after they have been isolated by stripping all ZWJs and VS15s
 //   (once a code point sequence has been identified as a single emoji, the two characters only
 //   create the abovementioned confusion) and looking up the correct fully-qualified form;

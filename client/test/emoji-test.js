@@ -4,10 +4,10 @@ import assert from 'assert'
 import emoji from '../lib/heim/emoji'
 
 const referenceEmoji = [
-  { u: '\u25b6', i: '25b6', n: 'arrow_forward', d: 'BMP emoji' },
+  { u: '\u2705', i: '2705', n: 'white_check_mark', d: 'BMP emoji' },
+  { u: '\u25b6\ufe0f', i: '25b6-fe0f', n: 'arrow_forward', d: 'BMP default-text emoji' },
   { u: '\ud83d\udd14', i: '1f514', n: 'bell', d: 'astral emoji' },
-  // The Unicode text is incorrect (note the missing \u200d), but this captures the current behavior.
-  { u: '\ud83d\udc41\ud83d\udde8', i: '1f441-1f5e8', n: 'eye_speech_bubble', d: 'ZWJ sequences' },
+  { u: '\ud83d\udc41\ufe0f\u200d\ud83d\udde8\ufe0f', i: '1f441-fe0f-200d-1f5e8-fe0f', n: 'eye_speech_bubble', d: 'ZWJ sequences' },
   { u: null, i: '~plusone', n: '+1', d: 'customized Unicode emoji' },
   { u: null, i: '~euphoria', n: 'euphoria', d: 'custom emoji' },
 ]
