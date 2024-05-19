@@ -221,7 +221,7 @@ gulp.task('emoji-static', () => {
     }
     return m[1]
   })
-  const emojiCodes = _.uniq(_.concat(_.map(_.values(emoji.index), (n) => n.replace(/^[uc]\//, '')), emojiFiles))
+  const emojiCodes = _.uniq(_.concat(_.map(_.values(emoji.index), (n) => n.replace(/^~/, '')), emojiFiles))
   const lessSource = _.map(_.compact(emojiCodes), (code) => {
     const twemojiName = code.replace(leadingZeros, '')
     let emojiPath = './res/emoji/' + twemojiName + '.svg'
