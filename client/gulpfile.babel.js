@@ -18,6 +18,7 @@ import browserify from 'browserify'
 import envify from 'envify/custom'
 import serve from 'gulp-serve'
 import fs from 'fs'
+import path from 'path'
 import ReactHTMLEmail from 'react-html-email'
 import { exec } from 'child_process'
 import colors from 'ansi-colors'
@@ -211,27 +212,43 @@ gulp.task('heim-less', () => {
 })
 
 gulp.task('emoji-static', () => {
+  function gatherPaths(...dirs) {
+    const result = {}
+    _.each(dirs, (dir) => {
+      const seen = {}
+      _.each(fs.readdirSync(dir), (fn) => {
+        if (!/\.svg$/.test(fn)) return
+
+        let stem = fn.slice(0, -4)
+        // See the comment on emoji.codepointIndex for why we summarily discard those code points.
+        if (/^[0-9a-f]+(-[0-9a-f]+)*$/.test(stem)) stem = stem.replace(/-(200d|fe0f)\b/g, '')
+
+        if (seen[stem]) {
+          throw new Error(`Duplicate emoji in source ${dir} for stem ${stem}: ${seen[stem]} and ${fn}`)
+        }
+        seen[stem] = fn
+
+        result[stem] = path.join(dir, fn)
+      })
+    })
+    return result
+  }
+
   const emoji = require('./lib/heim/emoji').default
-  const twemojiPath = 'node_modules/.resources/emoji-svg/'
-  const leadingZeros = /^0*/
-  const emojiFiles = _.map(fs.readdirSync(twemojiPath), (p) => {
-    const m = /^([0-9a-f-]+)\.svg$/.exec(p)
-    if (!m) {
-      return null
+  const twemojiPath = 'node_modules/.resources/emoji-svg'
+  const localPath = 'res/emoji'
+
+  const emojiFiles = gatherPaths(twemojiPath, localPath)
+
+  // Sanity-check custom emoji
+  _.each(emoji.index, (code, name) => {
+    if (/^~/.test(code) && !emojiFiles[code.substring(1)]) {
+      throw new Error(`Picture for custom emoji ${name} (expected ${code}.svg) not found!`)
     }
-    return m[1]
   })
-  const emojiCodes = _.uniq(_.concat(_.map(_.values(emoji.index), (n) => n.replace(/^~/, '')), emojiFiles))
-  const lessSource = _.map(_.compact(emojiCodes), (code) => {
-    const twemojiName = code.replace(leadingZeros, '')
-    let emojiPath = './res/emoji/' + twemojiName + '.svg'
-    if (!fs.existsSync(emojiPath)) {
-      emojiPath = twemojiPath + twemojiName + '.svg'
-    }
-    if (!fs.existsSync(emojiPath)) {
-      return ''
-    }
-    return '.emoji-' + code + ' { background-image: data-uri("' + emojiPath + '") }'
+
+  const lessSource = _.map(emojiFiles, (filepath, stem) => {
+    return '.emoji-' + stem + ' { background-image: data-uri("' + filepath + '") }'
   }).join('\n')
 
   const lessFile = gfile('emoji.less', lessSource, {src: true})
@@ -241,7 +258,9 @@ gulp.task('emoji-static', () => {
     .pipe(gulp.dest(heimStaticDest))
 
   const indexFile = gfile('emoji.json', JSON.stringify(emoji.index), {src: true})
-    .pipe(gulp.dest(heimDest))
+    .pipe(gulp.dest(heimStaticDest))
+    .pipe(gzip())
+    .pipe(gulp.dest(heimStaticDest))
 
   return merge([lessFile, indexFile])
 })

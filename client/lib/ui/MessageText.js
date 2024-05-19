@@ -77,17 +77,17 @@ export default createReactClass({
     }
 
     html = html.replace(emoji.namesRe, (match, name) => (
-      ReactDOMServer.renderToStaticMarkup(<span className={emoji.iconClass(emoji.nameToIconID(name))} title={match}>{match}</span>)
+      ReactDOMServer.renderToStaticMarkup(<span className={emoji.iconClass(emoji.nameToEmojiID(name))} title={match}>{match}</span>)
     ))
 
     html = twemoji.replace(html, (match) => {
-      const iconID = emoji.unicodeToIconID(match)
-      if (!iconID) {
+      const emojiID = emoji.unicodeToEmojiID(match)
+      if (!emojiID) {
         return match
       }
-      let emojiName = emoji.iconIDToName(iconID)
+      let emojiName = emoji.emojiIDToName(emojiID)
       emojiName = emojiName ? ':' + emojiName + ':' : match
-      return ReactDOMServer.renderToStaticMarkup(<span className={emoji.iconClass(iconID)} title={emojiName}>{match}</span>)
+      return ReactDOMServer.renderToStaticMarkup(<span className={emoji.iconClass(emojiID)} title={emojiName}>{match}</span>)
     })
 
     if (!this.props.onlyEmoji) {

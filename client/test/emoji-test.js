@@ -22,23 +22,25 @@ function runTests(label, callback, filter = null) {
 }
 
 describe('emoji', () => {
-  runTests('nameToIconID', (record) => {
-    assert.equal(emoji.nameToIconID(record.n), record.i)
+  runTests('nameToEmojiID', (record) => {
+    assert.equal(emoji.nameToEmojiID(record.n), record.i)
   })
 
-  runTests('iconIDToName', (record) => {
-    assert.equal(emoji.iconIDToName(record.i), record.n)
+  runTests('emojiIDToName', (record) => {
+    assert.equal(emoji.emojiIDToName(record.i), record.n)
   })
 
   runTests('iconClass', (record) => {
-    assert.ok(/^emoji emoji-[a-z0-9-]+$/.test(emoji.iconClass(record.i)))
+    const iconClass = emoji.iconClass(record.i)
+    assert.ok(/^emoji emoji-[a-z0-9-]+$/.test(iconClass))
+    assert.ok(!/^\b(200d|fe0f)\b/.test(iconClass))
   })
 
   runTests('nameToUnicode', (record) => {
     assert.equal(emoji.nameToUnicode(record.n), record.u)
   })
 
-  runTests('unicodeToIconID', (record) => {
-    assert.equal(emoji.unicodeToIconID(record.u), record.i)
+  runTests('unicodeToEmojiID', (record) => {
+    assert.equal(emoji.unicodeToEmojiID(record.u), record.i)
   }, (record) => record.u)
 })

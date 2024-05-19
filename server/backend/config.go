@@ -202,7 +202,7 @@ func (cfg *ServerConfig) Heim(ctx scope.Context) (*proto.Heim, error) {
 		return nil, err
 	}
 
-	emojiPath := filepath.Join(cfg.Settings.StaticPath, "emoji.json")
+	emojiPath := filepath.Join(cfg.Settings.StaticPath, "static", "emoji.json")
 	if err = proto.LoadEmoji(emojiPath); err != nil {
 		logging.Logger(ctx).Printf("error loading %s: %s\n", emojiPath, err)
 	}
