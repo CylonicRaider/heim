@@ -449,7 +449,7 @@ const Message = createReactClass({
       content = _.trim(content.replace(/^\/me ?/, ''))
       messageRender = (
         <div className="message">
-          <MessageText content={content} className="message-emote" style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 95%)'}} />
+          <MessageText content={content} className="message-text message-emote" style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 95%)'}} />
           {messageAgo}
         </div>
       )
@@ -458,7 +458,7 @@ const Message = createReactClass({
       content = _.trim(content.replace(/^\/vote ?/, ''))
       messageRender = (
         <div className="message">
-          <MessageText content={content} />
+          <MessageText content={content} className="message-text" />
           {messageAgo}
           <InlineVoting message={message} tree={this.props.tree} />
         </div>
@@ -471,7 +471,7 @@ const Message = createReactClass({
       messageRender = (
         <div className="message-tall">
           <div className="message expando" onClick={this[actionMethod]}>
-            <MessageText content={content} />
+            <MessageText content={content} className="message-text" />
             <FastButton className="expand" onClick={this[actionMethod]}>{action}</FastButton>
           </div>
           {messageAgo}
@@ -480,7 +480,7 @@ const Message = createReactClass({
     } else {
       messageRender = (
         <div className="message">
-          <MessageText ref="message" content={content} />
+          <MessageText ref="message" content={content} className="message-text" />
           {messageAgo}
         </div>
       )
