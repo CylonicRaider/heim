@@ -84,7 +84,7 @@ func TestNormalizeNick(t *testing.T) {
 	})
 
 	Convey("Emoji are collapsed", t, func() {
-		validEmoji["+1"] = "+1"
+		validEmoji["+1"] = "~plusone"
 		name := make([]byte, MaxNickLength+len(":+1:")-1)
 		for i := 0; i < MaxNickLength+len(":+1:")-1; i++ {
 			name[i] = 'a'
@@ -102,7 +102,8 @@ func TestNormalizeNick(t *testing.T) {
 }
 
 func TestNickLen(t *testing.T) {
-	validEmoji["greenduck"] = "greenduck"
+	validEmoji["greenduck"] = "~greenduck"
+
 	Convey("Length of nicks without emoji are correct", t, func() {
 		name := ":greenduck"
 		So(nickLen(name), ShouldEqual, len(name))
@@ -125,5 +126,35 @@ func TestNickLen(t *testing.T) {
 	Convey("Testing boundary cases", t, func() {
 		name := ":greenduck:f"
 		So(nickLen(name), ShouldEqual, 2)
+	})
+}
+
+func TestNormalizeEmoji(t *testing.T) {
+	validEmoji["greenduck"] = "~greenduck"
+	validEmoji["apple"] = "1f34e"
+
+	Convey("Plain nicks pass through", t, func() {
+		name := "greenduck"
+		So(normalizeEmoji(name), ShouldEqual, name)
+	})
+
+	Convey("Unicode emoji shortcodes are normalized", t, func() {
+		name := "green:apple:duck"
+		So(normalizeEmoji(name), ShouldEqual, "green\U0001F34Educk")
+	})
+
+	Convey("Custom emoji are unmodified", t, func() {
+		name := "greenduck:greenduck:"
+		So(normalizeEmoji(name), ShouldEqual, name)
+	})
+
+	Convey("Testing degenerate case", t, func() {
+		name := strings.Repeat(":", 1000000)
+		So(normalizeEmoji(name), ShouldEqual, name)
+	})
+
+	Convey("Testing boundary case", t, func() {
+		name := ":apple:apple:apple:"
+		So(normalizeEmoji(name), ShouldEqual, "\U0001F34Eapple\U0001F34E")
 	})
 }
