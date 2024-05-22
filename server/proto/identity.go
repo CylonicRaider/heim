@@ -11,7 +11,7 @@ import (
 
 var validEmoji = map[string]string{}
 
-var possibleEmoji = regexp.MustCompile(":[\\S]+?:")
+var possibleEmoji = regexp.MustCompile(":[^\\s:]+?:")
 
 const MaxNickLength = 36
 
@@ -70,19 +70,25 @@ func LoadEmoji(path string) error {
 }
 
 func nickLen(nick string) int {
-	indices := possibleEmoji.FindAllStringIndex(nick, 36)
-	for _, item := range indices {
-		s := nick[item[0]+1 : item[1]-1]
-		_, ok := validEmoji[s]
-		if ok {
-			ret := 1 + nickLen(nick[0:item[0]])
-			if item[1] < len(nick) {
-				ret += nickLen(nick[item[1]:])
-			}
-			return ret
+	var result = 0
+	for {
+		m := possibleEmoji.FindStringIndex(nick)
+		if m == nil {
+			break
 		}
+		result += utf8.RuneCountInString(nick[:m[0]])
+
+		_, ok := validEmoji[nick[m[0]+1 : m[1]-1]]
+		if !ok {
+			result += utf8.RuneCountInString(nick[m[0]:m[1]-1])
+			nick = nick[m[1]-1:]
+			continue
+		}
+
+		result += 1
+		nick = nick[m[1]:]
 	}
-	return utf8.RuneCountInString(nick)
+	return result + utf8.RuneCountInString(nick)
 }
 
 // NormalizeNick validates and normalizes a proposed name from a user.
@@ -152,22 +158,30 @@ func codePointStringToUnicode(codepoints string) (string, bool) {
 // normalizeEmoji replaces emoji shortcodes with corresponding Unicode
 // code points
 func normalizeEmoji(nick string) string {
-	indices := possibleEmoji.FindAllStringIndex(nick, 36)
-	for _, item := range indices {
-		s := nick[item[0]+1 : item[1]-1]
-		v, ok := validEmoji[s]
-		if !ok || v[0] == '~' {
-			continue
+	result := ""
+	for {
+		m := possibleEmoji.FindStringIndex(nick)
+		if m == nil {
+			break
 		}
-		translated, ok := codePointStringToUnicode(v)
+		shortcode := nick[m[0]+1 : m[1]-1]
+
+		v, ok := validEmoji[shortcode]
 		if !ok {
+			result += nick[:m[1]-1]
+			nick = nick[m[1]-1:]
 			continue
 		}
-		ret := nick[:item[0]] + translated
-		if item[1] < len(nick) {
-			ret += normalizeEmoji(nick[item[1]:])
+
+		result += nick[:m[0]]
+		if v[0] == '~' {
+			result += nick[m[0]:m[1]]
+		} else if translated, ok := codePointStringToUnicode(v); !ok {
+			panic("Invalid putative-Unicode emoji :" + shortcode + ": (" + v + ")")
+		} else {
+			result += translated
 		}
-		return ret
+		nick = nick[m[1]:]
 	}
-	return nick
+	return result + nick + ""
 }

@@ -92,10 +92,7 @@ func TestNormalizeNick(t *testing.T) {
 		name[1] = ' '
 		name[4] = ' '
 		name[5] = ' '
-		name[len(name)-len(":+1:")] = ':'
-		name[len(name)-len(":+1:")+1] = '+'
-		name[len(name)-len(":+1:")+2] = '1'
-		name[len(name)-len(":+1:")+3] = ':'
+		copy(name[len(name)-len(":+1:"):], ":+1:")
 		expected := "a aa " + string(name[6:])
 		So(pass(string(name)), ShouldEqual, expected)
 	})
@@ -103,6 +100,7 @@ func TestNormalizeNick(t *testing.T) {
 
 func TestNickLen(t *testing.T) {
 	validEmoji["greenduck"] = "~greenduck"
+	validEmoji["apple"] = "1f34e"
 
 	Convey("Length of nicks without emoji are correct", t, func() {
 		name := ":greenduck"
@@ -126,6 +124,16 @@ func TestNickLen(t *testing.T) {
 	Convey("Testing boundary cases", t, func() {
 		name := ":greenduck:f"
 		So(nickLen(name), ShouldEqual, 2)
+	})
+
+	Convey("Testing overlapping shortcodes", t, func() {
+		name := ":greenduck:apple:"
+		So(nickLen(name), ShouldEqual, 1 + len("apple:"))
+	})
+
+	Convey("Testing partially-valid overlapping shortcodes", t, func() {
+		name := ":no!such!emoji:greenduck:"
+		So(nickLen(name), ShouldEqual, len(":no!such!emoji") + 1)
 	})
 }
 
@@ -156,5 +164,15 @@ func TestNormalizeEmoji(t *testing.T) {
 	Convey("Testing boundary case", t, func() {
 		name := ":apple:apple:apple:"
 		So(normalizeEmoji(name), ShouldEqual, "\U0001F34Eapple\U0001F34E")
+	})
+
+	Convey("Testing overlapping shortcodes", t, func() {
+		name := ":greenduck:apple:"
+		So(normalizeEmoji(name), ShouldEqual, name)
+	})
+
+	Convey("Testing partially-valid overlapping shortcodes", t, func() {
+		name := ":no!such!emoji:apple:greenduck:apple:"
+		So(normalizeEmoji(name), ShouldEqual, ":no!such!emoji\U0001F34Egreenduck\U0001F34E")
 	})
 }
