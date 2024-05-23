@@ -116,8 +116,13 @@ func TestNickLen(t *testing.T) {
 		So(nickLen(name), ShouldEqual, len("foobar")+2)
 	})
 
-	Convey("Testing degenerate cases", t, func() {
+	Convey("Testing degenerate case", t, func() {
 		name := strings.Repeat(":", 1000000)
+		So(nickLen(name), ShouldEqual, len(name))
+	})
+
+	Convey("Testing another degenerate case", t, func() {
+		name := strings.Repeat(":!", 500000)
 		So(nickLen(name), ShouldEqual, len(name))
 	})
 
@@ -158,6 +163,11 @@ func TestNormalizeEmoji(t *testing.T) {
 
 	Convey("Testing degenerate case", t, func() {
 		name := strings.Repeat(":", 1000000)
+		So(normalizeEmoji(name), ShouldEqual, name)
+	})
+
+	Convey("Testing another degenerate case", t, func() {
+		name := strings.Repeat(":!", 500000)
 		So(normalizeEmoji(name), ShouldEqual, name)
 	})
 

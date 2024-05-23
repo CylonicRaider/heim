@@ -158,7 +158,7 @@ func codePointStringToUnicode(codepoints string) (string, bool) {
 // normalizeEmoji replaces emoji shortcodes with corresponding Unicode
 // code points
 func normalizeEmoji(nick string) string {
-	result := ""
+	sb := strings.Builder{}
 	for {
 		m := possibleEmoji.FindStringIndex(nick)
 		if m == nil {
@@ -168,20 +168,21 @@ func normalizeEmoji(nick string) string {
 
 		v, ok := validEmoji[shortcode]
 		if !ok {
-			result += nick[:m[1]-1]
+			sb.WriteString(nick[:m[1]-1])
 			nick = nick[m[1]-1:]
 			continue
 		}
 
-		result += nick[:m[0]]
+		sb.WriteString(nick[:m[0]])
 		if v[0] == '~' {
-			result += nick[m[0]:m[1]]
+			sb.WriteString(nick[m[0]:m[1]])
 		} else if translated, ok := codePointStringToUnicode(v); !ok {
 			panic("Invalid putative-Unicode emoji :" + shortcode + ": (" + v + ")")
 		} else {
-			result += translated
+			sb.WriteString(translated)
 		}
 		nick = nick[m[1]:]
 	}
-	return result + nick + ""
+	sb.WriteString(nick)
+	return sb.String()
 }
