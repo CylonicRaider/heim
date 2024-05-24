@@ -46,6 +46,9 @@ func init() {
 	if debugStackTraces {
 		SetDefaultStackMode(StackFail)
 	}
+	proto.ApplyEmoji(map[string]string{
+		"apple": "1f34e",
+	})
 }
 
 var (
@@ -1540,6 +1543,14 @@ func testAccountChangeName(s *serverUnderTest) {
 		connM.expectPing()
 		connM.expectSnapshot(s.backend.Version(), nil, nil)
 		connM.Close()
+
+		// Emoji normalization
+		s.Reconnect(conn)
+		conn.expectPing()
+		conn.expectSnapshot(s.backend.Version(), nil, nil)
+		conn.send("1", "change-name", `{"name":"real:apple:%s"}`, nonce)
+		conn.expect("1", "change-name-reply", "{\"name\":\"real\U0001F34E%s\"}", nonce)
+		conn.Close()
 	})
 }
 

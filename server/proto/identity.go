@@ -56,8 +56,8 @@ type IdentityView struct {
 	ServerEra string `json:"server_era"` // the era of the server that captured this view
 }
 
-// LoadEmoji takes a json key-value object stored in the file at path and
-// unmarshals it into the global validEmoji map[string]string.
+// LoadEmoji takes a json key-value object stored in the file at path and unmarshals it into
+// the global validEmoji mapping.
 func LoadEmoji(path string) error {
 	raw, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -67,6 +67,26 @@ func LoadEmoji(path string) error {
 		return err
 	}
 	return nil
+}
+
+// ApplyEmoji adds the given name-to-Unicode mappings into the emoji normalization table.
+// For each mapping, the key is an emoji shortcode (without surrounding colons, like
+// "astronaut") and the value is one of:
+// - The empty string to delete any shortcode mapping;
+// - A string of hex-encoded Unicode codepoints separated by hyphens denoting the
+//   corresponding Unicode string (like "1f9d1-200d-1f680");
+// - A string preceded by a tilde to denote a custom emoji (like "~euphorian-in-space").
+func ApplyEmoji(emoji map[string]string) {
+	if validEmoji == nil {
+		validEmoji = map[string]string{}
+	}
+	for name, value := range emoji {
+		if value == "" {
+			delete(validEmoji, name)
+		} else {
+			validEmoji[name] = value
+		}
+	}
 }
 
 func nickLen(nick string) int {
@@ -97,7 +117,7 @@ func nickLen(nick string) int {
 //
 // 1. Remove leading and trailing whitespace
 // 2. Collapse all internal whitespace to single spaces
-// 3. Replace all
+// 3. Close all unclosed bidi control codes
 func NormalizeNick(name string) (string, error) {
 	name = strings.TrimSpace(name)
 	if len(name) == 0 {
@@ -108,6 +128,19 @@ func NormalizeNick(name string) (string, error) {
 		return "", ErrInvalidNick
 	}
 	return normalizeBidi(normalized), nil
+}
+
+// NormalizeNickAndEmoji validates and normalizes a proposed name from a user
+// in a more extensive manner than NormalizeNick. In addition to
+// NormalizeNick's steps, this does:
+//
+// 4. Replace emoji shortcodes with corresponding Unicode code points
+func NormalizeNickAndEmoji(name string) (string, error) {
+	result, err := NormalizeNick(name)
+	if err != nil {
+		return "", err
+	}
+	return normalizeEmoji(result), nil
 }
 
 // normalizeBidi attempts to prevent names from using bidi control codes to

@@ -583,7 +583,7 @@ func (s *session) handleChangeNameCommand(msg *proto.ChangeNameCommand) *respons
 		return &response{err: proto.ErrNotLoggedIn}
 	}
 
-	name, err := proto.NormalizeNick(msg.Name)
+	name, err := proto.NormalizeNickAndEmoji(msg.Name)
 	if err != nil {
 		return &response{err: err}
 	}
@@ -591,7 +591,7 @@ func (s *session) handleChangeNameCommand(msg *proto.ChangeNameCommand) *respons
 	if err := s.backend.AccountManager().ChangeName(s.ctx, s.client.Account.ID(), name); err != nil {
 		return &response{err: err}
 	}
-	return &response{packet: &proto.ChangeNameReply{Name: msg.Name}}
+	return &response{packet: &proto.ChangeNameReply{Name: name}}
 }
 
 func (s *session) handleChangePasswordCommand(msg *proto.ChangePasswordCommand) *response {
