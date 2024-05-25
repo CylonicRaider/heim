@@ -98,14 +98,18 @@ func nickLen(nick string) int {
 		}
 		result += utf8.RuneCountInString(nick[:m[0]])
 
-		_, ok := validEmoji[nick[m[0]+1 : m[1]-1]]
+		v, ok := validEmoji[nick[m[0]+1 : m[1]-1]]
 		if !ok {
 			result += utf8.RuneCountInString(nick[m[0]:m[1]-1])
 			nick = nick[m[1]-1:]
 			continue
 		}
 
-		result += 1
+		if v[0] == '~' {
+			result += 1
+		} else {
+			result += 1 + strings.Count(v, "-")
+		}
 		nick = nick[m[1]:]
 	}
 	return result + utf8.RuneCountInString(nick)

@@ -101,6 +101,7 @@ func TestNormalizeNick(t *testing.T) {
 func TestNickLen(t *testing.T) {
 	validEmoji["greenduck"] = "~greenduck"
 	validEmoji["apple"] = "1f34e"
+	validEmoji["astronaut"] = "1f9d1-200d-1f680"
 
 	Convey("Length of nicks without emoji are correct", t, func() {
 		name := ":greenduck"
@@ -114,6 +115,11 @@ func TestNickLen(t *testing.T) {
 		So(nickLen(name), ShouldEqual, 1+len("greenduck:"))
 		name = "foo:greenduck::greenduck:bar"
 		So(nickLen(name), ShouldEqual, len("foobar")+2)
+	})
+
+	Convey("Length of nicks with multi-codepoint emoji are correct", t, func() {
+		name := ":astronaut:"
+		So(nickLen(name), ShouldEqual, 3)
 	})
 
 	Convey("Testing degenerate case", t, func() {
@@ -145,6 +151,7 @@ func TestNickLen(t *testing.T) {
 func TestNormalizeEmoji(t *testing.T) {
 	validEmoji["greenduck"] = "~greenduck"
 	validEmoji["apple"] = "1f34e"
+	validEmoji["astronaut"] = "1f9d1-200d-1f680"
 
 	Convey("Plain nicks pass through", t, func() {
 		name := "greenduck"
@@ -154,6 +161,11 @@ func TestNormalizeEmoji(t *testing.T) {
 	Convey("Unicode emoji shortcodes are normalized", t, func() {
 		name := "green:apple:duck"
 		So(normalizeEmoji(name), ShouldEqual, "green\U0001F34Educk")
+	})
+
+	Convey("Multi-codepoint Unicode emoji shortcuts are normalized", t, func() {
+		name := ":astronaut:"
+		So(normalizeEmoji(name), ShouldEqual, "\U0001F9D1\u200D\U0001F680")
 	})
 
 	Convey("Custom emoji are unmodified", t, func() {
