@@ -6,15 +6,15 @@ function logPacket(kind, data, highlight) {
   /* eslint-disable no-console */
   const group = highlight ? 'group' : 'groupCollapsed'
   const colors = {
-    'send': 'green',
-    'recv': '#06f',
-    'buffered-send': 'gray',
+    'send': 'rgba(0, 255, 0, 0.25)',
+    'recv': 'rgba(0, 128, 255, 0.25)',
+    'buffered-send': 'rgba(128, 128, 128, 0.25)',
   }
   console[group](
-    '%c%s %c%s %c%s',
-    'color: ' + colors[kind], kind,
-    'color: black', data.type,
-    highlight ? 'background: #efb' : 'color: gray; font-weight: normal', data.id ? '(id: ' + data.id + ')' : '(no id)'
+    '%c%s %s%c %s',
+    'background: ' + colors[kind], kind,
+    data.type,
+    highlight ? '' : 'font-weight: normal', data.id ? '(id: ' + data.id + ')' : '(no id)'
   )
   console.log(data)
   console.log(JSON.stringify(data, true, 2))
