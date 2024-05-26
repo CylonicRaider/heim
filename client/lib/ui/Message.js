@@ -235,7 +235,7 @@ const Message = createReactClass({
       )
     }
 
-    let children = message.get('children')
+    let children = message.get('children').filter((nodeId) => !this.props.tree.get(nodeId).get('deleted'))
     const paneData = this.state.paneData
     const count = this.props.tree.getCount(this.props.nodeId)
     const focused = paneData.get('focused')
