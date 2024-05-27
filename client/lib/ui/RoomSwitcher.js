@@ -33,11 +33,11 @@ export default createReactClass({
 
   apply(ev) {
     if (this.state.valid) {
-      // Only reset after the browser acted upon our link
-      setImmediate(this.reset)
-    } else {
-      ev.preventDefault()
+      const url = '/room/' + this.state.text + '/' + uiwindow.location.search + uiwindow.location.hash
+      window.open(url, '_blank')
+      this.reset()
     }
+    ev.preventDefault()
   },
 
   reset() {
