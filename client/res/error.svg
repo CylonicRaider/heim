@@ -19,7 +19,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -27,13 +26,12 @@
      d="m 6.9999973,0.07310706 c -3.813822,0 -6.92653616,3.11272194 -6.92653616,6.92644634 0,3.8137786 3.11271416,6.9273306 6.92653616,6.9273306 3.8137767,0 6.9265347,-3.113552 6.9265347,-6.9273306 0,-3.8137244 -3.112758,-6.92644634 -6.9265347,-6.92644634 z"
      id="path3004-90-9-2-6-5-7-76"
      style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#863333;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:65;marker:none;enable-background:accumulate" />
-  <text
-     xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:13.17858028px;line-height:125%;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans, Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     x="5.1209636"
-     y="11.617034"
-     id="text4359-7-9-0-9"><tspan
-       id="tspan4361-9-5-7-0"
-       x="5.1209636"
-       y="11.617034">!</tspan></text>
+  <g
+     aria-label="!"
+     id="text4359-7-9-0-9"
+     style="font-weight:bold;font-size:13.1786px;line-height:125%;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans, Bold';letter-spacing:0px;word-spacing:0px;fill:#ffffff;stroke-width:1px">
+    <path
+       d="M 7.7978627,8.4961299 H 6.2277584 L 5.8995809,2.2092779 H 8.1260402 Z M 5.8738415,10.69685 q 0,-0.302438 0.083653,-0.508354 0.090088,-0.2123497 0.2445245,-0.3410468 0.1544365,-0.1286971 0.3603518,-0.1866108 0.2059153,-0.057914 0.4440049,-0.057914 0.2252199,0 0.4247003,0.057914 0.2059154,0.057914 0.3603518,0.1866108 0.1544365,0.1286971 0.2445245,0.3410468 0.090088,0.205916 0.090088,0.508354 0,0.289568 -0.090088,0.495484 -0.090088,0.205915 -0.2445245,0.341047 -0.1544364,0.135132 -0.3603518,0.193045 -0.1994804,0.06435 -0.4247003,0.06435 -0.2380896,0 -0.4440049,-0.06435 Q 6.3564555,11.668513 6.202019,11.533381 6.0475825,11.398249 5.9574945,11.192334 5.8738415,10.986418 5.8738415,10.69685 Z"
+       id="path10" />
+  </g>
 </svg>
