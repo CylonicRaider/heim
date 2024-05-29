@@ -33,14 +33,16 @@ export default createReactClass({
       t = moment.unix(t)
     }
 
-    let display = '\u200b'
+    let display
     let className
     if (moment(this.state.now).diff(t, 'minutes') === 0) {
-      display += this.props.nowText
+      display = this.props.nowText
       className = 'now'
     } else {
-      display += t.locale('en-short').from(this.state.now, true)
+      display = t.locale('en-short').from(this.state.now, true)
     }
+
+    if (display) display = '\u200b' + display
 
     return (
       <time dateTime={t.toISOString()} title={t.format('MMMM Do YYYY, h:mm:ss a')} {...forwardProps(this.props)} className={classNames(className, this.props.className)}>
