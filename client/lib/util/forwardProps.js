@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-const forwardPropRe = /^(id|className|title|data-.*)$/
+const forwardPropRe = /^(id|name|className|title|data-.*)$/
 
 export default function forwardProps(self, whitelist) {
   whitelist = whitelist || {}

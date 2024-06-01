@@ -918,13 +918,20 @@ iframe.js {
       .button-icon('../../res/to-room.svg', 18px);
     }
 
+    .room-switcher-apply-here {
+      display: inline-block;
+      cursor: pointer;
+      .button-icon('../../res/change-room.svg', 18px);
+    }
+
     .room-switcher-cancel {
       .button-icon('../../res/to-room-cancel.svg', 18px);
     }
 
-    .room-switcher-expand, .room-switcher-apply, .room-switcher-cancel {
+    .room-switcher-expand, .room-switcher-apply, .room-switcher-apply-here,
+    .room-switcher-cancel {
       position: relative;
-      margin: auto 0;
+      margin: auto 0 auto 6px;
       border-radius: 2px;
       .touchable-bg(@neutral-color);
       .larger-touch-target(7.5px, 10px);
@@ -934,12 +941,16 @@ iframe.js {
       }
     }
 
+    .room-switcher-expand, .room-switcher-cancel {
+      margin-left: 0px;
+    }
+
     .room-switcher-prompt {
       margin: auto 0 auto 6px;
     }
 
     .room-switcher-inner {
-      margin: auto 6px;
+      margin: auto 0 auto 6px;
       background: white;
       box-shadow: 0 0 5px fade(black, 50%);
       transition: box-shadow 0.1s ease;
