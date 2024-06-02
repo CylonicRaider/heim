@@ -21,8 +21,14 @@ export default createReactClass({
     if (ev.key === 'Escape') {
       this.reset()
     } else if (ev.key === 'Enter') {
-      this.apply(!ev.shiftKey)
-      ev.preventDefault()
+      // HACK: React defers hadling this event, such that it happens outside of a user interaction context,
+      //       such that trying to open in a new tab triggers popup blocking. Hence, we do *not* intercept
+      //       Enter-with-no-Shift here, ensure the new-tab button is the form's default submit button,
+      //       and wait for the form submit event instead.
+      if (ev.shiftKey) {
+        this.apply(false)
+        ev.preventDefault()
+      }
     }
     ev.stopPropagation()
   },
@@ -80,6 +86,7 @@ export default createReactClass({
             &amp;<input type="text" autoFocus className="room-switcher-room" value={this.state.text} onKeyDown={this.onKeyDown} onChange={this.onChange} />
           </span>
         )}
+        {/* WARNING: Implicitly submitting the form (by pressing Enter in the input) must trigger the new-tab button; see onKeyDown(). */}
         {this.state.expanded && <FastButton fastTouch type="submit" title="open room in new tab" name="apply" className="room-switcher-apply" />}
         {this.state.expanded && <FastButton fastTouch type="submit" formtarget="_top" title="open room in this tab" name="apply-here" className="room-switcher-apply-here" />}
       </form>
