@@ -61,10 +61,10 @@ export default createReactClass({
     return (
       <span className="inline-voting">
         <FastButton onClick={this.upvote} className="approve">
-          <MessageText content=":thumbsup:" onlyEmoji /> {upvotes}
+          <MessageText content=":+1:" onlyEmoji /> {upvotes}
         </FastButton>
         <FastButton onClick={this.downvote} className="disapprove">
-          <MessageText content=":thumbsdown:" onlyEmoji /> {downvotes}
+          <MessageText content=":-1:" onlyEmoji /> {downvotes}
         </FastButton>
         <span className={resultClass}> {result}</span>
         {result !== 0 && <small>{percentText}</small>}
