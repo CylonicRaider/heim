@@ -4,9 +4,7 @@ import plainUnicodeIndex from 'emoji-annotation-to-unicode'
 import twemoji from '@twemoji/api'
 
 const unicodeIndex = _.extend({}, plainUnicodeIndex, {
-  'spider': '1f577',
-  'fjafjkldskf7jkfdj': '1f577',
-  'orange_heart': '1f9e1',
+  'fjafjkldskf7jkfdj': plainUnicodeIndex.spider,
   'mobile': plainUnicodeIndex.iphone,
   'happy': plainUnicodeIndex.smile,
   'sad': plainUnicodeIndex.cry,
