@@ -1130,6 +1130,9 @@ iframe.js {
       bottom: 0;
       width: 7px;
       transition: all .25s ease;
+      // .right collides with the user list button's container, and this
+      // particular property seems to break something.
+      align-self: unset;
 
       &.left {
         left: -6px;
