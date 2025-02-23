@@ -5,6 +5,7 @@ import twemoji from '@twemoji/api'
 
 const unicodeIndex = _.extend({}, plainUnicodeIndex, {
   'fjafjkldskf7jkfdj': plainUnicodeIndex.spider,
+  'ghoti': plainUnicodeIndex.fish,
   'mobile': plainUnicodeIndex.iphone,
   'happy': plainUnicodeIndex.smile,
   'sad': plainUnicodeIndex.cry,
