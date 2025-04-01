@@ -566,10 +566,10 @@ body.welcome {
         animation-duration: .65s;
         @keyframes tron {
           0% {
-            transform: translateY(100%) scaleY(0);
+            transform: translateX(100%) scaleX(0);
           }
           50% {
-            transform: translateY(100%) scaleY(0);
+            transform: translateX(100%) scaleX(0);
           }
           100% {
             transform: none;
@@ -1139,55 +1139,85 @@ body.error-page {
     transform: perspective(0);  // fix overflow clipping in Chrome
 
     & > div {
-      display: inline-block;
-      width: 100% / 5;
-      height: 100%;
+      display: block;
+      width: 100%;
+      height: 100% / 5;
     }
 
     .a {
-      background: #d95d3f;
+      background: #5bcefa;
     }
 
     .b {
-      background: #f29526;
+      background: #f5a9b8;
     }
 
     .c {
-      background: #5abe6b;
+      background: #eeeeee;
     }
 
     .d {
-      background: #4d97cb;
+      background: #f5a9b8;
     }
 
     .e {
-      background: #7f62b6;
+      background: #5bcefa;
     }
   }
 
-  @keyframes scramble {
+  @keyframes scramble-a {
     0% {
+      background: #5bcefa;
+    }
+    50% {
       background: #d95d3f;
     }
-
-    20% {
+    100% {
+      background: #5bcefa;
+    }
+  }
+  @keyframes scramble-b {
+    0% {
+      background: #f5a9b8;
+    }
+    50% {
       background: #f29526;
     }
-
-    40% {
+    100% {
+      background: #f5a9b8;
+    }
+  }
+  @keyframes scramble-c {
+    0% {
+      background: #eeeeee;
+    }
+    50% {
       background: #5abe6b;
     }
-
-    60% {
+    100% {
+      background: #eeeeee;
+    }
+  }
+  @keyframes scramble-d {
+    0% {
+      background: #f5a9b8;
+    }
+    50% {
       background: #4d97cb;
     }
-
-    80% {
+    100% {
+      background: #f5a9b8;
+    }
+  }
+  @keyframes scramble-e {
+    0% {
+      background: #5bcefa;
+    }
+    50% {
       background: #7f62b6;
     }
-
     100% {
-      background: #d95d3f;
+      background: #5bcefa;
     }
   }
 
@@ -1201,10 +1231,25 @@ body.error-page {
     .delay-parts(.45s);
 
     & > div {
-      animation-name: scramble;
       animation-iteration-count: infinite;
       animation-timing-function: steps(1);
       animation-duration: .45s;
+
+      &.a {
+        animation-name: scramble-a;
+      }
+      &.b {
+        animation-name: scramble-b;
+      }
+      &.c {
+        animation-name: scramble-c;
+      }
+      &.d {
+        animation-name: scramble-d;
+      }
+      &.e {
+        animation-name: scramble-e;
+      }
     }
   }
 
