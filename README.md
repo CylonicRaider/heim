@@ -42,6 +42,10 @@ Heim is now running on port 8080. \o/
 
 `docker-compose run --rm frontend npm test`
 
+### Updating dependencies
+
+`docker-compose run --rm update_deps`
+
 ## Self-hosting
 
 The container set defined in `docker-compose.yml` may serve as a starting
