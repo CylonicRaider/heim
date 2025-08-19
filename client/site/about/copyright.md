@@ -8,7 +8,7 @@ and expects its users to do the same.
 
 It is Euphoria's policy to terminate, in appropriate circumstances and at its
 discretion, account holders or subscribers who repeatedly infringe or who are
-repeatedly charged with infringing the rights of copyright holders
+repeatedly charged with infringing the rights of copyright holders.
 
 If you are a copyright owner, or are authorized to act on behalf of one, or
 authorized to act under any exclusive right under copyright, please report
