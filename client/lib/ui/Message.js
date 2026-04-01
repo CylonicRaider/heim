@@ -437,14 +437,28 @@ const Message = createReactClass({
     let messageRender
     if (!content) {
       messageRender = null
-    } else if (/^\/me/.test(content) && content.length < 240) {
-      content = _.trim(content.replace(/^\/me ?/, ''))
-      messageRender = (
-        <div className="message">
-          <MessageText content={content} className="message-text message-emote" style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 95%)'}} />
-          {messageAgo}
-        </div>
-      )
+    } else if (/\/me/.test(content) && content.length < 240) {
+      const index = content.indexOf('/me')
+      const before = _.trim(content.substring(0, index))
+      const after = _.trim(content.substring(index + 3))
+      if (index > 0) {
+        messageRender = (
+          <div className="message">
+            <MessageText content={before} className="message-text message-emote-before" style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 95%)'}} />
+            <MessageText className="nick" onlyEmoji style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 85%)'}} content={message.getIn(['sender', 'name'])} />
+            <MessageText content={after} className="message-text message-emote" style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 95%)'}} />
+            {messageAgo}
+          </div>
+        )
+        lineClasses['line-emote-embedded'] = true
+      } else {
+        messageRender = (
+          <div className="message">
+            <MessageText content={after} className="message-text message-emote" style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 95%)'}} />
+            {messageAgo}
+          </div>
+        )
+      }
       lineClasses['line-emote'] = true
     } else if (/^\/vote/.test(content) && content.length < 240) {
       content = _.trim(content.replace(/^\/vote ?/, ''))
@@ -503,7 +517,9 @@ const Message = createReactClass({
           </time>
         )}
         <div className={classNames(lineClasses)} onClick={this.onClick} onMouseDown={this.onMouseDown} onMouseEnter={this.onMouseEnter}>
-          <MessageText className="nick" onlyEmoji style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 85%)'}} content={message.getIn(['sender', 'name'])} />
+          {!lineClasses['line-emote-embedded'] && (
+            <MessageText className="nick" onlyEmoji style={{background: 'hsl(' + message.getIn(['sender', 'hue']) + ', 65%, 85%)'}} content={message.getIn(['sender', 'name'])} />
+          )}
           <span className="content">
             {messageRender}
             {messageEmbeds}

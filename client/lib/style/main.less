@@ -1199,6 +1199,10 @@ iframe.js {
         padding-left: 0;
       }
 
+      & > .line-emote-embedded .message {
+        padding-right: 0;
+      }
+
       & > .timestamp {
         color: hsl(56, 60%, 78%) !important;
       }
@@ -1408,7 +1412,7 @@ iframe.js {
     }
   }
 
-  .line-emote .message-emote {
+  .line-emote .message-emote, .line-emote .message-emote-before {
     .text-rect;
      vertical-align: bottom;
   }
@@ -1442,6 +1446,7 @@ iframe.js {
     }
 
     .nick {
+      display: inline-block;
       flex-shrink: 0;
       margin-right: @nick-spacing;
       height: @nick-height;
@@ -1661,6 +1666,21 @@ iframe.js {
       .ago {
         flex-shrink: 0;
         align-self: flex-end;
+      }
+
+      &.line-emote-embedded {
+        .nick {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+          margin-left: 0;
+        }
+
+        .message-emote-before {
+          display: inline-block;
+          padding-right: 3px;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
       }
     }
   }
