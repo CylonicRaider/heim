@@ -7,7 +7,7 @@ import Footer from './Footer'
 
 export default function MainPage(props) {
   return (
-    <Page className={classNames('page', props.className)} title={props.title} heimPage={props.heimPage}>
+    <Page className={classNames('page', props.className)} title={props.title} meta={props.meta} heimPage={props.heimPage}>
       {props.nav || null}
       <div className="container main">
         {props.sidebar && (
@@ -25,6 +25,7 @@ export default function MainPage(props) {
 MainPage.propTypes = {
   className: PropTypes.string,
   title: PropTypes.string,
+  meta: PropTypes.node,
   heimPage: PropTypes.string,
   nav: PropTypes.node,
   sidebar: PropTypes.bool,
