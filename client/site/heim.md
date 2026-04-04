@@ -8,6 +8,6 @@ The server is written in Go. The client is written in JavaScript using React
 client-server API is [documented](heim/api).
 
 You may have found this page due to the string `euphoria.leet.nu/heim`
-mentioned in the Go source code. The backend can be installed by calling
+mentioned in the Go source code. The server can be installed by running
 `go install euphoria.leet.nu/heim`, but will be largely non-functional without
 the client.
