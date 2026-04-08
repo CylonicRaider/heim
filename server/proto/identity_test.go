@@ -139,12 +139,12 @@ func TestNickLen(t *testing.T) {
 
 	Convey("Testing overlapping shortcodes", t, func() {
 		name := ":greenduck:apple:"
-		So(nickLen(name), ShouldEqual, 1 + len("apple:"))
+		So(nickLen(name), ShouldEqual, 1+len("apple:"))
 	})
 
 	Convey("Testing partially-valid overlapping shortcodes", t, func() {
 		name := ":no!such!emoji:greenduck:"
-		So(nickLen(name), ShouldEqual, len(":no!such!emoji") + 1)
+		So(nickLen(name), ShouldEqual, len(":no!such!emoji")+1)
 	})
 }
 

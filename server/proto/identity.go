@@ -72,10 +72,10 @@ func LoadEmoji(path string) error {
 // ApplyEmoji adds the given name-to-Unicode mappings into the emoji normalization table.
 // For each mapping, the key is an emoji shortcode (without surrounding colons, like
 // "astronaut") and the value is one of:
-// - The empty string to delete any shortcode mapping;
-// - A string of hex-encoded Unicode codepoints separated by hyphens denoting the
-//   corresponding Unicode string (like "1f9d1-200d-1f680");
-// - A string preceded by a tilde to denote a custom emoji (like "~euphorian-in-space").
+//   - The empty string to delete any shortcode mapping;
+//   - A string of hex-encoded Unicode codepoints separated by hyphens denoting the
+//     corresponding Unicode string (like "1f9d1-200d-1f680");
+//   - A string preceded by a tilde to denote a custom emoji (like "~euphorian-in-space").
 func ApplyEmoji(emoji map[string]string) {
 	if validEmoji == nil {
 		validEmoji = map[string]string{}
@@ -98,9 +98,9 @@ func nickLen(nick string) int {
 		}
 		result += utf8.RuneCountInString(nick[:m[0]])
 
-		v, ok := validEmoji[nick[m[0]+1 : m[1]-1]]
+		v, ok := validEmoji[nick[m[0]+1:m[1]-1]]
 		if !ok {
-			result += utf8.RuneCountInString(nick[m[0]:m[1]-1])
+			result += utf8.RuneCountInString(nick[m[0] : m[1]-1])
 			nick = nick[m[1]-1:]
 			continue
 		}
