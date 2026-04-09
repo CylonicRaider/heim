@@ -7,14 +7,11 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"image"
 	"io"
 	"strings"
 	"time"
 
 	"github.com/euphoria-io/scope"
-	"github.com/pquerna/otp"
-	"github.com/pquerna/otp/totp"
 	"golang.org/x/crypto/poly1305"
 
 	"euphoria.leet.nu/heim/proto/security"
@@ -26,30 +23,6 @@ const (
 	ClientKeyType                = security.AES128
 	PasswordResetRequestLifetime = time.Hour
 )
-
-type OTP struct {
-	URI       string
-	Validated bool
-}
-
-func (o *OTP) QRImage(width, height int) (image.Image, error) {
-	key, err := otp.NewKeyFromURL(o.URI)
-	if err != nil {
-		return nil, err
-	}
-	return key.Image(width, height)
-}
-
-func (o *OTP) Validate(password string) error {
-	key, err := otp.NewKeyFromURL(o.URI)
-	if err != nil {
-		return err
-	}
-	if !totp.Validate(password, key.Secret()) {
-		return ErrAccessDenied
-	}
-	return nil
-}
 
 type AccountManager interface {
 	// GetAccount returns the account with the given ID.

@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/euphoria-io/scope"
-	"github.com/pquerna/otp/totp"
 	"github.com/savaki/geoip2"
 
 	"euphoria.leet.nu/heim/cluster"
@@ -160,15 +159,7 @@ func (heim *Heim) NewOTP(account Account) (*OTP, error) {
 		name = ident.ID()
 		break
 	}
-	opts := totp.GenerateOpts{
-		Issuer:      heim.SiteName,
-		AccountName: name,
-	}
-	key, err := totp.Generate(opts)
-	if err != nil {
-		return nil, err
-	}
-	return &OTP{URI: key.String()}, nil
+	return NewOTP(heim.SiteName, name)
 }
 
 func emailVerificationToken(key *security.ManagedKey, email string) ([]byte, error) {
