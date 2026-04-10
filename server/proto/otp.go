@@ -38,7 +38,13 @@ func (o *OTP) Validate(password string) error {
 	if err != nil {
 		return err
 	}
-	if !totp.Validate(password, key.Secret()) {
+	rv, err := totp.ValidateCustom(password, key.Secret(), time.Now().UTC(), totp.ValidateOpts{
+		Period:    uint(key.Period()),
+		Skew:      1,
+		Digits:    key.Digits(),
+		Algorithm: key.Algorithm(),
+	})
+	if !rv || err != nil {
 		return ErrAccessDenied
 	}
 	return nil
