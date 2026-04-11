@@ -782,7 +782,7 @@ func (s *session) handleStaffEnrollOTPCommand(cmd *proto.StaffEnrollOTPCommand) 
 	}
 
 	reply := &proto.StaffEnrollOTPReply{
-		URI:     otp.URI,
+		URI:     otp.GetURI(),
 		QRImage: fmt.Sprintf("data:image/png;base64,%s", base64.StdEncoding.EncodeToString(encodedImg.Bytes())),
 	}
 	return &response{packet: reply}

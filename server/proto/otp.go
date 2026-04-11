@@ -8,6 +8,19 @@ import (
 	"github.com/pquerna/otp/totp"
 )
 
+type OTPInfo interface {
+	// GetURI returns the otpauth URI for enrollment into password managers.
+	GetURI() string
+
+	// QRImage returns a QR code of the enrollment URI.
+	QRImage(width, height int) (image.Image, error)
+
+	// HasBeenValidated returns whether the user has ever successfully submitted
+	// an OTP for this OTP object. This *cannot* be used to check whether the
+	// user has recently submitted a fresh one-time password.
+	HasBeenValidated() bool
+}
+
 type OTP struct {
 	URI       string
 	Validated bool
@@ -24,6 +37,9 @@ func NewOTP(issuer, name string) (*OTP, error) {
 	}
 	return &OTP{URI: key.String()}, nil
 }
+
+func (o *OTP) GetURI() string         { return o.URI }
+func (o *OTP) HasBeenValidated() bool { return o.Validated }
 
 func (o *OTP) QRImage(width, height int) (image.Image, error) {
 	key, err := otp.NewKeyFromURL(o.URI)

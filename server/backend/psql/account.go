@@ -968,11 +968,7 @@ func (b *AccountManagerBinding) getOTP(db gorp.SqlExecutor, kms security.KMS, ac
 	return otp, nil
 }
 
-func (b *AccountManagerBinding) OTP(ctx scope.Context, kms security.KMS, accountID snowflake.Snowflake) (*proto.OTP, error) {
-	return b.getOTP(b.DbMap, kms, accountID)
-}
-
-func (b *AccountManagerBinding) GenerateOTP(ctx scope.Context, heim *proto.Heim, kms security.KMS, account proto.Account) (*proto.OTP, error) {
+func (b *AccountManagerBinding) GenerateOTP(ctx scope.Context, heim *proto.Heim, kms security.KMS, account proto.Account) (proto.OTPInfo, error) {
 	encryptedKey, err := kms.GenerateEncryptedKey(OTPKeyType, "account", account.ID().String())
 	if err != nil {
 		return nil, err

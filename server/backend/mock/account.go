@@ -437,11 +437,7 @@ func (m *accountManager) ChangeName(ctx scope.Context, accountID snowflake.Snowf
 	return nil
 }
 
-func (m *accountManager) OTP(ctx scope.Context, kms security.KMS, accountID snowflake.Snowflake) (*proto.OTP, error) {
-	return m.b.otps[accountID], nil
-}
-
-func (m *accountManager) GenerateOTP(ctx scope.Context, heim *proto.Heim, kms security.KMS, account proto.Account) (*proto.OTP, error) {
+func (m *accountManager) GenerateOTP(ctx scope.Context, heim *proto.Heim, kms security.KMS, account proto.Account) (proto.OTPInfo, error) {
 	m.b.Lock()
 	defer m.b.Unlock()
 
