@@ -62,12 +62,12 @@ func (awsc *AccountWithStaffCapability) Bind(b *Backend) *AccountBinding {
 }
 
 type OTP struct {
-	AccountID    string `db:"account_id"`
-	IV           []byte
-	EncryptedKey []byte `db:"encrypted_key"`
-	Digest       []byte
-	EncryptedURI []byte `db:"encrypted_uri"`
-	Validated    bool
+	AccountID     string `db:"account_id"`
+	IV            []byte
+	EncryptedKey  []byte `db:"encrypted_key"`
+	Digest        []byte
+	EncryptedURI  []byte `db:"encrypted_uri"`
+	LastValidated uint64
 }
 
 type PersonalIdentity struct {
@@ -962,8 +962,8 @@ func (b *AccountManagerBinding) getOTP(db gorp.SqlExecutor, kms security.KMS, ac
 	}
 
 	otp := &proto.OTP{
-		URI:       string(uriBytes),
-		Validated: encryptedOTP.Validated,
+		URI:           string(uriBytes),
+		LastValidated: encryptedOTP.LastValidated,
 	}
 	return otp, nil
 }
@@ -995,7 +995,7 @@ func (b *AccountManagerBinding) GenerateOTP(ctx scope.Context, heim *proto.Heim,
 		return nil, err
 	}
 	if err == nil {
-		if rawOTP.Validated {
+		if rawOTP.LastValidated != 0 {
 			rollback(ctx, t)
 			return nil, proto.ErrOTPAlreadyEnrolled
 		}
@@ -1056,12 +1056,7 @@ func (b *AccountManagerBinding) ValidateOTP(ctx scope.Context, kms security.KMS,
 		return err
 	}
 
-	if otp.Validated {
-		rollback(ctx, t)
-		return nil
-	}
-
-	res, err := t.Exec("UPDATE otp SET validated = true WHERE account_id = $1", accountID.String())
+	res, err := t.Exec("UPDATE otp SET last_validated = $2 WHERE account_id = $1", accountID.String(), otp.LastValidated)
 	if err != nil {
 		rollback(ctx, t)
 		return err

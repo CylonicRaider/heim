@@ -446,7 +446,7 @@ func (m *accountManager) GenerateOTP(ctx scope.Context, heim *proto.Heim, kms se
 	}
 
 	old, ok := m.b.otps[account.ID()]
-	if ok && old.Validated {
+	if ok && old.HasBeenValidated() {
 		return nil, proto.ErrOTPAlreadyEnrolled
 	}
 
@@ -472,6 +472,5 @@ func (m *accountManager) ValidateOTP(ctx scope.Context, kms security.KMS, accoun
 		return err
 	}
 
-	m.b.otps[accountID].Validated = true
 	return nil
 }

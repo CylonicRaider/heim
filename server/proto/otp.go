@@ -5,7 +5,12 @@ import (
 	"time"
 
 	"github.com/pquerna/otp"
+	"github.com/pquerna/otp/hotp"
 	"github.com/pquerna/otp/totp"
+)
+
+const (
+	skew = 1
 )
 
 type OTPInfo interface {
@@ -22,8 +27,8 @@ type OTPInfo interface {
 }
 
 type OTP struct {
-	URI       string
-	Validated bool
+	URI           string
+	LastValidated uint64
 }
 
 func NewOTP(issuer, name string) (*OTP, error) {
@@ -39,7 +44,7 @@ func NewOTP(issuer, name string) (*OTP, error) {
 }
 
 func (o *OTP) GetURI() string         { return o.URI }
-func (o *OTP) HasBeenValidated() bool { return o.Validated }
+func (o *OTP) HasBeenValidated() bool { return o.LastValidated != 0 }
 
 func (o *OTP) QRImage(width, height int) (image.Image, error) {
 	key, err := otp.NewKeyFromURL(o.URI)
@@ -49,19 +54,52 @@ func (o *OTP) QRImage(width, height int) (image.Image, error) {
 	return key.Image(width, height)
 }
 
+// DANGER: The LastValidated field of the receiver must be stored to persistent
+// storage after calling to prevent replay attacks.
 func (o *OTP) Validate(password string) error {
 	key, err := otp.NewKeyFromURL(o.URI)
 	if err != nil {
 		return err
 	}
-	rv, err := totp.ValidateCustom(password, key.Secret(), time.Now().UTC(), totp.ValidateOpts{
-		Period:    uint(key.Period()),
-		Skew:      1,
+
+	// The totp package does not provide a simple and correct way of preventing
+	// replay attacks, and instead suggests that downstream developers implement
+	// that themselves ("its [sic] just a simple lookup if a TOTP has been used
+	// within the last few minutes"). Storing invalidated OTPs would require
+	// either nontrivial garbage collection or a persistent audit log (which is
+	// probably a good idea). We choose the more simple approach of enforcing
+	// a monotonically increasing underlying counter. Fortunately, grabbing and
+	// adapting the relevant totp code is easy because it is mostly a wrapper
+	// around hotp.
+
+	opts := hotp.ValidateOpts{
 		Digits:    key.Digits(),
 		Algorithm: key.Algorithm(),
-	})
-	if !rv || err != nil {
-		return ErrAccessDenied
 	}
-	return nil
+	period := int64(key.Period())
+	if period == 0 {
+		period = 30
+	}
+
+	now := uint64(time.Now().UTC().Unix() / period)
+	counts := []uint64{now}
+	for i := 0; i < skew; i++ {
+		counts = append(counts, now+1, now-1)
+	}
+
+	for _, c := range counts {
+		if c <= o.LastValidated {
+			continue
+		}
+		rv, err := hotp.ValidateCustom(password, c, key.Secret(), opts)
+		if err != nil {
+			return ErrAccessDenied
+		}
+		if rv {
+			o.LastValidated = c
+			return nil
+		}
+	}
+
+	return ErrAccessDenied
 }
