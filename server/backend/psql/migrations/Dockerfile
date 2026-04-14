@@ -1,7 +1,6 @@
-FROM golang:1.21
+FROM golang:1.26
 
-ENV GO111MODULE auto
 ENV GOPATH /go
 ENV PATH $PATH:/go/bin
-RUN go get -x github.com/rubenv/sql-migrate/...
+RUN go install github.com/rubenv/sql-migrate/sql-migrate@v1.8.1
 WORKDIR /migrations
