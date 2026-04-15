@@ -67,7 +67,7 @@ type OTP struct {
 	EncryptedKey  []byte `db:"encrypted_key"`
 	Digest        []byte
 	EncryptedURI  []byte `db:"encrypted_uri"`
-	LastValidated uint64
+	LastValidated uint64 `db:"last_validated"`
 }
 
 type PersonalIdentity struct {
