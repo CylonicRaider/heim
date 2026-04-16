@@ -3036,7 +3036,7 @@ func testEmailsLowLevel(s *serverUnderTest) {
 	})
 }
 
-func oneTimePassword(uri string) string {
+func oneTimePassword(uri string, timeOffset uint64) string {
 	key, err := otp.NewKeyFromURL(uri)
 	So(err, ShouldBeNil)
 
@@ -3045,7 +3045,7 @@ func oneTimePassword(uri string) string {
 	So(err, ShouldBeNil)
 	buf := make([]byte, 8)
 	mac := hmac.New(sha1.New, secretBytes)
-	counter := uint64(math.Floor(float64(time.Now().Unix()) / 30))
+	counter := uint64(math.Floor(float64(time.Now().Unix()) / 30)) + timeOffset
 	binary.BigEndian.PutUint64(buf, counter)
 	mac.Write(buf)
 	sum := mac.Sum(nil)
@@ -3090,13 +3090,23 @@ func testStaffOTP(s *serverUnderTest) {
 		capture := c1.expect("2", "staff-enroll-otp-reply", `{"uri":"*","qr_uri":"*"}`)
 
 		// validate
-		c1.send("3", "staff-validate-otp", `{"otp":"%s"}`, oneTimePassword(capture["uri"].(string)))
+		otp := oneTimePassword(capture["uri"].(string), 0)
+		c1.send("3", "staff-validate-otp", `{"otp":"%s"}`, otp)
 		c1.expect("3", "staff-validate-otp-reply", `{}`)
+
+		// using the same password again should fail
+		c1.send("4", "staff-validate-otp", `{"otp":"%s"}`, otp)
+		c1.expectError("4", "staff-validate-otp-reply", proto.ErrAccessDenied.Error())
+
+		// but a new password should work
+		otp = oneTimePassword(capture["uri"].(string), 1)
+		c1.send("5", "staff-validate-otp", `{"otp":"%s"}`, otp)
+		c1.expect("5", "staff-validate-otp-reply", `{}`)
 
 		// attempt to enroll should fail
 		time.Sleep(100 * time.Millisecond)
-		c1.send("4", "staff-enroll-otp", ``)
-		c1.expectError("4", "staff-enroll-otp-reply", proto.ErrOTPAlreadyEnrolled.Error())
+		c1.send("6", "staff-enroll-otp", ``)
+		c1.expectError("6", "staff-enroll-otp-reply", proto.ErrOTPAlreadyEnrolled.Error())
 	})
 }
 
@@ -3151,7 +3161,7 @@ func testStaffInvasion(s *serverUnderTest) {
 		c2.expect("", "bounce-event", `{"reason":"authentication required"}`)
 		c2.send("2", "staff-enroll-otp", ``)
 		capture = c2.expect("2", "staff-enroll-otp-reply", `{"uri":"*","qr_uri":"*"}`)
-		c2.send("3", "staff-invade", `{"password":"%s"}`, oneTimePassword(capture["uri"].(string)))
+		c2.send("3", "staff-invade", `{"password":"%s"}`, oneTimePassword(capture["uri"].(string), 0))
 		c2.expect("3", "staff-invade-reply", `{}`)
 		id = `{"session_id":"*","id":"*","name":"host","server_id":"*","server_era":"*","is_manager":true,"client_address":"*","real_client_address":"*"}`
 		c2.expectSnapshot(s.backend.Version(), []string{id}, []string{msg})
