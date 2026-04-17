@@ -3045,7 +3045,7 @@ func oneTimePassword(uri string, timeOffset uint64) string {
 	So(err, ShouldBeNil)
 	buf := make([]byte, 8)
 	mac := hmac.New(sha1.New, secretBytes)
-	counter := uint64(math.Floor(float64(time.Now().Unix()) / 30)) + timeOffset
+	counter := uint64(math.Floor(float64(time.Now().Unix())/30)) + timeOffset
 	binary.BigEndian.PutUint64(buf, counter)
 	mac.Write(buf)
 	sum := mac.Sum(nil)
