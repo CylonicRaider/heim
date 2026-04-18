@@ -20,6 +20,8 @@ import (
 )
 
 func TestGrants(t *testing.T) {
+	var snowflakeCounter uint64
+
 	Convey("Grant a capability on a room", t, func() {
 		kms := security.LocalKMS()
 		kms.SetMasterKey(make([]byte, security.AES256.KeySize()))
@@ -38,7 +40,7 @@ func TestGrants(t *testing.T) {
 		// Sign in as alice and send an encrypted message with aliceSendTime
 		// as the nonce.
 		aliceSendTime := time.Now()
-		msgNonce := []byte(snowflake.NewFromTime(aliceSendTime).String())
+		msgNonce := []byte(snowflake.NewFromTime(aliceSendTime, &snowflakeCounter).String())
 
 		aliceKey := &security.ManagedKey{
 			KeyType:   security.AES256,
@@ -53,7 +55,7 @@ func TestGrants(t *testing.T) {
 		So(err, ShouldBeNil)
 
 		msg := proto.Message{
-			ID:       snowflake.NewFromTime(aliceSendTime),
+			ID:       snowflake.NewFromTime(aliceSendTime, &snowflakeCounter),
 			UnixTime: proto.Time(aliceSendTime),
 			Content:  "hello",
 		}

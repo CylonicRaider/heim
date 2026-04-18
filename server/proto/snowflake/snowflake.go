@@ -6,30 +6,23 @@ import (
 	"strconv"
 	"sync/atomic"
 	"time"
-
-	"github.com/sdming/gosnow"
 )
 
 type Snowflaker interface {
 	Next() (uint64, error)
 }
 
-var Clock = func() time.Time { return time.Now() }
+func Clock() time.Time { return time.Now() }
+
 var Epoch = time.Date(2014, 12, 0, 0, 0, 0, 0, time.UTC)
-var DefaultSnowflaker Snowflaker
 
-var SeqCounter uint64
-
-const seqIDMask = (1 << gosnow.SequenceBits) - 1
-
-func init() {
-	gosnow.Since = Epoch.UnixNano() / 1000000
-	var err error
-	DefaultSnowflaker, err = gosnow.Default()
+var DefaultSnowflaker = func() Snowflaker {
+	result, err := NewSnowflakeGen(Epoch, DefaultWorkerID)
 	if err != nil {
 		panic(err)
 	}
-}
+	return result
+}()
 
 type Snowflake uint64
 
@@ -41,15 +34,13 @@ func New() (Snowflake, error) {
 	return Snowflake(snowflake), nil
 }
 
-func NewFromTime(t time.Time) Snowflake {
-	timestampMillis := (t.UnixNano() - Epoch.UnixNano()) / int64(time.Millisecond)
-	workerID := gosnow.DefaultWorkId()
-	seqID := atomic.AddUint64(&SeqCounter, 1)
-
-	return Snowflake(
-		(uint64(timestampMillis) << (gosnow.WorkerIdBits + gosnow.SequenceBits)) |
-			(uint64(workerID) << gosnow.SequenceBits) |
-			(seqID & seqIDMask))
+func NewFromTime(t time.Time, counter *uint64) Snowflake {
+	seqID := atomic.AddUint64(counter, 1)
+	return Snowflake(assemble(
+		timestampAt(t)-timestampAt(Epoch),
+		DefaultWorkerID,
+		uint16(seqID),
+	))
 }
 
 func NewFromString(s string) (Snowflake, error) {
@@ -95,7 +86,7 @@ func (s *Snowflake) UnmarshalJSON(data []byte) error {
 }
 
 func (s Snowflake) Time() time.Time {
-	timestampMillis := uint64(s) >> (gosnow.WorkerIdBits + gosnow.SequenceBits)
+	timestampMillis := uint64(s) >> (WorkerIDBits + SequenceBits)
 	return Epoch.Add(time.Duration(timestampMillis) * time.Millisecond)
 }
 
