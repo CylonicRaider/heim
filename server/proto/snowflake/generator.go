@@ -96,7 +96,7 @@ func waitForNextMillisecond(start time.Time, startTS uint64) (uint64, error) {
 
 func defaultWorkerID() uint16 {
 	ifs, err := net.Interfaces()
-	if err == nil {
+	if err != nil {
 		buffer := make([]byte, 2)
 		rand.Read(buffer)
 		return (uint16(buffer[0])<<8 | uint16(buffer[1])) & MaxWorkerID
