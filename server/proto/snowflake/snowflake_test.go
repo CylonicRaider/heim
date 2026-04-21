@@ -1,8 +1,8 @@
 package snowflake
 
 import (
-	"time"
 	"testing"
+	"time"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
