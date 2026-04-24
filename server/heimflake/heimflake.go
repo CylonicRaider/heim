@@ -7,11 +7,29 @@ import (
 	"euphoria.leet.nu/heim/proto/snowflake"
 )
 
-func main() {
-	sf, err := snowflake.New()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "ERROR:", err)
+func reportError(err error, fatal bool) bool {
+	if err == nil {
+		return false
+	}
+	fmt.Fprintln(os.Stderr, "ERROR:", err)
+	if fatal {
 		os.Exit(1)
 	}
-	fmt.Println(sf.String())
+	return true
+}
+
+func main() {
+	if len(os.Args) <= 1 {
+		sf, err := snowflake.New()
+		reportError(err, true)
+		fmt.Println(sf.String())
+		return
+	}
+	for _, s := range os.Args[1:] {
+		sf, err := snowflake.NewFromString(s)
+		if reportError(err, false) {
+			continue
+		}
+		fmt.Printf("%s: %s\n", sf, sf.Time())
+	}
 }
