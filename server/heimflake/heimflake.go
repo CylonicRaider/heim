@@ -3,9 +3,14 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"euphoria.leet.nu/heim/proto/snowflake"
 )
+
+func formatTime(t time.Time) string {
+	return t.Format("2006-01-02 15:04:05.000 Z0700")
+}
 
 func reportError(err error, fatal bool) bool {
 	if err == nil {
@@ -30,6 +35,6 @@ func main() {
 		if reportError(err, false) {
 			continue
 		}
-		fmt.Printf("%s: %s\n", sf, sf.Time())
+		fmt.Printf("%s: %s\n", sf, formatTime(sf.Time()))
 	}
 }
