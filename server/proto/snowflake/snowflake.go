@@ -92,3 +92,17 @@ func (s Snowflake) Time() time.Time {
 
 func (s Snowflake) IsZero() bool                    { return s == 0 }
 func (s Snowflake) Before(reference Snowflake) bool { return s < reference }
+
+type SnowflakeParts struct {
+	Time     time.Time
+	WorkerID uint16
+	Sequence uint16
+}
+
+func (s Snowflake) Split() SnowflakeParts {
+	return SnowflakeParts{
+		s.Time(),
+		uint16(uint64(s) >> SequenceBits & MaxWorkerID),
+		uint16(uint64(s) & MaxSequence),
+	}
+}
