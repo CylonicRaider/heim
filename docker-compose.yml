@@ -125,7 +125,6 @@ services:
       - ./server/backend/console/keys:/keys
     tmpfs:
       - /keys/.copy
-    command: run.sh
 
   # The backend_tests container is dedicated to running backend tests.
   backend_tests:
