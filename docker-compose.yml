@@ -73,7 +73,7 @@ services:
 
   # The backend container runs the backend server against the psql container with etcd mocked out.
   backend:
-    build: server/backend
+    build: server
     links:
       - psql
     volumes:
@@ -95,7 +95,7 @@ services:
 
   # The backend_etcd container runs the backend server against the psql container using etcd.
   backend_etcd:
-    build: server/backend
+    build: server
     links:
       - etcd
       - psql
@@ -128,7 +128,7 @@ services:
 
   # The backend_tests container is dedicated to running backend tests.
   backend_tests:
-    build: server/backend
+    build: server
     links:
       - psql_test
     volumes:
@@ -144,7 +144,7 @@ services:
 
   # The embed container serves static files for the embed domain.
   embed:
-    build: server/backend
+    build: server
     volumes:
       - .:/srv/heim
       - ./server:/go/src/euphoria.leet.nu/heim
@@ -157,7 +157,7 @@ services:
 
   # The presence container collects and exposes metrics about currently-present users.
   presence:
-    build: server/backend
+    build: server
     links:
       - etcd
       - psql
@@ -177,7 +177,7 @@ services:
 
   # The retention container deletes expired messages from rooms with limited message retention.
   retention:
-    build: server/backend
+    build: server
     links:
       - etcd
       - psql
@@ -197,7 +197,7 @@ services:
 
   # The activity container collects and exposes metrics about overall chat activity.
   activity:
-    build: server/backend
+    build: server
     links:
       - etcd
       - psql
