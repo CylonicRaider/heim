@@ -41,24 +41,24 @@ func log(format string, args ...interface{}) {
 	fmt.Fprintf(os.Stderr, format, args...)
 }
 
-func swallow(self string, binary string, paths []string) error {
+func swallow(self string, binary string, paths []string) (string, error) {
 	sf, err := os.Open(self)
 	if err != nil {
-		return fmt.Errorf("open %s: %s", self, err)
+		return "", fmt.Errorf("open %s: %s", self, err)
 	}
 	defer sf.Close()
 
 	hzp := binary + ".hzp"
 	f, err := os.OpenFile(hzp, os.O_RDWR|os.O_CREATE, 0755)
 	if err != nil {
-		return fmt.Errorf("open %s: %s", hzp, err)
+		return "", fmt.Errorf("open %s: %s", hzp, err)
 	}
 	fc := closeOnce{f}
 	defer fc.Close()
 
 	n, err := io.Copy(f, sf)
 	if err != nil {
-		return fmt.Errorf("copy %s->%s: %s", self, hzp, err)
+		return "", fmt.Errorf("copy %s->%s: %s", self, hzp, err)
 	}
 
 	zw := zip.NewWriter(f)
@@ -67,15 +67,18 @@ func swallow(self string, binary string, paths []string) error {
 	defer zwc.Close()
 
 	if err := swallowFile(zw, binary); err != nil {
-		return fmt.Errorf("swallow %s: %s", binary, err)
+		return "", fmt.Errorf("swallow %s: %s", binary, err)
 	}
 	for _, path := range paths {
 		if err := swallowFile(zw, path); err != nil {
-			return fmt.Errorf("swallow %s: %s", path, err)
+			return "", fmt.Errorf("swallow %s: %s", path, err)
 		}
 	}
 
-	return closeUntilError(&zwc, &fc)
+	if err := closeUntilError(&zwc, &fc); err != nil {
+		return "", err
+	}
+	return hzp, nil
 }
 
 func swallowFile(zw *zip.Writer, path string) error {
@@ -197,8 +200,10 @@ func main() {
 		fmt.Fprintf(os.Stderr, "where is %s: %s\n", os.Args[0], err)
 		os.Exit(1)
 	}
-	if err := swallow(self, os.Args[1], os.Args[2:]); err != nil {
+	path, err := swallow(self, os.Args[1], os.Args[2:])
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
+	log("  created %s\n", path)
 }
