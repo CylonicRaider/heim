@@ -178,7 +178,7 @@ func extractAndRun(hzp string, args []string, env []string) error {
 }
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "heimlich BINARY [PATH...]\n")
+	fmt.Fprintf(os.Stderr, "USAGE: heimlich BINARY [PATH...]\n")
 	os.Exit(2)
 }
 
