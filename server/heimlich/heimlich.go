@@ -27,7 +27,8 @@ func (co *closeOnce) Close() error {
 	return err
 }
 
-// does not continue closing after the first error; use defer for that
+// does not continue closing after the first error; combine with closeOnce and
+// defer for that
 func closeUntilError(cos ...*closeOnce) error {
 	for _, c := range cos {
 		if err := c.Close(); err != nil {
