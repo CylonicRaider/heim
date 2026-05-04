@@ -99,6 +99,7 @@ func swallowFile(zw *zip.Writer, path string) error {
 		return fmt.Errorf("fileinfoheader %s: %s", path, err)
 	}
 	fh.Name = path
+	fh.Method = zip.Deflate
 
 	w, err := zw.CreateHeader(fh)
 	if err != nil {
