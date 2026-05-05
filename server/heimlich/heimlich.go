@@ -184,28 +184,31 @@ func usage() {
 	os.Exit(2)
 }
 
+func fail(comment string, err error) {
+	fmt.Fprintf(os.Stderr, "ERROR: %s: %s\n", comment, err)
+	os.Exit(1)
+}
+
 func main() {
 	if strings.HasSuffix(os.Args[0], ".hzp") {
 		if err := extractAndRun(os.Args[0], os.Args, os.Environ()); err != nil {
-			fmt.Fprintf(os.Stderr, "extract error: %s\n", err)
-			os.Exit(1)
+			fail("starting up", err)
 		}
 		return
 	}
 
 	if len(os.Args) < 2 {
 		usage()
+		return
 	}
 
 	self, err := exec.LookPath(os.Args[0])
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "where is %s: %s\n", os.Args[0], err)
-		os.Exit(1)
+		fail("where is " + os.Args[0], err)
 	}
 	path, err := swallow(self, os.Args[1], os.Args[2:])
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s\n", err)
-		os.Exit(1)
+		fail("gathering files", err)
 	}
 	log("  created %s\n", path)
 }
