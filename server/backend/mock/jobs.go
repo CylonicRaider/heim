@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 
 	"euphoria.leet.nu/heim/proto/jobs"
 	"euphoria.leet.nu/heim/proto/snowflake"

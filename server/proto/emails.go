@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 
 	"euphoria.leet.nu/heim/proto/emails"
 	"euphoria.leet.nu/heim/proto/jobs"

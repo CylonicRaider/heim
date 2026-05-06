@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 
 	"euphoria.leet.nu/heim/backend"
 	"euphoria.leet.nu/heim/backend/mock"

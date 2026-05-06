@@ -10,7 +10,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 

@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"github.com/lib/pq"
 	"gopkg.in/gorp.v1"
 

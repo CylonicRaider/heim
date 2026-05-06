@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/coreos/go-etcd/etcd"
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"github.com/prometheus/client_golang/prometheus"
 
 	"euphoria.leet.nu/heim/cluster"

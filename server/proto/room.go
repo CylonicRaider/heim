@@ -7,7 +7,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"golang.org/x/crypto/poly1305"
 
 	"euphoria.leet.nu/heim/proto/security"

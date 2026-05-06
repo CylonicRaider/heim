@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 
 	"euphoria.leet.nu/heim/heimctl/worker"
 	"euphoria.leet.nu/heim/proto/logging"

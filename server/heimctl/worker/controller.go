@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"github.com/prometheus/client_golang/prometheus"
 
 	"euphoria.leet.nu/heim/proto"

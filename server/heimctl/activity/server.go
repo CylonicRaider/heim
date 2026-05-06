@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"euphoria.leet.nu/heim/proto/logging"

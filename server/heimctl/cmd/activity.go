@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"github.com/lib/pq"
 
 	"euphoria.leet.nu/heim/heimctl/activity"

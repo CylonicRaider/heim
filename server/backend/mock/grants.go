@@ -3,7 +3,7 @@ package mock
 import (
 	"sync"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/security"

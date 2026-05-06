@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"github.com/lib/pq"
 	"github.com/prometheus/client_golang/prometheus"
 	"gopkg.in/gorp.v1"

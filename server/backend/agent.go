@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"github.com/gorilla/securecookie"
 
 	"euphoria.leet.nu/heim/proto"

@@ -4,7 +4,7 @@ import (
 	"flag"
 	"time"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"gopkg.in/gorp.v1"
 
 	"euphoria.leet.nu/heim/proto/logging"

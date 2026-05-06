@@ -20,7 +20,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"github.com/gorilla/websocket"
 	"github.com/pquerna/otp"
 

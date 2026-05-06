@@ -1,6 +1,6 @@
 package proto
 
-import "github.com/euphoria-io/scope"
+import "github.com/cylonicraider/go-scope/scope"
 
 // A Session is a connection between a client and a Room.
 type Session interface {

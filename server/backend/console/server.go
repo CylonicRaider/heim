@@ -15,7 +15,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"golang.org/x/crypto/ssh"
 
 	"euphoria.leet.nu/heim/cluster"

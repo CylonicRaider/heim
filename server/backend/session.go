@@ -11,7 +11,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/euphoria-io/scope"
+	"github.com/cylonicraider/go-scope/scope"
 	"github.com/gorilla/websocket"
 	"github.com/juju/ratelimit"
 	"github.com/prometheus/client_golang/prometheus"
