@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/cylonicraider/go-scope/scope"
+	"euphoria.leet.nu/lib/scope"
 	"github.com/savaki/geoip2"
 
 	"euphoria.leet.nu/heim/cluster"

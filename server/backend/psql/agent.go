@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cylonicraider/go-scope/scope"
+	"euphoria.leet.nu/lib/scope"
 	"gopkg.in/gorp.v1"
 
 	"euphoria.leet.nu/heim/proto"

@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/cylonicraider/go-scope/scope"
+	"euphoria.leet.nu/lib/scope"
 )
 
 type logCtxKey int

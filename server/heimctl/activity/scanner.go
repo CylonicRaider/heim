@@ -3,7 +3,7 @@ package activity
 import (
 	"encoding/json"
 
-	"github.com/cylonicraider/go-scope/scope"
+	"euphoria.leet.nu/lib/scope"
 	"github.com/lib/pq"
 
 	"euphoria.leet.nu/heim/backend/psql"

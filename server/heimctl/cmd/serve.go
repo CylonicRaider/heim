@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/cylonicraider/go-scope/scope"
+	"euphoria.leet.nu/lib/scope"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"euphoria.leet.nu/heim/backend"

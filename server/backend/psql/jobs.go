@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cylonicraider/go-scope/scope"
+	"euphoria.leet.nu/lib/scope"
 	"github.com/lib/pq"
 	"gopkg.in/gorp.v1"
 

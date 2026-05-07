@@ -7,7 +7,7 @@ import (
 	"net/smtp"
 	"time"
 
-	"github.com/cylonicraider/go-scope/scope"
+	"euphoria.leet.nu/lib/scope"
 )
 
 func NewSMTPDeliverer(localAddr, serverAddr, sslHost string, auth smtp.Auth) *SMTPDeliverer {

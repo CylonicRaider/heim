@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cylonicraider/go-scope/scope"
+	"euphoria.leet.nu/lib/scope"
 
 	"euphoria.leet.nu/heim/console"
 	"euphoria.leet.nu/heim/proto"

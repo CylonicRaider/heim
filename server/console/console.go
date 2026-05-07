@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/cylonicraider/go-scope/scope"
+	"euphoria.leet.nu/lib/scope"
 	"golang.org/x/term"
 )
 

@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"time"
 
-	"github.com/cylonicraider/go-scope/scope"
+	"euphoria.leet.nu/lib/scope"
 	"golang.org/x/crypto/poly1305"
 
 	"euphoria.leet.nu/heim/proto/security"

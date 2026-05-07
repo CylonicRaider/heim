@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cylonicraider/go-scope/scope"
+	"euphoria.leet.nu/lib/scope"
 
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/emails"
