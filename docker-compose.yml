@@ -78,9 +78,8 @@ services:
       - psql
     volumes:
       - .:/srv/heim
-      - ./server:/go/src/euphoria.leet.nu/heim
       - ./server/backend/console/keys:/keys
-      - ./_deps/godeps:/godeps
+      - ./_deps/godeps:/srv/heim/server/vendor
       - ./_data/gocache:/gocache
     ports:
       - "8080:80"
@@ -90,7 +89,7 @@ services:
       HEIM_ID: dev1
       HEIM_ETCD: mock
       HEIM_ETCD_HOME: /dev/euphoria
-      HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
+      HEIM_CONFIG: /srv/heim/server/heim.yml
     command: run.sh heimctl serve -http :80 -console :2222
 
   # The backend_etcd container runs the backend server against the psql container using etcd.
@@ -101,9 +100,8 @@ services:
       - psql
     volumes:
       - .:/srv/heim
-      - ./server:/go/src/euphoria.leet.nu/heim
       - ./server/backend/console/keys:/keys
-      - ./_deps/godeps:/godeps
+      - ./_deps/godeps:/srv/heim/server/vendor
       - ./_data/gocache:/gocache
     ports:
       - "8080:80"
@@ -113,7 +111,7 @@ services:
       HEIM_ID: dev1
       HEIM_ETCD: http://etcd:4001
       HEIM_ETCD_HOME: /dev/euphoria
-      HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
+      HEIM_CONFIG: /srv/heim/server/heim.yml
     command: run.sh heimctl serve -http :80 -console :2222
 
   # The backend_console container connects to the backend console.
@@ -133,9 +131,8 @@ services:
       - psql_test
     volumes:
       - .:/srv/heim
-      - ./server:/go/src/euphoria.leet.nu/heim
       - ./server/backend/console/keys:/keys
-      - ./_deps/godeps:/godeps
+      - ./_deps/godeps:/srv/heim/server/vendor
       - ./_data/gocache:/gocache
     environment:
       GOCACHE: /gocache
@@ -147,8 +144,7 @@ services:
     build: server
     volumes:
       - .:/srv/heim
-      - ./server:/go/src/euphoria.leet.nu/heim
-      - ./_deps/godeps:/godeps
+      - ./_deps/godeps:/srv/heim/server/vendor
     ports:
       - "8081:80"
     environment:
@@ -163,16 +159,15 @@ services:
       - psql
     volumes:
       - .:/srv/heim
-      - ./server:/go/src/euphoria.leet.nu/heim
       - ./server/backend/console/keys:/keys
-      - ./_deps/godeps:/godeps
+      - ./_deps/godeps:/srv/heim/server/vendor
     ports:
       - "8082:80"
     environment:
       GOCACHE: /gocache
       HEIM_ETCD: http://etcd:4001
       HEIM_ETCD_HOME: /dev/euphoria
-      HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
+      HEIM_CONFIG: /srv/heim/server/heim.yml
     command: run.sh heimctl presence-exporter -http :80 -interval 10s
 
   # The retention container deletes expired messages from rooms with limited message retention.
@@ -183,16 +178,15 @@ services:
       - psql
     volumes:
       - .:/srv/heim
-      - ./server:/go/src/euphoria.leet.nu/heim
       - ./server/backend/console/keys:/keys
-      - ./_deps/godeps:/godeps
+      - ./_deps/godeps:/srv/heim/server/vendor
     ports:
       - "8083:80"
     environment:
       GOCACHE: /gocache
       HEIM_ETCD: http://etcd:4001
       HEIM_ETCD_HOME: /dev/euphoria
-      HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
+      HEIM_CONFIG: /srv/heim/server/heim.yml
     command: run.sh heimctl log-retention -http :80 -interval 10s
 
   # The activity container collects and exposes metrics about overall chat activity.
@@ -203,16 +197,15 @@ services:
       - psql
     volumes:
       - .:/srv/heim
-      - ./server:/go/src/euphoria.leet.nu/heim
       - ./server/backend/console/keys:/keys
-      - ./_deps/godeps:/godeps
+      - ./_deps/godeps:/srv/heim/server/vendor
     ports:
       - "8084:80"
     environment:
       GOCACHE: /gocache
       HEIM_ETCD: http://etcd:4001
       HEIM_ETCD_HOME: /dev/euphoria
-      HEIM_CONFIG: /go/src/euphoria.leet.nu/heim/heim.yml
+      HEIM_CONFIG: /srv/heim/server/heim.yml
     command: run.sh heimctl activity-exporter -http :80
 
   # The haproxy container runs the HAProxy reverse proxy.
