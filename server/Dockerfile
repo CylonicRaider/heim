@@ -3,8 +3,6 @@ FROM golang:1.26
 # For etcd tests.
 RUN apt-get update && apt-get install -y etcd-server etcd-client
 
-ENV GOPATH /go
-
 # Shut up, Git.
 RUN git config --global --add safe.directory '*'
 
