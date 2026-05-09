@@ -7,4 +7,4 @@ go install \
     euphoria.leet.nu/heim/heimctl
 
 export PATH=/go/bin:"$PATH"
-exec $*
+exec "$@"
