@@ -155,9 +155,9 @@ func (e *etcdCluster) GetValue(key string) (string, error) {
 }
 
 func (e *etcdCluster) SetValue(key, value string) error {
-	_, err := e.c.Set(e.key(key), value, 0)
+	_, err := e.c.Set(e.key("%s", key), value, 0)
 	if err != nil {
-		return fmt.Errorf("set on %s: %s", e.key(key), err)
+		return fmt.Errorf("set on %s: %s", e.key("%s", key), err)
 	}
 	return nil
 }

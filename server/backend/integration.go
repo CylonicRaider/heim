@@ -2411,7 +2411,7 @@ func testMessageTruncation(s *serverUnderTest) {
 		c1.send("1", "nick", `{"name":"c1"}`)
 		c1.expect("1", "nick-reply", `{"session_id":"*","id":"*","from":"","to":"c1"}`)
 		c1.send("2", "send", `{"content":"%s"}`, strings.Repeat(".", proto.MaxMessageLength+1))
-		c1.expectError("2", "send-reply", proto.ErrMessageTooLong.Error())
+		c1.expectError("2", "send-reply", "%s", proto.ErrMessageTooLong.Error())
 
 		c2 := s.Connect("bigmessages")
 		defer c2.Close()
@@ -3085,7 +3085,7 @@ func testStaffOTP(s *serverUnderTest) {
 		c1.expectPing()
 		c1.expectSnapshot(s.backend.Version(), nil, nil)
 		c1.send("1", "staff-validate-otp", `{"otp":"000000"}`)
-		c1.expectError("1", "staff-validate-otp-reply", proto.ErrOTPNotEnrolled.Error())
+		c1.expectError("1", "staff-validate-otp-reply", "%s", proto.ErrOTPNotEnrolled.Error())
 		c1.send("2", "staff-enroll-otp", ``)
 		capture := c1.expect("2", "staff-enroll-otp-reply", `{"uri":"*","qr_uri":"*"}`)
 
@@ -3096,7 +3096,7 @@ func testStaffOTP(s *serverUnderTest) {
 
 		// using the same password again should fail
 		c1.send("4", "staff-validate-otp", `{"otp":"%s"}`, otp)
-		c1.expectError("4", "staff-validate-otp-reply", proto.ErrAccessDenied.Error())
+		c1.expectError("4", "staff-validate-otp-reply", "%s", proto.ErrAccessDenied.Error())
 
 		// but a new password should work
 		otp = oneTimePassword(capture["uri"].(string), 1)
@@ -3106,7 +3106,7 @@ func testStaffOTP(s *serverUnderTest) {
 		// attempt to enroll should fail
 		time.Sleep(100 * time.Millisecond)
 		c1.send("6", "staff-enroll-otp", ``)
-		c1.expectError("6", "staff-enroll-otp-reply", proto.ErrOTPAlreadyEnrolled.Error())
+		c1.expectError("6", "staff-enroll-otp-reply", "%s", proto.ErrOTPAlreadyEnrolled.Error())
 	})
 }
 
@@ -3284,7 +3284,7 @@ func testPMs(s *serverUnderTest) {
 		c.expectPing()
 		c.expectSnapshot(s.backend.Version(), nil, nil)
 		c.send("1", "pm-initiate", `{"user_id":"%s"}`, r.id())
-		c.expectError("1", "pm-initiate-reply", proto.ErrAccessDenied.Error())
+		c.expectError("1", "pm-initiate-reply", "%s", proto.ErrAccessDenied.Error())
 		c.Close()
 
 		// Log in and invite recipient to PM

@@ -64,7 +64,7 @@ func TestEmail(t *testing.T) {
 		buf := &bytes.Buffer{}
 		n, err := e.WriteTo(buf)
 		So(err, ShouldBeNil)
-		Printf(buf.String())
+		Printf("%s", buf.String())
 		So(n, ShouldEqual, buf.Len())
 
 		header, content := splitEmail(buf.Bytes())
