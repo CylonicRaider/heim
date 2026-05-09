@@ -449,7 +449,6 @@ func (s *session) serve() error {
 
 		}
 	}
-	return nil
 }
 
 func (s *session) readMessages() {

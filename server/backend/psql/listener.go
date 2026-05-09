@@ -86,7 +86,8 @@ func (lm ListenerMap) Broadcast(ctx scope.Context, event *proto.Packet, exclude 
 			}
 			if fastKeepaliveAgentID != "" && strings.HasPrefix(sessionID, fastKeepaliveAgentID) {
 				if err := listener.CheckAbandoned(); err != nil {
-					fmt.Errorf("fast keepalive to %s: %s", listener.ID(), err)
+					// TODO: accumulate errors, including this one
+					logging.Logger(ctx).Printf("fast keepalive to %s: %s", listener.ID(), err)
 				}
 			}
 			if !listener.enabled {
