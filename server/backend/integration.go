@@ -1391,7 +1391,7 @@ func testAccountChangePassword(s *serverUnderTest) {
 		other.Close()
 
 		// Password change email should have been sent.
-		msg := <-inbox
+		msg := receiveEmail(inbox)
 		So(msg.EmailType, ShouldEqual, proto.PasswordChangedEmail)
 		_, ok := msg.Data.(*proto.PasswordChangedEmailParams)
 		So(ok, ShouldBeTrue)
@@ -1416,7 +1416,7 @@ func testAccountResetPassword(s *serverUnderTest) {
 		conn.expect("1", "reset-password-reply", `{}`)
 
 		// Receive confirmation code in email.
-		msg := <-inbox
+		msg := receiveEmail(inbox)
 		So(msg.EmailType, ShouldEqual, proto.PasswordResetEmail)
 		p, ok := msg.Data.(*proto.PasswordResetEmailParams)
 		So(ok, ShouldBeTrue)
@@ -1878,7 +1878,7 @@ func testAccountRegistration(s *serverUnderTest) {
 			`{"success":false,"reason":"personal identity already in use"}`)
 
 		// Registration email should have been sent.
-		msg := <-inbox
+		msg := receiveEmail(inbox)
 		So(msg.EmailType, ShouldEqual, proto.WelcomeEmail)
 		params, ok := msg.Data.(*proto.WelcomeEmailParams)
 		So(ok, ShouldBeTrue)
@@ -2978,7 +2978,7 @@ func testEmailsLowLevel(s *serverUnderTest) {
 		deliverer.ok = true
 		ref := sendEmail("test")
 
-		msg := <-ch
+		msg := receiveEmail(ch)
 		delivered := normalizeRef(&msg.EmailRef)
 
 		// comparing times that pass through serialization is tricky
