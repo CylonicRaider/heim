@@ -204,7 +204,7 @@ func main() {
 
 	self, err := exec.LookPath(os.Args[0])
 	if err != nil {
-		fail("where is " + os.Args[0], err)
+		fail("where is "+os.Args[0], err)
 	}
 	path, err := swallow(self, os.Args[1], os.Args[2:])
 	if err != nil {

@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coreos/go-etcd/etcd"
 	"euphoria.leet.nu/lib/scope"
+	"github.com/coreos/go-etcd/etcd"
 	"github.com/prometheus/client_golang/prometheus"
 
 	"euphoria.leet.nu/heim/cluster"
