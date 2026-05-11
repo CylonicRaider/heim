@@ -89,7 +89,7 @@ func (js *JobService) GetQueue(ctx scope.Context, name string) (jobs.JobQueue, e
 		// If queue didn't exist yet, try to insert. This may fail due to race,
 		// in which case we'll loop and try to get again.
 		if err := t.Insert(jq); err != nil {
-			if !strings.HasPrefix(err.Error(), "pq: duplicate key value") {
+			if !isUniqueViolation(err) {
 				rollback(ctx, t)
 				return nil, err
 			}

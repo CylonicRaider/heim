@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"euphoria.leet.nu/lib/scope"
@@ -449,7 +448,7 @@ func (b *AccountManagerBinding) Register(
 	}
 	if err := t.Insert(personalIdentity); err != nil {
 		rollback()
-		if strings.HasPrefix(err.Error(), "pq: duplicate key value") {
+		if isUniqueViolation(err) {
 			return nil, nil, proto.ErrPersonalIdentityInUse
 		}
 		return nil, nil, err
@@ -844,7 +843,7 @@ func (b *AccountManagerBinding) ChangeName(ctx scope.Context, accountID snowflak
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return proto.ErrAccountNotFound
-		} else if strings.HasPrefix(err.Error(), "pq: duplicate key value") {
+		} else if isUniqueViolation(err) {
 			return proto.ErrAccountNameInUse
 		}
 		return err

@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/base64"
 	"fmt"
-	"strings"
 	"time"
 
 	"euphoria.leet.nu/lib/scope"
@@ -44,7 +43,7 @@ func (atb *AgentTrackerBinding) Register(ctx scope.Context, agent *proto.Agent) 
 	}
 
 	if err := atb.Backend.DbMap.Insert(row); err != nil {
-		if strings.HasPrefix(err.Error(), "pq: duplicate key value") {
+		if isUniqueViolation(err) {
 			return proto.ErrAgentAlreadyExists
 		}
 		return err

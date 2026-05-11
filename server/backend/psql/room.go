@@ -379,7 +379,7 @@ func (rb *RoomBinding) RenameUser(ctx scope.Context, session proto.Session, form
 			Nick:   session.Identity().Name(),
 		}
 		if err := rb.DbMap.Insert(nick); err != nil {
-			if !strings.HasPrefix(err.Error(), "pq: duplicate key value") {
+			if !isUniqueViolation(err) {
 				rollback(ctx, t)
 				return nil, err
 			}
@@ -630,7 +630,7 @@ func (rb *ManagedRoomBinding) banAgent(ctx scope.Context, agentID proto.UserID, 
 	for {
 		// Try to insert; if this fails due to duplicate key value, try to update.
 		if err := rb.DbMap.Insert(ban); err != nil {
-			if !strings.HasPrefix(err.Error(), "pq: duplicate key value") {
+			if !isUniqueViolation(err) {
 				rollback(ctx, t)
 				return err
 			}
@@ -772,7 +772,7 @@ func (rb *ManagedRoomBinding) AddManager(
 		if err == proto.ErrCapabilityNotFound {
 			return proto.ErrAccessDenied
 		}
-		if err.Error() == `pq: duplicate key value violates unique constraint "capability_pkey"` {
+		if isUniqueViolation(err) {
 			return nil
 		}
 		return err

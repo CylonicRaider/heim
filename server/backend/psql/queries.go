@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"euphoria.leet.nu/lib/scope"
+	"github.com/lib/pq"
+	"github.com/lib/pq/pqerror"
 	"gopkg.in/gorp.v1"
 
 	"euphoria.leet.nu/heim/proto/logging"
@@ -42,4 +44,8 @@ func allColumns(dbMap *gorp.DbMap, row interface{}, prefix string, aliases ...st
 		}
 	}
 	return strings.Join(parts, ", "), nil
+}
+
+func isUniqueViolation(err error) bool {
+	return pq.As(err, pqerror.UniqueViolation) != nil
 }
