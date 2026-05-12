@@ -412,22 +412,16 @@ func (b *Backend) CreateRoom(
 		return nil, err
 	}
 
-	rollback := func() {
-		if err := t.Rollback(); err != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", err)
-		}
-	}
-
 	if err := t.Insert(room); err != nil {
 		logging.Logger(ctx).Printf("room creation error on %s: %s", name, err)
-		rollback()
+		rollback(ctx, t)
 		return nil, err
 	}
 
 	if rmkb != nil {
 		if err := t.Insert(&rmkb.MessageKey, &rmkb.RoomMessageKey); err != nil {
 			logging.Logger(ctx).Printf("room creation error on %s (message key): %s", name, err)
-			rollback()
+			rollback(ctx, t)
 			return nil, err
 		}
 	}
@@ -440,7 +434,7 @@ func (b *Backend) CreateRoom(
 		if err := managerCapTable.Save(ctx, managers[i], capability); err != nil {
 			logging.Logger(ctx).Printf(
 				"room creation error on %s (manager %s): %s", name, managers[i].ID().String(), err)
-			rollback()
+			rollback(ctx, t)
 			return nil, err
 		}
 	}
@@ -453,7 +447,7 @@ func (b *Backend) CreateRoom(
 		if err := messageCapTable.Save(ctx, managers[i], capability); err != nil {
 			logging.Logger(ctx).Printf(
 				"room creation error on %s (access capability): %s", name, err)
-			rollback()
+			rollback(ctx, t)
 			return nil, err
 		}
 	}
@@ -662,9 +656,7 @@ func (b *Backend) join(ctx scope.Context, rb *RoomBinding, session proto.Session
 	}
 	if len(agentBans) > 0 {
 		logging.Logger(ctx).Printf("access denied to %s: %#v", session.Identity().ID(), agentBans)
-		if err := t.Rollback(); err != nil {
-			return "", err
-		}
+		rollback(ctx, t)
 		return "", proto.ErrAccessDenied
 	}
 
@@ -681,9 +673,7 @@ func (b *Backend) join(ctx scope.Context, rb *RoomBinding, session proto.Session
 	}
 	if len(ipBans) > 0 {
 		logging.Logger(ctx).Printf("access denied to %s: %#v", client.IP, ipBans)
-		if err := t.Rollback(); err != nil {
-			return "", err
-		}
+		rollback(ctx, t)
 		return "", proto.ErrAccessDenied
 	}
 
@@ -715,15 +705,11 @@ func (b *Backend) join(ctx scope.Context, rb *RoomBinding, session proto.Session
 		Connected: client.Connected,
 	}
 	if _, err := t.Delete(entry); err != nil {
-		if rerr := t.Rollback(); rerr != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", rerr)
-		}
+		rollback(ctx, t)
 		return "", err
 	}
 	if err := t.Insert(entry); err != nil {
-		if rerr := t.Rollback(); rerr != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", rerr)
-		}
+		rollback(ctx, t)
 		return "", err
 	}
 

@@ -12,7 +12,6 @@ import (
 	"gopkg.in/gorp.v1"
 
 	"euphoria.leet.nu/heim/proto"
-	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
 )
@@ -245,21 +244,15 @@ func (rb *RoomBinding) EditMessage(
 		return reply, err
 	}
 
-	rollback := func() {
-		if err := t.Rollback(); err != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", err)
-		}
-	}
-
 	var msg Message
 	err = t.SelectOne(&msg, fmt.Sprintf("SELECT %s FROM message WHERE room = $1 AND id = $2", cols), rb.RoomName, edit.ID.String())
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		return reply, err
 	}
 
 	if msg.PreviousEditID.Valid && msg.PreviousEditID.String != edit.PreviousEditID.String() {
-		rollback()
+		rollback(ctx, t)
 		return reply, proto.ErrEditInconsistent
 	}
 
@@ -282,7 +275,7 @@ func (rb *RoomBinding) EditMessage(
 		}
 	}
 	if err := t.Insert(entry); err != nil {
-		rollback()
+		rollback(ctx, t)
 		return reply, err
 	}
 
@@ -312,7 +305,7 @@ func (rb *RoomBinding) EditMessage(
 	}
 	query := fmt.Sprintf("UPDATE message SET %s WHERE room = $1 AND id = $2", strings.Join(sets, ", "))
 	if _, err := t.Exec(query, args...); err != nil {
-		rollback()
+		rollback(ctx, t)
 		return reply, err
 	}
 
@@ -323,7 +316,7 @@ func (rb *RoomBinding) EditMessage(
 		}
 		err = rb.broadcast(ctx, t, proto.EditMessageEventType, event, session)
 		if err != nil {
-			rollback()
+			rollback(ctx, t)
 			return reply, err
 		}
 	}
@@ -445,16 +438,12 @@ func (rb *ManagedRoomBinding) GenerateMessageKey(ctx scope.Context, kms security
 	}
 
 	if err := transaction.Insert(&rmkb.MessageKey); err != nil {
-		if rerr := transaction.Rollback(); rerr != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", rerr)
-		}
+		rollback(ctx, transaction)
 		return nil, err
 	}
 
 	if err := transaction.Insert(&rmkb.RoomMessageKey); err != nil {
-		if rerr := transaction.Rollback(); rerr != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", rerr)
-		}
+		rollback(ctx, transaction)
 		return nil, err
 	}
 
@@ -789,17 +778,11 @@ func (rb *ManagedRoomBinding) RemoveManager(
 		return err
 	}
 
-	rollback := func() {
-		if err := t.Rollback(); err != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", err)
-		}
-	}
-
 	rmkb := NewRoomManagerKeyBinding(rb)
 	rmkb.SetExecutor(t)
 
 	if _, _, _, err := rmkb.Authority(ctx, actor, actorKey); err != nil {
-		rollback()
+		rollback(ctx, t)
 		if err == proto.ErrCapabilityNotFound {
 			return proto.ErrAccessDenied
 		}
@@ -807,7 +790,7 @@ func (rb *ManagedRoomBinding) RemoveManager(
 	}
 
 	if err := rmkb.RevokeFromAccount(ctx, formerManager); err != nil {
-		rollback()
+		rollback(ctx, t)
 		if err == proto.ErrCapabilityNotFound || err == proto.ErrAccessDenied {
 			return proto.ErrManagerNotFound
 		}

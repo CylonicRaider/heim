@@ -111,27 +111,21 @@ func (atb *AgentTrackerBinding) SetClientKey(
 		return err
 	}
 
-	rollback := func() {
-		if err := t.Rollback(); err != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", err)
-		}
-	}
-
 	agent, err := atb.getFromDB(agentID, atb.Backend.DbMap)
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		return err
 	}
 
 	if err := agent.SetClientKey(accessKey, clientKey); err != nil {
-		rollback()
+		rollback(ctx, t)
 		return err
 	}
 
 	err = atb.setClientKeyInDB(
 		agentID, accountID.String(), agent.EncryptedClientKey.Ciphertext, t)
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		return err
 	}
 

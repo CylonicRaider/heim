@@ -321,15 +321,9 @@ func (b *AccountManagerBinding) ChangeClientKey(
 		return err
 	}
 
-	rollback := func() {
-		if err := t.Rollback(); err != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", err)
-		}
-	}
-
 	row, err := t.Get(Account{}, accountID.String())
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		if err == sql.ErrNoRows {
 			return proto.ErrAccountNotFound
 		}
@@ -339,7 +333,7 @@ func (b *AccountManagerBinding) ChangeClientKey(
 
 	sec := account.Bind(b.Backend).accountSecurity()
 	if err := sec.ChangeClientKey(oldKey, newKey); err != nil {
-		rollback()
+		rollback(ctx, t)
 		return err
 	}
 
@@ -347,17 +341,17 @@ func (b *AccountManagerBinding) ChangeClientKey(
 		"UPDATE account SET mac = $2, encrypted_user_key = $3 WHERE id = $1",
 		accountID.String(), sec.MAC, sec.UserKey.Ciphertext)
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		return err
 	}
 
 	n, err := res.RowsAffected()
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		return err
 	}
 	if n == 0 {
-		rollback()
+		rollback(ctx, t)
 		return proto.ErrAccountNotFound
 	}
 
@@ -418,12 +412,6 @@ func (b *AccountManagerBinding) Register(
 		return nil, nil, err
 	}
 
-	rollback := func() {
-		if err := t.Rollback(); err != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", err)
-		}
-	}
-
 	// Insert new rows for account.
 	account := &Account{
 		ID:                  accountID.String(),
@@ -443,11 +431,11 @@ func (b *AccountManagerBinding) Register(
 		AccountID: accountID.String(),
 	}
 	if err := t.Insert(account); err != nil {
-		rollback()
+		rollback(ctx, t)
 		return nil, nil, err
 	}
 	if err := t.Insert(personalIdentity); err != nil {
-		rollback()
+		rollback(ctx, t)
 		if isUniqueViolation(err) {
 			return nil, nil, proto.ErrPersonalIdentityInUse
 		}
@@ -458,16 +446,16 @@ func (b *AccountManagerBinding) Register(
 	atb := &AgentTrackerBinding{b.Backend}
 	agent, err := atb.getFromDB(agentID, t)
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		return nil, nil, err
 	}
 	if err := agent.SetClientKey(agentKey, clientKey); err != nil {
-		rollback()
+		rollback(ctx, t)
 		return nil, nil, err
 	}
 	err = atb.setClientKeyInDB(agentID, accountID.String(), agent.EncryptedClientKey.Ciphertext, t)
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		return nil, nil, err
 	}
 
@@ -486,9 +474,7 @@ func (b *AccountManagerBinding) Resolve(ctx scope.Context, namespace, id string)
 	t, err := b.DbMap.Begin()
 	account, err := b.resolve(t, namespace, id)
 	if err != nil {
-		if rerr := t.Rollback(); rerr != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", err)
-		}
+		rollback(ctx, t)
 		return nil, err
 	}
 	if err := t.Commit(); err != nil {
@@ -524,9 +510,7 @@ func (b *AccountManagerBinding) Get(ctx scope.Context, id snowflake.Snowflake) (
 	t, err := b.DbMap.Begin()
 	account, err := b.get(t, id)
 	if err != nil {
-		if rerr := t.Rollback(); rerr != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", err)
-		}
+		rollback(ctx, t)
 		return nil, err
 	}
 	if err := t.Commit(); err != nil {
@@ -634,12 +618,6 @@ func (b *AccountManagerBinding) GrantStaff(
 		return err
 	}
 
-	rollback := func() {
-		if err := t.Rollback(); err != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", err)
-		}
-	}
-
 	dbCap := &Capability{
 		ID:                   capability.CapabilityID(),
 		NonceBytes:           capability.Nonce(),
@@ -647,7 +625,7 @@ func (b *AccountManagerBinding) GrantStaff(
 		PublicData:           capability.PublicPayload(),
 	}
 	if err := t.Insert(dbCap); err != nil {
-		rollback()
+		rollback(ctx, t)
 		return err
 	}
 
@@ -655,16 +633,16 @@ func (b *AccountManagerBinding) GrantStaff(
 		"UPDATE account SET staff_capability_id = $2 WHERE id = $1",
 		accountID.String(), capability.CapabilityID())
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		return err
 	}
 	n, err := result.RowsAffected()
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		return err
 	}
 	if n != 1 {
-		rollback()
+		rollback(ctx, t)
 		return proto.ErrAccountNotFound
 	}
 
@@ -692,21 +670,15 @@ func (b *AccountManagerBinding) RequestPasswordReset(
 		return nil, nil, err
 	}
 
-	rollback := func() {
-		if err := t.Rollback(); err != nil {
-			logging.Logger(ctx).Printf("rollback error: %s", err)
-		}
-	}
-
 	account, err := b.resolve(t, namespace, id)
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		return nil, nil, err
 	}
 
 	req, err := proto.GeneratePasswordResetRequest(kms, account.ID())
 	if err != nil {
-		rollback()
+		rollback(ctx, t)
 		return nil, nil, err
 	}
 
@@ -718,12 +690,12 @@ func (b *AccountManagerBinding) RequestPasswordReset(
 		Expires:   req.Expires,
 	}
 	if err := t.Insert(stored); err != nil {
-		rollback()
+		rollback(ctx, t)
 		return nil, nil, err
 	}
 
 	if err := t.Commit(); err != nil {
-		rollback()
+		rollback(ctx, t)
 		return nil, nil, err
 	}
 
