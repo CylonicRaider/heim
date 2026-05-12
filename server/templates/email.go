@@ -140,7 +140,7 @@ func (e *Email) WriteTo(w io.Writer) (int64, error) {
 	return wc.n, nil
 }
 
-func EvaluateEmail(t *Templater, baseName string, context interface{}) (*Email, error) {
+func EvaluateEmail(t Templater, baseName string, context interface{}) (*Email, error) {
 	email := &Email{}
 
 	headerBytes, err := t.Evaluate(baseName+".hdr", context)

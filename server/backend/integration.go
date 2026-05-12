@@ -31,6 +31,7 @@ import (
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/proto/snowflake"
+	"euphoria.leet.nu/heim/templates"
 
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/smartystreets/goconvey/convey/reporting"
@@ -573,6 +574,7 @@ func IntegrationTest(t *testing.T, factory proto.BackendFactory) {
 			Context:        newTestScope(),
 			KMS:            security.LocalKMS(),
 			EmailDeliverer: &emails.TestDeliverer{},
+			EmailTemplater: NewEmailTestTemplater(),
 			SiteName:       "test",
 		}
 		heim.KMS.(security.MockKMS).SetMasterKey(make([]byte, security.AES256.KeySize()))
@@ -2914,6 +2916,27 @@ func testJobsLowLevel(s *serverUnderTest) {
 	})
 }
 
+type testTemplater struct {
+	result string
+}
+
+func NewEmailTestTemplater() templates.Templater {
+	return &testTemplater{"Testing: yes\n\ntest"}
+}
+
+func (t *testTemplater) Load(path string) []error {
+	panic("This should never be called!")
+}
+
+func (t *testTemplater) Evaluate(name string, context interface{}) ([]byte, error) {
+	return []byte(t.result), nil
+}
+
+func (t *testTemplater) Validate(name string, testCase templates.TemplateTest) error {
+	_, err := t.Evaluate(name, testCase.Data)
+	return err
+}
+
 type testDeliverer struct {
 	emails.TestDeliverer
 	ok bool
@@ -2945,6 +2968,8 @@ func testEmailsLowLevel(s *serverUnderTest) {
 	otherAccount, _, err := s.Account(ctx, kms, "email", "other"+addr, "hunter2")
 	So(err, ShouldBeNil)
 
+	templater := NewEmailTestTemplater()
+
 	deliverer := &testDeliverer{}
 	ch := deliverer.Inbox(addr)
 	et := s.backend.EmailTracker()
@@ -2969,7 +2994,7 @@ func testEmailsLowLevel(s *serverUnderTest) {
 	}
 
 	sendEmail := func(templateName string) *emails.EmailRef {
-		ref, err := et.Send(ctx, js, nil, deliverer, account, "", templateName, nil)
+		ref, err := et.Send(ctx, js, templater, deliverer, account, "", templateName, nil)
 		So(err, ShouldBeNil)
 		return normalizeRef(ref)
 	}

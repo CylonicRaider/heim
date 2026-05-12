@@ -38,7 +38,7 @@ type Server struct {
 	b             proto.Backend
 	kms           security.KMS
 	pageModTime   time.Time
-	pageTemplater *templates.Templater
+	pageTemplater templates.Templater
 	staticPath    string
 	sc            *securecookie.SecureCookie
 	rootCtx       scope.Context

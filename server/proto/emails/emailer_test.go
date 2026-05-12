@@ -90,7 +90,7 @@ func TestTemplateEmailer(t *testing.T) {
 From: noreply@heim.invalid{{end}}`)
 		So(err, ShouldBeNil)
 
-		templater := &templates.Templater{Templates: map[string]*template.Template{"test": tmpl}}
+		templater := &templates.StandardTemplater{Templates: map[string]*template.Template{"test": tmpl}}
 
 		Convey("Send test email", func() {
 			ref, err := NewEmail(templater, "<msgid@test>", "test@heim.invalid", "test", nil)

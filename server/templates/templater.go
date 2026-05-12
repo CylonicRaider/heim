@@ -17,13 +17,19 @@ type TemplateTest struct {
 	Data interface{}
 }
 
-type Templater struct {
+type Templater interface {
+	Load(path string) []error
+	Evaluate(name string, context interface{}) ([]byte, error)
+	Validate(name string, testCase TemplateTest) error
+}
+
+type StandardTemplater struct {
 	Templates map[string]*template.Template
 
 	staticFiles map[string][]byte
 }
 
-func (t *Templater) findAndParse(prefix, path string) []error {
+func (t *StandardTemplater) findAndParse(prefix, path string) []error {
 	// Scan the top-level directory of the given path.
 	entries, err := ioutil.ReadDir(path)
 	if err != nil {
@@ -57,7 +63,7 @@ func (t *Templater) findAndParse(prefix, path string) []error {
 	return nil
 }
 
-func (t *Templater) parseGlob(prefix, path, pattern string) (*template.Template, []error) {
+func (t *StandardTemplater) parseGlob(prefix, path, pattern string) (*template.Template, []error) {
 	matches, err := filepath.Glob(filepath.Join(path, pattern))
 	if err != nil {
 		return nil, []error{err}
@@ -93,7 +99,7 @@ func (t *Templater) parseGlob(prefix, path, pattern string) (*template.Template,
 	return tmpl, nil
 }
 
-func (t *Templater) Load(path string) []error {
+func (t *StandardTemplater) Load(path string) []error {
 	// Initialize if necessary.
 	if t.staticFiles == nil {
 		t.staticFiles = map[string][]byte{}
@@ -128,7 +134,7 @@ func (t *Templater) Load(path string) []error {
 	return nil
 }
 
-func (t *Templater) Evaluate(name string, context interface{}) ([]byte, error) {
+func (t *StandardTemplater) Evaluate(name string, context interface{}) ([]byte, error) {
 	ext := filepath.Ext(name)
 	tmplName := name[:len(name)-len(ext)]
 	tmpl, ok := t.Templates[tmplName]
@@ -152,8 +158,9 @@ func (t *Templater) Evaluate(name string, context interface{}) ([]byte, error) {
 	return w.Bytes(), nil
 }
 
-func (t *Templater) Validate(name string, testCase ...TemplateTest) []error {
-	return nil
+func (t *StandardTemplater) Validate(name string, testCase TemplateTest) error {
+	_, err := t.Evaluate(name, testCase.Data)
+	return err
 }
 
 type Attachment struct {
@@ -204,4 +211,19 @@ func (sf *StaticFiles) File(path string) (template.URL, error) {
 		Content:   content,
 	}
 	return template.URL("cid:" + sf.attached[path].ContentID), nil
+}
+
+func ValidateTemplates(t Templater, scenarios map[string]map[string]TemplateTest) []error {
+	errors := []error{}
+	for templateName, testCases := range scenarios {
+		for _, testCase := range testCases {
+			if err := t.Validate(templateName, testCase); err != nil {
+				errors = append(errors, err)
+			}
+		}
+	}
+	if len(errors) == 0 {
+		return nil
+	}
+	return errors
 }

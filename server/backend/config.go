@@ -370,13 +370,13 @@ type EmailConfig struct {
 	Templates  string `yaml:"templates"`
 }
 
-func (ec *EmailConfig) Get(ctx scope.Context, cfg *ServerConfig) (*templates.Templater, emails.Deliverer, error) {
+func (ec *EmailConfig) Get(ctx scope.Context, cfg *ServerConfig) (templates.Templater, emails.Deliverer, error) {
 	proto.DefaultCommonEmailParams = *cfg.CommonEmailParams
 	localDomain := cfg.CommonEmailParams.EmailDomain
 	cfg.CommonEmailParams.CommonData.LocalDomain = localDomain
 
 	// Load templates and configure email sender.
-	templater := &templates.Templater{}
+	templater := &templates.StandardTemplater{}
 	// TODO: replace -static with a better sense of a static root
 	if errs := templater.Load(filepath.Join(cfg.Settings.StaticPath, "..", "email")); errs != nil {
 		return nil, nil, errs[0]

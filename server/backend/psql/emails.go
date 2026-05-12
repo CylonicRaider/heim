@@ -83,7 +83,7 @@ type EmailTracker struct {
 }
 
 func (et *EmailTracker) Send(
-	ctx scope.Context, js jobs.JobService, templater *templates.Templater, deliverer emails.Deliverer,
+	ctx scope.Context, js jobs.JobService, templater templates.Templater, deliverer emails.Deliverer,
 	account proto.Account, to, templateName string, data interface{}) (
 	*emails.EmailRef, error) {
 

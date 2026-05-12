@@ -29,7 +29,7 @@ type Emailer interface {
 	Send(ctx scope.Context, to, templateName string, data interface{}) (*EmailRef, error)
 }
 
-func NewEmail(templater *templates.Templater, msgID, to, templateName string, data interface{}) (*EmailRef, error) {
+func NewEmail(templater templates.Templater, msgID, to, templateName string, data interface{}) (*EmailRef, error) {
 	now := time.Now()
 	ref := &EmailRef{
 		ID:        msgID,
@@ -37,9 +37,6 @@ func NewEmail(templater *templates.Templater, msgID, to, templateName string, da
 		SendTo:    to,
 		Created:   now,
 		data:      data,
-	}
-	if templater == nil {
-		return ref, nil
 	}
 
 	if cd, ok := data.(commonData); ok {

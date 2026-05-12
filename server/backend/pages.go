@@ -47,23 +47,12 @@ var PageScenarios = map[string]map[string]templates.TemplateTest{
 	},
 }
 
-func ValidatePageTemplates(templater *templates.Templater) []error {
-	errors := []error{}
-	for templateName, testCases := range PageScenarios {
-		testList := make([]templates.TemplateTest, 0, len(testCases))
-		for _, testCase := range testCases {
-			testList = append(testList, testCase)
-		}
-		errors = append(errors, templater.Validate(templateName, testList...)...)
-	}
-	if len(errors) == 0 {
-		return nil
-	}
-	return errors
+func ValidatePageTemplates(templater templates.Templater) []error {
+	return templates.ValidateTemplates(templater, PageScenarios)
 }
 
-func LoadPageTemplates(ctx scope.Context, path string) (*templates.Templater, error) {
-	pageTemplater := &templates.Templater{}
+func LoadPageTemplates(ctx scope.Context, path string) (templates.Templater, error) {
+	pageTemplater := &templates.StandardTemplater{}
 	if errs := pageTemplater.Load(path); errs != nil {
 		return nil, errs[0]
 	}

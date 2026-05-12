@@ -25,9 +25,9 @@ type Heim struct {
 	StaticPath string
 
 	EmailDeliverer emails.Deliverer
-	EmailTemplater *templates.Templater
+	EmailTemplater templates.Templater
 	GeoIP          *geoip2.Api
-	PageTemplater  *templates.Templater
+	PageTemplater  templates.Templater
 }
 
 func (heim *Heim) MockDeliverer() emails.MockDeliverer {

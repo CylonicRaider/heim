@@ -28,7 +28,7 @@ type EmailTracker interface {
 	List(ctx scope.Context, accountID snowflake.Snowflake, n int, before time.Time) ([]*emails.EmailRef, error)
 	MarkDelivered(ctx scope.Context, accountID snowflake.Snowflake, id string) error
 	Send(
-		ctx scope.Context, js jobs.JobService, templater *templates.Templater, deliverer emails.Deliverer,
+		ctx scope.Context, js jobs.JobService, templater templates.Templater, deliverer emails.Deliverer,
 		account Account, to, templateName string, data interface{}) (*emails.EmailRef, error)
 }
 
@@ -204,19 +204,8 @@ var (
 	}
 )
 
-func ValidateEmailTemplates(templater *templates.Templater) []error {
-	errors := []error{}
-	for templateName, testCases := range EmailScenarios {
-		testList := make([]templates.TemplateTest, 0, len(testCases))
-		for _, testCase := range testCases {
-			testList = append(testList, testCase)
-		}
-		errors = append(errors, templater.Validate(templateName, testList...)...)
-	}
-	if len(errors) == 0 {
-		return nil
-	}
-	return errors
+func ValidateEmailTemplates(templater templates.Templater) []error {
+	return templates.ValidateTemplates(templater, EmailScenarios)
 }
 
 func verificationURL(siteURL, email, token string) template.HTML {

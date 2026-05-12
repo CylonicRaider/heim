@@ -149,7 +149,7 @@ func TestEmail(t *testing.T) {
 		write(td, "test.txt", "text")
 		write(filepath.Join(td, "static"), "a.png", "lmao")
 
-		templater := &Templater{}
+		templater := &StandardTemplater{}
 		So(templater.Load(td), ShouldBeNil)
 
 		e, err := EvaluateEmail(templater, "test", &StaticFiles{})
