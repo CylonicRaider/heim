@@ -104,11 +104,9 @@ type EtcdServer struct {
 }
 
 func (s *EtcdServer) consumeStderr(stderr io.ReadCloser, ch chan<- string) {
-	// Read until we see a line like this:
-	// 2015/02/24 09:52:20 etcdserver: published {Name:default ClientURLs:[http://localhost:2379
-	// http://localhost:4001]} to cluster 7e27652122e8b2ae
+	// Read until we see a line containing the marker.
+	marker := `"local-member-attributes":"{Name:default ClientURLs:[`
 
-	marker := "etcdserver: published {Name:default ClientURLs:["
 	r := bufio.NewReader(stderr)
 	atStart := true
 	for {
