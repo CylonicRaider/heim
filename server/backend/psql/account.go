@@ -39,23 +39,29 @@ func (a *Account) Bind(b *Backend) *AccountBinding {
 }
 
 type AccountWithStaffCapability struct {
-	AccountID            string         `db:"id"`
-	CapabilityAccountID  sql.NullString `db:"account_id"`
-	AccountNonce         []byte         `db:"nonce"`
-	StaffCapabilityID    sql.NullString `db:"staff_capability_id"`
-	StaffCapabilityNonce []byte         `db:"staff_capability_nonce"`
 	Account
-	Capability
+
+	// This type is only used for a query of an account left-joined with its staff capability. To avoid errors
+	// when scanning nulls into the non-nullable capability fields and general hassle due to column name clashes,
+	// it is most expedient to just re-state the fields of Capability, optionalized, here.
+	CapabilityID                   sql.NullString `db:"staff_capability_id"`
+	CapabilityAccountID            sql.NullString `db:"account_id"`
+	CapabilityNonce                ByteAOrNull    `db:"staff_capability_nonce"`
+	CapabilityEncryptedPrivateData ByteAOrNull    `db:"encrypted_private_data"`
+	CapabilityPublicData           ByteAOrNull    `db:"public_data"`
 }
 
 func (awsc *AccountWithStaffCapability) Bind(b *Backend) *AccountBinding {
-	awsc.Account.ID = awsc.AccountID
-	awsc.Account.Nonce = awsc.AccountNonce
 	ab := awsc.Account.Bind(b)
-	if awsc.StaffCapabilityID.Valid {
-		awsc.Capability.ID = awsc.StaffCapabilityID.String
-		awsc.Capability.NonceBytes = awsc.StaffCapabilityNonce
-		ab.StaffCapability = &awsc.Capability
+	if awsc.CapabilityID.Valid {
+		// TODO: maybe check if capability's account ID is consistent with account's
+		ab.StaffCapability = &Capability{
+			ID:                   awsc.CapabilityID.String,
+			AccountID:            awsc.CapabilityAccountID.String,
+			NonceBytes:           awsc.CapabilityNonce,
+			EncryptedPrivateData: NewByteANonNull(awsc.CapabilityEncryptedPrivateData.v),
+			PublicData:           NewByteANonNull(awsc.CapabilityPublicData.v),
+		}
 	}
 	return ab
 }
@@ -620,9 +626,9 @@ func (b *AccountManagerBinding) GrantStaff(
 
 	dbCap := &Capability{
 		ID:                   capability.CapabilityID(),
-		NonceBytes:           capability.Nonce(),
-		EncryptedPrivateData: capability.EncryptedPayload(),
-		PublicData:           capability.PublicPayload(),
+		NonceBytes:           NewByteAOrNull(capability.Nonce()),
+		EncryptedPrivateData: NewByteANonNull(capability.EncryptedPayload()),
+		PublicData:           NewByteANonNull(capability.PublicPayload()),
 	}
 	if err := t.Insert(dbCap); err != nil {
 		rollback(ctx, t)

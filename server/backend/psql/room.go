@@ -502,8 +502,8 @@ func (rb *ManagedRoomBinding) MessageKey(ctx scope.Context) (proto.RoomMessageKe
 
 	msgKey := &security.ManagedKey{
 		KeyType:      proto.RoomMessageKeyType,
-		IV:           row.MessageKey.IV,
-		Ciphertext:   row.MessageKey.EncryptedKey,
+		IV:           row.MessageKey.IV.v,
+		Ciphertext:   row.MessageKey.EncryptedKey.v,
 		ContextKey:   "room",
 		ContextValue: rb.RoomName,
 	}
@@ -511,7 +511,7 @@ func (rb *ManagedRoomBinding) MessageKey(ctx scope.Context) (proto.RoomMessageKe
 	if err := keyID.FromString(row.KeyID); err != nil {
 		return nil, err
 	}
-	return NewRoomMessageKeyBinding(rb, keyID, msgKey, row.Nonce), nil
+	return NewRoomMessageKeyBinding(rb, keyID, msgKey, row.Nonce.v), nil
 }
 
 func (rb *RoomBinding) WaitForPart(sessionID string) error {

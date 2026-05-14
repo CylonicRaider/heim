@@ -23,7 +23,7 @@ type Email struct {
 	EmailType string `db:"email_type"`
 	SendTo    string `db:"send_to"`
 	SendFrom  string `db:"send_from"`
-	Message   []byte
+	Message   ByteANonNull
 	Created   time.Time
 	Delivered gorp.NullTime
 	Failed    gorp.NullTime
@@ -36,7 +36,7 @@ func (e *Email) ToBackend() (*emails.EmailRef, error) {
 		EmailType: e.EmailType,
 		SendTo:    e.SendTo,
 		SendFrom:  e.SendFrom,
-		Message:   e.Message,
+		Message:   e.Message.v,
 		Created:   e.Created,
 	}
 
@@ -60,7 +60,7 @@ func (e *Email) FromBackend(ref *emails.EmailRef) {
 	e.EmailType = ref.EmailType
 	e.SendTo = ref.SendTo
 	e.SendFrom = ref.SendFrom
-	e.Message = ref.Message
+	e.Message = NewByteANonNull(ref.Message)
 	e.Created = ref.Created
 
 	if ref.Delivered.IsZero() {

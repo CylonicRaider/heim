@@ -17,9 +17,9 @@ import (
 
 type Agent struct {
 	ID                 string
-	IV                 []byte
-	MAC                []byte
-	EncryptedClientKey []byte         `db:"encrypted_client_key"`
+	IV                 ByteANonNull
+	MAC                ByteANonNull
+	EncryptedClientKey ByteAOrNull    `db:"encrypted_client_key"`
 	AccountID          sql.NullString `db:"account_id"`
 	Created            time.Time
 	Blessed            bool
@@ -33,13 +33,15 @@ type AgentTrackerBinding struct {
 func (atb *AgentTrackerBinding) Register(ctx scope.Context, agent *proto.Agent) error {
 	row := &Agent{
 		ID:      agent.IDString(),
-		IV:      agent.IV,
-		MAC:     agent.MAC,
+		IV:      NewByteANonNull(agent.IV),
+		MAC:     NewByteANonNull(agent.MAC),
 		Created: agent.Created,
 		Bot:     agent.Bot,
 	}
 	if agent.EncryptedClientKey != nil {
-		row.EncryptedClientKey = agent.EncryptedClientKey.Ciphertext
+		row.EncryptedClientKey = NewByteAOrNull(agent.EncryptedClientKey.Ciphertext)
+	} else {
+		row.EncryptedClientKey = EmptyByteAOrNull()
 	}
 
 	if err := atb.Backend.DbMap.Insert(row); err != nil {
@@ -70,12 +72,12 @@ func (atb *AgentTrackerBinding) getFromDB(agentID string, db gorp.SqlExecutor) (
 	agentRow := row.(*Agent)
 	agent := &proto.Agent{
 		ID:  idBytes,
-		IV:  agentRow.IV,
-		MAC: agentRow.MAC,
+		IV:  agentRow.IV.v,
+		MAC: agentRow.MAC.v,
 		EncryptedClientKey: &security.ManagedKey{
 			KeyType:    proto.AgentKeyType,
-			IV:         agentRow.IV,
-			Ciphertext: agentRow.EncryptedClientKey,
+			IV:         agentRow.IV.v,
+			Ciphertext: agentRow.EncryptedClientKey.v,
 		},
 		AccountID: agentRow.AccountID.String,
 		Created:   agentRow.Created,

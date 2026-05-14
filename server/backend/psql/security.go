@@ -2,20 +2,20 @@ package psql
 
 type MessageKey struct {
 	ID           string
-	EncryptedKey []byte `db:"encrypted_key"`
-	IV           []byte
-	Nonce        []byte
+	EncryptedKey ByteANonNull `db:"encrypted_key"`
+	IV           ByteAOrNull
+	Nonce        ByteANonNull
 }
 
 type Capability struct {
 	ID                   string
-	AccountID            string `db:"account_id"`
-	NonceBytes           []byte `db:"nonce"`
-	EncryptedPrivateData []byte `db:"encrypted_private_data"`
-	PublicData           []byte `db:"public_data"`
+	AccountID            string       `db:"account_id"`
+	NonceBytes           ByteAOrNull  `db:"nonce"`
+	EncryptedPrivateData ByteANonNull `db:"encrypted_private_data"`
+	PublicData           ByteANonNull `db:"public_data"`
 }
 
 func (c *Capability) CapabilityID() string     { return c.ID }
-func (c *Capability) Nonce() []byte            { return c.NonceBytes }
-func (c *Capability) PublicPayload() []byte    { return c.PublicData }
-func (c *Capability) EncryptedPayload() []byte { return c.EncryptedPrivateData }
+func (c *Capability) Nonce() []byte            { return c.NonceBytes.v }
+func (c *Capability) PublicPayload() []byte    { return c.PublicData.v }
+func (c *Capability) EncryptedPayload() []byte { return c.EncryptedPrivateData.v }

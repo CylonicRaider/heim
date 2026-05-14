@@ -1,6 +1,7 @@
 package psql
 
 import (
+	"bytes"
 	"database/sql"
 	"time"
 
@@ -69,9 +70,9 @@ func (rmc *RoomManagerCapabilities) Save(
 
 	capRow := &Capability{
 		ID:                   c.CapabilityID(),
-		NonceBytes:           c.Nonce(),
-		EncryptedPrivateData: c.EncryptedPayload(),
-		PublicData:           c.PublicPayload(),
+		NonceBytes:           NewByteAOrNull(c.Nonce()),
+		EncryptedPrivateData: NewByteANonNull(c.EncryptedPayload()),
+		PublicData:           NewByteANonNull(c.PublicPayload()),
 	}
 	rmCapRow := &RoomManagerCapability{
 		Room:         rmc.Room.Name,
@@ -132,9 +133,9 @@ func (rmc *RoomMessageCapabilities) Save(
 
 	capRow := &Capability{
 		ID:                   c.CapabilityID(),
-		NonceBytes:           c.Nonce(),
-		EncryptedPrivateData: c.EncryptedPayload(),
-		PublicData:           c.PublicPayload(),
+		NonceBytes:           NewByteAOrNull(c.Nonce()),
+		EncryptedPrivateData: NewByteANonNull(c.EncryptedPayload()),
+		PublicData:           NewByteANonNull(c.PublicPayload()),
 	}
 	roomCapRow := &RoomCapability{
 		Room:         rmc.Room.Name,
@@ -207,9 +208,9 @@ func NewRoomMessageKeyBinding(
 		},
 		MessageKey: MessageKey{
 			ID:           keyID.String(),
-			EncryptedKey: msgKey.Ciphertext,
-			IV:           msgKey.IV,
-			Nonce:        nonce,
+			EncryptedKey: NewByteANonNull(msgKey.Ciphertext),
+			IV:           NewByteAOrNull(msgKey.IV),
+			Nonce:        NewByteANonNull(nonce),
 		},
 		RoomMessageKey: RoomMessageKey{
 			Room:      rb.Room.Name,
@@ -222,19 +223,13 @@ func NewRoomMessageKeyBinding(
 
 func (rmkb *RoomMessageKeyBinding) KeyID() string        { return rmkb.RoomMessageKey.KeyID }
 func (rmkb *RoomMessageKeyBinding) Timestamp() time.Time { return rmkb.RoomMessageKey.Activated }
-func (rmkb *RoomMessageKeyBinding) Nonce() []byte        { return rmkb.MessageKey.Nonce }
+func (rmkb *RoomMessageKeyBinding) Nonce() []byte        { return rmkb.MessageKey.Nonce.v }
 
 func (rmkb *RoomMessageKeyBinding) ManagedKey() security.ManagedKey {
-	dup := func(v []byte) []byte {
-		w := make([]byte, len(v))
-		copy(w, v)
-		return w
-	}
-
 	mkey := security.ManagedKey{
 		KeyType:      proto.RoomMessageKeyType,
-		IV:           dup(rmkb.MessageKey.IV),
-		Ciphertext:   dup(rmkb.MessageKey.EncryptedKey),
+		IV:           bytes.Clone(rmkb.MessageKey.IV.v),
+		Ciphertext:   bytes.Clone(rmkb.MessageKey.EncryptedKey.v),
 		ContextKey:   "room",
 		ContextValue: rmkb.RoomMessageKey.Room,
 	}
