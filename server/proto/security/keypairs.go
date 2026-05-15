@@ -1,6 +1,7 @@
 package security
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -149,20 +150,12 @@ type ManagedKeyPair struct {
 }
 
 func (k *ManagedKeyPair) Clone() ManagedKeyPair {
-	dup := func(v []byte) []byte {
-		if v == nil {
-			return nil
-		}
-		w := make([]byte, len(v))
-		copy(w, v)
-		return w
-	}
 	return ManagedKeyPair{
 		KeyPairType:         k.KeyPairType,
-		IV:                  dup(k.IV),
-		PrivateKey:          dup(k.PrivateKey),
-		EncryptedPrivateKey: dup(k.EncryptedPrivateKey),
-		PublicKey:           dup(k.PublicKey),
+		IV:                  bytes.Clone(k.IV),
+		PrivateKey:          bytes.Clone(k.PrivateKey),
+		EncryptedPrivateKey: bytes.Clone(k.EncryptedPrivateKey),
+		PublicKey:           bytes.Clone(k.PublicKey),
 	}
 }
 
