@@ -68,11 +68,11 @@ func (awsc *AccountWithStaffCapability) Bind(b *Backend) *AccountBinding {
 
 type OTP struct {
 	AccountID     string `db:"account_id"`
-	IV            []byte
-	EncryptedKey  []byte `db:"encrypted_key"`
-	Digest        []byte
-	EncryptedURI  []byte `db:"encrypted_uri"`
-	LastValidated uint64 `db:"last_validated"`
+	IV            ByteANonNull
+	EncryptedKey  ByteANonNull `db:"encrypted_key"`
+	Digest        ByteANonNull
+	EncryptedURI  ByteANonNull `db:"encrypted_uri"`
+	LastValidated uint64       `db:"last_validated"`
 }
 
 type PersonalIdentity struct {
@@ -93,7 +93,7 @@ func (pib *PersonalIdentityBinding) Verified() bool    { return pib.pid.Verified
 type PasswordResetRequest struct {
 	ID          string
 	AccountID   string `db:"account_id"`
-	Key         []byte
+	Key         ByteANonNull
 	Requested   time.Time
 	Expires     time.Time
 	Consumed    gorp.NullTime
@@ -691,7 +691,7 @@ func (b *AccountManagerBinding) RequestPasswordReset(
 	stored := &PasswordResetRequest{
 		ID:        req.ID.String(),
 		AccountID: req.AccountID.String(),
-		Key:       req.Key,
+		Key:       NewByteANonNull(req.Key),
 		Requested: req.Requested,
 		Expires:   req.Expires,
 	}
@@ -740,7 +740,7 @@ func (b *AccountManagerBinding) resolvePasswordReset(
 		return nil, nil, err
 	}
 	if err == nil {
-		req.Key = stored.Key
+		req.Key = stored.Key.v
 		if err := req.AccountID.FromString(stored.AccountID); err == nil {
 			account, err = b.get(db, req.AccountID)
 			if err != nil && err != proto.ErrAccountNotFound {
@@ -924,8 +924,8 @@ func (b *AccountManagerBinding) getOTP(db gorp.SqlExecutor, kms security.KMS, ac
 
 	key := security.ManagedKey{
 		KeyType:      OTPKeyType,
-		IV:           encryptedOTP.IV,
-		Ciphertext:   encryptedOTP.EncryptedKey,
+		IV:           encryptedOTP.IV.v,
+		Ciphertext:   encryptedOTP.EncryptedKey.v,
 		ContextKey:   "account",
 		ContextValue: accountID.String(),
 	}
@@ -933,7 +933,7 @@ func (b *AccountManagerBinding) getOTP(db gorp.SqlExecutor, kms security.KMS, ac
 		return nil, err
 	}
 
-	uriBytes, err := security.DecryptGCM(&key, encryptedOTP.IV, encryptedOTP.Digest, encryptedOTP.EncryptedURI, nil)
+	uriBytes, err := security.DecryptGCM(&key, encryptedOTP.IV.v, encryptedOTP.Digest.v, encryptedOTP.EncryptedURI.v, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -997,10 +997,10 @@ func (b *AccountManagerBinding) GenerateOTP(ctx scope.Context, heim *proto.Heim,
 
 	row := &OTP{
 		AccountID:    account.ID().String(),
-		IV:           iv,
-		EncryptedKey: encryptedKey.Ciphertext,
-		Digest:       digest,
-		EncryptedURI: encryptedURI,
+		IV:           NewByteANonNull(iv),
+		EncryptedKey: NewByteANonNull(encryptedKey.Ciphertext),
+		Digest:       NewByteANonNull(digest),
+		EncryptedURI: NewByteANonNull(encryptedURI),
 	}
 	if err := t.Insert(row); err != nil {
 		// TODO: this could fail in the case of a race condition

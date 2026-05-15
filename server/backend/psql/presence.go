@@ -15,7 +15,7 @@ type Presence struct {
 	SessionID string `db:"session_id"`
 	Updated   time.Time
 	KeyID     string `db:"key_id"`
-	Fact      []byte
+	Fact      ByteANonNull
 }
 
 func (p *Presence) SetFact(fact *proto.Presence) error {
@@ -23,13 +23,13 @@ func (p *Presence) SetFact(fact *proto.Presence) error {
 	if err != nil {
 		return err
 	}
-	p.Fact = data
+	p.Fact = NewByteANonNull(data)
 	return nil
 }
 
 func (p *Presence) SessionView(level proto.PrivilegeLevel) (proto.SessionView, error) {
 	var fact proto.Presence
-	if err := json.Unmarshal(p.Fact, &fact); err != nil {
+	if err := json.Unmarshal(p.Fact.v, &fact); err != nil {
 		return proto.SessionView{}, err
 	}
 	switch level {

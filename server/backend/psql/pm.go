@@ -16,12 +16,12 @@ type PM struct {
 	Initiator             string
 	InitiatorNick         string `db:"initiator_nick"`
 	Receiver              string
-	ReceiverNick          string `db:"receiver_nick"`
-	ReceiverMAC           []byte `db:"receiver_mac"`
-	IV                    []byte
-	EncryptedSystemKey    []byte `db:"encrypted_system_key"`
-	EncryptedInitiatorKey []byte `db:"encrypted_initiator_key"`
-	EncryptedReceiverKey  []byte `db:"encrypted_receiver_key"`
+	ReceiverNick          string       `db:"receiver_nick"`
+	ReceiverMAC           ByteANonNull `db:"receiver_mac"`
+	IV                    ByteANonNull
+	EncryptedSystemKey    ByteANonNull `db:"encrypted_system_key"`
+	EncryptedInitiatorKey ByteANonNull `db:"encrypted_initiator_key"`
+	EncryptedReceiverKey  ByteAOrNull  `db:"encrypted_receiver_key"`
 }
 
 func (pm *PM) ToBackend() *proto.PM {
@@ -29,25 +29,25 @@ func (pm *PM) ToBackend() *proto.PM {
 		InitiatorNick: pm.InitiatorNick,
 		Receiver:      proto.UserID(pm.Receiver),
 		ReceiverNick:  pm.ReceiverNick,
-		ReceiverMAC:   pm.ReceiverMAC,
-		IV:            pm.IV,
+		ReceiverMAC:   pm.ReceiverMAC.v,
+		IV:            pm.IV.v,
 		EncryptedSystemKey: &security.ManagedKey{
 			KeyType:      proto.RoomMessageKeyType,
-			Ciphertext:   pm.EncryptedSystemKey,
+			Ciphertext:   pm.EncryptedSystemKey.v,
 			ContextKey:   "pm",
 			ContextValue: pm.ID,
 		},
 		EncryptedInitiatorKey: &security.ManagedKey{
 			KeyType:    proto.RoomMessageKeyType,
-			IV:         pm.IV,
-			Ciphertext: pm.EncryptedInitiatorKey,
+			IV:         pm.IV.v,
+			Ciphertext: pm.EncryptedInitiatorKey.v,
 		},
 	}
-	if len(pm.EncryptedReceiverKey) > 0 {
+	if len(pm.EncryptedReceiverKey.v) > 0 {
 		bpm.EncryptedReceiverKey = &security.ManagedKey{
 			KeyType:    proto.RoomMessageKeyType,
-			IV:         pm.IV,
-			Ciphertext: pm.EncryptedReceiverKey,
+			IV:         pm.IV.v,
+			Ciphertext: pm.EncryptedReceiverKey.v,
 		}
 	}
 	// ignore id parsing errors
@@ -127,13 +127,15 @@ func (t *PMTracker) Initiate(
 		InitiatorNick:         pm.InitiatorNick,
 		Receiver:              string(pm.Receiver),
 		ReceiverNick:          pm.ReceiverNick,
-		ReceiverMAC:           pm.ReceiverMAC,
-		IV:                    pm.IV,
-		EncryptedSystemKey:    pm.EncryptedSystemKey.Ciphertext,
-		EncryptedInitiatorKey: pm.EncryptedInitiatorKey.Ciphertext,
+		ReceiverMAC:           NewByteANonNull(pm.ReceiverMAC),
+		IV:                    NewByteANonNull(pm.IV),
+		EncryptedSystemKey:    NewByteANonNull(pm.EncryptedSystemKey.Ciphertext),
+		EncryptedInitiatorKey: NewByteANonNull(pm.EncryptedInitiatorKey.Ciphertext),
 	}
 	if pm.EncryptedReceiverKey != nil {
-		row.EncryptedReceiverKey = pm.EncryptedReceiverKey.Ciphertext
+		row.EncryptedReceiverKey = NewByteAOrNull(pm.EncryptedReceiverKey.Ciphertext)
+	} else {
+		row.EncryptedReceiverKey = EmptyByteAOrNull()
 	}
 
 	// Look for existing PM to reuse.

@@ -40,7 +40,7 @@ type JobItem struct {
 	ID                     int64
 	Queue                  string
 	JobType                string `db:"job_type"`
-	Data                   []byte
+	Data                   ByteAOrNull
 	Created                time.Time
 	Due                    time.Time
 	Claimed                gorp.NullTime
@@ -59,7 +59,7 @@ type JobLog struct {
 	Stolen    gorp.NullTime
 	StolenBy  sql.NullString `db:"stolen_by"`
 	Outcome   sql.NullString
-	Log       []byte
+	Log       ByteAOrNull
 }
 
 type JobService struct {
@@ -146,7 +146,7 @@ func (jq *JobQueueBinding) insertJob(db gorp.SqlExecutor, job *jobs.Job) error {
 		ID:                     int64(job.ID),
 		Queue:                  jq.Name(),
 		JobType:                string(job.Type),
-		Data:                   []byte(job.Data),
+		Data:                   NewByteAOrNull(job.Data),
 		Created:                job.Created,
 		Due:                    job.Due,
 		AttemptsMade:           job.AttemptsMade,
@@ -307,7 +307,7 @@ func (jq *JobQueueBinding) TryClaim(ctx scope.Context, handlerID string) (*jobs.
 	job := &jobs.Job{
 		ID:                snowflake.Snowflake(row.ID),
 		Type:              jobs.JobType(row.JobType),
-		Data:              json.RawMessage(row.Data),
+		Data:              json.RawMessage(row.Data.v),
 		Created:           row.Created,
 		Due:               row.Due,
 		MaxWorkDuration:   time.Duration(row.MaxWorkDurationSeconds) * time.Second,
@@ -339,7 +339,7 @@ func (jq *JobQueueBinding) TrySteal(ctx scope.Context, handlerID string) (*jobs.
 	job := &jobs.Job{
 		ID:                snowflake.Snowflake(row.ID),
 		Type:              jobs.JobType(row.JobType),
-		Data:              json.RawMessage(row.Data),
+		Data:              json.RawMessage(row.Data.v),
 		Created:           row.Created,
 		Due:               row.Due,
 		MaxWorkDuration:   time.Duration(row.MaxWorkDurationSeconds) * time.Second,
