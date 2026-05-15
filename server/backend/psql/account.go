@@ -22,12 +22,12 @@ type Account struct {
 	ID                  string
 	Name                string
 	Email               string
-	Nonce               []byte
-	MAC                 []byte
-	EncryptedSystemKey  []byte         `db:"encrypted_system_key"`
-	EncryptedUserKey    []byte         `db:"encrypted_user_key"`
-	EncryptedPrivateKey []byte         `db:"encrypted_private_key"`
-	PublicKey           []byte         `db:"public_key"`
+	Nonce               ByteANonNull
+	MAC                 ByteANonNull
+	EncryptedSystemKey  ByteANonNull   `db:"encrypted_system_key"`
+	EncryptedUserKey    ByteANonNull   `db:"encrypted_user_key"`
+	EncryptedPrivateKey ByteANonNull   `db:"encrypted_private_key"`
+	PublicKey           ByteANonNull   `db:"public_key"`
 	StaffCapabilityID   sql.NullString `db:"staff_capability_id"`
 }
 
@@ -125,29 +125,30 @@ func (ab *AccountBinding) Email() (string, bool) {
 }
 
 func (ab *AccountBinding) KeyFromPassword(password string) *security.ManagedKey {
-	return security.KeyFromPasscode([]byte(password), ab.Account.Nonce, proto.ClientKeyType)
+	return security.KeyFromPasscode([]byte(password), ab.Account.Nonce.v, proto.ClientKeyType)
+}
+
+func (ab *AccountBinding) clientKeyIV() []byte {
+	iv := make([]byte, proto.ClientKeyType.BlockSize())
+	copy(iv, ab.Account.Nonce.v)
+	return iv
 }
 
 func (ab *AccountBinding) KeyPair() security.ManagedKeyPair {
-	iv := make([]byte, proto.ClientKeyType.BlockSize())
-	copy(iv, ab.Account.Nonce)
-
-	return security.ManagedKeyPair{
+	key := security.ManagedKeyPair{
 		KeyPairType:         security.Curve25519,
-		IV:                  iv,
-		EncryptedPrivateKey: ab.Account.EncryptedPrivateKey,
-		PublicKey:           ab.Account.PublicKey,
+		IV:                  ab.clientKeyIV(),
+		EncryptedPrivateKey: ab.Account.EncryptedPrivateKey.v,
+		PublicKey:           ab.Account.PublicKey.v,
 	}
+	return key.Clone()
 }
 
 func (ab *AccountBinding) UserKey() security.ManagedKey {
-	iv := make([]byte, proto.ClientKeyType.BlockSize())
-	copy(iv, ab.Account.Nonce)
-
 	key := &security.ManagedKey{
 		KeyType:    proto.ClientKeyType,
-		IV:         iv,
-		Ciphertext: ab.Account.EncryptedUserKey,
+		IV:         ab.clientKeyIV(),
+		Ciphertext: ab.Account.EncryptedUserKey.v,
 	}
 	return key.Clone()
 }
@@ -155,37 +156,20 @@ func (ab *AccountBinding) UserKey() security.ManagedKey {
 func (ab *AccountBinding) SystemKey() security.ManagedKey {
 	key := &security.ManagedKey{
 		KeyType:      proto.ClientKeyType,
-		Ciphertext:   ab.Account.EncryptedSystemKey,
+		Ciphertext:   ab.Account.EncryptedSystemKey.v,
 		ContextKey:   "nonce",
-		ContextValue: base64.URLEncoding.EncodeToString(ab.Account.Nonce),
+		ContextValue: base64.URLEncoding.EncodeToString(ab.Account.Nonce.v),
 	}
 	return key.Clone()
 }
 
 func (ab *AccountBinding) accountSecurity() *proto.AccountSecurity {
-	iv := make([]byte, proto.ClientKeyType.BlockSize())
-	copy(iv, ab.Account.Nonce)
-
 	return &proto.AccountSecurity{
-		Nonce: ab.Account.Nonce,
-		MAC:   ab.Account.MAC,
-		UserKey: security.ManagedKey{
-			KeyType:    proto.ClientKeyType,
-			IV:         iv,
-			Ciphertext: ab.Account.EncryptedUserKey,
-		},
-		SystemKey: security.ManagedKey{
-			KeyType:      proto.ClientKeyType,
-			Ciphertext:   ab.Account.EncryptedSystemKey,
-			ContextKey:   "nonce",
-			ContextValue: base64.URLEncoding.EncodeToString(ab.Account.Nonce),
-		},
-		KeyPair: security.ManagedKeyPair{
-			KeyPairType:         security.Curve25519,
-			IV:                  iv,
-			EncryptedPrivateKey: ab.Account.EncryptedPrivateKey,
-			PublicKey:           ab.Account.PublicKey,
-		},
+		Nonce: ab.Account.Nonce.v,
+		MAC:   ab.Account.MAC.v,
+		UserKey: ab.UserKey(),
+		SystemKey: ab.SystemKey(),
+		KeyPair: ab.KeyPair(),
 	}
 }
 
@@ -205,13 +189,13 @@ func (ab *AccountBinding) UnlockStaffKMS(clientKey *security.ManagedKey) (securi
 	}
 
 	iv := make([]byte, proto.ClientKeyType.BlockSize())
-	copy(iv, ab.Account.Nonce)
+	copy(iv, ab.Account.Nonce.v)
 	key := &security.ManagedKey{
 		KeyType:    proto.ClientKeyType,
 		IV:         iv,
-		Ciphertext: make([]byte, len(ab.Account.EncryptedUserKey)),
+		Ciphertext: make([]byte, len(ab.Account.EncryptedUserKey.v)),
 	}
-	copy(key.Ciphertext, ab.Account.EncryptedUserKey)
+	copy(key.Ciphertext, ab.Account.EncryptedUserKey.v)
 	if err := key.Decrypt(clientKey); err != nil {
 		return nil, err
 	}
@@ -421,12 +405,12 @@ func (b *AccountManagerBinding) Register(
 	// Insert new rows for account.
 	account := &Account{
 		ID:                  accountID.String(),
-		Nonce:               sec.Nonce,
-		MAC:                 sec.MAC,
-		EncryptedSystemKey:  sec.SystemKey.Ciphertext,
-		EncryptedUserKey:    sec.UserKey.Ciphertext,
-		EncryptedPrivateKey: sec.KeyPair.EncryptedPrivateKey,
-		PublicKey:           sec.KeyPair.PublicKey,
+		Nonce:               NewByteANonNull(sec.Nonce),
+		MAC:                 NewByteANonNull(sec.MAC),
+		EncryptedSystemKey:  NewByteANonNull(sec.SystemKey.Ciphertext),
+		EncryptedUserKey:    NewByteANonNull(sec.UserKey.Ciphertext),
+		EncryptedPrivateKey: NewByteANonNull(sec.KeyPair.EncryptedPrivateKey),
+		PublicKey:           NewByteANonNull(sec.KeyPair.PublicKey),
 	}
 	if namespace == "email" {
 		account.Email = id
