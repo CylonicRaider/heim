@@ -566,8 +566,8 @@ func (b *AccountManagerBinding) GrantStaff(
 	// before we proceed. That should be fine, since this is an infrequently
 	// used action.
 	var row struct {
-		EncryptedClientKey []byte `db:"encrypted_system_key"`
-		Nonce              []byte `db:"nonce"`
+		EncryptedClientKey ByteANonNull `db:"encrypted_system_key"`
+		Nonce              ByteANonNull `db:"nonce"`
 	}
 	err := b.DbMap.SelectOne(
 		&row, "SELECT encrypted_system_key, nonce FROM account WHERE id = $1", accountID.String())
@@ -582,9 +582,9 @@ func (b *AccountManagerBinding) GrantStaff(
 	kms := kmsCred.KMS()
 	clientKey := &security.ManagedKey{
 		KeyType:      proto.ClientKeyType,
-		Ciphertext:   row.EncryptedClientKey,
+		Ciphertext:   row.EncryptedClientKey.v,
 		ContextKey:   "nonce",
-		ContextValue: base64.URLEncoding.EncodeToString(row.Nonce),
+		ContextValue: base64.URLEncoding.EncodeToString(row.Nonce.v),
 	}
 	if err := kms.DecryptKey(clientKey); err != nil {
 		return err

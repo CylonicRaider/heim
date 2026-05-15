@@ -406,7 +406,7 @@ func (jq *JobQueueBinding) Log(ctx scope.Context, jobID snowflake.Snowflake, att
 	var row struct {
 		HandlerID string `db:"handler_id"`
 		Outcome   sql.NullString
-		Log       []byte
+		Log       ByteAOrNull
 	}
 	err := jq.Backend.DbMap.SelectOne(
 		&row,
@@ -422,7 +422,7 @@ func (jq *JobQueueBinding) Log(ctx scope.Context, jobID snowflake.Snowflake, att
 		AttemptNumber: attemptNumber,
 		HandlerID:     row.HandlerID,
 		FailureReason: row.Outcome.String,
-		Log:           row.Log,
+		Log:           row.Log.v,
 	}
 	if !row.Outcome.Valid {
 		jl.Success = true
