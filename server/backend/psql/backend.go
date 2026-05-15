@@ -348,12 +348,12 @@ func (b *Backend) CreateRoom(
 	logging.Logger(ctx).Printf("creating room: %s", name)
 	room := &Room{
 		Name:                   name,
-		IV:                     sec.KeyPair.IV,
-		MAC:                    sec.MAC,
-		Nonce:                  sec.Nonce,
-		EncryptedManagementKey: sec.KeyEncryptingKey.Ciphertext,
-		EncryptedPrivateKey:    sec.KeyPair.EncryptedPrivateKey,
-		PublicKey:              sec.KeyPair.PublicKey,
+		IV:                     NewByteANonNull(sec.KeyPair.IV),
+		MAC:                    NewByteANonNull(sec.MAC),
+		Nonce:                  NewByteANonNull(sec.Nonce),
+		EncryptedManagementKey: NewByteANonNull(sec.KeyEncryptingKey.Ciphertext),
+		EncryptedPrivateKey:    NewByteANonNull(sec.KeyPair.EncryptedPrivateKey),
+		PublicKey:              NewByteANonNull(sec.KeyPair.PublicKey),
 	}
 
 	var (

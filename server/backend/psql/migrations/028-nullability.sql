@@ -1,5 +1,13 @@
 -- +migrate Up
 
+ALTER TABLE room
+    ALTER pk_nonce SET NOT NULL,
+    ALTER pk_iv SET NOT NULL,
+    ALTER pk_mac SET NOT NULL,
+    ALTER encrypted_management_key SET NOT NULL,
+    ALTER encrypted_private_key SET NOT NULL,
+    ALTER public_key SET NOT NULL;
+
 ALTER TABLE presence
     ALTER fact SET NOT NULL;
 
@@ -12,14 +20,6 @@ ALTER TABLE capability
     ALTER encrypted_private_data SET NOT NULL,
     ALTER public_data SET NOT NULL,
     ALTER nonce SET NOT NULL;
-
-ALTER TABLE room
-    ALTER pk_nonce SET NOT NULL,
-    ALTER pk_iv SET NOT NULL,
-    ALTER pk_mac SET NOT NULL,
-    ALTER encrypted_management_key SET NOT NULL,
-    ALTER encrypted_private_key SET NOT NULL,
-    ALTER public_key SET NOT NULL;
 
 ALTER TABLE agent
     ALTER blessed SET NOT NULL;

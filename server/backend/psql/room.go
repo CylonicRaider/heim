@@ -21,15 +21,15 @@ var global *RoomBinding
 
 type Room struct {
 	Name                   string
-	FoundedBy              string `db:"founded_by"`
-	RetentionDays          int    `db:"retention_days"`
-	Nonce                  []byte `db:"pk_nonce"`
-	MAC                    []byte `db:"pk_mac"`
-	IV                     []byte `db:"pk_iv"`
-	EncryptedManagementKey []byte `db:"encrypted_management_key"`
-	EncryptedPrivateKey    []byte `db:"encrypted_private_key"`
-	PublicKey              []byte `db:"public_key"`
-	MinAgentAge            int64  `db:"min_agent_age"`
+	FoundedBy              string       `db:"founded_by"`
+	RetentionDays          int          `db:"retention_days"`
+	Nonce                  ByteANonNull `db:"pk_nonce"`
+	MAC                    ByteANonNull `db:"pk_mac"`
+	IV                     ByteANonNull `db:"pk_iv"`
+	EncryptedManagementKey ByteANonNull `db:"encrypted_management_key"`
+	EncryptedPrivateKey    ByteANonNull `db:"encrypted_private_key"`
+	PublicKey              ByteANonNull `db:"public_key"`
+	MinAgentAge            int64        `db:"min_agent_age"`
 }
 
 func (r *Room) Bind(b *Backend) *ManagedRoomBinding {

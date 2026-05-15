@@ -193,15 +193,15 @@ func NewRoomMessageKeyBinding(
 			},
 			Managers: NewRoomManagerKeyBinding(rb),
 			KeyEncryptingKey: &security.ManagedKey{
-				Ciphertext:   rb.Room.EncryptedManagementKey,
+				Ciphertext:   rb.Room.EncryptedManagementKey.v,
 				ContextKey:   "room",
 				ContextValue: rb.Room.Name,
 			},
 			SubjectKeyPair: &security.ManagedKeyPair{
 				KeyPairType:         security.Curve25519,
-				IV:                  rb.Room.IV,
-				EncryptedPrivateKey: rb.Room.EncryptedPrivateKey,
-				PublicKey:           rb.Room.PublicKey,
+				IV:                  rb.Room.IV.v,
+				EncryptedPrivateKey: rb.Room.EncryptedPrivateKey.v,
+				PublicKey:           rb.Room.PublicKey.v,
 			},
 			PayloadKey:   msgKey,
 			SubjectNonce: nonce,
@@ -252,17 +252,17 @@ func NewRoomManagerKeyBinding(rb *ManagedRoomBinding) *RoomManagerKeyBinding {
 		GrantManager: &proto.GrantManager{
 			KeyEncryptingKey: &security.ManagedKey{
 				KeyType:      proto.RoomManagerKeyType,
-				Ciphertext:   rb.Room.EncryptedManagementKey,
+				Ciphertext:   rb.Room.EncryptedManagementKey.v,
 				ContextKey:   "room",
 				ContextValue: rb.Room.Name,
 			},
 			SubjectKeyPair: &security.ManagedKeyPair{
 				KeyPairType:         security.Curve25519,
-				IV:                  rb.Room.IV,
-				EncryptedPrivateKey: rb.Room.EncryptedPrivateKey,
-				PublicKey:           rb.Room.PublicKey,
+				IV:                  rb.Room.IV.v,
+				EncryptedPrivateKey: rb.Room.EncryptedPrivateKey.v,
+				PublicKey:           rb.Room.PublicKey.v,
 			},
-			SubjectNonce: rb.Room.Nonce,
+			SubjectNonce: rb.Room.Nonce.v,
 		},
 	}
 	rmkb.GrantManager.Capabilities = rmkb.RoomManagerCapabilities
@@ -284,7 +284,7 @@ func (rmkb *RoomManagerKeyBinding) Unlock(
 	managerKey *security.ManagedKey) (*security.ManagedKeyPair, error) {
 
 	sec := &proto.RoomSecurity{
-		MAC:     rmkb.Room.MAC,
+		MAC:     rmkb.Room.MAC.v,
 		KeyPair: rmkb.KeyPair(),
 	}
 	return sec.Unlock(managerKey)
