@@ -2,12 +2,10 @@ package psql
 
 /* Some time between time immemorial (i.e. ca. 2016) and now, the pq library
  * changed its handling of byte slices to treat nil slices as SQL NULLs rather
- * than empty arrays. This breaks legacy code in this package, which uses NOT
- * NULL columns but actually treats them in a nullable manner with the empty
- * byte array as the null/zero/nil value and assumes that nil byte slices are
- * equivalent to empty ones. The two types introduced in this file allow
- * remediating this mess by clearly distinguishing nullable, non-nullable, and
- * not-audited-yet byte arrays. */
+ * than empty arrays. This broke legacy code in this package that assumed that
+ * nil byte slices are equivalent to empty ones. The two types introduced in
+ * this file allow clearly distinguishing nullable vs. non-nullable byte
+ * strings. */
 
 import (
 	"bytes"
@@ -25,13 +23,13 @@ type ByteANonNull struct {
 
 func NewByteAOrNull(data []byte) ByteAOrNull {
 	if len(data) == 0 {
-		return ByteAOrNull{[]byte{}}
+		data = nil
 	}
 	return ByteAOrNull{data}
 }
 
 func EmptyByteAOrNull() ByteAOrNull {
-	return ByteAOrNull{[]byte{}}
+	return ByteAOrNull{}
 }
 
 func NewByteANonNull(data []byte) ByteANonNull {
@@ -44,14 +42,16 @@ func NewByteANonNull(data []byte) ByteANonNull {
 func (b *ByteAOrNull) Scan(src interface{}) error {
 	switch src.(type) {
 	case []byte:
-		result := bytes.Clone(src.([]byte))
-		if result == nil {
-			result = []byte{}
+		result := src.([]byte)
+		if len(result) != 0 {
+			result = bytes.Clone(result)
+		} else {
+			result = nil
 		}
 		b.v = result
 		return nil
 	case nil:
-		b.v = []byte{}
+		b.v = nil
 		return nil
 	}
 	return fmt.Errorf("cannot convert %T to nullable byte array", src)
