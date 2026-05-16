@@ -12,16 +12,14 @@ ALTER TABLE presence
     ALTER fact SET NOT NULL;
 
 ALTER TABLE master_key
-    ALTER encrypted_key SET NOT NULL,
-    ALTER iv SET NOT NULL,
-    ALTER nonce SET NOT NULL;
+    ALTER iv DROP NOT NULL;
 
 ALTER TABLE capability
     ALTER encrypted_private_data SET NOT NULL,
-    ALTER public_data SET NOT NULL,
-    ALTER nonce SET NOT NULL;
+    ALTER public_data SET NOT NULL;
 
 ALTER TABLE agent
+    ALTER encrypted_client_key DROP NOT NULL,
     ALTER blessed SET NOT NULL;
 
 -- +migrate Down
@@ -38,14 +36,12 @@ ALTER TABLE presence
     ALTER fact DROP NOT NULL;
 
 ALTER TABLE master_key
-    ALTER encrypted_key DROP NOT NULL,
-    ALTER iv DROP NOT NULL,
-    ALTER nonce DROP NOT NULL;
+    ALTER iv SET NOT NULL;
 
 ALTER TABLE capability
     ALTER encrypted_private_data DROP NOT NULL,
-    ALTER public_data DROP NOT NULL,
-    ALTER nonce DROP NOT NULL;
+    ALTER public_data DROP NOT NULL;
 
 ALTER TABLE agent
+    ALTER encrypted_client_key SET NOT NULL,
     ALTER blessed DROP NOT NULL;
