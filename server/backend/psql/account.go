@@ -165,11 +165,11 @@ func (ab *AccountBinding) SystemKey() security.ManagedKey {
 
 func (ab *AccountBinding) accountSecurity() *proto.AccountSecurity {
 	return &proto.AccountSecurity{
-		Nonce: ab.Account.Nonce.v,
-		MAC:   ab.Account.MAC.v,
-		UserKey: ab.UserKey(),
+		Nonce:     ab.Account.Nonce.v,
+		MAC:       ab.Account.MAC.v,
+		UserKey:   ab.UserKey(),
 		SystemKey: ab.SystemKey(),
-		KeyPair: ab.KeyPair(),
+		KeyPair:   ab.KeyPair(),
 	}
 }
 
