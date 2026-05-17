@@ -125,7 +125,6 @@ func (s *Server) handleRobotsTxt(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) resolveRoom(ctx scope.Context, prefix, roomName string, client *proto.Client) (room proto.Room, err error) {
-	// TODO: support room creation?
 	switch prefix {
 	case "pm:":
 		var (
