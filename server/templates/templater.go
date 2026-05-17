@@ -49,7 +49,7 @@ func (t *StandardTemplater) findAndParse(prefix, path string) []error {
 				errors = append(errors, err)
 				continue
 			}
-			tmpl, errs := t.parseGlob(prefix, path, filepath.Base(tmplName)+".*")
+			tmpl, errs := t.parseGlob(prefix, path, tmplName, filepath.Base(tmplName)+".*")
 			if len(errs) > 0 {
 				errors = append(errors, errs...)
 				continue
@@ -63,7 +63,7 @@ func (t *StandardTemplater) findAndParse(prefix, path string) []error {
 	return nil
 }
 
-func (t *StandardTemplater) parseGlob(prefix, path, pattern string) (*template.Template, []error) {
+func (t *StandardTemplater) parseGlob(prefix, path, name, pattern string) (*template.Template, []error) {
 	matches, err := filepath.Glob(filepath.Join(path, pattern))
 	if err != nil {
 		return nil, []error{err}
@@ -81,7 +81,7 @@ func (t *StandardTemplater) parseGlob(prefix, path, pattern string) (*template.T
 		basePath = basePath + "/"
 	}
 	errors := []error{}
-	tmpl := template.New(basePath + matches[0])
+	tmpl := template.New(name)
 	for _, match := range matches {
 		subTmpl, err := template.ParseFiles(match)
 		if err != nil {
@@ -216,8 +216,10 @@ func (sf *StaticFiles) File(path string) (template.URL, error) {
 func ValidateTemplates(t Templater, scenarios map[string]map[string]TemplateTest) []error {
 	errors := []error{}
 	for templateName, testCases := range scenarios {
-		for _, testCase := range testCases {
+		for tcName, testCase := range testCases {
 			if err := t.Validate(templateName, testCase); err != nil {
+				err = fmt.Errorf("validating template %s, test case %s: %s",
+					templateName, tcName, err)
 				errors = append(errors, err)
 			}
 		}

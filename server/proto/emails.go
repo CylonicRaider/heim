@@ -152,7 +152,7 @@ var (
 	}
 
 	EmailScenarios = map[string]map[string]templates.TemplateTest{
-		WelcomeEmail: map[string]templates.TemplateTest{
+		WelcomeEmail + ".html": map[string]templates.TemplateTest{
 			"default": templates.TemplateTest{
 				Data: &WelcomeEmailParams{
 					CommonEmailParams: DefaultCommonEmailParams,
@@ -161,7 +161,7 @@ var (
 			},
 		},
 
-		PasswordChangedEmail: map[string]templates.TemplateTest{
+		PasswordChangedEmail + ".html": map[string]templates.TemplateTest{
 			"default": templates.TemplateTest{
 				Data: &PasswordChangedEmailParams{
 					CommonEmailParams: DefaultCommonEmailParams,
@@ -170,7 +170,7 @@ var (
 			},
 		},
 
-		PasswordResetEmail: map[string]templates.TemplateTest{
+		PasswordResetEmail + ".html": map[string]templates.TemplateTest{
 			"default": templates.TemplateTest{
 				Data: &PasswordResetEmailParams{
 					CommonEmailParams: DefaultCommonEmailParams,
@@ -179,7 +179,7 @@ var (
 			},
 		},
 
-		RoomInvitationEmail: map[string]templates.TemplateTest{
+		RoomInvitationEmail + ".html": map[string]templates.TemplateTest{
 			"default": templates.TemplateTest{
 				Data: &RoomInvitationEmailParams{
 					CommonEmailParams: DefaultCommonEmailParams,
@@ -190,7 +190,7 @@ var (
 			},
 		},
 
-		RoomInvitationWelcomeEmail: map[string]templates.TemplateTest{
+		RoomInvitationWelcomeEmail + ".html": map[string]templates.TemplateTest{
 			"default": templates.TemplateTest{
 				Data: &RoomInvitationWelcomeEmailParams{
 					CommonEmailParams: DefaultCommonEmailParams,
