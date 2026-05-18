@@ -241,6 +241,11 @@ func (s *Server) serveRoomWebsocket(
 }
 
 func (s *Server) handlePrefsVerify(w http.ResponseWriter, r *http.Request) {
+	if !s.policy.AllowAPI {
+		http.Error(w, "403 forbidden", http.StatusForbidden)
+		return
+	}
+
 	if err := r.ParseForm(); err != nil {
 		s.serveErrorPage("bad request", http.StatusBadRequest, w, r)
 		return
@@ -325,6 +330,11 @@ func (s *Server) handlePrefsVerifyPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handlePrefsResetPassword(w http.ResponseWriter, r *http.Request) {
+	if !s.policy.AllowAPI {
+		http.Error(w, "403 forbidden", http.StatusForbidden)
+		return
+	}
+
 	if err := r.ParseForm(); err != nil {
 		s.serveErrorPage(err.Error(), http.StatusBadRequest, w, r)
 		return
