@@ -145,6 +145,7 @@ services:
     volumes:
       - .:/srv/heim
       - ./_deps/godeps:/srv/heim/server/vendor
+      - ./_data/gocache:/gocache
     ports:
       - "8081:80"
     environment:
@@ -161,6 +162,7 @@ services:
       - .:/srv/heim
       - ./server/backend/console/keys:/keys
       - ./_deps/godeps:/srv/heim/server/vendor
+      - ./_data/gocache:/gocache
     ports:
       - "8082:80"
     environment:
@@ -180,6 +182,7 @@ services:
       - .:/srv/heim
       - ./server/backend/console/keys:/keys
       - ./_deps/godeps:/srv/heim/server/vendor
+      - ./_data/gocache:/gocache
     ports:
       - "8083:80"
     environment:
@@ -199,6 +202,7 @@ services:
       - .:/srv/heim
       - ./server/backend/console/keys:/keys
       - ./_deps/godeps:/srv/heim/server/vendor
+      - ./_data/gocache:/gocache
     ports:
       - "8084:80"
     environment:
@@ -224,3 +228,7 @@ services:
     build: containers/update-deps
     volumes:
       - .:/srv/heim
+      - ./_deps/godeps:/srv/heim/server/vendor
+      - ./_data/gocache:/gocache
+    environment:
+      GOCACHE: /gocache
