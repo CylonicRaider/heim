@@ -228,7 +228,6 @@ services:
     build: containers/update-deps
     volumes:
       - .:/srv/heim
-      - ./_deps/godeps:/srv/heim/server/vendor
       - ./_data/gocache:/gocache
     environment:
       GOCACHE: /gocache
