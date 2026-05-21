@@ -6,7 +6,6 @@ require (
 	euphoria.leet.nu/lib/scope v0.0.2
 	github.com/aws/aws-sdk-go v1.55.8
 	github.com/coreos/go-etcd v2.0.0+incompatible
-	github.com/go-gorp/gorp v2.2.0+incompatible
 	github.com/gorilla/context v1.1.2
 	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/securecookie v1.1.2

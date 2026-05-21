@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"euphoria.leet.nu/lib/scope"
-	"github.com/go-gorp/gorp"
 	"github.com/prometheus/client_golang/prometheus"
+	"gopkg.in/gorp.v1"
 
 	"euphoria.leet.nu/heim/backend/psql"
 	"euphoria.leet.nu/heim/cluster"
