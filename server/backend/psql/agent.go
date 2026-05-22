@@ -16,14 +16,14 @@ import (
 )
 
 type Agent struct {
-	ID                 string
-	IV                 ByteANonNull
-	MAC                ByteANonNull
+	ID                 string         `db:"id"`
+	IV                 ByteANonNull   `db:"iv"`
+	MAC                ByteANonNull   `db:"mac"`
 	EncryptedClientKey ByteAOrNull    `db:"encrypted_client_key"`
 	AccountID          sql.NullString `db:"account_id"`
-	Created            time.Time
-	Blessed            bool
-	Bot                bool
+	Created            time.Time      `db:"created"`
+	Blessed            bool           `db:"blessed"`
+	Bot                bool           `db:"bot"`
 }
 
 type AgentTrackerBinding struct {

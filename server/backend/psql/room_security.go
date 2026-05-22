@@ -14,11 +14,11 @@ import (
 )
 
 type RoomCapability struct {
-	Room         string
-	CapabilityID string `db:"capability_id"`
-	AccountID    string `db:"account_id"`
-	Granted      time.Time
-	Revoked      time.Time
+	Room         string    `db:"room"`
+	CapabilityID string    `db:"capability_id"`
+	AccountID    string    `db:"account_id"`
+	Granted      time.Time `db:"granted"`
+	Revoked      time.Time `db:"revoked"`
 }
 
 type RoomCapabilityBinding struct {
@@ -168,11 +168,11 @@ func (rmc *RoomMessageCapabilities) Remove(ctx scope.Context, capabilityID strin
 }
 
 type RoomMessageKey struct {
-	Room      string
-	KeyID     string `db:"key_id"`
-	Activated time.Time
-	Expired   time.Time
-	Comment   string
+	Room      string    `db:"room"`
+	KeyID     string    `db:"key_id"`
+	Activated time.Time `db:"activated"`
+	Expired   time.Time `db:"expired"`
+	Comment   string    `db:"comment"`
 }
 
 type RoomMessageKeyBinding struct {

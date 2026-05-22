@@ -8,14 +8,14 @@ import (
 )
 
 type Presence struct {
-	Room      string
-	Topic     string
-	ServerID  string `db:"server_id"`
-	ServerEra string `db:"server_era"`
-	SessionID string `db:"session_id"`
-	Updated   time.Time
-	KeyID     string `db:"key_id"`
-	Fact      ByteANonNull
+	Room      string       `db:"room"`
+	Topic     string       `db:"topic"`
+	ServerID  string       `db:"server_id"`
+	ServerEra string       `db:"server_era"`
+	SessionID string       `db:"session_id"`
+	Updated   time.Time    `db:"updated"`
+	KeyID     string       `db:"key_id"`
+	Fact      ByteANonNull `db:"fact"`
 }
 
 func (p *Presence) SetFact(fact *proto.Presence) error {
@@ -49,8 +49,8 @@ type roomConn struct {
 }
 
 type VirtualAddress struct {
-	Room    string
-	Virtual string
-	Real    string
-	Created time.Time
+	Room    string    `db:"room"`
+	Virtual string    `db:"virtual"`
+	Real    string    `db:"real"`
+	Created time.Time `db:"created"`
 }

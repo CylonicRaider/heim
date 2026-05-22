@@ -11,14 +11,14 @@ import (
 )
 
 type Message struct {
-	Room           string
-	ID             string
+	Room           string         `db:"room"`
+	ID             string         `db:"id"`
 	PreviousEditID sql.NullString `db:"previous_edit_id"`
-	Parent         string
-	Posted         time.Time
-	Edited         gorp.NullTime
-	Deleted        gorp.NullTime
-	SessionID      string `db:"session_id"`
+	Parent         string         `db:"parent"`
+	Posted         time.Time      `db:"posted"`
+	Edited         gorp.NullTime  `db:"edited"`
+	Deleted        gorp.NullTime  `db:"deleted"`
+	SessionID      string         `db:"session_id"`
 
 	SenderID            string `db:"sender_id"`
 	SenderName          string `db:"sender_name"`
@@ -26,9 +26,9 @@ type Message struct {
 	SenderIsManager     bool   `db:"sender_is_manager"`
 	SenderIsStaff       bool   `db:"sender_is_staff"`
 
-	ServerID        string `db:"server_id"`
-	ServerEra       string `db:"server_era"`
-	Content         string
+	ServerID        string         `db:"server_id"`
+	ServerEra       string         `db:"server_era"`
+	Content         string         `db:"content"`
 	EncryptionKeyID sql.NullString `db:"encryption_key_id"`
 }
 
@@ -113,8 +113,8 @@ func (m *Message) ToTransmission() proto.Message {
 }
 
 type MessageEditLog struct {
-	EditID          string `db:"edit_id"`
-	Room            string
+	EditID          string         `db:"edit_id"`
+	Room            string         `db:"room"`
 	MessageID       string         `db:"message_id"`
 	EditorID        sql.NullString `db:"editor_id"`
 	PreviousEditID  sql.NullString `db:"previous_edit_id"`

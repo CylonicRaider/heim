@@ -20,7 +20,7 @@ var notImpl = fmt.Errorf("not implemented")
 var global *RoomBinding
 
 type Room struct {
-	Name                   string
+	Name                   string       `db:"name"`
 	FoundedBy              string       `db:"founded_by"`
 	RetentionDays          int          `db:"retention_days"`
 	Nonce                  ByteANonNull `db:"pk_nonce"`

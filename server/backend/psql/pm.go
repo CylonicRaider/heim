@@ -12,13 +12,13 @@ import (
 )
 
 type PM struct {
-	ID                    string
-	Initiator             string
-	InitiatorNick         string `db:"initiator_nick"`
-	Receiver              string
+	ID                    string       `db:"id"`
+	Initiator             string       `db:"initiator"`
+	InitiatorNick         string       `db:"initiator_nick"`
+	Receiver              string       `db:"receiver"`
 	ReceiverNick          string       `db:"receiver_nick"`
 	ReceiverMAC           ByteANonNull `db:"receiver_mac"`
-	IV                    ByteANonNull
+	IV                    ByteANonNull `db:"iv"`
 	EncryptedSystemKey    ByteANonNull `db:"encrypted_system_key"`
 	EncryptedInitiatorKey ByteANonNull `db:"encrypted_initiator_key"`
 	EncryptedReceiverKey  ByteAOrNull  `db:"encrypted_receiver_key"`

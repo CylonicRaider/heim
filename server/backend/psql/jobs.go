@@ -18,7 +18,7 @@ import (
 )
 
 type JobQueue struct {
-	Name string
+	Name string `db:"name"`
 }
 
 func (jq *JobQueue) Bind(b *Backend) *JobQueueBinding {
@@ -37,29 +37,29 @@ type JobQueueBinding struct {
 }
 
 type JobItem struct {
-	ID                     int64
-	Queue                  string
-	JobType                string `db:"job_type"`
-	Data                   ByteAOrNull
-	Created                time.Time
-	Due                    time.Time
-	Claimed                gorp.NullTime
-	Completed              gorp.NullTime
-	MaxWorkDurationSeconds int32 `db:"max_work_duration_seconds"`
-	AttemptsMade           int32 `db:"attempts_made"`
-	AttemptsRemaining      int32 `db:"attempts_remaining"`
+	ID                     int64         `db:"id"`
+	Queue                  string        `db:"queue"`
+	JobType                string        `db:"job_type"`
+	Data                   ByteAOrNull   `db:"data"`
+	Created                time.Time     `db:"created"`
+	Due                    time.Time     `db:"due"`
+	Claimed                gorp.NullTime `db:"claimed"`
+	Completed              gorp.NullTime `db:"completed"`
+	MaxWorkDurationSeconds int32         `db:"max_work_duration_seconds"`
+	AttemptsMade           int32         `db:"attempts_made"`
+	AttemptsRemaining      int32         `db:"attempts_remaining"`
 }
 
 type JobLog struct {
-	JobID     int64 `db:"job_id"`
-	Attempt   int32
-	HandlerID string `db:"handler_id"`
-	Started   time.Time
-	Finished  gorp.NullTime
-	Stolen    gorp.NullTime
+	JobID     int64          `db:"job_id"`
+	Attempt   int32          `db:"attempt"`
+	HandlerID string         `db:"handler_id"`
+	Started   time.Time      `db:"started"`
+	Finished  gorp.NullTime  `db:"finished"`
+	Stolen    gorp.NullTime  `db:"stolen"`
 	StolenBy  sql.NullString `db:"stolen_by"`
-	Outcome   sql.NullString
-	Log       ByteAOrNull
+	Outcome   sql.NullString `db:"outcome"`
+	Log       ByteAOrNull    `db:"log"`
 }
 
 type JobService struct {
@@ -375,9 +375,9 @@ func (jq *JobQueueBinding) Fail(
 
 func (jq *JobQueueBinding) Stats(ctx scope.Context) (jobs.JobQueueStats, error) {
 	var row struct {
-		Waiting sql.NullInt64
-		Due     sql.NullInt64
-		Claimed sql.NullInt64
+		Waiting sql.NullInt64 `db:"waiting"`
+		Due     sql.NullInt64 `db:"due"`
+		Claimed sql.NullInt64 `db:"claimed"`
 	}
 
 	err := jq.Backend.DbMap.SelectOne(
@@ -404,9 +404,9 @@ func (jq *JobQueueBinding) Stats(ctx scope.Context) (jobs.JobQueueStats, error) 
 
 func (jq *JobQueueBinding) Log(ctx scope.Context, jobID snowflake.Snowflake, attemptNumber int32) (*jobs.JobLog, error) {
 	var row struct {
-		HandlerID string `db:"handler_id"`
-		Outcome   sql.NullString
-		Log       ByteAOrNull
+		HandlerID string         `db:"handler_id"`
+		Outcome   sql.NullString `db:"outcome"`
+		Log       ByteAOrNull    `db:"log"`
 	}
 	err := jq.Backend.DbMap.SelectOne(
 		&row,

@@ -19,11 +19,11 @@ import (
 const OTPKeyType = security.AES128
 
 type Account struct {
-	ID                  string
-	Name                string
-	Email               string
-	Nonce               ByteANonNull
-	MAC                 ByteANonNull
+	ID                  string         `db:"id"`
+	Name                string         `db:"name"`
+	Email               string         `db:"email"`
+	Nonce               ByteANonNull   `db:"nonce"`
+	MAC                 ByteANonNull   `db:"mac"`
 	EncryptedSystemKey  ByteANonNull   `db:"encrypted_system_key"`
 	EncryptedUserKey    ByteANonNull   `db:"encrypted_user_key"`
 	EncryptedPrivateKey ByteANonNull   `db:"encrypted_private_key"`
@@ -67,19 +67,19 @@ func (awsc *AccountWithStaffCapability) Bind(b *Backend) *AccountBinding {
 }
 
 type OTP struct {
-	AccountID     string `db:"account_id"`
-	IV            ByteANonNull
+	AccountID     string       `db:"account_id"`
+	IV            ByteANonNull `db:"iv"`
 	EncryptedKey  ByteANonNull `db:"encrypted_key"`
-	Digest        ByteANonNull
+	Digest        ByteANonNull `db:"digest"`
 	EncryptedURI  ByteANonNull `db:"encrypted_uri"`
 	LastValidated uint64       `db:"last_validated"`
 }
 
 type PersonalIdentity struct {
-	Namespace string
-	ID        string
+	Namespace string `db:"namespace"`
+	ID        string `db:"id"`
 	AccountID string `db:"account_id"`
-	Verified  bool
+	Verified  bool   `db:"verified"`
 }
 
 type PersonalIdentityBinding struct {
@@ -91,13 +91,13 @@ func (pib *PersonalIdentityBinding) ID() string        { return pib.pid.ID }
 func (pib *PersonalIdentityBinding) Verified() bool    { return pib.pid.Verified }
 
 type PasswordResetRequest struct {
-	ID          string
-	AccountID   string `db:"account_id"`
-	Key         ByteANonNull
-	Requested   time.Time
-	Expires     time.Time
-	Consumed    gorp.NullTime
-	Invalidated gorp.NullTime
+	ID          string        `db:"id"`
+	AccountID   string        `db:"account_id"`
+	Key         ByteANonNull  `db:"key"`
+	Requested   time.Time     `db:"requested"`
+	Expires     time.Time     `db:"expires"`
+	Consumed    gorp.NullTime `db:"consumed"`
+	Invalidated gorp.NullTime `db:"invalidated"`
 }
 
 type AccountBinding struct {
@@ -518,7 +518,7 @@ func (b *AccountManagerBinding) get(
 	}
 
 	capabilityCols, err := allColumns(b.DbMap, Capability{}, "c",
-		"ID", "staff_capability_id",
+		"id", "staff_capability_id",
 		"nonce", "staff_capability_nonce")
 	if err != nil {
 		return nil, err

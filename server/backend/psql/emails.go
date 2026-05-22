@@ -17,16 +17,16 @@ import (
 )
 
 type Email struct {
-	ID        string
-	AccountID string `db:"account_id"`
-	JobID     int64  `db:"job_id"`
-	EmailType string `db:"email_type"`
-	SendTo    string `db:"send_to"`
-	SendFrom  string `db:"send_from"`
-	Message   ByteANonNull
-	Created   time.Time
-	Delivered gorp.NullTime
-	Failed    gorp.NullTime
+	ID        string        `db:"id"`
+	AccountID string        `db:"account_id"`
+	JobID     int64         `db:"job_id"`
+	EmailType string        `db:"email_type"`
+	SendTo    string        `db:"send_to"`
+	SendFrom  string        `db:"send_from"`
+	Message   ByteANonNull  `db:"message"`
+	Created   time.Time     `db:"created"`
+	Delivered gorp.NullTime `db:"delivered"`
+	Failed    gorp.NullTime `db:"failed"`
 }
 
 func (e *Email) ToBackend() (*emails.EmailRef, error) {

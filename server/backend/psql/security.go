@@ -1,14 +1,14 @@
 package psql
 
 type MessageKey struct {
-	ID           string
+	ID           string       `db:"id"`
 	EncryptedKey ByteANonNull `db:"encrypted_key"`
-	IV           ByteAOrNull
-	Nonce        ByteANonNull
+	IV           ByteAOrNull  `db:"iv"`
+	Nonce        ByteANonNull `db:"nonce"`
 }
 
 type Capability struct {
-	ID                   string
+	ID                   string       `db:"id"`
 	AccountID            string       `db:"account_id"`
 	NonceBytes           ByteAOrNull  `db:"nonce"`
 	EncryptedPrivateData ByteANonNull `db:"encrypted_private_data"`
