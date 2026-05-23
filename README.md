@@ -8,25 +8,25 @@ React 15.x and Reflux.
 ## Getting started
 
 1. Install `git`, [`docker`](https://docs.docker.com/engine/install/), and
-   [`docker-compose`](https://docs.docker.com/compose/install/).
+   [`docker compose`](https://docs.docker.com/compose/install/).
 
 2. Ensure dependencies are fetched: Run `git submodule update --init` in this
    repo directory.
 
 ### Running a server
 
-1. Build the client static files: `docker-compose run --rm frontend`
+1. Build the client static files: `docker compose run --rm frontend`
 
-2. Init your db: `docker-compose run --rm upgradedb sql-migrate up`
+2. Init your db: `docker compose run --rm upgradedb`
 
-3. Start the server: `docker-compose up backend`
+3. Start the server: `docker compose up backend`
 
 Heim is now running on port 8080. \o/
 
 ### Developing the client (connected to the main instance)
 
 1. Launch the standalone static server and build watcher:  
-   `docker-compose run --service-ports frontend gulp develop`
+   `docker compose run --service-ports frontend gulp develop`
 
 2. To connect to [&test](https://euphoria.leet.nu/room/test) on euphoria.leet.nu
    using your local client, open:  
@@ -36,15 +36,15 @@ Heim is now running on port 8080. \o/
 
 #### Backend
 
-`docker-compose run --rm backend_tests`
+`docker compose run --rm backend_tests`
 
 #### Frontend
 
-`docker-compose run --rm frontend npm test`
+`docker compose run --rm frontend npm test`
 
 ### Updating dependencies
 
-`docker-compose run --rm update_deps`
+`docker compose run --rm update_deps`
 
 ## Self-hosting
 
