@@ -18,7 +18,6 @@ require (
 	github.com/savaki/geoip2 v0.0.0-20150727150920-9968b08fbf39
 	github.com/smartystreets/goconvey v1.8.1
 	golang.org/x/crypto v0.50.0
-	golang.org/x/net v0.53.0
 	golang.org/x/term v0.42.0
 	gopkg.in/gorp.v1 v1.7.2
 	gopkg.in/yaml.v2 v2.4.0
@@ -39,6 +38,7 @@ require (
 	github.com/smarty/assertions v1.15.0 // indirect
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
+	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
 	google.golang.org/protobuf v1.36.8 // indirect
 )

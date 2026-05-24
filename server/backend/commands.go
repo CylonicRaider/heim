@@ -9,8 +9,6 @@ import (
 	"image/png"
 	"time"
 
-	"golang.org/x/net/context"
-
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
@@ -821,9 +819,7 @@ func (s *session) handleStaffInspectIPCommand(cmd *proto.StaffInspectIPCommand) 
 		return &response{packet: reply}
 	}
 
-	// geoip uses google's context package
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	resp, err := s.heim.GeoIP.Insights(ctx, addr.String())
+	resp, err := s.heim.GeoIP.Insights(s.ctx.ForkWithTimeout(10*time.Second), addr.String())
 	if err == nil {
 		serialized, err := json.Marshal(resp)
 		if err == nil {
