@@ -22,6 +22,7 @@ import (
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/cluster/etcd"
 	"euphoria.leet.nu/heim/cluster/local"
+	"euphoria.leet.nu/heim/cluster/mock"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/emails"
 	"euphoria.leet.nu/heim/proto/logging"
@@ -265,7 +266,7 @@ func (c *ClusterConfig) EtcdCluster(ctx scope.Context) (cluster.Cluster, error) 
 	case "":
 		return nil, fmt.Errorf("cluster: etcd-host must be specified")
 	case "mock":
-		return cluster.NewMockCluster(), nil
+		return mock.MockCluster(), nil
 	case "local":
 		return local.LocalCluster(ctx, c.EtcdHome), nil
 	default:

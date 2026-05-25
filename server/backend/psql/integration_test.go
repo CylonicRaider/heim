@@ -8,6 +8,7 @@ import (
 
 	"euphoria.leet.nu/heim/backend"
 	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/cluster/mock"
 	"euphoria.leet.nu/heim/proto"
 
 	"github.com/rubenv/sql-migrate"
@@ -74,7 +75,7 @@ func TestBackend(t *testing.T) {
 	}()
 	factory := func(heim *proto.Heim) (proto.Backend, error) {
 		if b == nil {
-			heim.Cluster = &cluster.TestCluster{}
+			heim.Cluster = mock.MockCluster()
 			heim.PeerDesc = &cluster.PeerDesc{
 				ID:      "testcase",
 				Era:     "era",

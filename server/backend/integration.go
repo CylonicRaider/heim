@@ -24,7 +24,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/pquerna/otp"
 
-	"euphoria.leet.nu/heim/cluster"
+	"euphoria.leet.nu/heim/cluster/mock"
 	"euphoria.leet.nu/heim/proto"
 	"euphoria.leet.nu/heim/proto/emails"
 	"euphoria.leet.nu/heim/proto/jobs"
@@ -570,7 +570,7 @@ func IntegrationTest(t *testing.T, factory proto.BackendFactory) {
 	runTest := func(name string, test testSuite) {
 		// Set up and start backend.
 		heim := &proto.Heim{
-			Cluster:        &cluster.TestCluster{},
+			Cluster:        mock.MockCluster(),
 			Context:        newTestScope(),
 			KMS:            security.LocalKMS(),
 			EmailDeliverer: &emails.TestDeliverer{},
@@ -831,7 +831,7 @@ func testThreading(s *serverUnderTest) {
 
 func testPresence(factory proto.BackendFactory) {
 	heim := &proto.Heim{
-		Cluster: &cluster.TestCluster{},
+		Cluster: mock.MockCluster(),
 		Context: newTestScope(),
 		KMS:     security.LocalKMS(),
 	}
@@ -933,7 +933,7 @@ func testPresence(factory proto.BackendFactory) {
 
 		backend2 := factory()
 		kms := security.LocalKMS()
-		app2, err := NewServer(newTestScope(), backend2, &cluster.TestCluster{}, kms, "test2", "")
+		app2, err := NewServer(newTestScope(), backend2, &mock.MockCluster{}, kms, "test2", "")
 		So(err, ShouldBeNil)
 		app2.AllowRoomCreation(true)
 		server2 := httptest.NewServer(app2)
