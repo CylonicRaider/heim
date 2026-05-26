@@ -9,8 +9,8 @@ import (
 	"euphoria.leet.nu/heim/proto/security"
 )
 
-// The channel must be buffered as the backend's background goroutine both reads to and writes from it.
 func MockCluster() cluster.Cluster {
+	// The channel must be buffered as the backend's background goroutine both reads to and writes from it.
 	return &mockCluster{c: make(chan cluster.PeerEvent, 16)}
 }
 
@@ -51,7 +51,11 @@ func (tc *mockCluster) GetValue(key string) (string, error) {
 
 func (tc *mockCluster) SetValue(key, value string) error {
 	tc.Lock()
-	tc.data[key] = value
+	if tc.data == nil {
+		tc.data = map[string]string{key: value}
+	} else {
+		tc.data[key] = value
+	}
 	tc.Unlock()
 	return nil
 }
