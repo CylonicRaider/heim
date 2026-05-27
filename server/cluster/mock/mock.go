@@ -113,11 +113,6 @@ func (tc *mockCluster) update(desc *cluster.PeerDesc) cluster.PeerEvent {
 		tc.peers = map[string]cluster.PeerDesc{}
 	}
 
-	if tc.c == nil {
-		tc.peers[desc.ID] = *desc
-		return nil
-	}
-
 	_, ok := tc.peers[desc.ID]
 	tc.peers[desc.ID] = *desc
 	if ok {
@@ -134,20 +129,12 @@ func (tc *mockCluster) Update(desc *cluster.PeerDesc) error {
 	return nil
 }
 
-func (tc *mockCluster) part() cluster.PeerEvent {
+func (tc *mockCluster) Part() {
 	tc.Lock()
 	defer tc.Unlock()
-	desc, ok := tc.peers[tc.myID]
 	delete(tc.peers, tc.myID)
-	if ok {
-		return &cluster.PeerLostEvent{desc}
-	}
-	return nil
-}
-
-func (tc *mockCluster) Part() {
-	if event := tc.part(); event != nil {
-		tc.c <- event
+	if tc.c != nil {
+		close(tc.c)
 	}
 }
 

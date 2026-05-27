@@ -145,6 +145,9 @@ func (lc *localCluster) GetSecret(kms security.KMS, name string, bytes int) ([]b
 	}
 
 	resultBytes, err := hex.DecodeString(resultText)
+	if err != nil {
+		return nil, err
+	}
 	if len(resultBytes) != bytes {
 		return nil, fmt.Errorf("secret inconsistent: expected %d bytes, got %d", bytes, len(resultBytes))
 	}
@@ -172,22 +175,12 @@ func (lc *localCluster) Update(desc *cluster.PeerDesc) error {
 	return nil
 }
 
-func (lc *localCluster) part() cluster.PeerEvent {
+func (lc *localCluster) Part() {
 	lc.Lock()
 	defer lc.Unlock()
-
-	oldDesc := lc.me
 	lc.me = nil
-	if oldDesc != nil {
-		return &cluster.PeerLostEvent{*oldDesc}
-	} else {
-		return nil
-	}
-}
-
-func (lc *localCluster) Part() {
-	if event := lc.part(); event != nil {
-		lc.c <- event
+	if lc.c != nil {
+		close(lc.c)
 	}
 }
 

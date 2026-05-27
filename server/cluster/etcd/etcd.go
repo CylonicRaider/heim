@@ -123,7 +123,10 @@ func (e *etcdCluster) init() (uint64, error) {
 			latestIndex = child.ModifiedIndex
 		}
 	}
-	return latestIndex + 1, nil
+	if latestIndex > 0 {
+		latestIndex++
+	}
+	return latestIndex, nil
 }
 
 func (e *etcdCluster) GetDir(key string) (map[string]string, error) {
@@ -186,21 +189,27 @@ func (e *etcdCluster) update(desc *cluster.PeerDesc) (uint64, error) {
 		return 0, err
 	}
 	logging.Logger(e.ctx).Printf("writing %s to %s\n", string(valueBytes), desc.ID)
-	e.me = e.key("/peers/%s", desc.ID)
-	resp, err := e.c.Set(e.me, string(valueBytes), uint64(cluster.TTL/time.Second))
-	if err != nil {
-		return 0, fmt.Errorf("set on %s: %s", e.me, err)
-	}
-	selfAnnouncements.Inc()
 	e.m.Lock()
+	e.me = desc.ID
 	e.peers[desc.ID] = *desc
 	e.m.Unlock()
+	meKey := e.key("/peers/%s", e.me)
+	resp, err := e.c.Set(meKey, string(valueBytes), uint64(cluster.TTL/time.Second))
+	if err != nil {
+		return 0, fmt.Errorf("set on %s: %s", meKey, err)
+	}
+	selfAnnouncements.Inc()
 	return resp.Node.ModifiedIndex + 1, nil
 }
 
 func (e *etcdCluster) Part() {
 	close(e.stop)
-	e.c.Delete(e.me, false)
+	e.m.Lock()
+	me := e.me
+	e.m.Unlock()
+	if me != "" {
+		e.c.Delete(e.key("/peers/%s", me), false)
+	}
 }
 
 func (e *etcdCluster) Watch() <-chan cluster.PeerEvent { return e.ch }
@@ -208,6 +217,7 @@ func (e *etcdCluster) Watch() <-chan cluster.PeerEvent { return e.ch }
 func (e *etcdCluster) watch(waitIndex uint64) {
 	defer close(e.ch)
 
+	seenMe := false
 	backoff := initialWatchBackoff
 	numFailures := 0
 
@@ -217,6 +227,13 @@ func (e *etcdCluster) watch(waitIndex uint64) {
 	for {
 		resp := <-recv
 		if resp == nil {
+			// Maybe this backend is just stopping.
+			_, open := <-e.stop
+			if !open {
+				logging.Logger(e.ctx).Printf("peer watch: parted, exiting\n")
+				return
+			}
+
 			// If this happens the etcd cluster is unhealthy. Retry (with
 			// backoff), and terminate the server if we fail too many times.
 			logging.Logger(e.ctx).Printf("cluster error: watch: nil response\n")
@@ -251,6 +268,10 @@ func (e *etcdCluster) watch(waitIndex uint64) {
 			e.m.Lock()
 			prev, updated := e.peers[desc.ID]
 			e.peers[desc.ID] = desc
+			if desc.ID == e.me && !seenMe {
+				updated = false
+				seenMe = true
+			}
 			e.m.Unlock()
 			if updated {
 				if prev.Era != desc.Era {
