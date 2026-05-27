@@ -20,38 +20,47 @@ func TestEtcdCluster(t *testing.T) {
 	}
 	defer s.Shutdown()
 
+	peerDesc := func(id string) *cluster.PeerDesc {
+		return &cluster.PeerDesc{
+			ID: id,
+			Era: "0",
+		}
+	}
+	peerDescNE := func(id string) *cluster.PeerDesc {
+		return &cluster.PeerDesc{
+			ID: id,
+		}
+	}
+
+	cluster.BehavioralTest(t, func(desc *cluster.PeerDesc) cluster.Cluster {
+		return s.Join("/general", desc)
+	})
+
 	Convey("Observe peer departure", t, func() {
-		a := s.Join("/departure", "a", "0")
+		a := s.Join("/departure", peerDesc("a"))
 		// no defer a.Part() because we'll do that explicitly
-		b := s.Join("/departure", "b", "0")
+		b := s.Join("/departure", peerDesc("b"))
 		defer b.Part()
 
-		So(<-a.Watch(), ShouldResemble, &cluster.PeerJoinedEvent{cluster.PeerDesc{ID: "b", Era: "0"}})
+		So(<-a.Watch(), ShouldResemble, &cluster.PeerJoinedEvent{*peerDesc("b")})
 		a.Part()
-		So(<-b.Watch(), ShouldResemble, &cluster.PeerLostEvent{cluster.PeerDesc{ID: "a"}})
+		So(<-b.Watch(), ShouldResemble, &cluster.PeerLostEvent{*peerDescNE("a")})
 	})
 
 	Convey("Observe initial peers upon joining", t, func() {
-		a := s.Join("/initial", "a", "0")
+		a := s.Join("/initial", peerDesc("a"))
 		defer a.Part()
-		So(a.Peers(), ShouldResemble,
-			[]cluster.PeerDesc{
-				{ID: "a", Era: "0"},
-			})
+		So(a.Peers(), ShouldResemble, []cluster.PeerDesc{*peerDesc("a")})
 
-		b := s.Join("/initial", "b", "0")
+		b := s.Join("/initial", peerDesc("b"))
 		defer b.Part()
-		So(b.Peers(), ShouldResemble,
-			[]cluster.PeerDesc{
-				{ID: "a", Era: "0"},
-				{ID: "b", Era: "0"},
-			})
+		So(b.Peers(), ShouldResemble, []cluster.PeerDesc{*peerDesc("a"), *peerDesc("b")})
 	})
 
 	Convey("Updates are seen", t, func() {
-		a := s.Join("/updates", "a", "0")
+		a := s.Join("/updates", peerDesc("a"))
 		defer a.Part()
-		b := s.Join("/updates", "b", "0")
+		b := s.Join("/updates", peerDesc("b"))
 		defer b.Part()
 
 		b.Update(&cluster.PeerDesc{ID: "b", Era: "1"})
@@ -63,7 +72,7 @@ func TestEtcdCluster(t *testing.T) {
 
 	Convey("Secrets are created if necessary", t, func() {
 		kms := security.LocalKMS()
-		a := s.Join("/secrets1", "a", "0")
+		a := s.Join("/secrets1", peerDesc("a"))
 		defer a.Part()
 
 		secret, err := a.GetSecret(kms, "test1", 16)
@@ -81,7 +90,7 @@ func TestEtcdCluster(t *testing.T) {
 			c:   make(chan struct{}),
 		}
 
-		a := s.Join("/secrets1", "a", "0")
+		a := s.Join("/secrets1", peerDesc("a"))
 		defer a.Part()
 
 		sc := make(chan []byte)

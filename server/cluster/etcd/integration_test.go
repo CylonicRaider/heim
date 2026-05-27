@@ -5,6 +5,7 @@ import (
 
 	"euphoria.leet.nu/heim/backend"
 	"euphoria.leet.nu/heim/backend/mock"
+	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/cluster/etcd/clustertest"
 	"euphoria.leet.nu/heim/proto"
 )
@@ -21,7 +22,7 @@ func TestIntegration(t *testing.T) {
 
 	backend.IntegrationTest(
 		t, func(heim *proto.Heim) (proto.Backend, error) {
-			heim.Cluster = etcd.Join("/test", "testcase", "era")
+			heim.Cluster = etcd.Join("/test", &cluster.PeerDesc{ID: "testcase", Era: "era"})
 			return &mock.TestBackend{}, nil
 		})
 }

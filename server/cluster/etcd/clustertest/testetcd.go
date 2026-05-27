@@ -147,11 +147,7 @@ func (s *EtcdServer) Shutdown() error {
 	return nil
 }
 
-func (s *EtcdServer) Join(root, id, era string) cluster.Cluster {
-	desc := &cluster.PeerDesc{
-		ID:  id,
-		Era: era,
-	}
+func (s *EtcdServer) Join(root string, desc *cluster.PeerDesc) cluster.Cluster {
 	c, err := etcd.EtcdCluster(scope.New(), root, s.addr, desc)
 	if err != nil {
 		panic(fmt.Sprintf("error joining cluster: %s", err))
