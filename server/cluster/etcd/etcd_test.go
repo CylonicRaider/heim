@@ -22,7 +22,7 @@ func TestEtcdCluster(t *testing.T) {
 
 	peerDesc := func(id string) *cluster.PeerDesc {
 		return &cluster.PeerDesc{
-			ID: id,
+			ID:  id,
 			Era: "0",
 		}
 	}

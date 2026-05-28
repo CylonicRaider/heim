@@ -81,8 +81,8 @@ func BehavioralTest(t *testing.T, clusterFactory func(desc *PeerDesc) Cluster) {
 	}
 
 	defaultPeerDesc := func() *PeerDesc {
-		return &PeerDesc {
-			ID: "test",
+		return &PeerDesc{
+			ID:  "test",
 			Era: newNonce(),
 		}
 	}
