@@ -19,6 +19,10 @@ import (
 	"euphoria.leet.nu/heim/cluster/etcd"
 )
 
+const (
+	debugEtcdLogs = false
+)
+
 func pickPort() (int, error) {
 	ln, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
@@ -112,9 +116,12 @@ func (s *EtcdServer) consumeStderr(stderr io.ReadCloser, ch chan<- string) {
 	for {
 		line, isPrefix, err := r.ReadLine()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "read error: %s\n", err)
+			fmt.Fprintf(os.Stderr, "[etcd] read error: %s\n", err)
 			close(ch)
 			return
+		}
+		if debugEtcdLogs {
+			fmt.Fprintf(os.Stderr, "[etcd] log: %s\n", line)
 		}
 		if atStart {
 			lineStr := string(line)
@@ -132,8 +139,19 @@ func (s *EtcdServer) consumeStderr(stderr io.ReadCloser, ch chan<- string) {
 		atStart = !isPrefix
 	}
 
-	// Consume the remainder.
-	io.Copy(ioutil.Discard, stderr)
+	if debugEtcdLogs {
+		for {
+			line, _, err := r.ReadLine()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "[etcd] late read error: %s\n", err)
+				return
+			}
+			fmt.Fprintf(os.Stderr, "[etcd] log: %s\n", line)
+		}
+	} else {
+		// Consume the remainder.
+		io.Copy(ioutil.Discard, stderr)
+	}
 }
 
 func (s *EtcdServer) Shutdown() error {
