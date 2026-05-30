@@ -100,7 +100,7 @@ func BehavioralTest(t *testing.T, clusterFactory func(desc *PeerDesc) Cluster) {
 		defer cluster.Part()
 
 		_, err := cluster.GetValue("getset")
-		So(err, ShouldNotBeNil)
+		So(err, ShouldEqual, ErrNotFound)
 
 		nonce := newNonce()
 		err = cluster.SetValue("getset", nonce)

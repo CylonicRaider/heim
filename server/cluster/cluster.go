@@ -10,7 +10,7 @@ import (
 var (
 	TTL = 30 * time.Second
 
-	ErrNotFound = fmt.Errorf("not found")
+	ErrNotFound = fmt.Errorf("value not found")
 )
 
 type Cluster interface {
