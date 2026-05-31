@@ -3,6 +3,7 @@ package etcd
 import (
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -10,13 +11,16 @@ import (
 	"time"
 
 	"euphoria.leet.nu/lib/scope"
-	"github.com/coreos/go-etcd/etcd"
 	"github.com/prometheus/client_golang/prometheus"
+	etcdpbs "go.etcd.io/etcd/api/v3/etcdserverpb"
+	etcdv3 "go.etcd.io/etcd/client/v3"
 
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 )
+
+var ErrParted = errors.New("parted from cluster")
 
 var (
 	selfAnnouncements = prometheus.NewCounter(prometheus.CounterOpts{
@@ -56,111 +60,267 @@ func init() {
 	prometheus.MustRegister(peerWatchErrors)
 }
 
+type etcdEventType int
+
+const (
+	eetError etcdEventType = iota
+	eetCreate
+	eetModify
+	eetDelete
+)
+
+type etcdNode struct {
+	Key              string
+	Value            string
+	CreatedRevision  int64
+	ModifiedRevision int64
+}
+
+type etcdEvent struct {
+	Type     etcdEventType
+	etcdNode       // Zero if type is eetError.
+	Error    error // Only present if type is eetError.
+}
+
+// *insert invective targeting whoever wrote the etcd client library*
+func extractValueGet(key string, resp *etcdv3.GetResponse) (string, error) {
+	return extractValueRange(key, (*etcdpbs.RangeResponse)(resp), true)
+}
+
+// *insert more invective targeting whoever wrote the etcd client library*
+func extractValueTxn(key string, resp *etcdv3.TxnResponse) (string, error) {
+	if len(resp.Responses) != 1 {
+		return "", fmt.Errorf("etcd broken: expected one txn response, got %d", len(resp.Responses))
+	}
+	return extractValueRange(key, resp.Responses[0].GetResponseRange(), false)
+}
+
+// *insert even more invective targeting whoever wrote the etcd client library*
+func extractValueRange(key string, resp *etcdpbs.RangeResponse, allowEmpty bool) (string, error) {
+	if resp.Count == 0 && allowEmpty {
+		if len(resp.Kvs) != 0 {
+			return "", fmt.Errorf("etcd broken: expected no get kvs, got %d", len(resp.Kvs))
+		}
+		return "", cluster.ErrNotFound
+	}
+
+	if resp.Count != 1 {
+		return "", fmt.Errorf("etcd broken: expected get count 1, got %d", resp.Count)
+	}
+	if len(resp.Kvs) != 1 {
+		return "", fmt.Errorf("etcd broken: expected one get kv, got %d", len(resp.Kvs))
+	}
+	kv := resp.Kvs[0]
+	if string(kv.Key) != key {
+		return "", fmt.Errorf("etcd broken: expected get key %#v, got %#v", key, string(kv.Key))
+	}
+	return string(kv.Value), nil
+}
+
+// *no invective here because this is actually almost ok*
+func extractValueList(prefix string, resp *etcdv3.GetResponse, recursive bool) (map[string]etcdNode, error) {
+	if int64(len(resp.Kvs)) != resp.Count {
+		return nil, fmt.Errorf("etcd broken: Response count is %d but %d entries returned",
+			resp.Count, len(resp.Kvs))
+	}
+	result := map[string]etcdNode{}
+	for _, kv := range resp.Kvs {
+		key := string(kv.Key)
+		if !strings.HasPrefix(key, prefix) {
+			return nil, fmt.Errorf("etcd broken: Query for prefix %#v returned out-of-bailiwick key %#v",
+				prefix, key)
+		}
+		trimmedKey := key[len(prefix):]
+		if !recursive && strings.ContainsRune(trimmedKey, '/') {
+			continue
+		}
+		result[trimmedKey] = etcdNode{
+			Key:              key,
+			Value:            string(kv.Value),
+			CreatedRevision:  kv.CreateRevision,
+			ModifiedRevision: kv.ModRevision,
+		}
+	}
+	return result, nil
+}
+
+// *insert yet more invective targeting whoever wrote the etcd client library*
+func extractWatchEvents(rawEvents etcdv3.WatchChan) <-chan etcdEvent {
+	output := make(chan etcdEvent)
+
+	go func() {
+		defer close(output)
+
+		for wev := range rawEvents {
+			if wev.Err() != nil {
+				output <- etcdEvent{
+					Type:  eetError,
+					Error: fmt.Errorf("watch error: %s", wev.Err()),
+				}
+			}
+
+			for _, ev := range wev.Events {
+				oev := etcdEvent{
+					etcdNode: etcdNode{
+						Key:              string(ev.Kv.Key),
+						Value:            string(ev.Kv.Value),
+						CreatedRevision:  ev.Kv.CreateRevision,
+						ModifiedRevision: ev.Kv.ModRevision,
+					},
+				}
+
+				switch {
+				case ev.IsCreate():
+					oev.Type = eetCreate
+				case ev.IsModify():
+					oev.Type = eetModify
+				case ev.Type == etcdv3.EventTypePut:
+					output <- etcdEvent{
+						Type:  eetError,
+						Error: fmt.Errorf("etcd broken: watch got put that is neither create nor modify"),
+					}
+					continue
+				case ev.Type == etcdv3.EventTypeDelete:
+					oev.Type = eetDelete
+				default:
+					output <- etcdEvent{
+						Type:  eetError,
+						Error: fmt.Errorf("got unexpected watch event type %d", ev.Type),
+					}
+					continue
+				}
+
+				output <- oev
+			}
+		}
+	}()
+
+	return output
+}
+
 func EtcdCluster(ctx scope.Context, root, addr string, desc *cluster.PeerDesc) (cluster.Cluster, error) {
 	logging.Logger(ctx).Printf("connecting to %#v\n", addr)
-	e := &etcdCluster{
-		root:  strings.TrimRight(root, "/") + "/",
-		c:     etcd.NewClient([]string{addr}),
-		ch:    make(chan cluster.PeerEvent),
-		stop:  make(chan bool),
-		peers: map[string]cluster.PeerDesc{},
-		ctx:   ctx,
-	}
-	idx, err := e.init()
+	client, err := etcdv3.NewFromURL(addr)
 	if err != nil {
 		return nil, err
 	}
-	if desc != nil {
-		idx, err = e.update(desc)
-		if err != nil {
-			return nil, err
-		}
+	e := &etcdCluster{
+		root:  strings.TrimRight(root, "/") + "/",
+		c:     client,
+		ch:    make(chan cluster.PeerEvent),
+		peers: map[string]cluster.PeerDesc{},
+		ctx:   ctx,
+		wctx:  ctx.Fork(),
 	}
-	go e.watch(idx)
+	rev, err := e.init(desc)
+	if err != nil {
+		return nil, err
+	}
+	go e.background(rev)
 	return e, nil
 }
 
 type etcdCluster struct {
 	m     sync.RWMutex
-	c     *etcd.Client
+	c     *etcdv3.Client
 	root  string
 	me    string
+	lease etcdv3.LeaseID
 	ch    chan cluster.PeerEvent
-	stop  chan bool
 	peers map[string]cluster.PeerDesc
 	ctx   scope.Context
+	wctx  scope.Context
 }
 
 func (e *etcdCluster) key(format string, args ...interface{}) string {
-	return e.root + strings.TrimLeft(fmt.Sprintf(format, args...), "/")
+	return e.root + strings.Trim(fmt.Sprintf(format, args...), "/")
 }
 
-func (e *etcdCluster) init() (uint64, error) {
-	if !e.c.SyncCluster() {
-		return 0, fmt.Errorf("cluster error: failed to sync with %s", e.c.GetCluster())
+func (e *etcdCluster) init(desc *cluster.PeerDesc) (int64, error) {
+	if err := e.c.Sync(e.ctx); err != nil {
+		return 0, fmt.Errorf("cluster error: failed to sync with %s: %s", e.c.Endpoints(), err)
 	}
 
-	resp, err := e.c.Get(e.key("/peers"), false, false)
+	resp, err := e.c.Grant(e.ctx, int64(cluster.TTL/time.Second))
 	if err != nil {
-		if etcdErr, ok := err.(*etcd.EtcdError); ok && etcdErr.ErrorCode == 100 {
-			return 0, nil
-		}
-		return 0, fmt.Errorf("cluster error: init: %s", err)
+		return 0, fmt.Errorf("cluster error: acquire lease: %s", err)
 	}
-	node := resp.Node
-	if !node.Dir {
-		return 0, fmt.Errorf("cluster error: init: expected directory")
+	if resp.Error != "" {
+		return 0, fmt.Errorf("cluster error: acquire lease: why is there another error field: %s", resp.Error)
+	}
+	if resp.ID == etcdv3.NoLease {
+		return 0, fmt.Errorf("cluster error: acquire lease: returned no lease")
+	}
+	e.lease = resp.ID
+
+	if desc != nil {
+		err = e.Update(desc)
+		if err != nil {
+			return 0, err
+		}
 	}
 
-	latestIndex := uint64(0)
-	for _, child := range node.Nodes {
+	peerNodes, err := e.getDirEx("/peers")
+	if err != nil {
+		return 0, err
+	}
+
+	latestRevision := int64(0)
+	for _, node := range peerNodes {
 		var desc cluster.PeerDesc
-		if err := json.Unmarshal([]byte(child.Value), &desc); err != nil {
-			return 0, fmt.Errorf("cluster error: init: bad node %s: %s\n", child.Key, err)
+		if err := json.Unmarshal([]byte(node.Value), &desc); err != nil {
+			return 0, fmt.Errorf("cluster error: init: bad node %s: %s\n", node.Key, err)
 		}
 		e.peers[desc.ID] = desc
-		if child.ModifiedIndex > latestIndex {
-			latestIndex = child.ModifiedIndex
+		if node.ModifiedRevision > latestRevision {
+			latestRevision = node.ModifiedRevision
 		}
 	}
-	if latestIndex > 0 {
-		latestIndex++
+	if latestRevision > 0 {
+		latestRevision++
 	}
-	return latestIndex, nil
+
+	return latestRevision, nil
 }
 
 func (e *etcdCluster) GetDir(key string) (map[string]string, error) {
-	prefix := e.key("%s", key) + "/"
-	resp, err := e.c.Get(prefix, false, false)
+	nodes, err := e.getDirEx(key)
 	if err != nil {
-		if etcdErr, ok := err.(*etcd.EtcdError); ok && etcdErr.ErrorCode == 100 {
-			return nil, cluster.ErrNotFound
-		}
-		return nil, err
+		return nil, fmt.Errorf("get of dir %s: %s", e.key("%s", key), err)
 	}
-
 	result := map[string]string{}
-	for _, child := range resp.Node.Nodes {
-		result[child.Key[len(prefix):]] = child.Value
+	for key, node := range nodes {
+		result[key] = node.Value
 	}
 	return result, nil
 }
 
-func (e *etcdCluster) GetValue(key string) (string, error) {
-	resp, err := e.c.Get(e.key("%s", key), false, false)
+func (e *etcdCluster) getDirEx(key string) (map[string]etcdNode, error) {
+	fullPrefix := e.key("%s", key) + "/"
+	resp, err := e.c.Get(e.ctx, fullPrefix, etcdv3.WithPrefix())
 	if err != nil {
-		if etcdErr, ok := err.(*etcd.EtcdError); ok && etcdErr.ErrorCode == 100 {
-			return "", cluster.ErrNotFound
-		}
+		return nil, err
+	}
+	return extractValueList(fullPrefix, resp, false)
+}
+
+func (e *etcdCluster) GetValue(key string) (string, error) {
+	fullKey := e.key("%s", key)
+	resp, err := e.c.Get(e.ctx, fullKey)
+	if err != nil {
+		return "", fmt.Errorf("get of %s: %s", e.key("%s", key), err)
+	}
+	result, err := extractValueGet(fullKey, resp)
+	if err != nil {
 		return "", err
 	}
-	return resp.Node.Value, nil
+	return string(result), nil
 }
 
 func (e *etcdCluster) SetValue(key, value string) error {
-	_, err := e.c.Set(e.key("%s", key), value, 0)
+	_, err := e.c.Put(e.ctx, e.key("%s", key), value)
 	if err != nil {
-		return fmt.Errorf("set on %s: %s", e.key("%s", key), err)
+		return fmt.Errorf("put to %s: %s", e.key("%s", key), err)
 	}
 	return nil
 }
@@ -177,91 +337,94 @@ func (e *etcdCluster) Peers() []cluster.PeerDesc {
 }
 
 func (e *etcdCluster) Update(desc *cluster.PeerDesc) error {
-	if _, err := e.update(desc); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (e *etcdCluster) update(desc *cluster.PeerDesc) (uint64, error) {
 	valueBytes, err := json.Marshal(desc)
 	if err != nil {
-		return 0, err
+		return err
 	}
-	logging.Logger(e.ctx).Printf("writing %s to %s\n", string(valueBytes), desc.ID)
+
 	e.m.Lock()
 	e.me = desc.ID
 	e.peers[desc.ID] = *desc
 	e.m.Unlock()
+
 	meKey := e.key("/peers/%s", e.me)
-	resp, err := e.c.Set(meKey, string(valueBytes), uint64(cluster.TTL/time.Second))
+	logging.Logger(e.ctx).Printf("writing %s to %s\n", string(valueBytes), meKey)
+	_, err = e.c.Put(e.ctx, meKey, string(valueBytes), etcdv3.WithLease(e.lease))
 	if err != nil {
-		return 0, fmt.Errorf("set on %s: %s", meKey, err)
+		return fmt.Errorf("put to %s: %s", meKey, err)
 	}
+
 	selfAnnouncements.Inc()
-	return resp.Node.ModifiedIndex + 1, nil
+
+	return nil
 }
 
 func (e *etcdCluster) Part() {
-	close(e.stop)
+	e.wctx.Terminate(ErrParted)
 	e.m.Lock()
-	me := e.me
+	lease := e.lease
+	e.lease = 0
 	e.m.Unlock()
-	if me != "" {
-		e.c.Delete(e.key("/peers/%s", me), false)
+	if lease != 0 {
+		_, err := e.c.Revoke(e.ctx, lease)
+		if err != nil {
+			logging.Logger(e.ctx).Printf("part: lease revoke error: %s", err)
+		}
 	}
 }
 
 func (e *etcdCluster) Watch() <-chan cluster.PeerEvent { return e.ch }
 
-func (e *etcdCluster) watch(waitIndex uint64) {
+func (e *etcdCluster) background(watchRev int64) {
 	defer close(e.ch)
 
-	seenMe := false
-	backoff := initialWatchBackoff
-	numFailures := 0
+	keepAlives, err := e.c.KeepAlive(e.wctx, e.lease)
+	if err != nil {
+		logging.Logger(e.ctx).Printf("peer watch: could not launch lease keepalive: %s", err)
+		return
+	}
 
-	recv := make(chan *etcd.Response)
-	go e.c.Watch(e.key("/peers"), waitIndex, true, recv, e.stop)
+	rawWatch := e.c.Watch(e.wctx, e.key("/peers"), etcdv3.WithPrefix(), etcdv3.WithRev(watchRev))
+	watch := extractWatchEvents(rawWatch)
+
+	seenMe := false
 
 	for {
-		resp := <-recv
-		if resp == nil {
-			// Maybe this backend is just stopping.
-			_, open := <-e.stop
-			if !open {
-				logging.Logger(e.ctx).Printf("peer watch: parted, exiting\n")
+		var ev etcdEvent
+		var ok bool
+		select {
+		case <-e.wctx.Done():
+			logging.Logger(e.ctx).Printf("peer watch: context done, exiting")
+			return
+		case _, ok = <-keepAlives:
+			if !ok {
+				err = fmt.Errorf("keep-alive channel closed unexpectedly")
+				e.wctx.Terminate(err)
+				logging.Logger(e.ctx).Printf("peer watch: %s", err)
 				return
 			}
-
-			// If this happens the etcd cluster is unhealthy. Retry (with
-			// backoff), and terminate the server if we fail too many times.
-			logging.Logger(e.ctx).Printf("cluster error: watch: nil response\n")
-
-			numFailures++
-			if numFailures >= maxConsecutiveWatchFailures {
-				e.ctx.Terminate(fmt.Errorf("cluster error: %d consecutive watch errors", numFailures))
+			continue
+		case ev, ok = <-watch:
+			if !ok {
+				err = fmt.Errorf("watch channel closed unexpectedly")
+				e.wctx.Terminate(err)
+				logging.Logger(e.ctx).Printf("peer watch: %s", err)
 				return
 			}
-			time.Sleep(backoff)
-			backoff *= 2
+		}
 
-			recv = make(chan *etcd.Response)
-			go e.c.Watch(e.key("/peers"), waitIndex, true, recv, e.stop)
+		if ev.Type == eetError {
+			logging.Logger(e.ctx).Printf("peer watch: error: %s", ev.Error)
 			continue
 		}
 
-		backoff = initialWatchBackoff
-		numFailures = 0
-		waitIndex = resp.Node.ModifiedIndex + 1
+		peerID := strings.TrimLeft(strings.TrimPrefix(ev.Key, e.key("/peers")), "/")
 
-		peerID := strings.TrimLeft(strings.TrimPrefix(resp.Node.Key, e.key("/peers")), "/")
-
-		switch resp.Action {
-		case "set":
+		switch ev.Type {
+		case eetCreate, eetModify:
 			var desc cluster.PeerDesc
-			if err := json.Unmarshal([]byte(resp.Node.Value), &desc); err != nil {
-				logging.Logger(e.ctx).Printf("cluster error: set: %s\n", err)
+			if err := json.Unmarshal([]byte(ev.Value), &desc); err != nil {
+				logging.Logger(e.ctx).Printf("peer watch: decode announcement: %s\n", err)
 				peerWatchErrors.Inc()
 				continue
 			}
@@ -279,82 +442,105 @@ func (e *etcdCluster) watch(waitIndex uint64) {
 				}
 				e.ch <- &cluster.PeerAliveEvent{desc}
 			} else {
-				logging.Logger(e.ctx).Printf("peer watch: set %s\n", desc.ID)
+				logging.Logger(e.ctx).Printf("peer watch: create %s\n", desc.ID)
 				e.ch <- &cluster.PeerJoinedEvent{desc}
 			}
 			peerEvents.Inc()
-		case "expire", "delete":
-			logging.Logger(e.ctx).Printf("peer watch: %s %s\n", resp.Action, peerID)
+
+		case eetDelete:
+			logging.Logger(e.ctx).Printf("peer watch: delete %s\n", peerID)
 			e.m.Lock()
 			delete(e.peers, peerID)
 			e.m.Unlock()
 			e.ch <- &cluster.PeerLostEvent{cluster.PeerDesc{ID: peerID}}
 			peerEvents.Inc()
-		default:
-			logging.Logger(e.ctx).Printf("peer watch: ignoring watch event: %v\n", resp)
 		}
 
 		peerLiveCount.Set(float64(len(e.peers)))
 	}
 }
 
+func (e *etcdCluster) getWithDefault(fullKey string, setter func() (string, error)) (string, error) {
+	value, err := setter()
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := e.c.Txn(e.ctx).If(
+		etcdv3.Compare(etcdv3.Version(fullKey), ">", 0),
+	).Then(
+		etcdv3.OpGet(fullKey),
+	).Else(
+		etcdv3.OpPut(fullKey, value),
+	).Commit()
+	if err != nil {
+		return "", err
+	}
+
+	if resp.Succeeded {
+		return extractValueTxn(fullKey, resp)
+	} else {
+		return value, nil
+	}
+}
+
 func (e *etcdCluster) GetSecret(kms security.KMS, name string, bytes int) ([]byte, error) {
-	resp, err := e.c.Get(e.key("/secrets/%s", name), false, false)
-	if err != nil {
-		if etcdErr, ok := err.(*etcd.EtcdError); ok && etcdErr.ErrorCode == 100 {
-			return e.setSecret(kms, name, bytes)
-		}
-		return nil, err
-	}
-
-	secret, err := hex.DecodeString(resp.Node.Value)
+	fullKey := e.key("/secrets/%s", name)
+	resp, err := e.c.Get(e.ctx, fullKey)
 	if err != nil {
 		return nil, err
 	}
-
-	if len(secret) != bytes {
-		return nil, fmt.Errorf("secret inconsistent: expected %d bytes, got %d", bytes, len(secret))
+	result, err := extractValueGet(fullKey, resp)
+	if err == cluster.ErrNotFound {
+		return e.setSecret(kms, name, bytes)
+	} else if err != nil {
+		return nil, err
 	}
-
-	return secret, nil
+	return e.decodeSecret(result, bytes)
 }
 
 func (e *etcdCluster) setSecret(kms security.KMS, name string, bytes int) ([]byte, error) {
-	// Generate our own key.
 	secret, err := kms.GenerateNonce(bytes)
 	if err != nil {
 		return nil, err
 	}
+	hexSecret := hex.EncodeToString(secret)
 
-	// Try to stake our claim on this secret.
-	if _, err := e.c.Create(e.key("/secrets/%s", name), hex.EncodeToString(secret), 0); err != nil {
-		if etcdErr, ok := err.(*etcd.EtcdError); ok && etcdErr.ErrorCode == 105 {
-			// Lost the race, try to use GetSecret again.
-			return e.GetSecret(kms, name, bytes)
-		}
+	result, err := e.getWithDefault(e.key("/secrets/%s", name), func() (string, error) {
+		return hexSecret, nil
+	})
+	if err != nil {
 		return nil, err
 	}
 
+	if result == hexSecret {
+		return secret, nil
+	}
+	return e.decodeSecret(result, bytes)
+}
+
+func (e *etcdCluster) decodeSecret(value string, bytes int) ([]byte, error) {
+	secret, err := hex.DecodeString(value)
+	if err != nil {
+		return nil, err
+	}
+	if len(secret) != bytes {
+		return nil, fmt.Errorf("secret inconsistent: expected %d bytes, got %d", bytes, len(secret))
+	}
 	return secret, nil
 }
 
 func (e *etcdCluster) GetValueWithDefault(key string, setter func() (string, error)) (string, error) {
-	for {
-		resp, err := e.c.Get(e.key("%s", key), false, false)
-		if err != nil {
-			if etcdErr, ok := err.(*etcd.EtcdError); ok && etcdErr.ErrorCode == 100 {
-				value, err := setter()
-				if err != nil {
-					return "", err
-				}
-				if _, err := e.c.Create(e.key("%s", key), value, 0); err != nil {
-					// Lost the race, repeat.
-					continue
-				}
-				return value, nil
-			}
-			return "", err
-		}
-		return resp.Node.Value, nil
+	fullKey := e.key("%s", key)
+	resp, err := e.c.Get(e.ctx, fullKey)
+	if err != nil {
+		return "", err
 	}
+	result, err := extractValueGet(fullKey, resp)
+	if err == cluster.ErrNotFound {
+		return e.getWithDefault(fullKey, setter)
+	} else if err != nil {
+		return "", err
+	}
+	return result, nil
 }
