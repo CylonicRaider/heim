@@ -12,8 +12,8 @@ import (
 
 	"euphoria.leet.nu/lib/scope"
 	"github.com/prometheus/client_golang/prometheus"
-	etcdpbs "go.etcd.io/etcd/api/v3/etcdserverpb"
-	etcdv3 "go.etcd.io/etcd/client/v3"
+	etcdpb "go.etcd.io/etcd/api/v3/etcdserverpb"
+	etcd "go.etcd.io/etcd/client/v3"
 
 	"euphoria.leet.nu/heim/cluster"
 	"euphoria.leet.nu/heim/proto/logging"
@@ -64,8 +64,7 @@ type etcdEventType int
 
 const (
 	eetError etcdEventType = iota
-	eetCreate
-	eetModify
+	eetPut
 	eetDelete
 )
 
@@ -83,12 +82,13 @@ type etcdEvent struct {
 }
 
 // *insert invective targeting whoever wrote the etcd client library*
-func extractValueGet(key string, resp *etcdv3.GetResponse) (string, error) {
-	return extractValueRange(key, (*etcdpbs.RangeResponse)(resp), true)
+func extractValueGet(key string, resp *etcd.GetResponse) (string, error) {
+	return extractValueRange(key, (*etcdpb.RangeResponse)(resp), true)
 }
 
 // *insert more invective targeting whoever wrote the etcd client library*
-func extractValueTxn(key string, resp *etcdv3.TxnResponse) (string, error) {
+func extractValueTxn(key string, resp *etcd.TxnResponse) (string, error) {
+	// This assumes a transaction that contains a single get operation (on the path that was taken).
 	if len(resp.Responses) != 1 {
 		return "", fmt.Errorf("etcd broken: expected one txn response, got %d", len(resp.Responses))
 	}
@@ -96,7 +96,7 @@ func extractValueTxn(key string, resp *etcdv3.TxnResponse) (string, error) {
 }
 
 // *insert even more invective targeting whoever wrote the etcd client library*
-func extractValueRange(key string, resp *etcdpbs.RangeResponse, allowEmpty bool) (string, error) {
+func extractValueRange(key string, resp *etcdpb.RangeResponse, allowEmpty bool) (string, error) {
 	if resp.Count == 0 && allowEmpty {
 		if len(resp.Kvs) != 0 {
 			return "", fmt.Errorf("etcd broken: expected no get kvs, got %d", len(resp.Kvs))
@@ -118,16 +118,16 @@ func extractValueRange(key string, resp *etcdpbs.RangeResponse, allowEmpty bool)
 }
 
 // *no invective here because this is actually almost ok*
-func extractValueList(prefix string, resp *etcdv3.GetResponse, recursive bool) (map[string]etcdNode, error) {
+func extractValueList(prefix string, resp *etcd.GetResponse, recursive bool) (map[string]etcdNode, error) {
 	if int64(len(resp.Kvs)) != resp.Count {
-		return nil, fmt.Errorf("etcd broken: Response count is %d but %d entries returned",
+		return nil, fmt.Errorf("etcd broken: response count is %d but %d entries returned",
 			resp.Count, len(resp.Kvs))
 	}
 	result := map[string]etcdNode{}
 	for _, kv := range resp.Kvs {
 		key := string(kv.Key)
 		if !strings.HasPrefix(key, prefix) {
-			return nil, fmt.Errorf("etcd broken: Query for prefix %#v returned out-of-bailiwick key %#v",
+			return nil, fmt.Errorf("etcd broken: query for prefix %#v returned out-of-bailiwick key %#v",
 				prefix, key)
 		}
 		trimmedKey := key[len(prefix):]
@@ -145,7 +145,7 @@ func extractValueList(prefix string, resp *etcdv3.GetResponse, recursive bool) (
 }
 
 // *insert yet more invective targeting whoever wrote the etcd client library*
-func extractWatchEvents(rawEvents etcdv3.WatchChan) <-chan etcdEvent {
+func extractWatchEvents(rawEvents etcd.WatchChan) <-chan etcdEvent {
 	output := make(chan etcdEvent)
 
 	go func() {
@@ -170,17 +170,9 @@ func extractWatchEvents(rawEvents etcdv3.WatchChan) <-chan etcdEvent {
 				}
 
 				switch {
-				case ev.IsCreate():
-					oev.Type = eetCreate
-				case ev.IsModify():
-					oev.Type = eetModify
-				case ev.Type == etcdv3.EventTypePut:
-					output <- etcdEvent{
-						Type:  eetError,
-						Error: fmt.Errorf("etcd broken: watch got put that is neither create nor modify"),
-					}
-					continue
-				case ev.Type == etcdv3.EventTypeDelete:
+				case ev.Type == etcd.EventTypePut:
+					oev.Type = eetPut
+				case ev.Type == etcd.EventTypeDelete:
 					oev.Type = eetDelete
 				default:
 					output <- etcdEvent{
@@ -199,10 +191,10 @@ func extractWatchEvents(rawEvents etcdv3.WatchChan) <-chan etcdEvent {
 }
 
 func EtcdCluster(ctx scope.Context, root, addr string, desc *cluster.PeerDesc) (cluster.Cluster, error) {
-	logging.Logger(ctx).Printf("connecting to %#v\n", addr)
-	client, err := etcdv3.NewFromURL(addr)
+	logging.Logger(ctx).Printf("connecting to %#v", addr)
+	client, err := etcd.NewFromURL(addr)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cluster init: create client: %s", err)
 	}
 	e := &etcdCluster{
 		root:  strings.TrimRight(root, "/") + "/",
@@ -222,10 +214,10 @@ func EtcdCluster(ctx scope.Context, root, addr string, desc *cluster.PeerDesc) (
 
 type etcdCluster struct {
 	m     sync.RWMutex
-	c     *etcdv3.Client
+	c     *etcd.Client
 	root  string
 	me    string
-	lease etcdv3.LeaseID
+	lease etcd.LeaseID
 	ch    chan cluster.PeerEvent
 	peers map[string]cluster.PeerDesc
 	ctx   scope.Context
@@ -248,7 +240,7 @@ func (e *etcdCluster) init(desc *cluster.PeerDesc) (int64, error) {
 	if resp.Error != "" {
 		return 0, fmt.Errorf("cluster error: acquire lease: why is there another error field: %s", resp.Error)
 	}
-	if resp.ID == etcdv3.NoLease {
+	if resp.ID == etcd.NoLease {
 		return 0, fmt.Errorf("cluster error: acquire lease: returned no lease")
 	}
 	e.lease = resp.ID
@@ -269,12 +261,10 @@ func (e *etcdCluster) init(desc *cluster.PeerDesc) (int64, error) {
 	for _, node := range peerNodes {
 		var desc cluster.PeerDesc
 		if err := json.Unmarshal([]byte(node.Value), &desc); err != nil {
-			return 0, fmt.Errorf("cluster error: init: bad node %s: %s\n", node.Key, err)
+			return 0, fmt.Errorf("cluster error: init: bad node %s: %s", node.Key, err)
 		}
 		e.peers[desc.ID] = desc
-		if node.ModifiedRevision > latestRevision {
-			latestRevision = node.ModifiedRevision
-		}
+		latestRevision = max(latestRevision, node.ModifiedRevision)
 	}
 	if latestRevision > 0 {
 		latestRevision++
@@ -286,7 +276,7 @@ func (e *etcdCluster) init(desc *cluster.PeerDesc) (int64, error) {
 func (e *etcdCluster) GetDir(key string) (map[string]string, error) {
 	nodes, err := e.getDirEx(key)
 	if err != nil {
-		return nil, fmt.Errorf("get of dir %s: %s", e.key("%s", key), err)
+		return nil, fmt.Errorf("cluster get of dir %s: %s", e.key("%s", key), err)
 	}
 	result := map[string]string{}
 	for key, node := range nodes {
@@ -297,9 +287,9 @@ func (e *etcdCluster) GetDir(key string) (map[string]string, error) {
 
 func (e *etcdCluster) getDirEx(key string) (map[string]etcdNode, error) {
 	fullPrefix := e.key("%s", key) + "/"
-	resp, err := e.c.Get(e.ctx, fullPrefix, etcdv3.WithPrefix())
+	resp, err := e.c.Get(e.ctx, fullPrefix, etcd.WithPrefix())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cluster get of dir %s: %s", fullPrefix[:len(fullPrefix)-1], err)
 	}
 	return extractValueList(fullPrefix, resp, false)
 }
@@ -308,7 +298,7 @@ func (e *etcdCluster) GetValue(key string) (string, error) {
 	fullKey := e.key("%s", key)
 	resp, err := e.c.Get(e.ctx, fullKey)
 	if err != nil {
-		return "", fmt.Errorf("get of %s: %s", e.key("%s", key), err)
+		return "", fmt.Errorf("cluster get of %s: %s", fullKey, err)
 	}
 	result, err := extractValueGet(fullKey, resp)
 	if err != nil {
@@ -318,9 +308,10 @@ func (e *etcdCluster) GetValue(key string) (string, error) {
 }
 
 func (e *etcdCluster) SetValue(key, value string) error {
-	_, err := e.c.Put(e.ctx, e.key("%s", key), value)
+	fullKey := e.key("%s", key)
+	_, err := e.c.Put(e.ctx, fullKey, value)
 	if err != nil {
-		return fmt.Errorf("put to %s: %s", e.key("%s", key), err)
+		return fmt.Errorf("cluster put to %s: %s", fullKey, err)
 	}
 	return nil
 }
@@ -339,7 +330,7 @@ func (e *etcdCluster) Peers() []cluster.PeerDesc {
 func (e *etcdCluster) Update(desc *cluster.PeerDesc) error {
 	valueBytes, err := json.Marshal(desc)
 	if err != nil {
-		return err
+		return fmt.Errorf("cluster: serialize peer desc: %s", err)
 	}
 
 	e.m.Lock()
@@ -348,10 +339,10 @@ func (e *etcdCluster) Update(desc *cluster.PeerDesc) error {
 	e.m.Unlock()
 
 	meKey := e.key("/peers/%s", e.me)
-	logging.Logger(e.ctx).Printf("writing %s to %s\n", string(valueBytes), meKey)
-	_, err = e.c.Put(e.ctx, meKey, string(valueBytes), etcdv3.WithLease(e.lease))
+	logging.Logger(e.ctx).Printf("writing %s to %s", string(valueBytes), meKey)
+	_, err = e.c.Put(e.ctx, meKey, string(valueBytes), etcd.WithLease(e.lease))
 	if err != nil {
-		return fmt.Errorf("put to %s: %s", meKey, err)
+		return fmt.Errorf("cluster put to %s: %s", meKey, err)
 	}
 
 	selfAnnouncements.Inc()
@@ -365,11 +356,17 @@ func (e *etcdCluster) Part() {
 	lease := e.lease
 	e.lease = 0
 	e.m.Unlock()
-	if lease != 0 {
+	if lease != etcd.NoLease {
+		// etcd should do this on its own, but doing it here ensures that it is done by the time the next
+		// test starts
 		_, err := e.c.Revoke(e.ctx, lease)
 		if err != nil {
-			logging.Logger(e.ctx).Printf("part: lease revoke error: %s", err)
+			logging.Logger(e.ctx).Printf("cluster part: revoke lease error: %s", err)
 		}
+	}
+	err := e.c.Close()
+	if err != nil {
+		logging.Logger(e.ctx).Printf("cluster part failed: %s", err)
 	}
 }
 
@@ -378,13 +375,15 @@ func (e *etcdCluster) Watch() <-chan cluster.PeerEvent { return e.ch }
 func (e *etcdCluster) background(watchRev int64) {
 	defer close(e.ch)
 
-	keepAlives, err := e.c.KeepAlive(e.wctx, e.lease)
+	wctx := etcd.WithRequireLeader(e.wctx)
+
+	keepAlives, err := e.c.KeepAlive(wctx, e.lease)
 	if err != nil {
-		logging.Logger(e.ctx).Printf("peer watch: could not launch lease keepalive: %s", err)
+		logging.Logger(e.ctx).Printf("peer watch: launch lease keepalive: %s", err)
 		return
 	}
 
-	rawWatch := e.c.Watch(e.wctx, e.key("/peers"), etcdv3.WithPrefix(), etcdv3.WithRev(watchRev))
+	rawWatch := e.c.Watch(wctx, e.key("/peers")+"/", etcd.WithPrefix(), etcd.WithRev(watchRev))
 	watch := extractWatchEvents(rawWatch)
 
 	seenMe := false
@@ -415,16 +414,17 @@ func (e *etcdCluster) background(watchRev int64) {
 
 		if ev.Type == eetError {
 			logging.Logger(e.ctx).Printf("peer watch: error: %s", ev.Error)
+			peerWatchErrors.Inc()
 			continue
 		}
 
-		peerID := strings.TrimLeft(strings.TrimPrefix(ev.Key, e.key("/peers")), "/")
+		peerID := strings.TrimPrefix(ev.Key, e.key("/peers")+"/")
 
 		switch ev.Type {
-		case eetCreate, eetModify:
+		case eetPut:
 			var desc cluster.PeerDesc
 			if err := json.Unmarshal([]byte(ev.Value), &desc); err != nil {
-				logging.Logger(e.ctx).Printf("peer watch: decode announcement: %s\n", err)
+				logging.Logger(e.ctx).Printf("peer watch: decode announcement: %s", err)
 				peerWatchErrors.Inc()
 				continue
 			}
@@ -438,17 +438,17 @@ func (e *etcdCluster) background(watchRev int64) {
 			e.m.Unlock()
 			if updated {
 				if prev.Era != desc.Era {
-					logging.Logger(e.ctx).Printf("peer watch: update %s\n", desc.ID)
+					logging.Logger(e.ctx).Printf("peer watch: update %s", desc.ID)
 				}
 				e.ch <- &cluster.PeerAliveEvent{desc}
 			} else {
-				logging.Logger(e.ctx).Printf("peer watch: create %s\n", desc.ID)
+				logging.Logger(e.ctx).Printf("peer watch: create %s", desc.ID)
 				e.ch <- &cluster.PeerJoinedEvent{desc}
 			}
 			peerEvents.Inc()
 
 		case eetDelete:
-			logging.Logger(e.ctx).Printf("peer watch: delete %s\n", peerID)
+			logging.Logger(e.ctx).Printf("peer watch: delete %s", peerID)
 			e.m.Lock()
 			delete(e.peers, peerID)
 			e.m.Unlock()
@@ -467,11 +467,11 @@ func (e *etcdCluster) getWithDefault(fullKey string, setter func() (string, erro
 	}
 
 	resp, err := e.c.Txn(e.ctx).If(
-		etcdv3.Compare(etcdv3.Version(fullKey), ">", 0),
+		etcd.Compare(etcd.Version(fullKey), ">", 0),
 	).Then(
-		etcdv3.OpGet(fullKey),
+		etcd.OpGet(fullKey),
 	).Else(
-		etcdv3.OpPut(fullKey, value),
+		etcd.OpPut(fullKey, value),
 	).Commit()
 	if err != nil {
 		return "", err
@@ -480,6 +480,7 @@ func (e *etcdCluster) getWithDefault(fullKey string, setter func() (string, erro
 	if resp.Succeeded {
 		return extractValueTxn(fullKey, resp)
 	} else {
+		// Of course, the value could have been replaced by the time we get here, but an attempt was made.
 		return value, nil
 	}
 }
@@ -503,6 +504,9 @@ func (e *etcdCluster) setSecret(kms security.KMS, name string, bytes int) ([]byt
 	secret, err := kms.GenerateNonce(bytes)
 	if err != nil {
 		return nil, err
+	}
+	if len(secret) != bytes {
+		return nil, fmt.Errorf("kms broken: requested %d bytes, got %d", bytes, len(secret))
 	}
 	hexSecret := hex.EncodeToString(secret)
 
@@ -534,13 +538,13 @@ func (e *etcdCluster) GetValueWithDefault(key string, setter func() (string, err
 	fullKey := e.key("%s", key)
 	resp, err := e.c.Get(e.ctx, fullKey)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("cluster get of %s: %s", fullKey, err)
 	}
 	result, err := extractValueGet(fullKey, resp)
 	if err == cluster.ErrNotFound {
 		return e.getWithDefault(fullKey, setter)
 	} else if err != nil {
-		return "", err
+		return "", fmt.Errorf("cluster get of %s: %s", fullKey, err)
 	}
 	return result, nil
 }
