@@ -75,7 +75,7 @@ func TestBackend(t *testing.T) {
 	}()
 	factory := func(heim *proto.Heim) (proto.Backend, error) {
 		if b == nil {
-			heim.Cluster = mock.MockCluster()
+			heim.Cluster = mock.MockCluster(nil)
 			heim.PeerDesc = &cluster.PeerDesc{
 				ID:      "testcase",
 				Era:     "era",

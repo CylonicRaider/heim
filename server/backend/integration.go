@@ -570,7 +570,7 @@ func IntegrationTest(t *testing.T, factory proto.BackendFactory) {
 	runTest := func(name string, test testSuite) {
 		// Set up and start backend.
 		heim := &proto.Heim{
-			Cluster:        mock.MockCluster(),
+			Cluster:        mock.MockCluster(nil),
 			Context:        newTestScope(),
 			KMS:            security.LocalKMS(),
 			EmailDeliverer: &emails.TestDeliverer{},
@@ -831,7 +831,7 @@ func testThreading(s *serverUnderTest) {
 
 func testPresence(factory proto.BackendFactory) {
 	heim := &proto.Heim{
-		Cluster: mock.MockCluster(),
+		Cluster: mock.MockCluster(nil),
 		Context: newTestScope(),
 		KMS:     security.LocalKMS(),
 	}

@@ -208,7 +208,7 @@ func EtcdCluster(ctx scope.Context, root, addr string, desc *cluster.PeerDesc) (
 	if err != nil {
 		return nil, err
 	}
-	go e.background(rev)
+	go e.background(rev, desc != nil)
 	return e, nil
 }
 
@@ -358,7 +358,7 @@ func (e *etcdCluster) Part() {
 	e.m.Unlock()
 	if lease != etcd.NoLease {
 		// etcd should do this on its own, but doing it here ensures that it is done by the time the next
-		// test starts
+		// test starts (when testing)
 		_, err := e.c.Revoke(e.ctx, lease)
 		if err != nil {
 			logging.Logger(e.ctx).Printf("cluster part: revoke lease error: %s", err)
@@ -372,7 +372,7 @@ func (e *etcdCluster) Part() {
 
 func (e *etcdCluster) Watch() <-chan cluster.PeerEvent { return e.ch }
 
-func (e *etcdCluster) background(watchRev int64) {
+func (e *etcdCluster) background(watchRev int64, hasInitialDesc bool) {
 	defer close(e.ch)
 
 	wctx := etcd.WithRequireLeader(e.wctx)
@@ -386,7 +386,7 @@ func (e *etcdCluster) background(watchRev int64) {
 	rawWatch := e.c.Watch(wctx, e.key("/peers")+"/", etcd.WithPrefix(), etcd.WithRev(watchRev))
 	watch := extractWatchEvents(rawWatch)
 
-	seenMe := false
+	seenMe := hasInitialDesc
 
 	for {
 		var ev etcdEvent

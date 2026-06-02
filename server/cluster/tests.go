@@ -65,16 +65,6 @@ func expectClose(watch <-chan PeerEvent) error {
 	}
 }
 
-func AutoJoinOrPanic(c Cluster, desc *PeerDesc) Cluster {
-	if desc == nil {
-		return c
-	}
-	if err := c.Update(desc); err != nil {
-		panic(err)
-	}
-	return c
-}
-
 func BehavioralTest(t *testing.T, clusterFactory func(desc *PeerDesc) Cluster) {
 	newNonce := func() string {
 		return time.Now().String()
@@ -177,54 +167,81 @@ func BehavioralTest(t *testing.T, clusterFactory func(desc *PeerDesc) Cluster) {
 	})
 
 	Convey("Presence", t, func() {
-		cluster := clusterFactory(nil)
-		parted := false
-		defer func() {
-			if !parted {
-				cluster.Part()
-			}
-		}()
+		Convey("Without initial announce", func() {
+			cluster := clusterFactory(nil)
+			parted := false
+			defer func() {
+				if !parted {
+					cluster.Part()
+				}
+			}()
 
-		// Initially, the cluster should be empty.
-		peers := cluster.Peers()
-		So(peers, ShouldBeEmpty)
+			// Initially, the cluster should be empty.
+			peers := cluster.Peers()
+			So(peers, ShouldBeEmpty)
 
-		events := cluster.Watch()
-		err := expectNoPeerEvents(events)
-		So(err, ShouldBeNil)
+			events := cluster.Watch()
+			err := expectNoPeerEvents(events)
+			So(err, ShouldBeNil)
 
-		// The first update should be a join.
-		refPeerDesc := PeerDesc{ID: "test1", Era: newNonce()}
-		peerDesc := refPeerDesc
-		err = cluster.Update(&peerDesc)
-		So(err, ShouldBeNil)
-		So(peerDesc, ShouldEqual, refPeerDesc)
+			// The first update should be a join.
+			refPeerDesc := PeerDesc{ID: "test1", Era: newNonce()}
+			peerDesc := refPeerDesc
+			err = cluster.Update(&peerDesc)
+			So(err, ShouldBeNil)
+			So(peerDesc, ShouldEqual, refPeerDesc)
 
-		ev, err := expectOnePeerEvent(events)
-		So(err, ShouldBeNil)
-		So(ev, ShouldResemble, &PeerJoinedEvent{refPeerDesc})
+			ev, err := expectOnePeerEvent(events)
+			So(err, ShouldBeNil)
+			So(ev, ShouldResemble, &PeerJoinedEvent{refPeerDesc})
 
-		So(cluster.Peers(), ShouldEqual, []PeerDesc{refPeerDesc})
+			So(cluster.Peers(), ShouldEqual, []PeerDesc{refPeerDesc})
 
-		// Another update should lead to an alive event.
-		refPeerDesc.Era = newNonce()
-		peerDesc = refPeerDesc
-		err = cluster.Update(&peerDesc)
-		So(err, ShouldBeNil)
-		So(peerDesc, ShouldEqual, refPeerDesc)
+			// Another update should lead to an alive event.
+			refPeerDesc.Era = newNonce()
+			peerDesc = refPeerDesc
+			err = cluster.Update(&peerDesc)
+			So(err, ShouldBeNil)
+			So(peerDesc, ShouldEqual, refPeerDesc)
 
-		ev, err = expectOnePeerEvent(events)
-		So(err, ShouldBeNil)
-		So(ev, ShouldResemble, &PeerAliveEvent{refPeerDesc})
+			ev, err = expectOnePeerEvent(events)
+			So(err, ShouldBeNil)
+			So(ev, ShouldResemble, &PeerAliveEvent{refPeerDesc})
 
-		So(cluster.Peers(), ShouldEqual, []PeerDesc{refPeerDesc})
+			So(cluster.Peers(), ShouldEqual, []PeerDesc{refPeerDesc})
 
-		// A peer should not observe its own part event.
-		parted = true
-		cluster.Part()
+			// A peer should not observe its own part event.
+			parted = true
+			cluster.Part()
 
-		err = expectClose(events)
-		So(err, ShouldBeNil)
+			err = expectClose(events)
+			So(err, ShouldBeNil)
+		})
+
+		Convey("With initial announce", func() {
+			peerDesc := defaultPeerDesc()
+			cluster := clusterFactory(peerDesc)
+			defer cluster.Part()
+
+			// Initially, there should be one peer; we should not see ourselves joining.
+			peers := cluster.Peers()
+			So(peers, ShouldEqual, []PeerDesc{*peerDesc})
+
+			events := cluster.Watch()
+			err := expectNoPeerEvents(events)
+			So(err, ShouldBeNil)
+
+			// This update should not be a join, either.
+			newPeerDesc := PeerDesc{ID: peerDesc.ID, Era: newNonce()}
+			err = cluster.Update(&newPeerDesc)
+			So(err, ShouldBeNil)
+
+			ev, err := expectOnePeerEvent(events)
+			So(err, ShouldBeNil)
+			So(ev, ShouldResemble, &PeerAliveEvent{newPeerDesc})
+
+			So(cluster.Peers(), ShouldEqual, []PeerDesc{newPeerDesc})
+		})
 	})
 }
 

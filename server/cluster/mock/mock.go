@@ -9,9 +9,14 @@ import (
 	"euphoria.leet.nu/heim/proto/security"
 )
 
-func MockCluster() cluster.Cluster {
+func MockCluster(desc *cluster.PeerDesc) cluster.Cluster {
 	// The channel must be buffered as the backend's background goroutine both reads to and writes from it.
-	return &mockCluster{c: make(chan cluster.PeerEvent, 16)}
+	result := &mockCluster{c: make(chan cluster.PeerEvent, 16)}
+	if desc != nil {
+		result.peers = map[string]cluster.PeerDesc{desc.ID: *desc}
+		result.myID = desc.ID
+	}
+	return result
 }
 
 type mockCluster struct {
@@ -71,9 +76,10 @@ func (tc *mockCluster) GetValueWithDefault(key string, setter func() (string, er
 		return "", err
 	}
 	if tc.data == nil {
-		tc.data = map[string]string{}
+		tc.data = map[string]string{key: val}
+	} else {
+		tc.data[key] = val
 	}
-	tc.data[key] = val
 	return val, nil
 }
 

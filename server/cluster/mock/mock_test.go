@@ -7,7 +7,5 @@ import (
 )
 
 func TestMockCluster(t *testing.T) {
-	cluster.BehavioralTest(t, func(desc *cluster.PeerDesc) cluster.Cluster {
-		return cluster.AutoJoinOrPanic(MockCluster(), desc)
-	})
+	cluster.BehavioralTest(t, MockCluster)
 }

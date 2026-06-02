@@ -2,8 +2,9 @@ package local
 
 import (
 	"os"
-	"strings"
 	"testing"
+
+	"euphoria.leet.nu/lib/scope"
 
 	"euphoria.leet.nu/heim/cluster"
 )
@@ -13,19 +14,14 @@ func NewTestLocalCluster(desc *cluster.PeerDesc) cluster.Cluster {
 	if err != nil {
 		panic(err)
 	}
-	return cluster.AutoJoinOrPanic(&testLocalCluster{
-		localCluster{
-			rootDir: strings.TrimRight(rootDir, "/") + "/",
-			c:       make(chan cluster.PeerEvent, 16),
-		},
-	}, desc)
+	return testLocalCluster{LocalCluster(scope.New(), rootDir, desc).(*localCluster)}
 }
 
 type testLocalCluster struct {
-	localCluster
+	*localCluster
 }
 
-func (lc *testLocalCluster) Part() {
+func (lc testLocalCluster) Part() {
 	os.RemoveAll(lc.rootDir)
 	lc.localCluster.Part()
 }

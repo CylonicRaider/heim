@@ -23,12 +23,17 @@ type localCluster struct {
 	c       chan cluster.PeerEvent
 }
 
-func LocalCluster(ctx scope.Context, rootDir string) cluster.Cluster {
+func LocalCluster(ctx scope.Context, rootDir string, desc *cluster.PeerDesc) cluster.Cluster {
 	logging.Logger(ctx).Printf("using local cluster at %#v\n", rootDir)
-	return &localCluster{
+	result := &localCluster{
 		rootDir: strings.TrimRight(rootDir, "/") + "/",
 		c:       make(chan cluster.PeerEvent, 16),
 	}
+	if desc != nil {
+		me := *desc
+		result.me = &me
+	}
+	return result
 }
 
 func (lc *localCluster) path(key string) string {
