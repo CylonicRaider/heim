@@ -63,8 +63,6 @@ func StartEtcd() (*EtcdServer, error) {
 		"--listen-client-urls", url,
 		"--listen-peer-urls", "http://localhost:0",
 		"--advertise-client-urls", url,
-		// TODO: migrate to newer etcd client library...
-		"--enable-v2",
 	)
 
 	stderr, err := cmd.StderrPipe()
