@@ -9,156 +9,197 @@ import (
 	"euphoria.leet.nu/heim/proto/security"
 )
 
-func MockCluster(desc *cluster.PeerDesc) cluster.Cluster {
-	// The channel must be buffered as the backend's background goroutine both reads to and writes from it.
-	result := &mockCluster{c: make(chan cluster.PeerEvent, 16)}
-	if desc != nil {
-		result.peers = map[string]cluster.PeerDesc{desc.ID: *desc}
-		result.myID = desc.ID
+func NewMockClusterGroup() *mockClusterGroup {
+	return &mockClusterGroup{
+		data:  map[string]string{},
+		peers: map[string]*mockCluster{},
 	}
-	return result
 }
 
-type mockCluster struct {
+type mockClusterGroup struct {
 	sync.Mutex
-	data    map[string]string
-	peers   map[string]cluster.PeerDesc
-	secrets map[string][]byte
-	c       chan cluster.PeerEvent
-	myID    string
+	data  map[string]string
+	peers map[string]*mockCluster
 }
 
-func (tc *mockCluster) GetDir(key string) (map[string]string, error) {
-	tc.Lock()
-	defer tc.Unlock()
+func (g *mockClusterGroup) getDir(key string) (map[string]string, error) {
+	g.Lock()
+	defer g.Unlock()
+
 	key = strings.TrimRight(key, "/") + "/"
+
 	result := map[string]string{}
-	for k, v := range tc.data {
-		if strings.HasPrefix(k, key) {
-			rk := k[len(key):]
-			if !strings.Contains(rk, "/") {
-				result[rk] = v
-			}
+	for k, v := range g.data {
+		if !strings.HasPrefix(k, key) {
+			continue
 		}
+		rk := k[len(key):]
+		if strings.ContainsRune(rk, '/') {
+			continue
+		}
+		result[rk] = v
 	}
 	return result, nil
 }
 
-func (tc *mockCluster) GetValue(key string) (string, error) {
-	tc.Lock()
-	defer tc.Unlock()
-	data, ok := tc.data[key]
-	if !ok {
-		return "", cluster.ErrNotFound
-	}
-	return data, nil
-}
+func (g *mockClusterGroup) getSet(key string, setter func() (string, error), override bool) (string, error) {
+	g.Lock()
+	defer g.Unlock()
 
-func (tc *mockCluster) SetValue(key, value string) error {
-	tc.Lock()
-	if tc.data == nil {
-		tc.data = map[string]string{key: value}
-	} else {
-		tc.data[key] = value
+	if !override {
+		if value, ok := g.data[key]; ok {
+			return value, nil
+		}
 	}
-	tc.Unlock()
-	return nil
-}
 
-func (tc *mockCluster) GetValueWithDefault(key string, setter func() (string, error)) (string, error) {
-	tc.Lock()
-	defer tc.Unlock()
-	if val, ok := tc.data[key]; ok {
-		return val, nil
-	}
-	val, err := setter()
+	value, err := setter()
 	if err != nil {
 		return "", err
 	}
-	if tc.data == nil {
-		tc.data = map[string]string{key: val}
+
+	if g.data == nil {
+		g.data = map[string]string{key: value}
 	} else {
-		tc.data[key] = val
+		g.data[key] = value
 	}
-	return val, nil
+
+	return value, nil
+}
+
+func (g *mockClusterGroup) describePeers() []cluster.PeerDesc {
+	g.Lock()
+	defer g.Unlock()
+
+	result := make([]cluster.PeerDesc, 0, len(g.peers))
+	for _, p := range g.peers {
+		result = append(result, p.me)
+	}
+	return result
+}
+
+func (g *mockClusterGroup) updatePeer(peer *mockCluster, desc *cluster.PeerDesc, eventToSelf bool) {
+	g.Lock()
+	defer g.Unlock()
+
+	if peer.me.ID != "" && desc.ID != peer.me.ID {
+		panic("changing peer ID is not allowed")
+	}
+	peer.me = *desc
+
+	_, ok := g.peers[desc.ID]
+	g.peers[desc.ID] = peer
+
+	var ev cluster.PeerEvent
+	if ok {
+		ev = &cluster.PeerAliveEvent{*desc}
+	} else {
+		ev = &cluster.PeerJoinedEvent{*desc}
+	}
+
+	for _, p := range g.peers {
+		if p == peer && !eventToSelf {
+			continue
+		}
+		p.c <- ev
+	}
+}
+
+func (g *mockClusterGroup) removePeer(peer *mockCluster) {
+	g.Lock()
+	defer g.Unlock()
+
+	peerID := peer.me.ID
+	found, ok := g.peers[peerID]
+	if !ok {
+		return
+	}
+	if found != peer {
+		panic("multiple peers with same ID in cluster")
+	}
+
+	delete(g.peers, peerID)
+	peer.me = cluster.PeerDesc{}
+	close(peer.c)
+
+	ev := &cluster.PeerLostEvent{cluster.PeerDesc{ID: peerID}}
+	for _, p := range g.peers {
+		p.c <- ev
+	}
+}
+
+func (g *mockClusterGroup) NewCluster(desc *cluster.PeerDesc) cluster.Cluster {
+	// The channel must be buffered as the backend's background goroutine both reads to and writes from it.
+	result := &mockCluster{
+		c: make(chan cluster.PeerEvent, 16),
+		g: g,
+	}
+	if desc != nil {
+		g.updatePeer(result, desc, false)
+	}
+	return result
+}
+
+func MockCluster(desc *cluster.PeerDesc) cluster.Cluster {
+	return NewMockClusterGroup().NewCluster(desc)
+}
+
+type mockCluster struct {
+	g  *mockClusterGroup
+	me cluster.PeerDesc
+	c  chan cluster.PeerEvent
+}
+
+func (tc *mockCluster) GetDir(key string) (map[string]string, error) {
+	return tc.g.getDir(key)
+}
+
+func (tc *mockCluster) GetValue(key string) (string, error) {
+	return tc.g.getSet(key, func() (string, error) {
+		return "", cluster.ErrNotFound
+	}, false)
+}
+
+func (tc *mockCluster) SetValue(key, value string) error {
+	_, err := tc.g.getSet(key, func() (string, error) {
+		return value, nil
+	}, true)
+	return err
+}
+
+func (tc *mockCluster) GetValueWithDefault(key string, setter func() (string, error)) (string, error) {
+	return tc.g.getSet(key, setter, false)
 }
 
 func (tc *mockCluster) GetSecret(kms security.KMS, name string, bytes int) ([]byte, error) {
-	tc.Lock()
-	defer tc.Unlock()
-
-	if secret, ok := tc.secrets[name]; ok {
-		if len(secret) != bytes {
-			return nil, fmt.Errorf("secret inconsistent: expected %d bytes, got %d", bytes, len(secret))
+	secret, err := tc.g.getSet("/secrets/"+strings.TrimLeft(name, "/"), func() (string, error) {
+		secret, err := kms.GenerateNonce(bytes)
+		if err != nil {
+			return "", err
 		}
-		return secret, nil
-	}
-
-	secret, err := kms.GenerateNonce(bytes)
+		return string(secret), nil
+	}, false)
 	if err != nil {
 		return nil, err
 	}
-
-	if tc.secrets == nil {
-		tc.secrets = map[string][]byte{name: secret}
-	} else {
-		tc.secrets[name] = secret
+	if len(secret) != bytes {
+		return nil, fmt.Errorf("secret inconsistent: expected %d bytes, got %d", bytes, len(secret))
 	}
-	return secret, nil
-}
-
-func (tc *mockCluster) update(desc *cluster.PeerDesc) cluster.PeerEvent {
-	tc.Lock()
-	defer tc.Unlock()
-
-	if tc.myID == "" {
-		tc.myID = desc.ID
-	}
-
-	if tc.peers == nil {
-		tc.peers = map[string]cluster.PeerDesc{}
-	}
-
-	_, ok := tc.peers[desc.ID]
-	tc.peers[desc.ID] = *desc
-	if ok {
-		return &cluster.PeerAliveEvent{*desc}
-	} else {
-		return &cluster.PeerJoinedEvent{*desc}
-	}
+	return []byte(secret), nil
 }
 
 func (tc *mockCluster) Update(desc *cluster.PeerDesc) error {
-	if event := tc.update(desc); event != nil {
-		tc.c <- event
-	}
+	tc.g.updatePeer(tc, desc, true)
 	return nil
 }
 
 func (tc *mockCluster) Part() {
-	tc.Lock()
-	defer tc.Unlock()
-	delete(tc.peers, tc.myID)
-	if tc.c != nil {
-		close(tc.c)
-	}
+	tc.g.removePeer(tc)
 }
 
 func (tc *mockCluster) Peers() []cluster.PeerDesc {
-	tc.Lock()
-	defer tc.Unlock()
-	peers := []cluster.PeerDesc{}
-	for _, peer := range tc.peers {
-		peers = append(peers, peer)
-	}
-	return peers
+	return tc.g.describePeers()
 }
 
 func (tc *mockCluster) Watch() <-chan cluster.PeerEvent {
-	tc.Lock()
-	defer tc.Unlock()
-	if tc.c == nil {
-		tc.c = make(chan cluster.PeerEvent)
-	}
 	return tc.c
 }
