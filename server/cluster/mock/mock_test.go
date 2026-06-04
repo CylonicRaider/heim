@@ -7,5 +7,5 @@ import (
 )
 
 func TestMockCluster(t *testing.T) {
-	cluster.BehavioralTest(t, MockCluster)
+	cluster.BehavioralTest(t, NewMockClusterGroup().NewCluster)
 }
