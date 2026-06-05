@@ -77,16 +77,20 @@ func (g *mockClusterGroup) describePeers() []cluster.PeerDesc {
 	return result
 }
 
-func (g *mockClusterGroup) updatePeer(peer *mockCluster, desc *cluster.PeerDesc, eventToSelf bool) {
+func (g *mockClusterGroup) updatePeer(peer *mockCluster, desc *cluster.PeerDesc, eventToSelf bool) error {
 	g.Lock()
 	defer g.Unlock()
 
 	if peer.me.ID != "" && desc.ID != peer.me.ID {
-		panic("changing peer ID is not allowed")
+		return fmt.Errorf("changing peer ID is not allowed")
 	}
-	peer.me = *desc
 
-	_, ok := g.peers[desc.ID]
+	found, ok := g.peers[desc.ID]
+	if ok && found != peer {
+		return fmt.Errorf("cluster has another member with ID %#v", desc.ID)
+	}
+
+	peer.me = *desc
 	g.peers[desc.ID] = peer
 
 	var ev cluster.PeerEvent
@@ -102,6 +106,7 @@ func (g *mockClusterGroup) updatePeer(peer *mockCluster, desc *cluster.PeerDesc,
 		}
 		p.c <- ev
 	}
+	return nil
 }
 
 func (g *mockClusterGroup) removePeer(peer *mockCluster) {
@@ -134,7 +139,9 @@ func (g *mockClusterGroup) NewCluster(desc *cluster.PeerDesc) cluster.Cluster {
 		g: g,
 	}
 	if desc != nil {
-		g.updatePeer(result, desc, false)
+		if err := g.updatePeer(result, desc, false); err != nil {
+			panic(err)
+		}
 	}
 	return result
 }
@@ -188,8 +195,7 @@ func (tc *mockCluster) GetSecret(kms security.KMS, name string, bytes int) ([]by
 }
 
 func (tc *mockCluster) Update(desc *cluster.PeerDesc) error {
-	tc.g.updatePeer(tc, desc, true)
-	return nil
+	return tc.g.updatePeer(tc, desc, true)
 }
 
 func (tc *mockCluster) Part() {
