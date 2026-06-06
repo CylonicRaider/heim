@@ -2,6 +2,7 @@ package mock
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"sync"
 
@@ -70,10 +71,11 @@ func (g *mockClusterGroup) describePeers() []cluster.PeerDesc {
 	g.Lock()
 	defer g.Unlock()
 
-	result := make([]cluster.PeerDesc, 0, len(g.peers))
+	result := make(cluster.PeerList, 0, len(g.peers))
 	for _, p := range g.peers {
 		result = append(result, p.me)
 	}
+	sort.Sort(result)
 	return result
 }
 
