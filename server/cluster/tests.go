@@ -219,13 +219,13 @@ func BehavioralTest(t *testing.T, clusterFactory func(desc *PeerDesc) Cluster) {
 		})
 
 		Convey("With initial announce", func() {
-			peerDesc := defaultPeerDesc()
-			cluster := clusterFactory(peerDesc)
+			peerDesc := *defaultPeerDesc()
+			cluster := clusterFactory(&peerDesc)
 			defer cluster.Part()
 
 			// Initially, there should be one peer; we should not see ourselves joining.
 			peers := cluster.Peers()
-			So(peers, ShouldEqual, []PeerDesc{*peerDesc})
+			So(peers, ShouldEqual, []PeerDesc{peerDesc})
 
 			events := cluster.Watch()
 			err := expectNoPeerEvents(events)
