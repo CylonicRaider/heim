@@ -34,7 +34,7 @@ func TestEtcdCluster(t *testing.T) {
 
 	cluster.BehavioralTest(t, func(desc *cluster.PeerDesc) cluster.Cluster {
 		return s.Join("/general", desc)
-	})
+	}, true)
 
 	Convey("Observe peer departure", t, func() {
 		a := s.Join("/departure", peerDesc("a"))

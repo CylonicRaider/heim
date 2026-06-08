@@ -65,7 +65,7 @@ func expectClose(watch <-chan PeerEvent) error {
 	}
 }
 
-func BehavioralTest(t *testing.T, clusterFactory func(desc *PeerDesc) Cluster) {
+func BehavioralTest(t *testing.T, clusterFactory func(desc *PeerDesc) Cluster, supportsMultiple bool) {
 	newNonce := func() string {
 		return time.Now().String()
 	}
@@ -73,6 +73,13 @@ func BehavioralTest(t *testing.T, clusterFactory func(desc *PeerDesc) Cluster) {
 	defaultPeerDesc := func() *PeerDesc {
 		return &PeerDesc{
 			ID:  "test",
+			Era: newNonce(),
+		}
+	}
+
+	namedPeerDesc := func(name string) *PeerDesc {
+		return &PeerDesc{
+			ID:  name,
 			Era: newNonce(),
 		}
 	}
@@ -242,6 +249,84 @@ func BehavioralTest(t *testing.T, clusterFactory func(desc *PeerDesc) Cluster) {
 
 			So(cluster.Peers(), ShouldEqual, []PeerDesc{newPeerDesc})
 		})
+	})
+
+	if !supportsMultiple {
+		return
+	}
+
+	Convey("Concurrent presence", t, func() {
+		// Launch first cluster member.
+		descA := *namedPeerDesc("test-a")
+		clusterA := clusterFactory(&descA)
+		defer clusterA.Part()
+
+		eventsA := clusterA.Watch()
+		So(expectNoPeerEvents(eventsA), ShouldBeNil)
+
+		So(clusterA.Peers(), ShouldEqual, []PeerDesc{descA})
+
+		// Launch second cluster member.
+		descB := *namedPeerDesc("test-b")
+		clusterB := clusterFactory(&descB)
+		partedB := false
+		defer func() {
+			if !partedB {
+				clusterB.Part()
+			}
+		}()
+
+		eventsB := clusterB.Watch()
+		So(expectNoPeerEvents(eventsB), ShouldBeNil)
+
+		ev, err := expectOnePeerEvent(eventsA)
+		So(err, ShouldBeNil)
+		So(ev, ShouldResemble, &PeerJoinedEvent{descB})
+
+		So(clusterA.Peers(), ShouldEqual, []PeerDesc{descA, descB})
+		So(clusterB.Peers(), ShouldEqual, []PeerDesc{descA, descB})
+
+		// Update a member's data.
+		descB.Era = newNonce()
+		clusterB.Update(&descB)
+
+		ev, err = expectOnePeerEvent(eventsA)
+		So(err, ShouldBeNil)
+		So(ev, ShouldResemble, &PeerAliveEvent{descB})
+
+		ev, err = expectOnePeerEvent(eventsB)
+		So(err, ShouldBeNil)
+		So(ev, ShouldResemble, &PeerAliveEvent{descB})
+
+		So(clusterA.Peers(), ShouldEqual, []PeerDesc{descA, descB})
+		So(clusterB.Peers(), ShouldEqual, []PeerDesc{descA, descB})
+
+		// Another time, just to be sure.
+		descB.Era = newNonce()
+		clusterB.Update(&descB)
+
+		ev, err = expectOnePeerEvent(eventsA)
+		So(err, ShouldBeNil)
+		So(ev, ShouldResemble, &PeerAliveEvent{descB})
+
+		ev, err = expectOnePeerEvent(eventsB)
+		So(err, ShouldBeNil)
+		So(ev, ShouldResemble, &PeerAliveEvent{descB})
+
+		So(clusterA.Peers(), ShouldEqual, []PeerDesc{descA, descB})
+		So(clusterB.Peers(), ShouldEqual, []PeerDesc{descA, descB})
+
+		// Remove one peer.
+		partedB = true
+		clusterB.Part()
+
+		So(expectClose(eventsB), ShouldBeNil)
+
+		ev, err = expectOnePeerEvent(eventsA)
+		So(err, ShouldBeNil)
+		So(ev, ShouldResemble, &PeerLostEvent{PeerDesc{ID: descB.ID}})
+
+		So(clusterA.Peers(), ShouldEqual, []PeerDesc{descA})
 	})
 }
 

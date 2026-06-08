@@ -27,5 +27,5 @@ func (lc testLocalCluster) Part() {
 }
 
 func TestLocalCluster(t *testing.T) {
-	cluster.BehavioralTest(t, NewTestLocalCluster)
+	cluster.BehavioralTest(t, NewTestLocalCluster, false)
 }
