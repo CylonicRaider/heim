@@ -18,14 +18,14 @@ func NewMockClusterGroup() *mockClusterGroup {
 }
 
 type mockClusterGroup struct {
-	sync.Mutex
+	sync.RWMutex
 	data  map[string]string
 	peers map[string]*mockCluster
 }
 
 func (g *mockClusterGroup) getDir(key string) (map[string]string, error) {
-	g.Lock()
-	defer g.Unlock()
+	g.RLock()
+	defer g.RUnlock()
 
 	key = strings.TrimRight(key, "/") + "/"
 
@@ -44,32 +44,39 @@ func (g *mockClusterGroup) getDir(key string) (map[string]string, error) {
 }
 
 func (g *mockClusterGroup) getSet(key string, setter func() (string, error), override bool) (string, error) {
-	g.Lock()
-	defer g.Unlock()
-
 	if !override {
+		g.RLock()
 		if value, ok := g.data[key]; ok {
+			g.RUnlock()
 			return value, nil
 		}
+		g.RUnlock()
 	}
 
-	value, err := setter()
+	newValue, err := setter()
 	if err != nil {
 		return "", err
 	}
 
-	if g.data == nil {
-		g.data = map[string]string{key: value}
-	} else {
-		g.data[key] = value
+	g.Lock()
+	defer g.Unlock()
+
+	if value, ok := g.data[key]; ok {
+		return value, nil
 	}
 
-	return value, nil
+	if g.data == nil {
+		g.data = map[string]string{key: newValue}
+	} else {
+		g.data[key] = newValue
+	}
+
+	return newValue, nil
 }
 
 func (g *mockClusterGroup) describePeers() []cluster.PeerDesc {
-	g.Lock()
-	defer g.Unlock()
+	g.RLock()
+	defer g.RUnlock()
 
 	result := make(cluster.PeerList, 0, len(g.peers))
 	for _, p := range g.peers {
@@ -80,12 +87,12 @@ func (g *mockClusterGroup) describePeers() []cluster.PeerDesc {
 }
 
 func (g *mockClusterGroup) updatePeer(peer *mockCluster, desc *cluster.PeerDesc, eventToSelf bool) error {
-	g.Lock()
-	defer g.Unlock()
-
 	if peer.me.ID != "" && desc.ID != peer.me.ID {
 		return fmt.Errorf("changing peer ID is not allowed")
 	}
+
+	g.Lock()
+	defer g.Unlock()
 
 	found, ok := g.peers[desc.ID]
 	if ok && found != peer {
@@ -163,15 +170,11 @@ func (tc *mockCluster) GetDir(key string) (map[string]string, error) {
 }
 
 func (tc *mockCluster) GetValue(key string) (string, error) {
-	return tc.g.getSet(key, func() (string, error) {
-		return "", cluster.ErrNotFound
-	}, false)
+	return tc.g.getSet(key, func() (string, error) { return "", cluster.ErrNotFound }, false)
 }
 
 func (tc *mockCluster) SetValue(key, value string) error {
-	_, err := tc.g.getSet(key, func() (string, error) {
-		return value, nil
-	}, true)
+	_, err := tc.g.getSet(key, func() (string, error) { return value, nil }, true)
 	return err
 }
 

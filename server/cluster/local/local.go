@@ -17,7 +17,7 @@ import (
 )
 
 type localCluster struct {
-	sync.Mutex
+	sync.RWMutex
 	rootDir string
 	me      *cluster.PeerDesc
 	c       chan cluster.PeerEvent
@@ -43,8 +43,8 @@ func (lc *localCluster) path(key string) string {
 func (lc *localCluster) GetDir(key string) (map[string]string, error) {
 	path := lc.path(key)
 
-	lc.Lock()
-	defer lc.Unlock()
+	lc.RLock()
+	defer lc.RUnlock()
 
 	entries, err := os.ReadDir(path)
 	if err != nil {
@@ -72,29 +72,36 @@ func (lc *localCluster) GetDir(key string) (map[string]string, error) {
 	return result, nil
 }
 
+func (lc *localCluster) getRaw(path string) (string, error) {
+	lc.RLock()
+	defer lc.RUnlock()
+
+	bytes, err := os.ReadFile(path)
+	if err == nil {
+		return string(bytes), nil
+	} else if os.IsNotExist(err) {
+		return "", cluster.ErrNotFound
+	} else {
+		return "", err
+	}
+}
+
 func (lc *localCluster) transaction(key string, setter func() (string, error), override bool) (string, error) {
 	path := lc.path(key)
 
-	lc.Lock()
-	defer lc.Unlock()
-
 	if !override {
-		bytes, err := os.ReadFile(path)
-		if err == nil {
-			return string(bytes), nil
-		} else if !os.IsNotExist(err) {
-			return "", err
+		if text, err := lc.getRaw(path); err != cluster.ErrNotFound {
+			return text, err
 		}
-	}
-
-	if setter == nil {
-		return "", cluster.ErrNotFound
 	}
 
 	newText, err := setter()
 	if err != nil {
 		return "", err
 	}
+
+	lc.Lock()
+	defer lc.Unlock()
 
 	if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
 		return "", err
@@ -123,7 +130,7 @@ func (lc *localCluster) transaction(key string, setter func() (string, error), o
 }
 
 func (lc *localCluster) GetValue(key string) (string, error) {
-	return lc.transaction(key, nil, false)
+	return lc.transaction(key, func() (string, error) { return "", cluster.ErrNotFound }, false)
 }
 
 func (lc *localCluster) SetValue(key, value string) error {
@@ -190,8 +197,8 @@ func (lc *localCluster) Part() {
 }
 
 func (lc *localCluster) Peers() []cluster.PeerDesc {
-	lc.Lock()
-	defer lc.Unlock()
+	lc.RLock()
+	defer lc.RUnlock()
 	result := []cluster.PeerDesc{}
 	if lc.me != nil {
 		result = append(result, *lc.me)
