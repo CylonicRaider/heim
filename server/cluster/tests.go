@@ -149,28 +149,96 @@ func BehavioralTest(t *testing.T, clusterFactory func(desc *PeerDesc) Cluster, s
 			So(setterCalled, ShouldBeFalse)
 			So(got, ShouldEqual, nonce)
 		})
+
+		Convey("Handles race condition correctly", func() {
+			type result struct {
+				Data  string
+				Error error
+			}
+
+			bgsc := make(chan struct{})
+			bgrc := make(chan result)
+			go func() {
+				value, err := cluster.GetValueWithDefault("getdefaultrace", func() (string, error) {
+					bgsc <- struct{}{}
+					<-bgsc
+					return "this should not be the result", nil
+				})
+				bgrc <- result{Data: value, Error: err}
+			}()
+
+			// Wait for background goroutine to enter the setter function
+			<-bgsc
+
+			// Let another call succeed first
+			text, err := cluster.GetValueWithDefault("getdefaultrace", func() (string, error) {
+				return "this should be the result", nil
+			})
+			So(err, ShouldBeNil)
+			So(text, ShouldEqual, "this should be the result")
+
+			// Release the goroutine
+			bgsc <- struct{}{}
+
+			// Retrieve and validate the goroutine's result
+			bgResult := <-bgrc
+			So(bgResult.Error, ShouldBeNil)
+			So(bgResult.Data, ShouldEqual, text)
+		})
 	})
 
 	Convey("Secrets", t, func() {
 		cluster := clusterFactory(defaultPeerDesc())
 		defer cluster.Part()
 
-		kms := &testKMS{security.LocalKMS(), false}
+		Convey("Basic", func() {
+			kms := &testKMS{security.LocalKMS(), false, nil}
 
-		result, err := cluster.GetSecret(kms, "testsecret", 17)
-		So(err, ShouldBeNil)
-		So(kms.PopGenerateNonceCalled(), ShouldBeTrue)
-		So(result, ShouldHaveLength, 17)
+			result, err := cluster.GetSecret(kms, "testsecret", 17)
+			So(err, ShouldBeNil)
+			So(kms.PopGenerateNonceCalled(), ShouldBeTrue)
+			So(result, ShouldHaveLength, 17)
 
-		result2, err := cluster.GetSecret(kms, "testsecret", 17)
-		So(err, ShouldBeNil)
-		So(kms.PopGenerateNonceCalled(), ShouldBeFalse)
-		So(result2, ShouldEqual, result)
+			result2, err := cluster.GetSecret(kms, "testsecret", 17)
+			So(err, ShouldBeNil)
+			So(kms.PopGenerateNonceCalled(), ShouldBeFalse)
+			So(result2, ShouldEqual, result)
 
-		_, err = cluster.GetSecret(kms, "testsecret", 13)
-		So(err, ShouldNotBeNil)
-		So(err.Error(), ShouldStartWith, "secret inconsistent:")
-		So(kms.PopGenerateNonceCalled(), ShouldBeFalse)
+			_, err = cluster.GetSecret(kms, "testsecret", 13)
+			So(err, ShouldNotBeNil)
+			So(err.Error(), ShouldStartWith, "secret inconsistent:")
+			So(kms.PopGenerateNonceCalled(), ShouldBeFalse)
+		})
+
+		Convey("Handles race condition correctly", func() {
+			kms := &testKMS{security.LocalKMS(), false, make(chan struct{})}
+
+			type result struct {
+				Data  []byte
+				Error error
+			}
+
+			bgrc := make(chan result)
+			go func() {
+				secret, err := cluster.GetSecret(kms, "secretrace", 23)
+				bgrc <- result{Data: secret, Error: err}
+			}()
+
+			// Wait until the goroutine is in the middle of its GetSecret call
+			<-kms.gnSync
+
+			// Now, let another call succeed first
+			secret, err := cluster.GetSecret(kms.KMS, "secretrace", 23)
+			So(err, ShouldBeNil)
+
+			// Unblock the goroutine
+			kms.gnSync <- struct{}{}
+
+			// Get and validate the goroutine's result
+			bgResult := <-bgrc
+			So(bgResult.Error, ShouldBeNil)
+			So(bgResult.Data, ShouldEqual, secret)
+		})
 	})
 
 	Convey("Presence", t, func() {
@@ -332,16 +400,21 @@ func BehavioralTest(t *testing.T, clusterFactory func(desc *PeerDesc) Cluster, s
 
 type testKMS struct {
 	security.KMS
-	generateNonceCalled bool
+	gnCalled bool
+	gnSync   chan struct{}
 }
 
 func (tkms *testKMS) GenerateNonce(bytes int) ([]byte, error) {
-	tkms.generateNonceCalled = true
+	tkms.gnCalled = true
+	if tkms.gnSync != nil {
+		tkms.gnSync <- struct{}{}
+		<-tkms.gnSync
+	}
 	return tkms.KMS.GenerateNonce(bytes)
 }
 
 func (tkms *testKMS) PopGenerateNonceCalled() bool {
-	result := tkms.generateNonceCalled
-	tkms.generateNonceCalled = false
+	result := tkms.gnCalled
+	tkms.gnCalled = false
 	return result
 }

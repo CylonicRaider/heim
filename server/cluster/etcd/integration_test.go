@@ -16,7 +16,7 @@ func TestIntegration(t *testing.T) {
 		t.Fatal(err)
 	}
 	if etcd == nil {
-		t.Fatal("can't test euphoria.leet.nu/heim/cluster/etcd: etcd not available in PATH")
+		t.Skipf("etcd not in PATH, skipping etcd integration tests")
 	}
 	defer etcd.Shutdown()
 
