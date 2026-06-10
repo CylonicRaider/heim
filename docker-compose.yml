@@ -134,9 +134,12 @@ services:
       - ./server/backend/console/keys:/keys
       - ./_deps/godeps:/srv/heim/server/vendor
       - ./_data/gocache:/gocache
+    tmpfs:
+      - /tmp/data
     environment:
       GOCACHE: /gocache
       DSN: postgres://postgres:heimlich@psql_test/heim?sslmode=disable
+      TEST_TMPDIR: /tmp/data
     command: go test euphoria.leet.nu/heim/...
 
   # The embed container serves static files for the embed domain.

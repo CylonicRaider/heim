@@ -45,7 +45,7 @@ func StartEtcd() (*EtcdServer, error) {
 		return nil, nil
 	}
 
-	d, err := ioutil.TempDir("", "etcd_test")
+	d, err := ioutil.TempDir(os.Getenv("TEST_TMPDIR"), "etcd_test")
 	if err != nil {
 		return nil, fmt.Errorf("start etcd: tempdir error: %s", err)
 	}
