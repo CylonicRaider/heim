@@ -79,6 +79,6 @@ offer our rationale and discuss any disciplinary decisions.
 ---
 
 ::: section credits
-This Code of Conduct is distributed under a [Creative Commons Attribution-ShareAlike license](http://creativecommons.org/licenses/by-sa/3.0).  
-It is derived partially from the [Citizen Code of Conduct](http://citizencodeofconduct.org).
+This Code of Conduct is distributed under a [Creative Commons Attribution-ShareAlike license](https://creativecommons.org/licenses/by-sa/3.0).
+It is derived partially from the [Citizen Code of Conduct](https://github.com/stumpsyn/policies/blob/master/citizen_code_of_conduct.md).
 :::
