@@ -26,7 +26,7 @@ Heim is now running on port 8080. \o/
 ### Developing the client (connected to the main instance)
 
 1. Launch the standalone static server and build watcher:  
-   `docker compose run --service-ports frontend gulp develop`
+   `docker compose run --rm --service-ports frontend gulp develop`
 
 2. To connect to [&test](https://euphoria.leet.nu/room/test) on euphoria.leet.nu
    using your local client, open:  
