@@ -3,7 +3,11 @@ import PropTypes from 'prop-types'
 import MarkdownIt from 'markdown-it'
 
 const sectionRe = /^section (\w+)$/
-const md = new MarkdownIt()
+const md = new MarkdownIt({
+  // This is only used for site documents we author ourselves, this is fine.
+  // TODO: Install definition list plugin.
+  html: true,
+})
   .use(require('markdown-it-anchor'), {
     permalink: true,
     permalinkBefore: true,

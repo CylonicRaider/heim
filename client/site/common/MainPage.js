@@ -17,7 +17,7 @@ export default function MainPage(props) {
         )}
         {props.children}
       </div>
-      <Footer />
+      {props.noFooter || <Footer />}
     </Page>
   )
 }
@@ -29,5 +29,6 @@ MainPage.propTypes = {
   heimPage: PropTypes.string,
   nav: PropTypes.node,
   sidebar: PropTypes.bool,
+  noFooter: PropTypes.bool,
   children: PropTypes.node,
 }
