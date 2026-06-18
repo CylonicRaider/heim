@@ -4,8 +4,11 @@
   <dt>Go module path:</dt>
   <dd><code>{{.ModulePath}}</code></dd>
 
+  <dt>VCS:<dt>
+  <dd><code>{{.VCS}}</code></dd>
+
   <dt>Repository:</dt>
-  <dd><a href="{{.RepoURL}}">{{.RepoURL}}</a>{{if .SubdirURL}}, subdir <a href="{{.SubdirURL}}">{{.SubdirName}}</a>{{end}}</dd>
+  <dd><a href="{{.RepoURL}}">{{.RepoURL}}</a>{{if .SubdirName}}, subdir <a href="{{.SubdirURL}}">{{.SubdirName}}</a>{{end}}</dd>
 </dl>
 
 {{.Description}}
