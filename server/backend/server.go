@@ -46,6 +46,8 @@ type Server struct {
 	settings ServerSettings
 	policy   ServerPolicy
 
+	libPages *libPageSet
+
 	m sync.Mutex
 
 	agentIDGenerator func() ([]byte, error)
@@ -78,6 +80,15 @@ func NewServer(heim *proto.Heim, id, era string) (*Server, error) {
 func (s *Server) Configure(settings ServerSettings, policy ServerPolicy) {
 	s.settings = settings
 	s.policy = policy
+}
+
+func (s *Server) ConfigureExtras(extras *ServerExtras) error {
+	libPages, err := extras.LibPages(s.rootCtx)
+	if err != nil {
+		return err
+	}
+	s.libPages = libPages
+	return nil
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {

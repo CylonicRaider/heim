@@ -121,6 +121,8 @@ type ServerConfig struct {
 	KMS     KMSConfig      `yaml:"kms"`
 	Email   EmailConfig    `yaml:"email"`
 	GeoIP   GeoIPConfig    `yaml:"geoip"`
+
+	Extras ServerExtras `yaml:"extras"`
 }
 
 func (cfg *ServerConfig) String() string {
@@ -251,6 +253,21 @@ func (p *ServerPolicy) MayAutoCreateRoom(prefix, roomName string) bool {
 		return p.MaxNewRoomNameLen == 0 || nameLen < p.MaxNewRoomNameLen
 	}
 	return false
+}
+
+type ServerExtras struct {
+	LibPageFile string `yaml:"lib-page-file,omitempty"`
+}
+
+func (e *ServerExtras) LibPages(ctx scope.Context) (*libPageSet, error) {
+	if e.LibPageFile == "" {
+		return nil, nil
+	}
+	result, err := LoadLibPages(ctx, e.LibPageFile)
+	if err != nil {
+		return nil, fmt.Errorf("lib-pages: %s", err)
+	}
+	return result, nil
 }
 
 type ClusterConfig struct {

@@ -48,6 +48,8 @@ func (s *Server) route() {
 		instrumentHttpHandlerFunc("prefsResetPassword", s.handlePrefsResetPassword))
 	s.r.Handle(
 		"/prefs/verify", instrumentHttpHandlerFunc("prefsVerify", s.handlePrefsVerify))
+
+	s.r.Handle("/lib/{name}", instrumentHttpHandlerFunc("libPage", s.handleLibPage))
 }
 
 func (s *Server) handleProbe(w http.ResponseWriter, r *http.Request) {
@@ -407,4 +409,14 @@ func (s *Server) handlePrefsResetPasswordPost(w http.ResponseWriter, r *http.Req
 	} else {
 		reply(nil, http.StatusOK)
 	}
+}
+
+func (s *Server) handleLibPage(w http.ResponseWriter, r *http.Request) {
+	name := mux.Vars(r)["name"]
+	data := s.libPages.Lookup(name)
+	if data == nil {
+		s.serveErrorPage("page not found", http.StatusNotFound, w, r)
+		return
+	}
+	s.servePage("libpage.html", data, w, r)
 }

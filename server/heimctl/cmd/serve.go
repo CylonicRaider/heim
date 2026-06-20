@@ -96,6 +96,10 @@ func (cmd *serveCmd) run(ctx scope.Context, args []string) error {
 
 	server.Configure(backend.Config.Settings, backend.Config.Policy)
 
+	if err = server.ConfigureExtras(&backend.Config.Extras); err != nil {
+		return fmt.Errorf("server extras setup: %s", err)
+	}
+
 	// Spin off goroutine to watch ctx and close listener if shutdown requested.
 	go func() {
 		<-ctx.Done()

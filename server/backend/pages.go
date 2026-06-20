@@ -17,6 +17,7 @@ const (
 	RoomPage          = "room.html"
 	ResetPasswordPage = "reset-password.html"
 	VerifyEmailPage   = "verify-email.html"
+	LibPage           = "libpage.html"
 )
 
 var PageScenarios = map[string]map[string]templates.TemplateTest{
@@ -42,6 +43,30 @@ var PageScenarios = map[string]map[string]templates.TemplateTest{
 					"email":        "test@test.invalid",
 					"confirmation": "confirmationcode",
 				},
+			},
+		},
+	},
+	LibPage: map[string]templates.TemplateTest{
+		"default": templates.TemplateTest{
+			Data: map[string]interface{}{
+				"Name":        "magic",
+				"GoImport":    "magic git https://example.com/magic",
+				"ModulePath":  "magic",
+				"VCS":         "sccs",
+				"RepoURL":     "https://example.com/magic",
+				"Description": "Magic solves all your problems on its own!",
+			},
+		},
+		"subdir": templates.TemplateTest{
+			Data: map[string]interface{}{
+				"Name":        "magic/more",
+				"GoImport":    "magic git https://example.com/magic more",
+				"ModulePath":  "magic/more",
+				"VCS":         "sccs",
+				"RepoURL":     "https://example.com/magic",
+				"SubdirName":  "more",
+				"SubdirURL":   "https://example.com/magic/more",
+				"Description": "Magic did not solve your problem? Try more magic!",
 			},
 		},
 	},
