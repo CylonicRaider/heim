@@ -74,10 +74,6 @@
   "overrides": {
     "graceful-fs": "~4.2.10"
   },
-  "author": {
-    "name": "Max Goodman",
-    "email": "c@chromakode.com"
-  },
   "scripts": {
     "test": "eslint . && mochify --allow-chrome-as-root"
   },
