@@ -69,35 +69,35 @@ func assignAgent(ctx scope.Context, s *Server, bot bool) (*proto.Agent, *http.Co
 	}
 	_, err := rand.Read(agentKey.Plaintext)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("agent generation error: %s", err)
+		return nil, nil, nil, fmt.Errorf("agent generation error: generate key: %s", err)
 	}
 
 	var agentID []byte
 	if s.agentIDGenerator != nil {
 		agentID, err = s.agentIDGenerator()
 		if err != nil {
-			return nil, nil, nil, fmt.Errorf("agent generation error: %s", err)
+			return nil, nil, nil, fmt.Errorf("agent generation error: generate id: %s", err)
 		}
 	}
 
 	agent, err := proto.NewAgent(agentID, agentKey)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("agent generation error: %s", err)
+		return nil, nil, nil, fmt.Errorf("agent generation error: new agent: %s", err)
 	}
 
 	agent.Bot = bot
 	if err := s.b.AgentTracker().Register(ctx, agent); err != nil {
-		return nil, nil, nil, fmt.Errorf("agent generation error: %s", err)
+		return nil, nil, nil, fmt.Errorf("agent generation error: register agent: %s", err)
 	}
 
 	ac, err := newAgentCredentials(agent, agentKey)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("agent generation error: %s", err)
+		return nil, nil, nil, fmt.Errorf("agent generation error: create credentials: %s", err)
 	}
 
 	cookie, err := ac.Cookie(s.sc)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("agent generation error: %s", err)
+		return nil, nil, nil, fmt.Errorf("agent generation error: create cookie: %s", err)
 	}
 
 	return agent, cookie, agentKey, nil
