@@ -97,7 +97,7 @@ func (s *Server) servePage(name string, params map[string]interface{}, w http.Re
 		case templates.ErrTemplateNotFound:
 			s.serveErrorPage("page not found", http.StatusNotFound, w, r)
 		default:
-			s.serveErrorPage(err.Error(), http.StatusInternalServerError, w, r)
+			s.serveInternalError(w, err)
 		}
 		return
 	}
@@ -108,7 +108,7 @@ func (s *Server) servePage(name string, params map[string]interface{}, w http.Re
 func (s *Server) serveJSONPage(name string, context map[string]interface{}, w http.ResponseWriter, r *http.Request) {
 	params, err := json.Marshal(context)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.serveInternalError(w, err)
 		return
 	}
 	s.servePage(name, map[string]interface{}{"Data": string(params)}, w, r)
@@ -118,7 +118,7 @@ func (s *Server) serveErrorPage(message string, code int, w http.ResponseWriter,
 	params := map[string]interface{}{"Message": message, "Code": code}
 	content, err := s.pageTemplater.Evaluate("error.html", params)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.serveInternalError(w, err)
 		return
 	}
 

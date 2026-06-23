@@ -79,7 +79,7 @@ func (s *Server) handleRoomStatic(w http.ResponseWriter, r *http.Request) {
 	// Tag the agent.
 	client, cookie, _, err := getClient(ctx, s, r)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.serveInternalError(w, err)
 		return
 	}
 	if cookie != nil {
@@ -97,7 +97,7 @@ func (s *Server) handleRoomStatic(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else {
-			s.serveErrorPage(err.Error(), http.StatusInternalServerError, w, r)
+			s.serveInternalError(w, err)
 			return
 		}
 	}
@@ -175,7 +175,7 @@ func (s *Server) handleRoom(w http.ResponseWriter, r *http.Request) {
 
 	client, cookie, agentKey, err := getClient(ctx, s, r)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.serveInternalError(w, err)
 		return
 	}
 
@@ -192,7 +192,7 @@ func (s *Server) handleRoom(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "404 page not found", http.StatusNotFound)
 			return
 		default:
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.serveInternalError(w, err)
 			return
 		}
 	}
@@ -214,7 +214,7 @@ func (s *Server) serveRoomWebsocket(
 	conn, err := upgrader.Upgrade(w, r, headers)
 	if err != nil {
 		logging.Logger(ctx).Printf("upgrade error: %s", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.serveInternalError(w, err)
 		return
 	}
 	defer conn.Close()
@@ -364,7 +364,7 @@ func (s *Server) handlePrefsResetPassword(w http.ResponseWriter, r *http.Request
 		case proto.ErrInvalidConfirmationCode:
 			s.serveErrorPage("invalid/expired confirmation code", http.StatusBadRequest, w, r)
 		default:
-			s.serveErrorPage(err.Error(), http.StatusInternalServerError, w, r)
+			s.serveInternalError(w, err)
 		}
 	case "POST":
 		s.handlePrefsResetPasswordPost(w, r)

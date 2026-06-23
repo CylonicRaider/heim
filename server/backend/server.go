@@ -153,6 +153,10 @@ func (s *Server) serveGzippedFile(w http.ResponseWriter, r *http.Request, filena
 	http.ServeContent(w, r, name, d.ModTime(), f)
 }
 
+func (s *Server) serveInternalError(w http.ResponseWriter, err error) {
+	http.Error(w, err.Error(), http.StatusInternalServerError)
+}
+
 type hijackResponseWriter struct {
 	http.ResponseWriter
 	http.Hijacker
