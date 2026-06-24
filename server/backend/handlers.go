@@ -23,7 +23,7 @@ import (
 func (s *Server) route() {
 	s.r = mux.NewRouter().StrictSlash(true)
 	s.r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		s.serveErrorPage("page not found", http.StatusNotFound, w, r)
+		s.serveErrorPage(nil, "page not found", http.StatusNotFound, w, r)
 	})
 
 	s.r.Path("/").Methods("OPTIONS").HandlerFunc(s.handleProbe)
@@ -66,20 +66,20 @@ func (s *Server) handleStatic(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleRoomStatic(w http.ResponseWriter, r *http.Request) {
+	ctx := logging.LoggingContext(s.rootCtx.Fork(), os.Stdout,
+		fmt.Sprintf("[room-static %p] ", r))
+
 	// Before creating an agent cookie, make this visitor look like a human.
 	if err := r.ParseForm(); err != nil {
-		s.serveErrorPage("bad request", http.StatusBadRequest, w, r)
+		s.serveErrorPage(ctx, "bad request", http.StatusBadRequest, w, r)
 		return
 	}
 	r.Form.Set("h", "1")
 
-	ctx := logging.LoggingContext(s.rootCtx.Fork(), os.Stdout,
-		fmt.Sprintf("[room-static %p] ", r))
-
 	// Tag the agent.
 	client, cookie, _, err := getClient(ctx, s, r)
 	if err != nil {
-		s.serveInternalError(w, err)
+		s.serveInternalError(ctx, w, err)
 		return
 	}
 	if cookie != nil {
@@ -93,11 +93,11 @@ func (s *Server) handleRoomStatic(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if err == proto.ErrRoomNotFound {
 			if !s.settings.ShowAllRooms && !s.policy.MayAutoCreateRoom(prefix, roomName) {
-				s.serveErrorPage("room not found", http.StatusNotFound, w, r)
+				s.serveErrorPage(ctx, "room not found", http.StatusNotFound, w, r)
 				return
 			}
 		} else {
-			s.serveInternalError(w, err)
+			s.serveInternalError(ctx, w, err)
 			return
 		}
 	}
@@ -107,7 +107,7 @@ func (s *Server) handleRoomStatic(w http.ResponseWriter, r *http.Request) {
 	} else {
 		params["RoomTitle"] = strings.TrimPrefix(room.Title(), "&")
 	}
-	s.servePage("room.html", params, w, r)
+	s.servePage(ctx, "room.html", params, w, r)
 }
 
 func (s *Server) handleHomeStatic(w http.ResponseWriter, r *http.Request) {
@@ -116,10 +116,10 @@ func (s *Server) handleHomeStatic(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleAboutStatic(w http.ResponseWriter, r *http.Request) {
 	if s.staticPath == "" || r.URL.Path == "" {
-		s.servePage("about", nil, w, r)
+		s.servePage(nil, "about", nil, w, r)
 		return
 	}
-	s.servePage(path.Clean(r.URL.Path)[1:]+".html", nil, w, r)
+	s.servePage(nil, path.Clean(r.URL.Path)[1:]+".html", nil, w, r)
 }
 
 func (s *Server) handleRobotsTxt(w http.ResponseWriter, r *http.Request) {
@@ -175,7 +175,7 @@ func (s *Server) handleRoom(w http.ResponseWriter, r *http.Request) {
 
 	client, cookie, agentKey, err := getClient(ctx, s, r)
 	if err != nil {
-		s.serveInternalError(w, err)
+		s.serveInternalError(ctx, w, err)
 		return
 	}
 
@@ -192,7 +192,7 @@ func (s *Server) handleRoom(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "404 page not found", http.StatusNotFound)
 			return
 		default:
-			s.serveInternalError(w, err)
+			s.serveInternalError(ctx, w, err)
 			return
 		}
 	}
@@ -213,8 +213,7 @@ func (s *Server) serveRoomWebsocket(
 	}
 	conn, err := upgrader.Upgrade(w, r, headers)
 	if err != nil {
-		logging.Logger(ctx).Printf("upgrade error: %s", err)
-		s.serveInternalError(w, err)
+		s.serveInternalError(ctx, w, err)
 		return
 	}
 	defer conn.Close()
@@ -249,7 +248,7 @@ func (s *Server) handlePrefsVerify(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := r.ParseForm(); err != nil {
-		s.serveErrorPage("bad request", http.StatusBadRequest, w, r)
+		s.serveErrorPage(nil, "bad request", http.StatusBadRequest, w, r)
 		return
 	}
 
@@ -261,11 +260,11 @@ func (s *Server) handlePrefsVerify(w http.ResponseWriter, r *http.Request) {
 			"confirmation": confirmation,
 			"email":        email,
 		}
-		s.serveJSONPage(VerifyEmailPage, params, w, r)
+		s.serveJSONPage(nil, VerifyEmailPage, params, w, r)
 	case "POST":
 		s.handlePrefsVerifyPost(w, r)
 	default:
-		s.serveErrorPage("invalid method", http.StatusMethodNotAllowed, w, r)
+		s.serveErrorPage(nil, "invalid method", http.StatusMethodNotAllowed, w, r)
 	}
 }
 
@@ -338,7 +337,7 @@ func (s *Server) handlePrefsResetPassword(w http.ResponseWriter, r *http.Request
 	}
 
 	if err := r.ParseForm(); err != nil {
-		s.serveErrorPage(err.Error(), http.StatusBadRequest, w, r)
+		s.serveErrorPage(nil, err.Error(), http.StatusBadRequest, w, r)
 		return
 	}
 
@@ -360,16 +359,16 @@ func (s *Server) handlePrefsResetPassword(w http.ResponseWriter, r *http.Request
 					break
 				}
 			}
-			s.serveJSONPage(ResetPasswordPage, params, w, r)
+			s.serveJSONPage(ctx, ResetPasswordPage, params, w, r)
 		case proto.ErrInvalidConfirmationCode:
-			s.serveErrorPage("invalid/expired confirmation code", http.StatusBadRequest, w, r)
+			s.serveErrorPage(ctx, "invalid/expired confirmation code", http.StatusBadRequest, w, r)
 		default:
-			s.serveInternalError(w, err)
+			s.serveInternalError(ctx, w, err)
 		}
 	case "POST":
 		s.handlePrefsResetPasswordPost(w, r)
 	default:
-		s.serveErrorPage("invalid method", http.StatusMethodNotAllowed, w, r)
+		s.serveErrorPage(nil, "invalid method", http.StatusMethodNotAllowed, w, r)
 	}
 }
 
@@ -415,8 +414,8 @@ func (s *Server) handleLibPage(w http.ResponseWriter, r *http.Request) {
 	name := mux.Vars(r)["name"]
 	data := s.libPages.Lookup(name)
 	if data == nil {
-		s.serveErrorPage("page not found", http.StatusNotFound, w, r)
+		s.serveErrorPage(nil, "page not found", http.StatusNotFound, w, r)
 		return
 	}
-	s.servePage("libpage.html", data, w, r)
+	s.servePage(nil, "libpage.html", data, w, r)
 }

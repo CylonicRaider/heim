@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/websocket"
 
 	"euphoria.leet.nu/heim/proto"
+	"euphoria.leet.nu/heim/proto/logging"
 	"euphoria.leet.nu/heim/proto/security"
 	"euphoria.leet.nu/heim/templates"
 
@@ -153,7 +154,12 @@ func (s *Server) serveGzippedFile(w http.ResponseWriter, r *http.Request, filena
 	http.ServeContent(w, r, name, d.ModTime(), f)
 }
 
-func (s *Server) serveInternalError(w http.ResponseWriter, err error) {
+func (s *Server) serveInternalError(ctx scope.Context, w http.ResponseWriter, err error) {
+	if ctx != nil {
+		logging.Logger(ctx).Printf("internal server error: [%T] %s", err, err.Error())
+	} else {
+		logging.Logger(s.rootCtx).Printf("internal server error without context: [%T] %s", err, err.Error())
+	}
 	http.Error(w, err.Error(), http.StatusInternalServerError)
 }
 

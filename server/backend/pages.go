@@ -90,14 +90,14 @@ func LoadPageTemplates(ctx scope.Context, path string) (templates.Templater, err
 	return pageTemplater, nil
 }
 
-func (s *Server) servePage(name string, params map[string]interface{}, w http.ResponseWriter, r *http.Request) {
+func (s *Server) servePage(ctx scope.Context, name string, params map[string]interface{}, w http.ResponseWriter, r *http.Request) {
 	content, err := s.pageTemplater.Evaluate(name, params)
 	if err != nil {
 		switch err {
 		case templates.ErrTemplateNotFound:
-			s.serveErrorPage("page not found", http.StatusNotFound, w, r)
+			s.serveErrorPage(ctx, "page not found", http.StatusNotFound, w, r)
 		default:
-			s.serveInternalError(w, err)
+			s.serveInternalError(ctx, w, err)
 		}
 		return
 	}
@@ -105,20 +105,20 @@ func (s *Server) servePage(name string, params map[string]interface{}, w http.Re
 	http.ServeContent(w, r, name, s.pageModTime, bytes.NewReader(content))
 }
 
-func (s *Server) serveJSONPage(name string, context map[string]interface{}, w http.ResponseWriter, r *http.Request) {
+func (s *Server) serveJSONPage(ctx scope.Context, name string, context map[string]interface{}, w http.ResponseWriter, r *http.Request) {
 	params, err := json.Marshal(context)
 	if err != nil {
-		s.serveInternalError(w, err)
+		s.serveInternalError(ctx, w, err)
 		return
 	}
-	s.servePage(name, map[string]interface{}{"Data": string(params)}, w, r)
+	s.servePage(ctx, name, map[string]interface{}{"Data": string(params)}, w, r)
 }
 
-func (s *Server) serveErrorPage(message string, code int, w http.ResponseWriter, r *http.Request) {
+func (s *Server) serveErrorPage(ctx scope.Context, message string, code int, w http.ResponseWriter, r *http.Request) {
 	params := map[string]interface{}{"Message": message, "Code": code}
 	content, err := s.pageTemplater.Evaluate("error.html", params)
 	if err != nil {
-		s.serveInternalError(w, err)
+		s.serveInternalError(ctx, w, err)
 		return
 	}
 
