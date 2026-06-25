@@ -5,7 +5,6 @@ import MarkdownIt from 'markdown-it'
 const sectionRe = /^section (\w+)$/
 const md = new MarkdownIt({
   // This is only used for site documents we author ourselves, this is fine.
-  // TODO: Install definition list plugin.
   html: true,
 })
   .use(require('markdown-it-anchor'), {
@@ -13,6 +12,7 @@ const md = new MarkdownIt({
     permalinkBefore: true,
     permalinkSymbol: '#',
   })
+  .use(require('markdown-it-deflist'))
   .use(require('markdown-it-container'), 'section', {
     validate(params) {
       return params.trim().match(sectionRe)

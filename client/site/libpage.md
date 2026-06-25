@@ -1,18 +1,16 @@
 # {{.Name}}
 
-<dl>
-  <dt>Go module path:</dt>
-  <dd><code>{{.ModulePath}}</code></dd>
+Go module path:
+: `{{.ModulePath}}`
 
-  <dt>VCS:<dt>
-  <dd><code>{{.VCS}}</code></dd>
+VCS:
+: `{{.VCS}}`
 
-  <dt>Repository:</dt>
-  <dd><a href="{{.RepoURL}}">{{.RepoURL}}</a>{{if .SubdirName}}, subdir <a href="{{.SubdirURL}}">{{.SubdirName}}</a>{{end}}</dd>
-</dl>
+Repository:
+: <a href="{{.RepoURL}}">{{.RepoURL}}</a>{{if .SubdirName}}, subdir <a href="{{.SubdirURL}}">{{.SubdirName}}</a>{{end}}
 
 {{.Description}}
 
 ::: section small
-(This page is automatically generated to make <code>go install {{.ModulePath}}</code> work.)
+(This page is automatically generated to make `go install {{.ModulePath}}` work.)
 :::
