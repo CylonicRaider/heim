@@ -1,19 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import MarkdownIt from 'markdown-it'
+import mdit_anchor from 'markdown-it-anchor'
+import mdit_deflist from 'markdown-it-deflist'
+import mdit_container from 'markdown-it-container'
 
 const sectionRe = /^section (\w+)$/
 const md = new MarkdownIt({
   // This is only used for site documents we author ourselves, this is fine.
   html: true,
 })
-  .use(require('markdown-it-anchor'), {
-    permalink: true,
-    permalinkBefore: true,
-    permalinkSymbol: '#',
+  .use(mdit_anchor, {
+    permalink: mdit_anchor.permalink.linkInsideHeader()
   })
-  .use(require('markdown-it-deflist'))
-  .use(require('markdown-it-container'), 'section', {
+  .use(mdit_deflist)
+  .use(mdit_container, 'section', {
     validate(params) {
       return params.trim().match(sectionRe)
     },
