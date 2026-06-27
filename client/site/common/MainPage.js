@@ -17,7 +17,7 @@ export default function MainPage(props) {
         )}
         {props.children}
       </div>
-      {props.noFooter || <Footer />}
+      {props.noFooter ? null : <Footer />}
     </Page>
   )
 }
