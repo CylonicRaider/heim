@@ -1,4 +1,4 @@
-# {{.Name}}
+# {{.Name}} {#main}
 
 Go module path:
 : `{{.ModulePath}}`

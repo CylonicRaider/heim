@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import MarkdownIt from 'markdown-it'
 import mdit_anchor from 'markdown-it-anchor'
+import mdit_attrs from 'markdown-it-attrs'
 import mdit_deflist from 'markdown-it-deflist'
 import mdit_container from 'markdown-it-container'
 
@@ -10,6 +11,9 @@ const md = new MarkdownIt({
   // This is only used for site documents we author ourselves, this is fine.
   html: true,
 })
+  .use(mdit_attrs, {
+    allowedAttributes: ['id', 'class', /^data-.*$/]
+  })
   .use(mdit_anchor, {
     permalink: mdit_anchor.permalink.linkInsideHeader()
   })
