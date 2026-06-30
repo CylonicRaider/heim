@@ -41,7 +41,7 @@ func (lp *libPageSet) Init() []error {
 	for name, page := range lp.Pages {
 		var importInfo *goImport
 		for _, provider := range lp.Providers {
-			if importInfo = provider.ParseURL(name, page.URL); importInfo != nil {
+			if importInfo = provider.ParseURL(page.ModulePath, page.URL); importInfo != nil {
 				break
 			}
 		}
