@@ -59,15 +59,17 @@
            id="rect9955-8-7-0-3"
            d="m 98.350721,835.09971 -25.977901,0 0,20.51385 3.9754,-3.62112 22.002501,0 z"
            style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#606060;fill-opacity:1;fill-rule:nonzero;stroke:#606060;stroke-width:2.04155684;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
-        <text
+        <g
+           aria-label=":D"
            id="text5952-8"
-           y="847.93951"
-           x="79.234222"
-           style="color:#000000;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:13.26133442px;line-height:125%;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans, Normal';text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#f0f0f0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-           xml:space="preserve"><tspan
-             y="847.93951"
-             x="79.234222"
-             id="tspan5954-3">:D</tspan></text>
+           style="font-weight:bold;font-size:13.2613px;line-height:125%;font-family:'Droid Sans';-inkscape-font-specification:'Droid Sans, Normal';letter-spacing:0px;word-spacing:0px;baseline-shift:baseline;display:inline;overflow:visible;opacity:1;fill:#f0f0f0;stroke-width:1px;enable-background:accumulate">
+          <path
+             d="m 79.991828,847.01355 q 0,-0.30434 0.08418,-0.51154 0.09065,-0.21369 0.24606,-0.34319 0.155407,-0.12951 0.362615,-0.18779 0.207208,-0.0583 0.446793,-0.0583 0.226634,0 0.427367,0.0583 0.207208,0.0583 0.362615,0.18779 0.155406,0.1295 0.24606,0.34319 0.09065,0.2072 0.09065,0.51154 0,0.29139 -0.09065,0.4986 -0.09065,0.20721 -0.24606,0.34319 -0.155407,0.13598 -0.362615,0.19425 -0.200733,0.0648 -0.427367,0.0648 -0.239585,0 -0.446793,-0.0648 -0.207208,-0.0583 -0.362615,-0.19425 -0.155406,-0.13598 -0.24606,-0.34319 -0.08418,-0.20721 -0.08418,-0.4986 z m 0,-5.34856 q 0,-0.30434 0.08418,-0.51155 0.09065,-0.21368 0.24606,-0.34319 0.155407,-0.1295 0.362615,-0.18778 0.207208,-0.0583 0.446793,-0.0583 0.226634,0 0.427367,0.0583 0.207208,0.0583 0.362615,0.18778 0.155406,0.12951 0.24606,0.34319 0.09065,0.20721 0.09065,0.51155 0,0.29138 -0.09065,0.50507 -0.09065,0.20721 -0.24606,0.34319 -0.155407,0.1295 -0.362615,0.19425 -0.200733,0.0583 -0.427367,0.0583 -0.239585,0 -0.446793,-0.0583 -0.207208,-0.0648 -0.362615,-0.19425 -0.155406,-0.13598 -0.24606,-0.34319 -0.08418,-0.21369 -0.08418,-0.50507 z"
+             id="path17712" />
+          <path
+             d="m 91.530743,843.11544 q 0,1.19793 -0.330238,2.10446 -0.323763,0.90007 -0.945389,1.50874 -0.615149,0.6022 -1.515211,0.90654 -0.893586,0.30433 -2.039707,0.30433 h -2.492975 v -9.46683 h 2.771411 q 1.042517,0 1.877826,0.29786 0.841784,0.29787 1.437508,0.88712 0.595724,0.58277 0.913012,1.45045 0.323763,0.86769 0.323763,2.00733 z m -2.033232,0.0518 q 0,-0.78998 -0.161882,-1.35981 -0.155406,-0.5763 -0.459743,-0.95186 -0.297862,-0.37557 -0.73818,-0.55687 -0.433842,-0.18131 -0.99719,-0.18131 h -0.925962 v 6.16445 h 0.738179 q 1.269152,0 1.903727,-0.77703 0.641051,-0.77704 0.641051,-2.33757 z"
+             id="path17714" />
+        </g>
       </g>
     </g>
   </g>
