@@ -529,8 +529,7 @@ body.page {
 }
 
 body.welcome {
-  // thanks to http://subtlepatterns.com/symphony/
-  background: data-uri('./res/symphony.png');
+  background: @brand-bg-color;
 
   @keyframes raise {
     0% {
@@ -793,7 +792,7 @@ body.about {
       right: -100%;
       top: -55px;
       bottom: 0;
-      background: linear-gradient(to bottom, transparent, fade(#ebf2eb, 50%)), data-uri('./res/symphony.png');
+      background: @brand-bg-color;
       border-bottom: 1px solid fade(black, 25%);
       z-index: -1;
     }
