@@ -35,6 +35,7 @@ const storeActions = Reflux.createActions([
   'openThreadPane',
   'closeThreadPane',
   'closeFocusedThreadPane',
+  'selectMessage',
   'gotoMessageInPane',
   'gotoPopupMessage',
   'globalMouseUp',
@@ -85,6 +86,7 @@ function createPaneStore(paneId, createOptions = {}) {
     'toggleFocusMessage',
     'moveMessageFocus',
     'revealMessage',
+    'selectMessage',
     'escape',
     'focusEntry',
     'blurEntry',
@@ -233,6 +235,28 @@ function createPaneStore(paneId, createOptions = {}) {
           })
         this.setMessageData(messageId, {repliesExpanded: true})
       })
+    },
+
+    selectMessage(messageId, toggle = false) {
+      if (!this.chatState.nick) {
+        return
+      }
+
+      messageId = messageId || this.state.rootId
+      const message = this.chatState.messages.get(messageId)
+      if (!message) {
+        return
+      }
+      const parentId = messageId === this.state.rootId ? null : message.get('parent')
+      const parentMessage = parentId === null ? null : this.chatState.messages.get(parentId)
+      const isLastChild = parentMessage && messageId == parentMessage.get('children').last()
+
+      let selectId = isLastChild ? parentId : messageId
+      if (toggle && parentId && this.state.focusedMessage === selectId) {
+        selectId = isLastChild ? messageId : parentId
+      }
+
+      this.focusMessage(selectId)
     },
 
     escape() {
@@ -617,7 +641,7 @@ const store = module.exports.store = Reflux.createStore({
     }
   },
 
-  gotoMessageInPane(messageId) {
+  _gotoMessageCommon(messageId, focusPane, selectInPane) {
     const parentPaneId = Immutable.Seq(this.chatState.messages.iterAncestorsOf(messageId))
       .map((ancestor) => 'thread-' + ancestor.get('id'))
       .find((threadId) => this.state.visiblePanes.has(threadId))
@@ -626,9 +650,18 @@ const store = module.exports.store = Reflux.createStore({
 
     ReactDOM.unstable_batchedUpdates(() => {
       parentPane.revealMessage(messageId)
-      parentPane.focusMessage(messageId)
+      if (focusPane) this.focusPane(parentPaneId || 'main')
+      selectInPane(parentPane)
       parentPane.scrollToEntry()
     })
+  },
+
+  selectMessage(messageId, toggle = false) {
+    this._gotoMessageCommon(messageId, true, parentPane => parentPane.selectMessage(messageId, toggle))
+  },
+
+  gotoMessageInPane(messageId) {
+    this._gotoMessageCommon(messageId, false, parentPane => parentPane.focusMessage(messageId))
   },
 
   gotoPopupMessage() {
