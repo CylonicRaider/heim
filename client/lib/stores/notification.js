@@ -474,7 +474,7 @@ module.exports.store = Reflux.createStore({
       alert.popup.onclick = () => {
         uiwindow.focus()
         this.dismissNotification(messageId)
-        ui.gotoMessageInPane(messageId)
+        ui.selectMessage(messageId)
       }
       alert.popup.onclose = _.partial(this.closePopup, alertKind)
 

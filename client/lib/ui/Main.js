@@ -180,7 +180,7 @@ export default createReactClass({
 
   onNotificationSelect(ev, id) {
     notification.dismissNotification(id)
-    ui.gotoMessageInPane(id)
+    ui.selectMessage(id)
   },
 
   _ignoreClick(ev) {

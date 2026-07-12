@@ -144,7 +144,7 @@ const Message = createReactClass({
       return
     }
 
-    this.props.pane.toggleFocusMessage(this.props.nodeId, this.state.node.get('parent'))
+    this.props.pane.selectMessage(this.props.nodeId, true)
   },
 
   onMouseDown(ev) {
