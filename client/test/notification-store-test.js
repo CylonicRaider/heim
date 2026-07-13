@@ -952,12 +952,12 @@ describe('notification store', () => {
         notification.store.storageChange(storageMock)
         simulateMessages(['id1'], mockChatState)
         clock.tick(1)
-        sinon.stub(ui, 'gotoMessageInPane')
+        sinon.stub(ui, 'selectMessage')
         window.uiwindow = {focus: sinon.stub()}
       })
 
       afterEach(() => {
-        ui.gotoMessageInPane.restore()
+        ui.selectMessage.restore()
         delete window.uiwindow
       })
 
@@ -970,8 +970,8 @@ describe('notification store', () => {
       it('should focus window and go to message when clicked', () => {
         fakeNotification.onclick()
         sinon.assert.calledOnce(window.uiwindow.focus)
-        sinon.assert.calledOnce(ui.gotoMessageInPane)
-        sinon.assert.calledWithExactly(ui.gotoMessageInPane, 'id1')
+        sinon.assert.calledOnce(ui.selectMessage)
+        sinon.assert.calledWithExactly(ui.selectMessage, 'id1')
       })
 
       it('should close after 3 seconds', () => {
