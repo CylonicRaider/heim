@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"container/heap"
+	"sync/atomic"
 	"time"
 
 	"euphoria.leet.nu/lib/scope"
@@ -35,11 +36,15 @@ func (j *LocalJob) IsDue() bool                { return j.IsDueAt(time.Now()) }
 func (j *LocalJob) IsDueAt(now time.Time) bool { return j.Due.Before(now) }
 
 func (j *LocalJob) Reschedule() bool {
-	delay := max(j.Due.Sub(j.Created)*2, LocalMinBackoff)
-	if delay > LocalMaxLifetime {
+	newDue := j.Created.Add(max(j.Due.Sub(j.Created)*2, LocalMinBackoff))
+	now := time.Now()
+	if newDue.Before(now) {
+		newDue = now
+	}
+	if newDue.Sub(j.Created) > LocalMaxLifetime {
 		return false
 	}
-	j.Due = j.Created.Add(delay)
+	j.Due = newDue
 	return true
 }
 
@@ -64,18 +69,23 @@ type LocalJobQueue struct {
 	data   localJobHeap
 	inbox  chan<- *LocalJob
 	outbox <-chan *LocalJob
+	closed atomic.Bool
 }
 
 func NewLocalJobQueue() *LocalJobQueue {
 	return &LocalJobQueue{}
 }
 
-func (q *LocalJobQueue) Push(job *LocalJob) {
+func (q *LocalJobQueue) Push(job *LocalJob) bool {
+	if q.closed.Load() {
+		return false
+	}
 	q.inbox <- job
+	return true
 }
 
-func (q *LocalJobQueue) PushNew(name string, callback func() error) {
-	q.Push(NewLocalJob(name, callback))
+func (q *LocalJobQueue) PushNew(name string, callback func() error) bool {
+	return q.Push(NewLocalJob(name, callback))
 }
 
 func (q *LocalJobQueue) scheduler(ctx scope.Context, inbox <-chan *LocalJob, outbox chan<- *LocalJob) {
@@ -155,7 +165,11 @@ func (q *LocalJobQueue) worker(ctx scope.Context, outbox <-chan *LocalJob) {
 			} else if err := job.Run(); err == nil {
 				// OK!
 			} else if job.Reschedule() {
-				q.Push(job)
+				if !q.Push(job) {
+					logging.Logger(ctx).Printf(
+						"giving up on job %s from %s due to closure, last error: %s",
+						job.Name, job.Created, err)
+				}
 			} else {
 				logging.Logger(ctx).Printf("giving up on job %s from %s, last error: %s",
 					job.Name, job.Created, err)
@@ -170,5 +184,6 @@ func (q *LocalJobQueue) StartWorker(ctx scope.Context) {
 }
 
 func (q *LocalJobQueue) Close() {
+	q.closed.Store(true)
 	close(q.inbox)
 }
