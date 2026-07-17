@@ -15,14 +15,34 @@ var (
 	LocalMaxLifetime = 1 * time.Hour
 )
 
+type LocalJobCallback func() error
+
+type LocalJobService interface {
+	// Start launches the background goroutines powering the job queue.
+	// The goroutines participate in the context's WaitGroup.
+	Start(ctx scope.Context, numWorkers int)
+
+	// Close initiates a clean shutdown of the job queue.
+	// Acceptance of new jobs (including retries of failed jobs) stops before Close returns.
+	// Asynchronously, the background coroutines drain all currently pending jobs at their respective due dates.
+	Close()
+
+	// Schedule the job's callback to run not before the job's due date.
+	// Returns whether the job was accepted.
+	Push(job *LocalJob) bool
+
+	// Convenience function for scheduling the given callback to run ASAP.
+	PushNew(name string, callback LocalJobCallback) bool
+}
+
 type LocalJob struct {
 	Name    string
 	Created time.Time
 	Due     time.Time
-	Func    func() error
+	Func    LocalJobCallback
 }
 
-func NewLocalJob(name string, callback func() error) *LocalJob {
+func NewLocalJob(name string, callback LocalJobCallback) *LocalJob {
 	now := time.Now()
 	return &LocalJob{
 		Name:    name,
@@ -84,7 +104,7 @@ func (q *LocalJobQueue) Push(job *LocalJob) bool {
 	return true
 }
 
-func (q *LocalJobQueue) PushNew(name string, callback func() error) bool {
+func (q *LocalJobQueue) PushNew(name string, callback LocalJobCallback) bool {
 	return q.Push(NewLocalJob(name, callback))
 }
 
@@ -183,7 +203,16 @@ func (q *LocalJobQueue) StartWorker(ctx scope.Context) {
 	go q.worker(ctx, q.outbox)
 }
 
+func (q *LocalJobQueue) Start(ctx scope.Context, numWorkers int) {
+	q.StartScheduler(ctx)
+	for i := 0; i < numWorkers; i++ {
+		q.StartWorker(ctx)
+	}
+}
+
 func (q *LocalJobQueue) Close() {
-	q.closed.Store(true)
+	if q.closed.Swap(true) {
+		return
+	}
 	close(q.inbox)
 }
