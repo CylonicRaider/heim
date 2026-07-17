@@ -250,9 +250,10 @@ function createPaneStore(paneId, createOptions = {}) {
       const parentId = messageId === this.state.rootId ? null : message.get('parent')
       const parentMessage = parentId === null ? null : this.chatState.messages.get(parentId)
       const isLastChild = parentMessage && messageId == parentMessage.get('children').last()
+      const focusedId = this.state.focusedMessage || this.state.rootId
 
       let selectId = isLastChild ? parentId : messageId
-      if (toggle && parentId && this.state.focusedMessage === selectId) {
+      if (toggle && parentId && selectId === focusedId) {
         selectId = isLastChild ? messageId : parentId
       }
 
