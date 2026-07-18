@@ -1654,6 +1654,7 @@ iframe.js {
       .message-emote {
         display: inline-block;
         padding-left: 3px;
+        max-width: 100%;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
       }
@@ -2455,7 +2456,7 @@ iframe.js {
         display: inline;
       }
 
-      .content {
+      &:not(.has-embed) .content {
         position: relative;
         left: .5em;
 

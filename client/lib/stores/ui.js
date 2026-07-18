@@ -242,18 +242,21 @@ function createPaneStore(paneId, createOptions = {}) {
         return
       }
 
-      messageId = messageId || this.state.rootId
+      const rootId = this.state.rootId
+      const focusedId = this.state.focusedMessage || rootId
+
+      messageId = messageId || rootId
       const message = this.chatState.messages.get(messageId)
       if (!message) {
         return
       }
-      const parentId = messageId === this.state.rootId ? null : message.get('parent')
-      const parentMessage = parentId === null ? null : this.chatState.messages.get(parentId)
-      const isLastChild = parentMessage && messageId == parentMessage.get('children').last()
+      const parentId = messageId === rootId ? null : message.get('parent')
+      const parentMessage = parentId === null || parentId === '__root' ? null : this.chatState.messages.get(parentId)
+      const preferSibling = parentMessage && messageId == parentMessage.get('children').last()
 
-      let selectId = isLastChild ? parentId : messageId
-      if (toggle && parentId && this.state.focusedMessage === selectId) {
-        selectId = isLastChild ? messageId : parentId
+      let selectId = preferSibling ? parentId : messageId
+      if (toggle && parentId && selectId === focusedId) {
+        selectId = preferSibling ? messageId : parentId
       }
 
       this.focusMessage(selectId)
