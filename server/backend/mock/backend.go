@@ -24,6 +24,7 @@ type TestBackend struct {
 	et             EmailTracker
 	ipBans         map[string]time.Time
 	js             JobService
+	ljs            *jobs.LocalJobQueue
 	otps           map[snowflake.Snowflake]*proto.OTP
 	pms            PMTracker
 	resetReqs      map[snowflake.Snowflake]*proto.PasswordResetRequest
@@ -35,6 +36,16 @@ func (b *TestBackend) AccountManager() proto.AccountManager { return &accountMan
 func (b *TestBackend) AgentTracker() proto.AgentTracker     { return &agentTracker{b} }
 func (b *TestBackend) EmailTracker() proto.EmailTracker     { return &b.et }
 func (b *TestBackend) Jobs() jobs.JobService                { return &b.js }
+
+func (b *TestBackend) LocalJobs() jobs.LocalJobService {
+	b.Lock()
+	defer b.Unlock()
+	if b.ljs == nil {
+		b.ljs = jobs.NewLocalJobQueue()
+		b.ljs.Start(scope.New(), 1)
+	}
+	return b.ljs
+}
 
 func (b *TestBackend) PMTracker() proto.PMTracker {
 	b.pms.b = b

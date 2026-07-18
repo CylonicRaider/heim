@@ -236,6 +236,7 @@ type ServerSettings struct {
 	ShowAllRooms       bool   `yaml:"show_all_rooms"`
 	SetInsecureCookies bool   `yaml:"set_insecure_cookies"`
 	Verbose            bool   `yaml:"verbose_log"`
+	LocalJobWorkers    int    `yaml:"local_job_workers"`
 }
 
 type ServerPolicy struct {

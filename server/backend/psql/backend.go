@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"runtime"
 	"sort"
 	"strings"
 	"sync"
@@ -105,6 +106,7 @@ type Backend struct {
 	logger      *log.Logger
 	verbose     bool
 	jql         *jobQueueListener
+	localJobs   *jobs.LocalJobQueue
 }
 
 func NewBackend(heim *proto.Heim, config *backend.DatabaseConfig,
@@ -145,6 +147,7 @@ func NewBackend(heim *proto.Heim, config *backend.DatabaseConfig,
 		listeners: map[string]ListenerMap{},
 		ctx:       logging.LoggingContext(heim.Context, os.Stdout, "[backend] "),
 		verbose:   settings.Verbose,
+		localJobs: jobs.NewLocalJobQueue(),
 	}
 	b.logger = log.New(logging.GetDefaultWriter(b.ctx), fmt.Sprintf("[backend %p] ", b), log.LstdFlags)
 
@@ -155,7 +158,7 @@ func NewBackend(heim *proto.Heim, config *backend.DatabaseConfig,
 		}
 	}
 
-	if err := b.start(); err != nil {
+	if err := b.start(settings); err != nil {
 		return nil, err
 	}
 
@@ -164,7 +167,7 @@ func NewBackend(heim *proto.Heim, config *backend.DatabaseConfig,
 
 func (b *Backend) debug(format string, args ...interface{}) { b.logger.Printf(format, args...) }
 
-func (b *Backend) start() error {
+func (b *Backend) start(settings *backend.ServerSettings) error {
 	b.DbMap = &gorp.DbMap{Db: b.DB, Dialect: gorp.PostgresDialect{}}
 	// TODO: make debug configurable
 	//b.DbMap.TraceOn("[gorp]", log.New(os.Stdout, "", log.LstdFlags))
@@ -181,6 +184,12 @@ func (b *Backend) start() error {
 
 	b.cancel = b.ctx.Cancel
 	b.ctx.WaitGroup().Add(1)
+
+	workers := settings.LocalJobWorkers
+	if workers < 1 {
+		workers = runtime.NumCPU()
+	}
+	b.localJobs.Start(logging.LoggingContext(b.ctx.Fork(), os.Stdout, "[bgjobs] "), workers)
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
@@ -917,6 +926,7 @@ func (b *Backend) AccountManager() proto.AccountManager { return &AccountManager
 func (b *Backend) AgentTracker() proto.AgentTracker     { return &AgentTrackerBinding{b} }
 func (b *Backend) EmailTracker() proto.EmailTracker     { return &EmailTracker{b} }
 func (b *Backend) Jobs() jobs.JobService                { return &JobService{b} }
+func (b *Backend) LocalJobs() jobs.LocalJobService      { return b.localJobs }
 func (b *Backend) PMTracker() proto.PMTracker           { return &PMTracker{b} }
 
 func (b *Backend) jobQueueListener() *jobQueueListener {

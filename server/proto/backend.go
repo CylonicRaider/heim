@@ -16,6 +16,7 @@ type Backend interface {
 	AgentTracker() AgentTracker
 	EmailTracker() EmailTracker
 	Jobs() jobs.JobService
+	LocalJobs() jobs.LocalJobService
 	PMTracker() PMTracker
 
 	// Ban adds an entry to the global ban list. A zero value for until
