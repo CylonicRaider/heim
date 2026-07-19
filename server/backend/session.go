@@ -562,13 +562,20 @@ func (s *session) join() error {
 
 	s.vClientAddr = addr
 	s.onClose = func() {
-		// Use a fork of the server's root context, because the session's context
-		// might be closed.
-		ctx := s.server.rootCtx.Fork()
-		if err := s.room.Part(ctx, s); err != nil {
-			logging.Logger(ctx).Printf("room part failed: %s", err)
-			return
-		}
+		// Closure is the one operation in a session that must not fail.
+		// The local job queue amortizes spikes and retries (several times) closes that fail anyway.
+		// TODO: Periodic garbage collection of stale sessions that survive this?
+		s.backend.LocalJobs().PushNew(fmt.Sprintf("part %s", s.id), func() error {
+			// Use a fork of the server's root context, because the session's context
+			// might be closed.
+			ctx := s.server.rootCtx.Fork()
+			if err := s.room.Part(ctx, s); err != nil {
+				err = fmt.Errorf("room part failed: %s", err)
+				logging.Logger(ctx).Printf("%s", err.Error())
+				return err
+			}
+			return nil
+		})
 	}
 
 	if err := s.sendSnapshot(); err != nil {
