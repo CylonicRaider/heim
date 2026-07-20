@@ -52,7 +52,7 @@ const ThreadListItem = createReactClass({
     }
 
     let newCount = count.get('newDescendants')
-    const children = thread.get('children')
+    const children = thread.get('children').filter((threadId) => !this.props.tree.get(threadId).get('deleted'))
     let timestamp
 
     if (children.size) {
@@ -76,7 +76,8 @@ const ThreadListItem = createReactClass({
         </FastButton>
         {this.props.depth < 3 && children.size > 0 && (
           <div className="children">
-            {children.toSeq().map((threadId) => <ThreadListItem key={threadId} threadData={this.props.threadData} threadTree={this.props.threadTree} threadNodeId={threadId} tree={this.props.tree} nodeId={threadId} depth={this.props.depth + 1} onClick={this.props.onClick} />
+            {children.map((threadId) =>
+              <ThreadListItem key={threadId} threadData={this.props.threadData} threadTree={this.props.threadTree} threadNodeId={threadId} tree={this.props.tree} nodeId={threadId} depth={this.props.depth + 1} onClick={this.props.onClick} />
             )}
           </div>
         )}
