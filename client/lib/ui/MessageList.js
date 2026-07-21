@@ -37,7 +37,7 @@ export default createReactClass({
   },
 
   render() {
-    const children = this.state.node.get('children')
+    const children = this.state.node.get('children').filter((nodeId) => !this.props.tree.get(nodeId).get('deleted'))
     return (
       <div className="message-list">
         {children.toIndexedSeq().map((nodeId, idx) => <Message key={nodeId} pane={this.props.pane} tree={this.props.tree} nodeId={nodeId} showTimeAgo={idx === children.size - 1} showTimeStamps={this.props.showTimeStamps} roomSettings={this.props.roomSettings} />)}
