@@ -15,6 +15,7 @@ import activity from '../stores/activity'
 import HooksMixin from './HooksMixin'
 import ChatPane from './ChatPane'
 import ChatTopBar from './ChatTopBar'
+import LiveTimeAgo from './LiveTimeAgo'
 import MessageText from './MessageText'
 import NotificationSettings from './NotificationSettings'
 import NotificationList from './NotificationList'
@@ -313,6 +314,7 @@ export default createReactClass({
                   <div key={mainPaneThreadId} className="main-pane-cover main-pane-thread">
                     <div className="top-bar">
                       <MessageText className="title" content={this.state.chat.messages.get(selectedThread).get('content')} />
+                      <span className="spacer" />
                       <FastButton className="close" onClick={ui.deselectThread} />
                     </div>
                     <ChatPane key={mainPaneThreadId} pane={this.state.ui.panes.get(mainPaneThreadId)} showTimeStamps={this.state.ui.showTimestamps} showParent showAllReplies onScrollbarSize={this.onScrollbarSize} />
@@ -337,11 +339,15 @@ export default createReactClass({
               {extraPanes}
               {threadPanes.entrySeq().map(([paneId, pane], idx) => {
                 const threadId = paneId.substr('thread-'.length)
-                const title = this.state.chat.messages.get(threadId).get('content')
+                const paneRoot = this.state.chat.messages.get(threadId)
+                const title = paneRoot.get('content')
+                const ago = paneRoot.get('$count').get('latestDescendantTime')
                 return (
                   <div key={paneId} className="chat-pane-container" style={{zIndex: threadPanes.size - idx}} onClickCapture={_.partial(this.onPaneClick, paneId)}>
                     <div className="top-bar">
                       <MessageText className="title" content={title} title={title} />
+                      {ago !== null && <LiveTimeAgo className="ago" time={ago} />}
+                      <span className="spacer" />
                       <FastButton className="close" onClick={_.partial(ui.closeThreadPane, threadId)} />
                     </div>
                     <ChatPane pane={pane} showParent showAllReplies />

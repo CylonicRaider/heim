@@ -657,6 +657,10 @@ iframe.js {
     }
   }
 
+  .top-bar .ago {
+    font-size: .8em;
+  }
+
   .chat-pane {
     position: relative;
     flex: 1;
@@ -880,12 +884,16 @@ iframe.js {
   }
 
   .title {
-    flex: 1;
+    flex: 0 1 auto;
     text-overflow: ellipsis;
     overflow: hidden;
     color: @topic-color;
     font-weight: bold;
     font-size: .8em;
+  }
+
+  .spacer {
+    flex: 1 0 1em;
   }
 
   .close {
@@ -1886,7 +1894,7 @@ iframe.js {
   }
 }
 
-.replies.collapsed, .expand-rest, .message-node .content, .thread-list, .notification-list {
+.replies.collapsed, .expand-rest, .message-node .content, .thread-list, .notification-list, .top-bar {
   .ago {
     font-weight: normal;
     white-space: nowrap;
