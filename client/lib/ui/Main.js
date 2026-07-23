@@ -122,9 +122,17 @@ export default createReactClass({
 
   onTabKeyCombo(ev) {
     if (ev.key === 'ArrowLeft') {
-      ui.focusLeftPane()
+      if (this.state.ui.thin) {
+        ui.panViewTo('info')
+      } else {
+        ui.focusLeftPane()
+      }
     } else if (ev.key === 'ArrowRight') {
-      ui.focusRightPane()
+      if (this.state.ui.thin) {
+        ui.panViewTo('sidebar')
+      } else {
+        ui.focusRightPane()
+      }
     } else if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') {
       if (!this.state.ui.threadPopupAnchorEl) {
         return
@@ -152,10 +160,15 @@ export default createReactClass({
       }
       this.selectThread(threadEls[idx].dataset.threadId, threadEls[idx])
     } else if (ev.key === 'Enter' && this.state.ui.focusedPane === this.state.ui.popupPane) {
-      ui.popupToThreadPane()
+      if (!this.state.ui.thin) {
+        // TODO: Make this work?
+        ui.popupToThreadPane()
+      }
     } else if (ev.key === 'Backspace') {
       if (/^thread-/.test(this.state.ui.focusedPane)) {
         ui.closeFocusedThreadPane()
+      } else if (this.state.ui.thin) {
+        ui.panViewTo('main')
       }
     } else if (uiwindow.getSelection().isCollapsed) {
       ui.focusEntry()
