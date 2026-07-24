@@ -90,7 +90,7 @@ export default createReactClass({
       }
       prevUser = user
       return true
-    }).toList()
+    }).cacheResult()
     const humanUniqueCount = (people || {size: 0}).size
     const humanDuplicateCount = humanCount - humanUniqueCount
     const bots = list.get('bot')
