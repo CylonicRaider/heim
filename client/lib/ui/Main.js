@@ -352,9 +352,9 @@ export default createReactClass({
               {extraPanes}
               {threadPanes.entrySeq().map(([paneId, pane], idx) => {
                 const threadId = paneId.substr('thread-'.length)
-                const paneRoot = this.state.chat.messages.get(threadId)
-                const title = paneRoot.get('content')
-                const ago = paneRoot.get('$count').get('latestDescendantTime')
+                const title = this.state.chat.messages.get(threadId).get('content')
+                const counts = this.state.chat.messages.getCount(threadId)
+                const ago = counts ? counts.get('latestDescendantTime') : null
                 return (
                   <div key={paneId} className="chat-pane-container" style={{zIndex: threadPanes.size - idx}} onClickCapture={_.partial(this.onPaneClick, paneId)}>
                     <div className="top-bar">
