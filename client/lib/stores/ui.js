@@ -19,8 +19,7 @@ const storeActions = Reflux.createActions([
   'setUISize',
   'focusEntry',
   'focusPane',
-  'focusLeftPane',
-  'focusRightPane',
+  'moveFocus',
   'collapseInfoPane',
   'expandInfoPane',
   'toggleUserList',
@@ -559,6 +558,16 @@ const store = module.exports.store = Reflux.createStore({
     })
   },
 
+  _panLeftRight(delta) {
+    const positions = ['info', 'main', 'sidebar']
+    let idx = positions.indexOf(this.state.panPos)
+    idx = (idx == -1) ? 1 : _.clamp(0, idx + delta, positions.size - 1)
+    if (positions[idx] == this.state.panPos) {
+      return
+    }
+    storeActions.panViewTo(positions[idx])
+  },
+
   _moveFocusedPane(delta) {
     const focusablePanes = this.state.visiblePanes
       .toKeyedSeq()
@@ -587,12 +596,24 @@ const store = module.exports.store = Reflux.createStore({
     }
   },
 
-  focusLeftPane() {
-    this._moveFocusedPane(-1)
-  },
-
-  focusRightPane() {
-    this._moveFocusedPane(1)
+  moveFocus(direction) {
+    const shouldPan = this.state.thin && this.state.focusedPane == 'main'
+    switch (direction) {
+      case 'left':
+        if (shouldPan) {
+          this._panLeftRight(-1)
+        } else {
+          this._moveFocusedPane(-1)
+        }
+        break
+      case 'right':
+        if (shouldPan) {
+          this._panLeftRight(1)
+        } else {
+          this._moveFocusedPane(1)
+        }
+        break
+    }
   },
 
   focusEntry(character) {

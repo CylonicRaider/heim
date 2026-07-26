@@ -122,17 +122,9 @@ export default createReactClass({
 
   onTabKeyCombo(ev) {
     if (ev.key === 'ArrowLeft') {
-      if (this.state.ui.thin) {
-        ui.panViewTo('info')
-      } else {
-        ui.focusLeftPane()
-      }
+      ui.moveFocus('left')
     } else if (ev.key === 'ArrowRight') {
-      if (this.state.ui.thin) {
-        ui.panViewTo('sidebar')
-      } else {
-        ui.focusRightPane()
-      }
+      ui.moveFocus('right')
     } else if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') {
       if (!this.state.ui.threadPopupAnchorEl) {
         return
