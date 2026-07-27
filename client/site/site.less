@@ -529,7 +529,7 @@ body.page {
 }
 
 body.welcome {
-  background: @brand-bg-color;
+  background: linear-gradient(to bottom, transparent, fade(#ebf2eb, 50%)), data-uri('./res/background.svg') center / 512px;
 
   @keyframes raise {
     0% {
@@ -784,7 +784,7 @@ body.about {
       right: -100%;
       top: -55px;
       bottom: 0;
-      background: @brand-bg-color;
+      background: linear-gradient(to bottom, transparent, fade(#ebf2eb, 50%)), data-uri('./res/background.svg') center / 512px;
       border-bottom: 1px solid fade(black, 25%);
       z-index: -1;
     }
@@ -1113,6 +1113,7 @@ body.error-page {
   display: inline-block;
   width: @size;
   height: @size;
+  background: white;
   border-radius: 100%;
 
   .logo, .colors {
