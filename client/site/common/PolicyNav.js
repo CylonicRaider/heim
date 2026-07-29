@@ -6,7 +6,7 @@ import NavBar from './NavBar'
 const items = [
   {name: 'values', caption: <span>Values</span>},
   {name: 'conduct', caption: <span><span className="long">Code of </span>Conduct</span>},
-  {name: 'hosts', caption: <span><span className="long">Hosting </span>Rooms</span>},
+  {name: 'hosts', caption: <span><span className="long">Hosting </span>Policy</span>},
   {name: 'terms', caption: <span>Terms<span className="long"> of Service</span></span>},
   {name: 'privacy', caption: <span>Privacy<span className="long"> Policy</span></span>},
 ]
