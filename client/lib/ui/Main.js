@@ -126,7 +126,7 @@ export default createReactClass({
     } else if (ev.key === 'ArrowRight') {
       ui.moveFocus('right')
     } else if (ev.key === 'ArrowUp' || ev.key === 'ArrowDown') {
-      if (!this.state.ui.threadPopupAnchorEl) {
+      if (!this.state.ui.threadPopoutAnchorEl) {
         return
       }
 
@@ -151,14 +151,14 @@ export default createReactClass({
         idx++
       }
       this.selectThread(threadEls[idx].dataset.threadId, threadEls[idx])
-    } else if (ev.key === 'Enter' && this.state.ui.focusedPane === this.state.ui.popupPane) {
+    } else if (ev.key === 'Enter' && this.state.ui.focusedPane === this.state.ui.popoutPane) {
       if (!this.state.ui.thin) {
         // TODO: Make this work?
-        ui.popupToThreadPane()
+        ui.popoutToThreadPane()
       }
     } else if (ev.key === 'Backspace') {
-      if (/^thread-/.test(this.state.ui.focusedPane)) {
-        ui.closeFocusedThreadPane()
+      if (/^(thread|popout)-/.test(this.state.ui.focusedPane)) {
+        ui.closeFocusedPane()
       } else if (this.state.ui.thin) {
         ui.panViewTo('main')
       }
@@ -170,7 +170,7 @@ export default createReactClass({
   onThreadSelect(ev, id) {
     if (ev.button === 1) {
       ui.openThreadPane(id)
-    } else if (this.state.ui.selectedThread === id && this.state.ui.threadPopupAnchorEl) {
+    } else if (this.state.ui.selectedThread === id && this.state.ui.threadPopoutAnchorEl) {
       ui.deselectThread()
     } else {
       this.selectThread(id, ev.currentTarget)
@@ -209,7 +209,7 @@ export default createReactClass({
     ui.selectThread(id, itemEl)
   },
 
-  dismissThreadPopup(ev) {
+  dismissPopout(ev) {
     if (!ReactDOM.findDOMNode(this.refs.threadList).contains(ev.target)) {
       ui.deselectThread()
     }
@@ -246,7 +246,7 @@ export default createReactClass({
 
     let mainPaneThreadId
     if (thin && selectedThread) {
-      mainPaneThreadId = 'thread-' + selectedThread
+      mainPaneThreadId = 'popout-' + selectedThread
     }
 
     const threadPanes = this.state.ui.visiblePanes
@@ -278,7 +278,7 @@ export default createReactClass({
 
     return (
       <div id="ui" className={classNames({'disconnected': this.state.chat.connected === false})} onKeyDown={ui.keydownOnPage}>
-        <Panner ref="panner" id="ui-panes" snapPoints={snapPoints} onMove={ui.onViewPan} className={classNames({'info-pane-hidden': infoPaneHidden, 'sidebar-pane-hidden': sidebarPaneHidden, 'info-pane-focused': this.state.ui.focusedPane === this.state.ui.popupPane, 'manager-mode': this.state.ui.managerMode})} onMouseDownCapture={this.onMouseDown} onClickCapture={this.onClick} onTouchMove={this.onTouchMove}>
+        <Panner ref="panner" id="ui-panes" snapPoints={snapPoints} onMove={ui.onViewPan} className={classNames({'info-pane-hidden': infoPaneHidden, 'sidebar-pane-hidden': sidebarPaneHidden, 'info-pane-focused': this.state.ui.focusedPane === this.state.ui.popoutPane, 'manager-mode': this.state.ui.managerMode})} onMouseDownCapture={this.onMouseDown} onClickCapture={this.onClick} onTouchMove={this.onTouchMove}>
           {this.state.storage && this.state.storage.useOpenDyslexic && <link rel="stylesheet" type="text/css" id="css" href="/static/od.css" />}
           <div className="info-pane" onMouseEnter={ui.freezeInfo} onMouseLeave={ui.thawInfo}>
             {this.state.ui.managerMode && <FastButton ref="toolboxButton" className={classNames('toolbox-button', {'empty': !this.state.chat.selectedMessages.size, 'selected': !!this.state.ui.managerToolboxAnchorEl})} onClick={this.state.ui.managerToolboxAnchorEl ? ui.closeManagerToolbox : this.openManagerToolbox}>toolbox {selectedThingCount > -1 && <span className="count">{selectedThingCount} selected</span>}</FastButton>}
@@ -362,12 +362,12 @@ export default createReactClass({
             </div>
           )}
           {!thin && (
-            <Bubble ref="threadPopup" className="thread-popup" transition="slide-right" anchorEl={this.state.ui.threadPopupAnchorEl} visible={!!this.state.ui.threadPopupAnchorEl} onDismiss={this.dismissThreadPopup} offset={() => ({ left: ReactDOM.findDOMNode(this).getBoundingClientRect().left + 5, top: 26 })}>
+            <Bubble ref="threadPopout" className="thread-popout" transition="slide-right" anchorEl={this.state.ui.threadPopoutAnchorEl} visible={!!this.state.ui.threadPopoutAnchorEl} onDismiss={this.dismissPopout} offset={() => ({ left: ReactDOM.findDOMNode(this).getBoundingClientRect().left + 5, top: 26 })}>
               <div className="top-line">
-                <FastButton className="to-pane" onClick={ui.popupToThreadPane}>new pane</FastButton>
-                <FastButton className="scroll-to" onClick={ui.gotoPopupMessage}>go to</FastButton>
+                <FastButton className="to-pane" onClick={ui.popoutToThreadPane}>new pane</FastButton>
+                <FastButton className="scroll-to" onClick={ui.gotoPopoutMessage}>go to</FastButton>
               </div>
-              {selectedThread && <ChatPane key={this.state.ui.popupPane} pane={this.state.ui.panes.get(this.state.ui.popupPane)} afterRender={() => this.refs.threadPopup.reposition()} showParent showAllReplies />}
+              {selectedThread && <ChatPane key={this.state.ui.popoutPane} pane={this.state.ui.panes.get(this.state.ui.popoutPane)} afterRender={() => this.refs.threadPopout.reposition()} showParent showAllReplies />}
             </Bubble>
           )}
           {!thin && this.state.ui.managerMode && (

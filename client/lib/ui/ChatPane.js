@@ -63,7 +63,7 @@ export default createReactClass({
 
     // when a new pane is added, all of the other panes get squished and
     // need to update their scroll position
-    Reflux.listenTo(ui.popupToThreadPane, 'scrollUpdatePosition'),
+    Reflux.listenTo(ui.popoutToThreadPane, 'scrollUpdatePosition'),
   ],
 
   getDefaultProps() {

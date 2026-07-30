@@ -30,13 +30,13 @@ const storeActions = Reflux.createActions([
   'selectThreadInList',
   'panViewTo',
   'onViewPan',
-  'popupToThreadPane',
+  'popoutToThreadPane',
   'openThreadPane',
   'closeThreadPane',
-  'closeFocusedThreadPane',
+  'closeFocusedPane',
   'selectMessage',
   'gotoMessageInPane',
-  'gotoPopupMessage',
+  'gotoPopoutMessage',
   'globalMouseUp',
   'globalMouseMove',
   'toggleManagerMode',
@@ -78,7 +78,7 @@ const Pane = module.exports.Pane = class Pane {
   }
 }
 
-function createPaneStore(paneId, createOptions = {}) {
+function createPane(paneId, createOptions = {}) {
   const paneActions = Reflux.createActions([
     'sendMessage',
     'focusMessage',
@@ -324,10 +324,10 @@ const store = module.exports.store = Reflux.createStore({
       showTimestamps: true,
       focusedPane: 'main',
       panes: Immutable.Map({
-        main: createPaneStore('main'),
+        main: createPane('main'),
       }),
       visiblePanes: Immutable.OrderedSet(['main']),
-      popupPane: null,
+      popoutPane: null,
       panPos: 'main',
       sidebarPaneExpanded: false,
       infoPaneExpanded: false,
@@ -335,7 +335,7 @@ const store = module.exports.store = Reflux.createStore({
       frozenNotifications: null,
       selectedThread: null,
       lastSelectedThread: null,
-      threadPopupAnchorEl: null,
+      threadPopoutAnchorEl: null,
       managerMode: false,
       managerToolboxAnchorEl: null,
       draggingToolboxSelection: false,
@@ -437,7 +437,7 @@ const store = module.exports.store = Reflux.createStore({
   },
 
   _thawInfo() {
-    if (this.state.threadPopupAnchorEl) {
+    if (this.state.threadPopoutAnchorEl) {
       return
     }
     this.state.frozenThreadList = null
@@ -445,10 +445,10 @@ const store = module.exports.store = Reflux.createStore({
     this.trigger(this.state)
   },
 
-  _touchThreadPane(threadId) {
-    const paneId = 'thread-' + threadId
+  _touchThreadPane(kind, threadId) {
+    const paneId = kind + '-' + threadId
     if (!this.state.panes.has(paneId)) {
-      this.state.panes = this.state.panes.set(paneId, createPaneStore(paneId, {rootId: threadId}))
+      this.state.panes = this.state.panes.set(paneId, createPane(paneId, {rootId: threadId}))
     }
     const pane = this.state.panes.get(paneId)
     pane.focusMessage(threadId)
@@ -457,7 +457,7 @@ const store = module.exports.store = Reflux.createStore({
 
   selectThread(id, el) {
     ReactDOM.unstable_batchedUpdates(() => {
-      const pane = this._touchThreadPane(id)
+      const pane = this._touchThreadPane('popout', id)
       if (this.state.selectedThread && this.state.selectedThread !== id) {
         this.threadData.set(this.state.selectedThread, {selected: false})
       }
@@ -468,8 +468,8 @@ const store = module.exports.store = Reflux.createStore({
         this.focusPane(pane.id)
       } else {
         this.freezeInfo()
-        this.state.popupPane = pane.id
-        this.state.threadPopupAnchorEl = el
+        this.state.popoutPane = pane.id
+        this.state.threadPopoutAnchorEl = el
         this.focusPane(pane.id)
       }
       this.trigger(this.state)
@@ -485,12 +485,12 @@ const store = module.exports.store = Reflux.createStore({
       this.state.lastSelectedThread = this.state.selectedThread
       this.state.selectedThread = null
       if (!this.state.thin) {
-        if (!this.state.popupPane) {
+        if (!this.state.popoutPane) {
           return
         }
         this.thawInfo()
-        this.state.threadPopupAnchorEl = null
-        this.state.popupPane = null
+        this.state.threadPopoutAnchorEl = null
+        this.state.popoutPane = null
       }
       storeActions.panViewTo('main')
       storeActions.focusPane('main')
@@ -500,7 +500,7 @@ const store = module.exports.store = Reflux.createStore({
 
   openThreadPane(threadId) {
     ReactDOM.unstable_batchedUpdates(() => {
-      const pane = this._touchThreadPane(threadId)
+      const pane = this._touchThreadPane('thread', threadId)
       this.state.visiblePanes = this.state.visiblePanes.add(pane.id)
       this.deselectThread()
       this.chatState.messages.mergeNodes(threadId, {_inPane: pane.id})
@@ -509,7 +509,7 @@ const store = module.exports.store = Reflux.createStore({
     })
   },
 
-  popupToThreadPane() {
+  popoutToThreadPane() {
     this.openThreadPane(this.state.selectedThread)
   },
 
@@ -524,11 +524,12 @@ const store = module.exports.store = Reflux.createStore({
     })
   },
 
-  closeFocusedThreadPane() {
-    if (!/^thread-/.test(this.state.focusedPane)) {
-      return
+  closeFocusedPane() {
+    if (/^thread-/.test(this.state.focusedPane)) {
+      this.closeThreadPane(this._focusedPane().store.state.rootId)
+    } else if (/^popout-/.test(this.state.focusedPane)) {
+      this.deselectThread()
     }
-    this.closeThreadPane(this._focusedPane().store.state.rootId)
   },
 
   _focusedPane() {
@@ -576,7 +577,7 @@ const store = module.exports.store = Reflux.createStore({
       .cacheResult()
 
     let idx
-    if (this.state.focusedPane === this.state.popupPane) {
+    if (this.state.focusedPane === this.state.popoutPane) {
       idx = -1
     } else {
       idx = focusablePanes.keySeq().indexOf(this.state.focusedPane)
@@ -667,8 +668,17 @@ const store = module.exports.store = Reflux.createStore({
 
   _gotoMessageCommon(messageId, focusPane, selectInPane) {
     const parentPaneId = Immutable.Seq(this.chatState.messages.iterAncestorsOf(messageId))
-      .map((ancestor) => 'thread-' + ancestor.get('id'))
-      .find((threadId) => this.state.visiblePanes.has(threadId))
+      .map((ancestor) => {
+        const id = ancestor.get('id')
+        if (this.state.visiblePanes.has('thread-' + id)) {
+          return 'thread-' + id
+        } else if (this.state.popoutPane == 'popout-' + id) {
+          return 'popout-' + id
+        } else {
+          return null
+        }
+      })
+      .find((threadId) => !!threadId)
 
     const parentPane = this.state.panes.get(parentPaneId || 'main')
 
@@ -688,7 +698,7 @@ const store = module.exports.store = Reflux.createStore({
     this._gotoMessageCommon(messageId, false, parentPane => parentPane.focusMessage(messageId))
   },
 
-  gotoPopupMessage() {
+  gotoPopoutMessage() {
     const mainPane = this.state.panes.get('main')
     ReactDOM.unstable_batchedUpdates(() => {
       mainPane.revealMessage(this.state.selectedThread)
@@ -698,7 +708,7 @@ const store = module.exports.store = Reflux.createStore({
   },
 
   _createCustomPane(paneId, options) {
-    const newPane = createPaneStore(paneId, options)
+    const newPane = createPane(paneId, options)
     this.state.panes = this.state.panes.set(paneId, newPane)
     this.trigger(this.state)
     return newPane
