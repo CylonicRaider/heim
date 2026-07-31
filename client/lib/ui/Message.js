@@ -35,6 +35,7 @@ const Message = createReactClass({
     showTimeStamps: PropTypes.bool,
     showTimeAgo: PropTypes.bool,
     showAllReplies: PropTypes.bool,
+    suppressPaneLink: PropTypes.bool,
     depth: PropTypes.number,
     visibleCount: PropTypes.number,
     maxDepth: PropTypes.number,
@@ -257,7 +258,7 @@ const Message = createReactClass({
     }
 
     const messagePane = message.get('_inPane')
-    const repliesInOtherPane = messagePane && messagePane !== this.props.pane.id
+    const repliesInOtherPane = messagePane && !this.props.suppressPaneLink
     const seen = message.get('_seen')
     const mention = message.get('_mention')
 

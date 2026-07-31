@@ -364,7 +364,9 @@ export default createReactClass({
           {!thin && (
             <Bubble ref="threadPopout" className="thread-popout" transition="slide-right" anchorEl={this.state.ui.threadPopoutAnchorEl} visible={!!this.state.ui.threadPopoutAnchorEl} onDismiss={this.dismissPopout} offset={() => ({ left: ReactDOM.findDOMNode(this).getBoundingClientRect().left + 5, top: 26 })}>
               <div className="top-line">
-                <FastButton className="to-pane" onClick={ui.popoutToThreadPane}>new pane</FastButton>
+                <FastButton className="to-pane" onClick={ui.popoutToThreadPane}>
+                  {this.state.ui.visiblePanes.has((this.state.ui.popoutPane || '').replace(/^popout-/, 'thread-')) ? 'to pane' : 'new pane'}
+                </FastButton>
                 <FastButton className="scroll-to" onClick={ui.gotoPopoutMessage}>go to</FastButton>
               </div>
               {selectedThread && <ChatPane key={this.state.ui.popoutPane} pane={this.state.ui.panes.get(this.state.ui.popoutPane)} afterRender={() => this.refs.threadPopout.reposition()} showParent showAllReplies />}
