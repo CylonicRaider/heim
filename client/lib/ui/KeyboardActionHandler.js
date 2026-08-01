@@ -25,23 +25,23 @@ export default createReactClass({
   onKeyDown(ev) {
     let key = ev.key
 
-    if (ev.ctrlKey) {
+    if (ev.ctrlKey && ev.key !== 'Control') {
       key = 'Control' + key
     }
 
-    if (ev.altKey) {
+    if (ev.altKey && ev.key !== 'Alt') {
       key = 'Alt' + key
     }
 
-    if (ev.shiftKey) {
+    if (ev.shiftKey && ev.key !== 'Shift') {
       key = 'Shift' + key
     }
 
-    if (ev.metaKey) {
+    if (ev.metaKey && ev.key !== 'Meta') {
       key = 'Meta' + key
     }
 
-    if (key !== 'Tab' && Heim.tabPressed) {
+    if (Heim.tabPressed && ev.key !== 'Tab') {
       key = 'Tab' + key
     }
 
@@ -54,7 +54,7 @@ export default createReactClass({
 
   render() {
     return (
-      <div onKeyDown={this.onKeyDown} {...forwardProps(this)}>
+      <div onKeyDown={this.onKeyDown} {...forwardProps(this, /^on/)}>
         {this.props.children}
       </div>
     )
