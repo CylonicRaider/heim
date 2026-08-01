@@ -68,6 +68,15 @@ export default createReactClass({
     this.setState({scrollbarWidth: width})
   },
 
+  onViewPan(target, duration) {
+    ui.onViewPan(target, duration)
+    setTimeout(() => {
+      if (this.refs.threadPopout) {
+        this.refs.threadPopout.reposition()
+      }
+    }, duration)
+  },
+
   onMouseDown() {
     // FIXME: preventing/canceling a mousedown in React doesn't seem to stop
     // the subsequent click event, so we have to resort to this hack.
@@ -278,7 +287,7 @@ export default createReactClass({
 
     return (
       <div id="ui" className={classNames({'disconnected': this.state.chat.connected === false})} onKeyDown={ui.keydownOnPage}>
-        <Panner ref="panner" id="ui-panes" snapPoints={snapPoints} onMove={ui.onViewPan} className={classNames({'info-pane-hidden': infoPaneHidden, 'sidebar-pane-hidden': sidebarPaneHidden, 'info-pane-focused': this.state.ui.focusedPane === this.state.ui.popoutPane, 'manager-mode': this.state.ui.managerMode})} onMouseDownCapture={this.onMouseDown} onClickCapture={this.onClick} onTouchMove={this.onTouchMove}>
+        <Panner ref="panner" id="ui-panes" snapPoints={snapPoints} onMove={this.onViewPan} className={classNames({'info-pane-hidden': infoPaneHidden, 'sidebar-pane-hidden': sidebarPaneHidden, 'info-pane-focused': this.state.ui.focusedPane === this.state.ui.popoutPane, 'manager-mode': this.state.ui.managerMode})} onMouseDownCapture={this.onMouseDown} onClickCapture={this.onClick} onTouchMove={this.onTouchMove}>
           {this.state.storage && this.state.storage.useOpenDyslexic && <link rel="stylesheet" type="text/css" id="css" href="/static/od.css" />}
           <div className="info-pane" onMouseEnter={ui.freezeInfo} onMouseLeave={ui.thawInfo}>
             {this.state.ui.managerMode && <FastButton ref="toolboxButton" className={classNames('toolbox-button', {'empty': !this.state.chat.selectedMessages.size, 'selected': !!this.state.ui.managerToolboxAnchorEl})} onClick={this.state.ui.managerToolboxAnchorEl ? ui.closeManagerToolbox : this.openManagerToolbox}>toolbox {selectedThingCount > -1 && <span className="count">{selectedThingCount} selected</span>}</FastButton>}
