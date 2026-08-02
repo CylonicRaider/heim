@@ -10,6 +10,7 @@ import moment from 'moment'
 import ui from '../stores/ui'
 import chat from '../stores/chat'
 import Tree from '../util/Tree'
+import ButtonEntry from './ButtonEntry'
 import FastButton from './FastButton'
 import Embed from './Embed'
 import MessageText from './MessageText'
@@ -17,7 +18,6 @@ import InlineVoting from './InlineVoting'
 import ChatEntry from './ChatEntry'
 import LiveTimeAgo from './LiveTimeAgo'
 import KeyboardActionHandler from './KeyboardActionHandler'
-import EntryDragHandle from './EntryDragHandle'
 import TreeNodeMixin from './TreeNodeMixin'
 import MessageDataMixin from './MessageDataMixin'
 
@@ -193,7 +193,9 @@ const Message = createReactClass({
     if (this.state.paneData.get('focused')) {
       this.props.pane.focusEntry()
     }
-    ev.stopPropagation()
+    if (ev) {
+      ev.stopPropagation()
+    }
   },
 
   collapseReplies() {
@@ -214,6 +216,7 @@ const Message = createReactClass({
 
   focusOtherPane(ev) {
     ui.focusPane(this.state.node.get('_inPane'))
+    ev.preventDefault()
     ev.stopPropagation()
   },
 
@@ -286,27 +289,11 @@ const Message = createReactClass({
     let messageReplies
     let messageIndentedReplies
     if (repliesInOtherPane) {
-      /* eslint-disable jsx-a11y/click-events-have-key-events */
       messageIndentedReplies = (
-        <FastButton component="div" className={classNames('replies', 'in-pane', {'focus-target': focused})} onClick={this.focusOtherPane}>
+        <ButtonEntry className={['replies', 'in-pane']} pane={this.props.pane} focused={focused} onClick={this.focusOtherPane}>
           replies in pane <div className="pane-icon" />
-          {focused && <div className="spacer" onClick={(ev) => ev.stopPropagation()}><EntryDragHandle pane={this.props.pane} /></div>}
-        </FastButton>
+        </ButtonEntry>
       )
-      if (focused) {
-        messageIndentedReplies = (
-          <KeyboardActionHandler listenTo={pane.keydownOnPane} key="replies-key-handler" keys={{
-            ArrowLeft: () => pane.moveMessageFocus('out'),
-            ArrowRight: () => pane.moveMessageFocus('top'),
-            ArrowUp: () => pane.moveMessageFocus('up'),
-            ArrowDown: () => pane.moveMessageFocus('down'),
-            Enter: this.focusOtherPane,
-            Escape: () => pane.escape(),
-          }}>
-            {messageIndentedReplies}
-          </KeyboardActionHandler>
-        )
-      }
     } else if (children.size > 0 || focused) {
       const composingReply = focused && children.size === 0
       const fullCollapse = this.props.visibleCount === 0 && !showAllReplies || this.props.maxDepth === 0
@@ -326,31 +313,15 @@ const Message = createReactClass({
           replyLabel = childCount + ' replies'
         }
         messageIndentedReplies = (
-          <div>
-            <FastButton key="replies" component="div" className={classNames('replies', 'collapsed', {'focus-target': focused, 'empty': childCount === 0})} onClick={this.expandReplies}>
-              {replyLabel}
-              {childNewCount > 0 && <span className={classNames('new-count', {'new-mention': count.get('newMentionDescendants') > 0})}>{childNewCount}</span>}
-              {childCount > 0 && <LiveTimeAgo className="ago" time={count.get('latestDescendantTime')} nowText="active" />}
-              <MessageText className="message-preview" content={this.props.tree.get(count.get('latestDescendant')).get('content').trim()} />
-              {focused && <div className="spacer" onClick={(ev) => ev.stopPropagation()}><EntryDragHandle pane={this.props.pane} /></div>}
-            </FastButton>
-          </div>
+          <ButtonEntry className={{replies: true, collapsed: true, empty: childCount === 0}} pane={this.props.pane} focused={focused} onClick={this.expandReplies} keys={{
+            TabEnter: this.openInPane,
+          }}>
+            {replyLabel}
+            {childNewCount > 0 && <span className={classNames('new-count', {'new-mention': count.get('newMentionDescendants') > 0})}>{childNewCount}</span>}
+            {childCount > 0 && <LiveTimeAgo className="ago" time={count.get('latestDescendantTime')} nowText="active" />}
+            <MessageText className="message-preview" content={this.props.tree.get(count.get('latestDescendant')).get('content').trim()} />
+          </ButtonEntry>
         )
-        if (focused) {
-          messageIndentedReplies = (
-            <KeyboardActionHandler listenTo={pane.keydownOnPane} key="replies-key-handler" keys={{
-              ArrowLeft: () => pane.moveMessageFocus('out'),
-              ArrowRight: () => pane.moveMessageFocus('top'),
-              ArrowUp: () => pane.moveMessageFocus('up'),
-              ArrowDown: () => pane.moveMessageFocus('down'),
-              Enter: this.expandReplies,
-              TabEnter: this.openInPane,
-              Escape: () => pane.escape(),
-            }}>
-              {messageIndentedReplies}
-            </KeyboardActionHandler>
-          )
-        }
       } else {
         let focusAction
         let expandRestOfReplies
@@ -360,29 +331,15 @@ const Message = createReactClass({
           childCount = descCount.get('descendants')
           childNewCount = descCount.get('newDescendants')
           expandRestOfReplies = (
-            <FastButton key="replies" component="div" className={classNames('expand-rest', {'focus-target': focused})} onClick={this.expandReplies}>
+            <ButtonEntry className={'expand-rest'} pane={this.props.pane} focused={focused} onClick={this.expandReplies} keys={{
+              TabEnter: this.openInPane,
+            }}>
               {childCount} more
               {childNewCount > 0 && <span className={classNames('new-count', {'new-mention': descCount.get('newMentionDescendants') > 0})}>{childNewCount}</span>}
               <LiveTimeAgo className="ago" time={descCount.get('latestDescendantTime')} nowText="active" />
               <MessageText className="message-preview" content={this.props.tree.get(descCount.get('latestDescendant')).get('content').trim()} />
-              {focused && <div className="spacer" onClick={(ev) => ev.stopPropagation()}><EntryDragHandle pane={this.props.pane} /></div>}
-            </FastButton>
+            </ButtonEntry>
           )
-          if (focused) {
-            expandRestOfReplies = (
-              <KeyboardActionHandler listenTo={pane.keydownOnPane} key="replies-key-handler" keys={{
-                ArrowLeft: () => pane.moveMessageFocus('out'),
-                ArrowRight: () => pane.moveMessageFocus('top'),
-                ArrowUp: () => pane.moveMessageFocus('up'),
-                ArrowDown: () => pane.moveMessageFocus('down'),
-                Enter: this.expandReplies,
-                TabEnter: this.openInPane,
-                Escape: () => pane.escape(),
-              }}>
-                {expandRestOfReplies}
-              </KeyboardActionHandler>
-            )
-          }
           focusAction = expandRestOfReplies
           children = children.take(this.props.visibleCount)
         } else if (focused) {

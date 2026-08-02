@@ -73,6 +73,10 @@ export default createReactClass({
     } else if (/^Arrow/.test(ev.key) || ev.key === 'Tab' || ev.key === 'Backspace') {
       // don't let the keyboard action handler react to these
       ev.stopPropagation()
+      if (ev.key === 'Tab' && ev.shiftKey) {
+        // don't let the keyboard focus escape
+        ev.preventDefault()
+      }
     }
   },
 
@@ -219,7 +223,11 @@ export default createReactClass({
         Enter: this.chatSend,
         TabEnter: this.props.pane.openFocusedMessageInPane,
         Backspace: this.proxyKeyDown,
-        Tab: this.complete,
+        Tab: () => {
+          this.complete()
+          this.refs.input.focus()
+        },
+        ShiftTab: () => this.refs.nick.focus(),
       }}>
         <form className={classNames('entry', 'focus-target', {'empty': this.state.empty})} onSubmit={(ev) => ev.preventDefault()} autoComplete="off">
           <div className="nick-box">
@@ -229,7 +237,7 @@ export default createReactClass({
             </div>
           </div>
           <textarea key="msg" ref="input" className="entry-text" onChange={this.onChange} onKeyDown={this.saveEntryState} onClick={this.saveEntryState} />
-          <textarea key="measure" ref="measure" className="measure" />
+          <textarea key="measure" ref="measure" className="measure" tabIndex={-1} />
           <EntryDragHandle pane={this.props.pane} />
         </form>
       </KeyboardActionHandler>
