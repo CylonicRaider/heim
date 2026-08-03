@@ -61,7 +61,10 @@ export default createReactClass({
 
   onKeyDown(ev) {
     if (ev.key === 'Enter' || ev.key === 'Space') {
-      this.props.onClick(ev)
+      if (this.props.onClick(ev) !== false) {
+        ev.preventDefault()
+        ev.stopPropagation()
+      }
     }
   },
 
