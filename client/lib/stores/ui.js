@@ -502,7 +502,6 @@ const store = module.exports.store = Reflux.createStore({
     ReactDOM.unstable_batchedUpdates(() => {
       const pane = this._touchThreadPane('thread', threadId)
       this.state.visiblePanes = this.state.visiblePanes.add(pane.id)
-      this.deselectThread()
       this.chatState.messages.mergeNodes(threadId, {_inPane: pane.id})
       this.focusPane(pane.id)
       this.trigger(this.state)
@@ -543,6 +542,9 @@ const store = module.exports.store = Reflux.createStore({
 
     ReactDOM.unstable_batchedUpdates(() => {
       const lastFocused = this.state.focusedPane
+      if (/^popout-/.test(lastFocused) && !/^popout-/.test(id)) {
+        this.deselectThread()
+      }
       this.state.focusedPane = id
       this.trigger(this.state)
 
