@@ -188,6 +188,9 @@ export default createReactClass({
     }
     const completed = (text[wordStart - 1] !== '@' ? '@' : '') + match
     input.value = input.value.substring(0, wordStart) + completed + input.value.substring(wordEnd)
+    const cursorPosition = wordStart + completed.length
+    input.selectionStart = cursorPosition
+    input.selectionEnd = cursorPosition
     this.saveEntryState()
   },
 
