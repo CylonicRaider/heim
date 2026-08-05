@@ -183,7 +183,7 @@ export default createReactClass({
       .map((user) => user.get('name', ''))
     const match = mention.rankCompletions(nameSeq, word).first()
 
-    if (!match) {
+    if (!match || match === word) {
       return
     }
     const completed = (text[wordStart - 1] !== '@' ? '@' : '') + match
