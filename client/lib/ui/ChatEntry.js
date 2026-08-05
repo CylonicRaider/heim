@@ -187,8 +187,19 @@ export default createReactClass({
       return
     }
     const completed = (text[wordStart - 1] !== '@' ? '@' : '') + match
-    input.value = input.value.substring(0, wordStart) + completed + input.value.substring(wordEnd)
+    const expectedValue = text.substring(0, wordStart) + completed + text.substring(wordEnd)
     const cursorPosition = wordStart + completed.length
+    input.focus() // make sure we're really focused
+    const document = Heim.uidocument
+    // commit a heresy and use execCommand to preserve undo history
+    if (document.queryCommandSupported('insertText')) {
+      input.setSelectionRange(wordStart, wordEnd)
+      document.execCommand('insertText', false, completed)
+    }
+    // bulwark against browser makers neutering execCommand
+    if (input.value !== expectedValue) {
+      input.value = expectedValue
+    }
     input.setSelectionRange(cursorPosition, cursorPosition)
     this.saveEntryState()
   },
