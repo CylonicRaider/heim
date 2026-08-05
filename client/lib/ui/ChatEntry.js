@@ -193,8 +193,18 @@ export default createReactClass({
     const document = Heim.uidocument
     // commit a heresy and use execCommand to preserve undo history
     if (document.queryCommandSupported('insertText')) {
-      input.setSelectionRange(wordStart, wordEnd)
-      document.execCommand('insertText', false, completed)
+      if (completed.startsWith(word)) {
+        input.setSelectionRange(wordEnd, wordEnd)
+        const partial = completed.slice(word.length)
+        document.execCommand('insertText', false, partial)
+      } else if (completed.endsWith(word)) {
+        input.setSelectionRange(wordStart, wordStart)
+        const partial = completed.slice(0, -word.length)
+        document.execCommand('insertText', false, partial)
+      } else {
+        input.setSelectionRange(wordStart, wordEnd)
+        document.execCommand('insertText', false, completed)
+      }
     }
     // bulwark against browser makers neutering execCommand
     if (input.value !== expectedValue) {
