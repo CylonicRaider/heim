@@ -171,6 +171,11 @@ export default createReactClass({
       } else if (this.state.ui.thin) {
         ui.panViewTo('main')
       }
+    } else if (Heim.tabPressed && /^[a-z]$/.test(ev.key)) {
+      if (ev.key === 'r') {
+        ui.toggleRoomSwitcher()
+      }
+      ev.preventDefault()
     } else if (uiwindow.getSelection().isCollapsed) {
       ui.focusEntry()
     }

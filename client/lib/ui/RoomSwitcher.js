@@ -1,13 +1,19 @@
 import React from 'react'
 import createReactClass from 'create-react-class'
 import classNames from 'classnames'
+import Reflux from 'reflux'
 
+import ui from '../stores/ui'
 import FastButton from './FastButton'
 
 const roomNameRe = /^(pm:)?[a-z0-9]+$/
 
 export default createReactClass({
   displayName: 'RoomSwitcher',
+
+  mixins: [
+    Reflux.listenTo(ui.toggleRoomSwitcher, 'toggle'),
+  ],
 
   getInitialState() {
     return {
@@ -79,6 +85,7 @@ export default createReactClass({
           className={this.state.expanded ? 'room-switcher-cancel' : 'room-switcher-expand'}
           title={this.state.expanded ? 'do not go to another room' : 'go to another room'}
           onClick={this.toggle}
+          accessKey="r"
         />
         {this.state.expanded && <span className="room-switcher-prompt">go to</span>}
         {this.state.expanded && (

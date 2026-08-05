@@ -23,6 +23,7 @@ const storeActions = Reflux.createActions([
   'collapseInfoPane',
   'expandInfoPane',
   'toggleUserList',
+  'toggleRoomSwitcher',
   'freezeInfo',
   'thawInfo',
   'selectThread',
