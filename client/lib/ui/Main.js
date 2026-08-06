@@ -171,7 +171,7 @@ export default createReactClass({
       } else if (this.state.ui.thin) {
         ui.panViewTo('main')
       }
-    } else if (Heim.tabPressed && /^[a-z]$/.test(ev.key)) {
+    } else if (/^[a-z]$/.test(ev.key)) {
       if (ev.key === 'r') {
         ui.toggleRoomSwitcher()
       }
