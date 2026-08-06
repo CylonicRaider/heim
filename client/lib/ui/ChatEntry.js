@@ -183,27 +183,29 @@ export default createReactClass({
       .map((user) => user.get('name', ''))
     const match = mention.rankCompletions(nameSeq, word).first()
 
-    if (!match || match === word) {
+    if (!match) {
       return
     }
     const completed = (text[wordStart - 1] !== '@' ? '@' : '') + match
     const expectedValue = text.substring(0, wordStart) + completed + text.substring(wordEnd)
     const cursorPosition = wordStart + completed.length
     input.focus() // make sure we're really focused
-    const document = Heim.uidocument
+    if (input.value === expectedValue) {
+      return
+    }
     // commit a heresy and use execCommand to preserve undo history
-    if (document.queryCommandSupported('insertText')) {
+    if (uidocument.queryCommandSupported('insertText')) {
       if (completed.startsWith(word)) {
         input.setSelectionRange(wordEnd, wordEnd)
         const partial = completed.slice(word.length)
-        document.execCommand('insertText', false, partial)
+        uidocument.execCommand('insertText', false, partial)
       } else if (completed.endsWith(word)) {
         input.setSelectionRange(wordStart, wordStart)
         const partial = completed.slice(0, -word.length)
-        document.execCommand('insertText', false, partial)
+        uidocument.execCommand('insertText', false, partial)
       } else {
         input.setSelectionRange(wordStart, wordEnd)
-        document.execCommand('insertText', false, completed)
+        uidocument.execCommand('insertText', false, completed)
       }
     }
     // bulwark against browser makers neutering execCommand
