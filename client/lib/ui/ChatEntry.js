@@ -186,13 +186,14 @@ export default createReactClass({
     if (!match) {
       return
     }
+
     const completed = (text[wordStart - 1] !== '@' ? '@' : '') + match
     const expectedValue = text.substring(0, wordStart) + completed + text.substring(wordEnd)
-    const cursorPosition = wordStart + completed.length
-    input.focus() // make sure we're really focused
     if (input.value === expectedValue) {
       return
     }
+
+    input.focus() // make sure we're really focused
     // commit a heresy and use execCommand to preserve undo history
     if (uidocument.queryCommandSupported('insertText')) {
       if (completed.startsWith(word)) {
@@ -208,11 +209,15 @@ export default createReactClass({
         uidocument.execCommand('insertText', false, completed)
       }
     }
+
     // bulwark against browser makers neutering execCommand
     if (input.value !== expectedValue) {
       input.value = expectedValue
     }
+
+    const cursorPosition = wordStart + completed.length
     input.setSelectionRange(cursorPosition, cursorPosition)
+
     this.saveEntryState()
   },
 
