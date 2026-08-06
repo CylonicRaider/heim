@@ -188,8 +188,8 @@ export default createReactClass({
     }
 
     const completed = (text[wordStart - 1] !== '@' ? '@' : '') + match
-    const expectedValue = text.substring(0, wordStart) + completed + text.substring(wordEnd)
-    if (input.value === expectedValue) {
+    const newValue = text.substring(0, wordStart) + completed + text.substring(wordEnd)
+    if (input.value === newValue) {
       return
     }
 
@@ -198,12 +198,10 @@ export default createReactClass({
     if (uidocument.queryCommandSupported('insertText')) {
       if (completed.startsWith(word)) {
         input.setSelectionRange(wordEnd, wordEnd)
-        const partial = completed.slice(word.length)
-        uidocument.execCommand('insertText', false, partial)
+        uidocument.execCommand('insertText', false, completed.slice(word.length))
       } else if (completed.endsWith(word)) {
         input.setSelectionRange(wordStart, wordStart)
-        const partial = completed.slice(0, -word.length)
-        uidocument.execCommand('insertText', false, partial)
+        uidocument.execCommand('insertText', false, completed.slice(0, -word.length))
       } else {
         input.setSelectionRange(wordStart, wordEnd)
         uidocument.execCommand('insertText', false, completed)
@@ -211,8 +209,8 @@ export default createReactClass({
     }
 
     // bulwark against browser makers neutering execCommand
-    if (input.value !== expectedValue) {
-      input.value = expectedValue
+    if (input.value !== newValue) {
+      input.value = newValue
     }
 
     const cursorPosition = wordStart + completed.length
