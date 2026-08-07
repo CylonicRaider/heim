@@ -331,7 +331,7 @@ const Message = createReactClass({
           childCount = descCount.get('descendants')
           childNewCount = descCount.get('newDescendants')
           expandRestOfReplies = (
-            <ButtonEntry className={'expand-rest'} pane={this.props.pane} focused={focused} onClick={this.expandReplies} keys={{
+            <ButtonEntry className="expand-rest" pane={this.props.pane} focused={focused} onClick={this.expandReplies} keys={{
               TabEnter: this.openInPane,
             }}>
               {childCount} more
