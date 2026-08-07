@@ -43,7 +43,6 @@ export default createReactClass({
     const newText = ev.target.value
     const newValid = newText ? roomNameRe.test(newText) : null
     this.setState({text: newText, valid: newValid})
-    ev.stopPropagation()
   },
 
   onSubmit(ev) {
