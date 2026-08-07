@@ -22,7 +22,7 @@ export default createReactClass({
       const name = this.props.account.get('name')
       const email = this.props.account.get('email')
       return (
-        <FastButton className="account-button signed-in" onClick={this.props.onOpenAccountSettingsDialog}>
+        <FastButton className="account-button signed-in" onClick={this.props.onOpenAccountSettingsDialog} accessKey="a">
           <div className="account-info">
             <div className="status">signed in</div>
             <div className="name" title={email}>{name || email}</div>
@@ -32,6 +32,6 @@ export default createReactClass({
     }
 
     const title = accountAuthFlow.registerAvailable ? 'sign in or register' : 'sign in'
-    return <FastButton className="account-button" onClick={this.props.onOpenAccountAuthDialog}>{title}</FastButton>
+    return <FastButton className="account-button" onClick={this.props.onOpenAccountAuthDialog} accessKey="a">{title}</FastButton>
   },
 })

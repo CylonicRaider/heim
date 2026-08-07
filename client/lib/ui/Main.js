@@ -171,8 +171,16 @@ export default createReactClass({
       } else if (this.state.ui.thin) {
         ui.panViewTo('main')
       }
-    } else if (/^[a-z]$/.test(ev.key)) {
-      if (ev.key === 'r') {
+    } else if (/^[a-zA-Z]$/.test(ev.key)) {
+      // try to normalize away capslock
+      const key = ev.shiftKey ? ev.key.toUpperCase() : ev.key.toLowerCase()
+      if (key === 'a') {
+        if (this.state.chat.account) {
+          ui.openAccountSettingsDialog()
+        } else {
+          ui.openAccountAuthDialog()
+        }
+      } else if (key === 'r') {
         ui.toggleRoomSwitcher()
       }
       ev.preventDefault()
