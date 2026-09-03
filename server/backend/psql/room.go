@@ -251,6 +251,14 @@ func (rb *RoomBinding) EditMessage(
 		return reply, err
 	}
 
+	// HACK: prevent message corruption in private rooms until we fix it correctly
+	if msg.EncryptionKeyID.Valid && msg.EncryptionKeyID.String != "" {
+		if edit.Content != "" {
+			rollback(ctx, t)
+			return reply, fmt.Errorf("content edits in private rooms not yet implemented")
+		}
+	}
+
 	if msg.PreviousEditID.Valid && msg.PreviousEditID.String != edit.PreviousEditID.String() {
 		rollback(ctx, t)
 		return reply, proto.ErrEditInconsistent
